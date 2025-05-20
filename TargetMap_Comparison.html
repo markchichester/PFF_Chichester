@@ -21,13 +21,11 @@
       font-size: 16px;
     }
     iframe {
-      width: 100%;
+      width: 700px;
       height: 1000px;
       border: none;
-    }
-    .iframe-container {
-      max-width: 750px;
-      margin: auto;
+      display: block;
+      margin: 0 auto;
     }
   </style>
 </head>
@@ -40,9 +38,7 @@
     <option value="MalikNabers_TargetMap.html">Malik Nabers</option>
   </select>
 
-  <div class="iframe-container">
-    <iframe id="player-map" src="AmonRa_TargetMap.html"></iframe>
-  </div>
+  <iframe id="player-map" src="AmonRa_TargetMap.html"></iframe>
 
   <script>
     document.getElementById("player-select").addEventListener("change", function() {
