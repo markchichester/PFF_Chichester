@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,36 +7,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: "Archivo", sans-serif; background: white; padding: 20px; }
-    h1, h2 { text-align: center; margin-bottom: 5px; }
-    #player-select { margin: 20px auto; display: block; font-size: 16px; }
-    iframe {
+    body {
+      font-family: "Archivo", sans-serif;
+      background: white;
+      padding: 20px;
+      text-align: center;
+    }
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+    select {
+      margin: 20px auto;
+      font-size: 16px;
+      padding: 6px 10px;
+    }
+    .map-frame {
+      display: none;
+      margin: 0 auto;
       width: 100%;
       max-width: 695px;
       height: 1000px;
       border: none;
+    }
+    .active {
       display: block;
-      margin: 0 auto;
     }
     @media screen and (max-width: 768px) {
-      .desktop-only { display: none; }
+      .map-frame {
+        display: none !important;
+      }
+      #mobile-message {
+        display: block;
+        font-size: 16px;
+        color: #555;
+        margin-top: 20px;
+      }
     }
   </style>
 </head>
 <body>
   <h1>Nico Collins vs. Brian Thomas Jr.: Target Maps (2024)</h1>
   <h2>Powered by PFF</h2>
-  <select id="player-select">
-    <option value="Collins.html">Nico Collins</option>
-    <option value="Thomas.html">Brian Thomas Jr.</option>
+
+  <select id="player-toggle">
+    <option value="collins">Nico Collins</option>
+    <option value="thomas">Brian Thomas Jr.</option>
   </select>
-  <div class="desktop-only">
-    <iframe id="player-map" src="Collins.html"></iframe>
-  </div>
+
+  <iframe id="collins" class="map-frame active" src="Collins.html" allowfullscreen></iframe>
+  <iframe id="thomas" class="map-frame" src="Thomas.html" allowfullscreen></iframe>
+
+  <p id="mobile-message" style="display: none;">This interactive map is only available on desktop. Please view on a larger screen.</p>
+
   <script>
-    document.getElementById("player-select").addEventListener("change", function() {
-      document.getElementById("player-map").src = this.value;
+    const toggle = document.getElementById("player-toggle");
+    const collins = document.getElementById("collins");
+    const thomas = document.getElementById("thomas");
+
+    toggle.addEventListener("change", function () {
+      collins.classList.remove("active");
+      thomas.classList.remove("active");
+      if (this.value === "collins") {
+        collins.classList.add("active");
+      } else {
+        thomas.classList.add("active");
+      }
     });
   </script>
 </body>
 </html>
+
