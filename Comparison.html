@@ -34,7 +34,7 @@
     }
     @media screen and (max-width: 768px) {
       .map-frame {
-        display: none !important;
+        display: none;
       }
       #mobile-message {
         display: block;
@@ -42,6 +42,9 @@
         color: #555;
         margin-top: 20px;
       }
+    }
+    #mobile-message {
+      display: none;
     }
   </style>
 </head>
@@ -57,7 +60,7 @@
   <iframe id="collins" class="map-frame active" src="Collins.html" allowfullscreen></iframe>
   <iframe id="thomas" class="map-frame" src="Thomas.html" allowfullscreen></iframe>
 
-  <p id="mobile-message" style="display: none;">This interactive map is only available on desktop. Please view on a larger screen.</p>
+  <p id="mobile-message">This interactive map is only available on desktop. Please view on a larger screen.</p>
 
   <script>
     const toggle = document.getElementById("player-toggle");
@@ -67,6 +70,7 @@
     toggle.addEventListener("change", function () {
       collins.classList.remove("active");
       thomas.classList.remove("active");
+
       if (this.value === "collins") {
         collins.classList.add("active");
       } else {
