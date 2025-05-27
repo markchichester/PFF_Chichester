@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tyreek Hill vs. Terry McLaurin: Target Maps (2024)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body style="font-family: Archivo, sans-serif; background: white; padding: 20px;">
+
+  <div id="toggle-container" style="text-align: center; margin-bottom: 1em;">
+    <h2 style="margin-bottom: 0.2em;">Tyreek Hill vs. Terry McLaurin: Target Maps (2024)</h2>
+    <h3 style="margin-top: 0;">Powered by PFF</h3>
+
+    <select id="player-select" style="font-size: 16px; padding: 6px 10px; margin-top: 10px;">
+      <option value="hill-map">Tyreek Hill</option>
+      <option value="mclaurin-map">Terry McLaurin</option>
+    </select>
+  </div>
+
+  <div style="display: flex; justify-content: center;">
+    <div style="position: relative; width: 658px; height: 1000px;">
+      <iframe
+        id="hill-map"
+        class="toggle-map"
+        src="TyreekHill.html"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 1000px; border: none; display: block; z-index: 2;"
+        allowfullscreen>
+      </iframe>
+
+      <iframe
+        id="mclaurin-map"
+        class="toggle-map"
+        src="TerryMcLaurin.html"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 1000px; border: none; display: block; z-index: 1;"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+
+  <p class="mobile-message" style="display: none; text-align: center; font-size: 16px; color: #555; margin-top: 20px;">
+    This interactive map is only available on desktop. Please view on a larger screen.
+  </p>
+
+  <style>
+    @media screen and (max-width: 768px) {
+      #player-select,
+      .toggle-map {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+      }
+      .mobile-message {
+        display: block !important;
+      }
+    }
+  </style>
+
+  <script>
+    document.getElementById("player-select").addEventListener("change", function () {
+      document.querySelectorAll(".toggle-map").forEach(function (iframe) {
+        iframe.style.display = "none";
+      });
+
+      const target = document.getElementById(this.value);
+      target.style.display = "block";
+
+      setTimeout(() => {
+        target.contentWindow.postMessage("resizePlotly", "*");
+      }, 200);
+      setTimeout(() => {
+        target.contentWindow.postMessage("resizePlotly", "*");
+      }, 500);
+    });
+  </script>
+
+</body>
+</html>
