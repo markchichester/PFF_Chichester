@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fantasy Rankings Toggle</title>
+</head>
+<body>
+
+<div style="text-align:center; margin: 10px;">
+  <button onclick="switchPage('QBs.html')">QB</button>
+  <button onclick="switchPage('RBs finished.html')">RB</button>
+  <button onclick="switchPage('WRs.html')">WR</button>
+  <button onclick="switchPage('TEs.html')">TE</button>
+  <button onclick="switchPage('Ks.html')">K</button>
+  <button onclick="switchPage('D_ST.html')">D/ST</button>
+</div>
+
+<iframe id="frame" src="QBs.html" width="100%" height="1000px" style="border:none;"></iframe>
+
+<script>
+  function switchPage(file) {
+    document.getElementById('frame').src = file;
+  }
+</script>
+
+</body>
+</html>
