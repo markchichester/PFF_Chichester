@@ -1,0 +1,933 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>CFL 2023 Player Grades</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    h1 {
+      text-align: center;
+    }
+    .button-group {
+      text-align: center;
+      margin-bottom: 20px;
+      max-width: 658px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .position-button {
+      font-family: 'Archivo', sans-serif;
+      padding: 6px 10px;
+      margin: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background-color: white;
+      color: black;
+      border: none;
+      border-radius: 4px;
+    }
+    .position-button:hover {
+      background-color: #495057;
+    }
+    .table-wrapper {
+      max-width: 658px;
+      overflow-x: auto;
+      margin: 0 auto;
+      border-left: 3px solid transparent;
+    }
+    table {
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      width: max-content;
+      min-width: 100%;
+    }
+    th, td {
+      color: black;
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+      min-width: 100px;
+      white-space: normal;
+    }
+    th {
+      color: white !important;
+      background-color: #343a40 !important;
+      color: white;
+      cursor: pointer;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    th.sort-asc::after {
+      content: " ▲";
+    }
+    th.sort-desc::after {
+      content: " ▼";
+    }
+    td.name-cell {
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Freeze first 3 columns */
+    
+    
+    
+  
+    .position-button.active {
+      background-color: #0d6efd;
+      color: white;
+    }
+    
+    th, td {
+      padding: 8px;
+      border-left: 1px solid #333;
+      border-right: 1px solid #333;
+      box-sizing: border-box;
+      background-color: white;
+      color: black;
+      outline: 1px solid #333;
+      outline-offset: -1px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background-color: #333;
+      color: white;
+      z-index: 3;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      min-width: 160px;
+      max-width: 160px;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      position: sticky;
+      left: 160px;
+      z-index: 4;
+      min-width: 120px;
+      max-width: 120px;
+    }
+
+
+<style>
+  .sticky-show-more {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 20;
+    padding: 10px 0;
+    text-align: center;
+  }
+
+<style>
+  #showMoreButton:hover {
+    background-color: #444;
+  }
+
+/* Sticky Name and Team columns */
+th:nth-child(1), td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 2;
+  border-right: 1px solid #ccc;
+}
+
+th:nth-child(2), td:nth-child(2) {
+  position: sticky;
+  left: 160px;
+  background: white;
+  z-index: 2;
+  border-right: 1px solid #ccc;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #333;
+  color: white;
+  z-index: 10;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #333;
+  color: white;
+  z-index: 10;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #333;
+  color: white;
+  z-index: 10;
+}
+
+/* Sticky Name column */
+th:nth-child(1), td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 5;
+  border-right: 1px solid #ccc;
+}
+
+/* Sticky Team column */
+th:nth-child(2), td:nth-child(2) {
+  position: sticky;
+  left: 160px;
+  background: white;
+  z-index: 5;
+  border-right: 1px solid #ccc;
+}
+
+/* Raise z-index for headers in sticky columns */
+thead th:nth-child(1),
+thead th:nth-child(2) {
+  z-index: 11;
+}
+
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: #333 !important;
+    color: white;
+    z-index: 5;
+  }
+
+#topXContainer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#topXContainer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#minSnapsContainer, #exportBtn, #resetBtn {
+  margin-right: 16px;
+}
+
+/* Sticky column headers */
+#playerTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #333; /* dark gray background */
+  color: white;
+}
+
+/* Fully collapse hidden headers and data cells */
+th[style*="display: none"],
+td[style*="display: none"] {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+</style>
+</head>
+<body>
+<div class="search-container" style="text-align:center; margin-bottom: 10px;">
+<input id="searchInput" placeholder="Search player..." style="padding:6px;font-size:0.9rem;max-width:300px;width:100%;" type="text"/>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; justify-content: center; margin-top: 12px;">
+<button id="exportBtn" style="padding: 6px 12px; font-size: 0.9rem; background-color: #343a40; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    Export to CSV
+  </button>
+<button id="resetButton" style="margin-left: 10px; padding: 8px 16px; font-size: 14px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  Reset
+</button>
+<script>
+  document.getElementById("resetButton").addEventListener("click", function() {
+    location.reload();
+  });
+</script>
+</div>
+<div class="button-group">
+<button class="position-button" onclick="loadPosition('QB')">QB</button>
+<button class="position-button" onclick="loadPosition('RB')">RB</button>
+<button class="position-button" onclick="loadPosition('WR')">WR</button>
+<button class="position-button" onclick="loadPosition('TE')">TE</button>
+<button class="position-button" onclick="loadPosition('T')">T</button>
+<button class="position-button" onclick="loadPosition('G')">G</button>
+<button class="position-button" onclick="loadPosition('C')">C</button>
+<button class="position-button" onclick="loadPosition('DI')">DI</button>
+<button class="position-button" onclick="loadPosition('EDGE')">EDGE</button>
+<button class="position-button" onclick="loadPosition('LB')">LB</button>
+<button class="position-button" onclick="loadPosition('CB')">CB</button>
+<button class="position-button" onclick="loadPosition('S')">S</button>
+</div>
+<div class="table-wrapper">
+<div style="max-height: 600px; overflow-y: auto;">
+<div id="topXContainer" style="margin-top: 20px; text-align: center;">
+<label for="topXInput"><strong>Top</strong></label>
+<input id="topXInput" max="100" min="1" style="width: 60px;" type="number" value="10"/>
+<label for="topYSelect"><strong>by</strong></label>
+<select id="topYSelect"></select>
+<button id="applyTopXBtn" style="padding: 6px 12px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Apply</button>
+</div>
+<div id="tableScrollWrapper" style="max-height: 700px; overflow-y: auto; width: 100%; border: 1px solid #ccc;"><table id="gradesTable">
+<thead></thead>
+<tbody></tbody>
+</table></div></div>
+<div class="sticky-show-more" style="display: flex; justify-content: center; align-items: center;">
+<button id="showMoreButton" style="
+    font-family: Archivo;
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #2f2f2f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease;
+  ">Show More</button>
+</div>
+<style>
+  .sticky-toggle-horizontal {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 20;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+  }
+</style>
+<div class="sticky-toggle-horizontal">
+<div id="columnToggles" style="margin: 0 auto; max-width: 658px; text-align: center; font-family: Archivo; font-size: 13px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+</div>
+<div id="snapSliderContainer" style="margin-top: 20px; display: flex; align-items: center; gap: 12px; justify-content: center;">
+<label for="snapSlider" style="font-weight: bold;">Min Snaps:</label>
+<input id="snapSlider" max="1000" min="0" step="10" type="range" value="0"/>
+<span id="snapValue">0</span>
+</div>
+<script>
+  const columnDropdown = document.getElementById('topXColumn');
+  const table = document.getElementById('gradesTable');
+  const headers = Array.from(table.querySelectorAll('thead th'));
+  const metricHeaders = headers.slice(3); // skip Rank, Name, Team
+
+  // Populate dropdown with column headers
+  metricHeaders.forEach((th, idx) => {
+    const option = document.createElement('option');
+    option.value = idx + 3; // actual column index in <tr>
+    option.textContent = th.textContent;
+    columnDropdown.appendChild(option);
+  });
+
+  document.getElementById('applyTopX').addEventListener('click', function () {
+    const colIndex = parseInt(columnDropdown.value);
+    const topN = parseInt(document.getElementById('topXValue').value);
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    const visibleRows = rows.filter(row => row.style.display !== 'none');
+
+    visibleRows.sort((a, b) => {
+      const valA = parseFloat(a.children[colIndex].innerText) || 0;
+      const valB = parseFloat(b.children[colIndex].innerText) || 0;
+      return valB - valA;
+    });
+
+    rows.forEach(row => row.style.display = 'none');
+    visibleRows.slice(0, topN).forEach(row => row.style.display = '');
+  });
+</script>
+<script>
+  const snapSlider = document.getElementById('snapSlider');
+  const snapValue = document.getElementById('snapValue');
+  snapSlider.addEventListener('input', function() {
+    snapValue.textContent = this.value;
+    const minSnaps = parseInt(this.value);
+    const table = document.getElementById('gradesTable');
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const snaps = parseFloat(row.children[2].innerText);
+      row.style.display = (snaps >= minSnaps) ? '' : 'none';
+    });
+  });
+</script>
+</div>
+</div>
+<script>
+    const embeddedData = {
+      "QB": [{"Name": "Trevor Harris", "Team": "SASKATCH", "Total Snaps": 269, "Dropbacks": 189, "Designed Runs/Kneel-downs": 6, "Big-time Throws": 9, "Turnover-worthy Plays": 9, "Overall Grade": 73.3, "Passing Grade": 71.6, "Rushing Grade": 64.3}, {"Name": "Jeremiah Masoli", "Team": "OTTAWA", "Total Snaps": 16, "Dropbacks": 12, "Designed Runs/Kneel-downs": 1, "Big-time Throws": 1, "Turnover-worthy Plays": 1, "Overall Grade": 60.4, "Passing Grade": 62.3, "Rushing Grade": 57.7}, {"Name": "Dominique Davis", "Team": "BC", "Total Snaps": 75, "Dropbacks": 25, "Designed Runs/Kneel-downs": 39, "Big-time Throws": 0, "Turnover-worthy Plays": 0, "Overall Grade": 76.9, "Passing Grade": 34.6, "Rushing Grade": 87.6}, {"Name": "Cody Fajardo", "Team": "MONTREAL", "Total Snaps": 944, "Dropbacks": 648, "Designed Runs/Kneel-downs": 56, "Big-time Throws": 24, "Turnover-worthy Plays": 29, "Overall Grade": 75.2, "Passing Grade": 71.7, "Rushing Grade": 70.7}, {"Name": "Chad Kelly", "Team": "TORONTO", "Total Snaps": 822, "Dropbacks": 500, "Designed Runs/Kneel-downs": 34, "Big-time Throws": 32, "Turnover-worthy Plays": 23, "Overall Grade": 90.0, "Passing Grade": 85.0, "Rushing Grade": 80.1}, {"Name": "Nick Arbuckle", "Team": "OTTAWA", "Total Snaps": 107, "Dropbacks": 88, "Designed Runs/Kneel-downs": 1, "Big-time Throws": 1, "Turnover-worthy Plays": 6, "Overall Grade": 44.4, "Passing Grade": 45.5, "Rushing Grade": 51.5}, {"Name": "Vernon Adams Jr.", "Team": "BC", "Total Snaps": 868, "Dropbacks": 672, "Designed Runs/Kneel-downs": 29, "Big-time Throws": 43, "Turnover-worthy Plays": 32, "Overall Grade": 92.4, "Passing Grade": 90.7, "Rushing Grade": 86.1}, {"Name": "Antonio Pipkin", "Team": "SASKATCH", "Total Snaps": 29, "Dropbacks": 1, "Designed Runs/Kneel-downs": 27, "Big-time Throws": 0, "Turnover-worthy Plays": 0, "Overall Grade": 96.3, "Passing Grade": 73.1, "Rushing Grade": 93.3}, {"Name": "Tommy Stevens", "Team": "CALGARY", "Total Snaps": 64, "Dropbacks": 14, "Designed Runs/Kneel-downs": 45, "Big-time Throws": 0, "Turnover-worthy Plays": 0, "Overall Grade": 94.2, "Passing Grade": 53.5, "Rushing Grade": 94.5}, {"Name": "Tyrie Adams", "Team": "OTTAWA", "Total Snaps": 82, "Dropbacks": 43, "Designed Runs/Kneel-downs": 13, "Big-time Throws": 1, "Turnover-worthy Plays": 2, "Overall Grade": 64.0, "Passing Grade": 58.3, "Rushing Grade": 68.6}, {"Name": "Dru Brown", "Team": "WINNIPEG", "Total Snaps": 201, "Dropbacks": 106, "Designed Runs/Kneel-downs": 16, "Big-time Throws": 5, "Turnover-worthy Plays": 2, "Overall Grade": 89.7, "Passing Grade": 82.9, "Rushing Grade": 83.1}, {"Name": "Logan Bonner", "Team": "CALGARY", "Total Snaps": 3, "Dropbacks": 0, "Designed Runs/Kneel-downs": 3, "Big-time Throws": 0, "Turnover-worthy Plays": 0, "Overall Grade": 62.0, "Passing Grade": "", "Rushing Grade": 60.8}, {"Name": "Khalil Tate", "Team": "EDMONTON", "Total Snaps": 2, "Dropbacks": 0, "Designed Runs/Kneel-downs": 2, "Big-time Throws": 0, "Turnover-worthy Plays": 0, "Overall Grade": 55.4, "Passing Grade": "", "Rushing Grade": 57.5}, {"Name": "Shea Patterson", "Team": "SASKATCH", "Total Snaps": 27, "Dropbacks": 8, "Designed Runs/Kneel-downs": 15, "Big-time Throws": 0, "Turnover-worthy Plays": 0, "Overall Grade": 80.7, "Passing Grade": 52.0, "Rushing Grade": 79.7}, {"Name": "Caleb Evans", "Team": "MONTREAL", "Total Snaps": 178, "Dropbacks": 87, "Designed Runs/Kneel-downs": 49, "Big-time Throws": 2, "Turnover-worthy Plays": 4, "Overall Grade": 86.2, "Passing Grade": 56.5, "Rushing Grade": 92.6}, {"Name": "Tyrrell Pigrome", "Team": "OTTAWA", "Total Snaps": 62, "Dropbacks": 13, "Designed Runs/Kneel-downs": 42, "Big-time Throws": 2, "Turnover-worthy Plays": 3, "Overall Grade": 91.9, "Passing Grade": 41.7, "Rushing Grade": 92.2}, {"Name": "Taylor Cornelius", "Team": "EDMONTON", "Total Snaps": 340, "Dropbacks": 223, "Designed Runs/Kneel-downs": 44, "Big-time Throws": 7, "Turnover-worthy Plays": 9, "Overall Grade": 75.8, "Passing Grade": 49.4, "Rushing Grade": 97.2}, {"Name": "Dakota Prukop", "Team": "WINNIPEG", "Total Snaps": 106, "Dropbacks": 11, "Designed Runs/Kneel-downs": 77, "Big-time Throws": 0, "Turnover-worthy Plays": 1, "Overall Grade": 93.7, "Passing Grade": 26.2, "Rushing Grade": 95.2}, {"Name": "Dane Evans", "Team": "BC", "Total Snaps": 191, "Dropbacks": 126, "Designed Runs/Kneel-downs": 8, "Big-time Throws": 8, "Turnover-worthy Plays": 8, "Overall Grade": 82.1, "Passing Grade": 80.2, "Rushing Grade": 68.4}, {"Name": "Mason Fine", "Team": "SASKATCH", "Total Snaps": 210, "Dropbacks": 161, "Designed Runs/Kneel-downs": 2, "Big-time Throws": 3, "Turnover-worthy Plays": 5, "Overall Grade": 71.8, "Passing Grade": 73.7, "Rushing Grade": 53.4}, {"Name": "Davis Alexander", "Team": "MONTREAL", "Total Snaps": 16, "Dropbacks": 9, "Designed Runs/Kneel-downs": 1, "Big-time Throws": 0, "Turnover-worthy Plays": 1, "Overall Grade": 58.3, "Passing Grade": 69.1, "Rushing Grade": 48.5}, {"Name": "Jarret Doege", "Team": "EDMONTON", "Total Snaps": 97, "Dropbacks": 76, "Designed Runs/Kneel-downs": 4, "Big-time Throws": 7, "Turnover-worthy Plays": 7, "Overall Grade": 68.9, "Passing Grade": 67.2, "Rushing Grade": 64.9}, {"Name": "Chris Reynolds", "Team": "CALGARY", "Total Snaps": 6, "Dropbacks": 2, "Designed Runs/Kneel-downs": 0, "Big-time Throws": 0, "Turnover-worthy Plays": 1, "Overall Grade": 41.2, "Passing Grade": 40.6, "Rushing Grade": ""}, {"Name": "Dustin Crum", "Team": "OTTAWA", "Total Snaps": 791, "Dropbacks": 541, "Designed Runs/Kneel-downs": 34, "Big-time Throws": 12, "Turnover-worthy Plays": 15, "Overall Grade": 88.8, "Passing Grade": 80.7, "Rushing Grade": 82.9}, {"Name": "Taylor Powell", "Team": "HAMILTON", "Total Snaps": 512, "Dropbacks": 358, "Designed Runs/Kneel-downs": 11, "Big-time Throws": 11, "Turnover-worthy Plays": 16, "Overall Grade": 67.2, "Passing Grade": 63.3, "Rushing Grade": 74.3}, {"Name": "Jake Maier", "Team": "CALGARY", "Total Snaps": 999, "Dropbacks": 687, "Designed Runs/Kneel-downs": 20, "Big-time Throws": 30, "Turnover-worthy Plays": 29, "Overall Grade": 74.4, "Passing Grade": 72.1, "Rushing Grade": 66.5}, {"Name": "Jake Dolegala", "Team": "SASKATCH", "Total Snaps": 539, "Dropbacks": 390, "Designed Runs/Kneel-downs": 17, "Big-time Throws": 12, "Turnover-worthy Plays": 20, "Overall Grade": 65.1, "Passing Grade": 62.0, "Rushing Grade": 69.7}, {"Name": "Zach Collaros", "Team": "WINNIPEG", "Total Snaps": 892, "Dropbacks": 553, "Designed Runs/Kneel-downs": 26, "Big-time Throws": 36, "Turnover-worthy Plays": 20, "Overall Grade": 86.4, "Passing Grade": 86.6, "Rushing Grade": 46.8}, {"Name": "Bryan Scott", "Team": "TORONTO", "Total Snaps": 6, "Dropbacks": 4, "Designed Runs/Kneel-downs": 2, "Big-time Throws": 0, "Turnover-worthy Plays": 0, "Overall Grade": 41.9, "Passing Grade": 39.3, "Rushing Grade": 60.1}, {"Name": "Matthew Shiltz", "Team": "HAMILTON", "Total Snaps": 336, "Dropbacks": 215, "Designed Runs/Kneel-downs": 24, "Big-time Throws": 14, "Turnover-worthy Plays": 5, "Overall Grade": 83.2, "Passing Grade": 73.0, "Rushing Grade": 90.0}, {"Name": "Bo Levi Mitchell", "Team": "HAMILTON", "Total Snaps": 210, "Dropbacks": 153, "Designed Runs/Kneel-downs": 2, "Big-time Throws": 7, "Turnover-worthy Plays": 16, "Overall Grade": 59.0, "Passing Grade": 57.0, "Rushing Grade": 66.9}, {"Name": "Tre Ford", "Team": "EDMONTON", "Total Snaps": 482, "Dropbacks": 316, "Designed Runs/Kneel-downs": 30, "Big-time Throws": 14, "Turnover-worthy Plays": 11, "Overall Grade": 77.8, "Passing Grade": 67.1, "Rushing Grade": 83.1}, {"Name": "Cameron Dukes", "Team": "TORONTO", "Total Snaps": 206, "Dropbacks": 122, "Designed Runs/Kneel-downs": 37, "Big-time Throws": 3, "Turnover-worthy Plays": 6, "Overall Grade": 80.0, "Passing Grade": 64.6, "Rushing Grade": 87.1}], "RB": [{"Name": "Ka'Deem Carey", "Team": "CALGARY", "Total Snaps": 341, "Run plays": 106, "Run-block Snaps": 20, "Pass-block Snaps": 33, "Overall Grade": 80.2, "Receiving Grade": 58.1, "Rushing Grade": 88.1, "Pass-blocking Grade": 42.4}, {"Name": "William Stanback", "Team": "MONTREAL", "Total Snaps": 753, "Run plays": 185, "Run-block Snaps": 66, "Pass-block Snaps": 137, "Overall Grade": 75.5, "Receiving Grade": 51.0, "Rushing Grade": 81.6, "Pass-blocking Grade": 75.3}, {"Name": "Shannon Brooks", "Team": "EDMONTON", "Total Snaps": 153, "Run plays": 36, "Run-block Snaps": 7, "Pass-block Snaps": 35, "Overall Grade": 72.5, "Receiving Grade": 65.2, "Rushing Grade": 78.0, "Pass-blocking Grade": 34.2}, {"Name": "Brady Oliveira", "Team": "WINNIPEG", "Total Snaps": 1056, "Run plays": 302, "Run-block Snaps": 149, "Pass-block Snaps": 139, "Overall Grade": 90.9, "Receiving Grade": 62.5, "Rushing Grade": 93.7, "Pass-blocking Grade": 59.5}, {"Name": "Dedrick Mills", "Team": "CALGARY", "Total Snaps": 567, "Run plays": 144, "Run-block Snaps": 39, "Pass-block Snaps": 130, "Overall Grade": 82.8, "Receiving Grade": 54.7, "Rushing Grade": 93.1, "Pass-blocking Grade": 39.0}, {"Name": "Devonte Williams", "Team": "OTTAWA", "Total Snaps": 739, "Run plays": 187, "Run-block Snaps": 40, "Pass-block Snaps": 238, "Overall Grade": 83.8, "Receiving Grade": 76.0, "Rushing Grade": 88.9, "Pass-blocking Grade": 47.9}, {"Name": "Taquan Mizzell Sr.", "Team": "BC", "Total Snaps": 884, "Run plays": 177, "Run-block Snaps": 60, "Pass-block Snaps": 189, "Overall Grade": 75.7, "Receiving Grade": 67.2, "Rushing Grade": 84.2, "Pass-blocking Grade": 29.7}, {"Name": "Frankie Hickson", "Team": "SASKATCH", "Total Snaps": 164, "Run plays": 35, "Run-block Snaps": 18, "Pass-block Snaps": 51, "Overall Grade": 73.8, "Receiving Grade": 72.2, "Rushing Grade": 70.3, "Pass-blocking Grade": 81.9}, {"Name": "Jamal Morrow", "Team": "SASKATCH", "Total Snaps": 872, "Run plays": 205, "Run-block Snaps": 56, "Pass-block Snaps": 227, "Overall Grade": 75.2, "Receiving Grade": 68.0, "Rushing Grade": 79.1, "Pass-blocking Grade": 50.4}, {"Name": "LeVante Bellamy", "Team": "CALGARY", "Total Snaps": 80, "Run plays": 24, "Run-block Snaps": 5, "Pass-block Snaps": 12, "Overall Grade": 71.2, "Receiving Grade": 60.5, "Rushing Grade": 75.2, "Pass-blocking Grade": 35.7}, {"Name": "James Butler", "Team": "HAMILTON", "Total Snaps": 971, "Run plays": 252, "Run-block Snaps": 73, "Pass-block Snaps": 163, "Overall Grade": 84.8, "Receiving Grade": 74.2, "Rushing Grade": 89.1, "Pass-blocking Grade": 60.9}, {"Name": "A.J. Ouellette", "Team": "TORONTO", "Total Snaps": 622, "Run plays": 194, "Run-block Snaps": 58, "Pass-block Snaps": 92, "Overall Grade": 88.8, "Receiving Grade": 68.5, "Rushing Grade": 91.3, "Pass-blocking Grade": 47.1}, {"Name": "DeVonte Dedmon", "Team": "OTTAWA", "Total Snaps": 3, "Run plays": 1, "Run-block Snaps": 0, "Pass-block Snaps": 0, "Overall Grade": 53.9, "Receiving Grade": 57.9, "Rushing Grade": 57.5, "Pass-blocking Grade": ""}, {"Name": "Javon Leake", "Team": "TORONTO", "Total Snaps": 16, "Run plays": 5, "Run-block Snaps": 6, "Pass-block Snaps": 0, "Overall Grade": 71.0, "Receiving Grade": 62.8, "Rushing Grade": 69.3, "Pass-blocking Grade": ""}, {"Name": "Tayon Fleet-Davis", "Team": "HAMILTON", "Total Snaps": 8, "Run plays": 2, "Run-block Snaps": 0, "Pass-block Snaps": 3, "Overall Grade": 37.9, "Receiving Grade": 28.3, "Rushing Grade": 58.6, "Pass-blocking Grade": 0.0}, {"Name": "Peyton Logan", "Team": "CALGARY", "Total Snaps": 77, "Run plays": 17, "Run-block Snaps": 11, "Pass-block Snaps": 10, "Overall Grade": 67.5, "Receiving Grade": 44.9, "Rushing Grade": 76.7, "Pass-blocking Grade": 52.4}, {"Name": "Shaun Shivers", "Team": "BC", "Total Snaps": 99, "Run plays": 27, "Run-block Snaps": 6, "Pass-block Snaps": 16, "Overall Grade": 60.7, "Receiving Grade": 29.8, "Rushing Grade": 71.3, "Pass-blocking Grade": 53.7}, {"Name": "Walter Fletcher", "Team": "MONTREAL", "Total Snaps": 243, "Run plays": 59, "Run-block Snaps": 23, "Pass-block Snaps": 42, "Overall Grade": 79.8, "Receiving Grade": 80.4, "Rushing Grade": 80.2, "Pass-blocking Grade": 67.1}, {"Name": "De'Montre Tuggle", "Team": "OTTAWA", "Total Snaps": 117, "Run plays": 33, "Run-block Snaps": 13, "Pass-block Snaps": 18, "Overall Grade": 71.4, "Receiving Grade": 72.6, "Rushing Grade": 70.4, "Pass-blocking Grade": 63.9}, {"Name": "Kevin Brown", "Team": "EDMONTON", "Total Snaps": 734, "Run plays": 190, "Run-block Snaps": 33, "Pass-block Snaps": 143, "Overall Grade": 78.8, "Receiving Grade": 60.1, "Rushing Grade": 86.0, "Pass-blocking Grade": 51.3}, {"Name": "Daniel Adeboboye", "Team": "TORONTO", "Total Snaps": 160, "Run plays": 41, "Run-block Snaps": 11, "Pass-block Snaps": 23, "Overall Grade": 81.9, "Receiving Grade": 64.3, "Rushing Grade": 89.3, "Pass-blocking Grade": 44.6}, {"Name": "Deonta McMahon", "Team": "TORONTO", "Total Snaps": 143, "Run plays": 39, "Run-block Snaps": 15, "Pass-block Snaps": 18, "Overall Grade": 64.9, "Receiving Grade": 69.6, "Rushing Grade": 62.9, "Pass-blocking Grade": 41.0}, {"Name": "JaQuan Hardy", "Team": "BC", "Total Snaps": 104, "Run plays": 20, "Run-block Snaps": 7, "Pass-block Snaps": 17, "Overall Grade": 68.0, "Receiving Grade": 54.2, "Rushing Grade": 75.3, "Pass-blocking Grade": 44.0}, {"Name": "Jeshrun Antwi", "Team": "MONTREAL", "Total Snaps": 172, "Run plays": 42, "Run-block Snaps": 32, "Pass-block Snaps": 23, "Overall Grade": 67.9, "Receiving Grade": 47.7, "Rushing Grade": 75.9, "Pass-blocking Grade": 36.0}, {"Name": "Johnny Augustine", "Team": "WINNIPEG", "Total Snaps": 115, "Run plays": 47, "Run-block Snaps": 22, "Pass-block Snaps": 10, "Overall Grade": 73.6, "Receiving Grade": 41.7, "Rushing Grade": 76.9, "Pass-blocking Grade": 69.5}, {"Name": "Kienan LaFrance", "Team": "BC", "Total Snaps": 25, "Run plays": 7, "Run-block Snaps": 8, "Pass-block Snaps": 4, "Overall Grade": 71.0, "Receiving Grade": 57.5, "Rushing Grade": 70.4, "Pass-blocking Grade": 48.2}, {"Name": "Charlie Power", "Team": "CALGARY", "Total Snaps": 14, "Run plays": 0, "Run-block Snaps": 13, "Pass-block Snaps": 0, "Overall Grade": 57.2, "Receiving Grade": 59.2, "Rushing Grade": "", "Pass-blocking Grade": ""}, {"Name": "Ante Milanovic-Litre", "Team": "OTTAWA", "Total Snaps": 113, "Run plays": 17, "Run-block Snaps": 62, "Pass-block Snaps": 17, "Overall Grade": 70.5, "Receiving Grade": 60.5, "Rushing Grade": 69.2, "Pass-blocking Grade": 72.4}, {"Name": "Sean Thomas Erlington", "Team": "HAMILTON", "Total Snaps": 101, "Run plays": 18, "Run-block Snaps": 11, "Pass-block Snaps": 29, "Overall Grade": 73.3, "Receiving Grade": 67.4, "Rushing Grade": 73.7, "Pass-blocking Grade": 82.4}, {"Name": "Jackson Bennett", "Team": "OTTAWA", "Total Snaps": 131, "Run plays": 32, "Run-block Snaps": 5, "Pass-block Snaps": 35, "Overall Grade": 73.5, "Receiving Grade": 72.0, "Rushing Grade": 73.2, "Pass-blocking Grade": 68.6}, {"Name": "Andrew Harris", "Team": "TORONTO", "Total Snaps": 169, "Run plays": 53, "Run-block Snaps": 23, "Pass-block Snaps": 18, "Overall Grade": 78.6, "Receiving Grade": 69.8, "Rushing Grade": 82.3, "Pass-blocking Grade": 43.7}], "WR": [{"Name": "Emmanuel Arceneaux", "Team": "EDMONTON", "Total Snaps": 469, "Passing-game Snaps": 300, "Run-blocking snaps": 140, "Pass-blocking snaps": 29, "Overall Grade": 52.9, "Receiving Grade": 55.6, "Pass-blocking Grade": 54.0, "Run-blocking Grade": 39.0}, {"Name": "Greg Ellingson", "Team": "MONTREAL", "Total Snaps": 58, "Passing-game Snaps": 44, "Run-blocking snaps": 13, "Pass-blocking snaps": 1, "Overall Grade": 51.1, "Receiving Grade": 51.2, "Pass-blocking Grade": 64.5, "Run-blocking Grade": 60.0}, {"Name": "Shaq Evans", "Team": "OTTAWA", "Total Snaps": 510, "Passing-game Snaps": 356, "Run-blocking snaps": 152, "Pass-blocking snaps": 2, "Overall Grade": 58.4, "Receiving Grade": 58.1, "Pass-blocking Grade": 66.0, "Run-blocking Grade": 62.1}, {"Name": "Derel Walker", "Team": "HAMILTON", "Total Snaps": 129, "Passing-game Snaps": 100, "Run-blocking snaps": 29, "Pass-blocking snaps": 0, "Overall Grade": 54.8, "Receiving Grade": 55.6, "Pass-blocking Grade": "", "Run-blocking Grade": 46.2}, {"Name": "Justin Hardy", "Team": "OTTAWA", "Total Snaps": 978, "Passing-game Snaps": 679, "Run-blocking snaps": 294, "Pass-blocking snaps": 5, "Overall Grade": 67.6, "Receiving Grade": 67.9, "Pass-blocking Grade": 59.7, "Run-blocking Grade": 62.2}, {"Name": "Mario Alford", "Team": "SASKATCH", "Total Snaps": 5, "Passing-game Snaps": 4, "Run-blocking snaps": 1, "Pass-blocking snaps": 0, "Overall Grade": 43.1, "Receiving Grade": 33.3, "Pass-blocking Grade": "", "Run-blocking Grade": 60.0}, {"Name": "Quan Bray", "Team": "OTTAWA", "Total Snaps": 102, "Passing-game Snaps": 80, "Run-blocking snaps": 22, "Pass-blocking snaps": 0, "Overall Grade": 62.4, "Receiving Grade": 60.9, "Pass-blocking Grade": "", "Run-blocking Grade": 76.0}, {"Name": "Rasheed Bailey", "Team": "WINNIPEG", "Total Snaps": 991, "Passing-game Snaps": 576, "Run-blocking snaps": 395, "Pass-blocking snaps": 6, "Overall Grade": 59.6, "Receiving Grade": 57.3, "Pass-blocking Grade": 34.6, "Run-blocking Grade": 65.8}, {"Name": "Lucky Whitehead", "Team": "BC", "Total Snaps": 873, "Passing-game Snaps": 659, "Run-blocking snaps": 212, "Pass-blocking snaps": 0, "Overall Grade": 61.4, "Receiving Grade": 60.9, "Pass-blocking Grade": "", "Run-blocking Grade": 64.8}, {"Name": "DaVaris Daniels", "Team": "TORONTO", "Total Snaps": 934, "Passing-game Snaps": 559, "Run-blocking snaps": 370, "Pass-blocking snaps": 5, "Overall Grade": 72.7, "Receiving Grade": 73.5, "Pass-blocking Grade": 29.8, "Run-blocking Grade": 60.7}, {"Name": "Chandler Worthy", "Team": "MONTREAL", "Total Snaps": 85, "Passing-game Snaps": 63, "Run-blocking snaps": 22, "Pass-blocking snaps": 0, "Overall Grade": 63.2, "Receiving Grade": 63.0, "Pass-blocking Grade": "", "Run-blocking Grade": 61.8}, {"Name": "Kenny Lawler", "Team": "WINNIPEG", "Total Snaps": 694, "Passing-game Snaps": 416, "Run-blocking snaps": 276, "Pass-blocking snaps": 2, "Overall Grade": 80.6, "Receiving Grade": 81.0, "Pass-blocking Grade": 70.2, "Run-blocking Grade": 62.3}, {"Name": "Tevaun Smith", "Team": "OTTAWA", "Total Snaps": 247, "Passing-game Snaps": 193, "Run-blocking snaps": 54, "Pass-blocking snaps": 0, "Overall Grade": 50.3, "Receiving Grade": 50.6, "Pass-blocking Grade": "", "Run-blocking Grade": 50.1}, {"Name": "Marken Michel", "Team": "CALGARY", "Total Snaps": 875, "Passing-game Snaps": 572, "Run-blocking snaps": 301, "Pass-blocking snaps": 1, "Overall Grade": 60.4, "Receiving Grade": 62.3, "Pass-blocking Grade": 62.6, "Run-blocking Grade": 52.5}, {"Name": "Bralon Addison", "Team": "OTTAWA", "Total Snaps": 312, "Passing-game Snaps": 222, "Run-blocking snaps": 79, "Pass-blocking snaps": 11, "Overall Grade": 65.4, "Receiving Grade": 66.3, "Pass-blocking Grade": 73.1, "Run-blocking Grade": 48.8}, {"Name": "Tevin Jones", "Team": "SASKATCH", "Total Snaps": 830, "Passing-game Snaps": 581, "Run-blocking snaps": 247, "Pass-blocking snaps": 2, "Overall Grade": 62.8, "Receiving Grade": 62.4, "Pass-blocking Grade": 66.0, "Run-blocking Grade": 67.0}, {"Name": "Tommylee Lewis", "Team": "CALGARY", "Total Snaps": 132, "Passing-game Snaps": 85, "Run-blocking snaps": 46, "Pass-blocking snaps": 0, "Overall Grade": 66.7, "Receiving Grade": 65.6, "Pass-blocking Grade": "", "Run-blocking Grade": 58.7}, {"Name": "D'haquille Williams", "Team": "HAMILTON", "Total Snaps": 588, "Passing-game Snaps": 410, "Run-blocking snaps": 168, "Pass-blocking snaps": 10, "Overall Grade": 64.3, "Receiving Grade": 64.5, "Pass-blocking Grade": 47.1, "Run-blocking Grade": 57.8}, {"Name": "Carlton Agudosi", "Team": "TORONTO", "Total Snaps": 151, "Passing-game Snaps": 121, "Run-blocking snaps": 30, "Pass-blocking snaps": 0, "Overall Grade": 56.7, "Receiving Grade": 57.2, "Pass-blocking Grade": "", "Run-blocking Grade": 48.1}, {"Name": "Tim White", "Team": "HAMILTON", "Total Snaps": 1007, "Passing-game Snaps": 675, "Run-blocking snaps": 319, "Pass-blocking snaps": 5, "Overall Grade": 70.9, "Receiving Grade": 71.8, "Pass-blocking Grade": 73.4, "Run-blocking Grade": 46.0}, {"Name": "Keon Hatcher", "Team": "BC", "Total Snaps": 812, "Passing-game Snaps": 618, "Run-blocking snaps": 194, "Pass-blocking snaps": 0, "Overall Grade": 81.2, "Receiving Grade": 81.9, "Pass-blocking Grade": "", "Run-blocking Grade": 57.5}, {"Name": "Markeith Ambles", "Team": "CALGARY", "Total Snaps": 215, "Passing-game Snaps": 136, "Run-blocking snaps": 71, "Pass-blocking snaps": 8, "Overall Grade": 61.1, "Receiving Grade": 61.3, "Pass-blocking Grade": 63.4, "Run-blocking Grade": 61.4}, {"Name": "Juwan Brescacin", "Team": "SASKATCH", "Total Snaps": 69, "Passing-game Snaps": 60, "Run-blocking snaps": 8, "Pass-blocking snaps": 1, "Overall Grade": 58.9, "Receiving Grade": 58.9, "Pass-blocking Grade": 70.8, "Run-blocking Grade": 56.1}, {"Name": "Reggie Begelton", "Team": "CALGARY", "Total Snaps": 878, "Passing-game Snaps": 587, "Run-blocking snaps": 280, "Pass-blocking snaps": 9, "Overall Grade": 75.2, "Receiving Grade": 79.4, "Pass-blocking Grade": 54.8, "Run-blocking Grade": 34.8}, {"Name": "Omar Bayless", "Team": "HAMILTON", "Total Snaps": 385, "Passing-game Snaps": 234, "Run-blocking snaps": 147, "Pass-blocking snaps": 4, "Overall Grade": 62.6, "Receiving Grade": 63.2, "Pass-blocking Grade": 71.3, "Run-blocking Grade": 55.5}, {"Name": "David Ungerer III", "Team": "TORONTO", "Total Snaps": 712, "Passing-game Snaps": 467, "Run-blocking snaps": 244, "Pass-blocking snaps": 1, "Overall Grade": 59.6, "Receiving Grade": 61.7, "Pass-blocking Grade": 63.9, "Run-blocking Grade": 35.7}, {"Name": "Kyran Moore", "Team": "EDMONTON", "Total Snaps": 774, "Passing-game Snaps": 537, "Run-blocking snaps": 233, "Pass-blocking snaps": 4, "Overall Grade": 68.1, "Receiving Grade": 67.3, "Pass-blocking Grade": 36.7, "Run-blocking Grade": 64.3}, {"Name": "Austin Mack", "Team": "MONTREAL", "Total Snaps": 994, "Passing-game Snaps": 665, "Run-blocking snaps": 327, "Pass-blocking snaps": 2, "Overall Grade": 70.9, "Receiving Grade": 73.5, "Pass-blocking Grade": 67.7, "Run-blocking Grade": 51.0}, {"Name": "Dejon Brissett", "Team": "TORONTO", "Total Snaps": 725, "Passing-game Snaps": 452, "Run-blocking snaps": 265, "Pass-blocking snaps": 8, "Overall Grade": 62.8, "Receiving Grade": 64.7, "Pass-blocking Grade": 63.4, "Run-blocking Grade": 52.3}, {"Name": "Jaelon Acklin", "Team": "OTTAWA", "Total Snaps": 1043, "Passing-game Snaps": 692, "Run-blocking snaps": 350, "Pass-blocking snaps": 1, "Overall Grade": 65.3, "Receiving Grade": 66.2, "Pass-blocking Grade": 64.5, "Run-blocking Grade": 48.3}, {"Name": "Kai Locksley", "Team": "HAMILTON", "Total Snaps": 83, "Passing-game Snaps": 43, "Run-blocking snaps": 9, "Pass-blocking snaps": 0, "Overall Grade": 87.4, "Receiving Grade": 65.3, "Pass-blocking Grade": "", "Run-blocking Grade": 60.5}, {"Name": "Dalton Schoen", "Team": "WINNIPEG", "Total Snaps": 883, "Passing-game Snaps": 554, "Run-blocking snaps": 327, "Pass-blocking snaps": 1, "Overall Grade": 79.0, "Receiving Grade": 80.3, "Pass-blocking Grade": 67.4, "Run-blocking Grade": 60.8}, {"Name": "Brendan O'Leary-Orange", "Team": "WINNIPEG", "Total Snaps": 253, "Passing-game Snaps": 143, "Run-blocking snaps": 108, "Pass-blocking snaps": 2, "Overall Grade": 57.2, "Receiving Grade": 58.9, "Pass-blocking Grade": 66.6, "Run-blocking Grade": 43.2}, {"Name": "Dominique Rhymes", "Team": "BC", "Total Snaps": 629, "Passing-game Snaps": 456, "Run-blocking snaps": 165, "Pass-blocking snaps": 8, "Overall Grade": 62.9, "Receiving Grade": 63.6, "Pass-blocking Grade": 73.6, "Run-blocking Grade": 63.0}, {"Name": "Maurice Ffrench", "Team": "EDMONTON", "Total Snaps": 209, "Passing-game Snaps": 151, "Run-blocking snaps": 56, "Pass-blocking snaps": 2, "Overall Grade": 66.4, "Receiving Grade": 65.2, "Pass-blocking Grade": 65.3, "Run-blocking Grade": 70.2}, {"Name": "Tre Odoms-Dukes", "Team": "CALGARY", "Total Snaps": 808, "Passing-game Snaps": 533, "Run-blocking snaps": 263, "Pass-blocking snaps": 12, "Overall Grade": 62.9, "Receiving Grade": 65.1, "Pass-blocking Grade": 31.0, "Run-blocking Grade": 49.1}, {"Name": "Quartney Davis", "Team": "MONTREAL", "Total Snaps": 208, "Passing-game Snaps": 157, "Run-blocking snaps": 51, "Pass-blocking snaps": 0, "Overall Grade": 54.7, "Receiving Grade": 56.1, "Pass-blocking Grade": "", "Run-blocking Grade": 41.1}, {"Name": "Ayden Eberhardt", "Team": "BC", "Total Snaps": 97, "Passing-game Snaps": 73, "Run-blocking snaps": 24, "Pass-blocking snaps": 0, "Overall Grade": 56.9, "Receiving Grade": 56.7, "Pass-blocking Grade": "", "Run-blocking Grade": 60.3}, {"Name": "Anthony Johnson", "Team": "HAMILTON", "Total Snaps": 52, "Passing-game Snaps": 37, "Run-blocking snaps": 15, "Pass-blocking snaps": 0, "Overall Grade": 49.1, "Receiving Grade": 49.3, "Pass-blocking Grade": "", "Run-blocking Grade": 61.5}, {"Name": "Dillon Mitchell", "Team": "EDMONTON", "Total Snaps": 809, "Passing-game Snaps": 588, "Run-blocking snaps": 221, "Pass-blocking snaps": 0, "Overall Grade": 57.4, "Receiving Grade": 55.7, "Pass-blocking Grade": "", "Run-blocking Grade": 72.8}, {"Name": "Eugene Lewis", "Team": "EDMONTON", "Total Snaps": 562, "Passing-game Snaps": 391, "Run-blocking snaps": 171, "Pass-blocking snaps": 0, "Overall Grade": 72.2, "Receiving Grade": 73.6, "Pass-blocking Grade": "", "Run-blocking Grade": 60.2}, {"Name": "Janarion Grant", "Team": "WINNIPEG", "Total Snaps": 23, "Passing-game Snaps": 9, "Run-blocking snaps": 12, "Pass-blocking snaps": 0, "Overall Grade": 74.0, "Receiving Grade": 70.2, "Pass-blocking Grade": "", "Run-blocking Grade": 59.1}, {"Name": "Cam Phillips", "Team": "TORONTO", "Total Snaps": 531, "Passing-game Snaps": 314, "Run-blocking snaps": 202, "Pass-blocking snaps": 15, "Overall Grade": 62.9, "Receiving Grade": 63.8, "Pass-blocking Grade": 47.2, "Run-blocking Grade": 56.7}, {"Name": "Drew Wolitarsky", "Team": "WINNIPEG", "Total Snaps": 986, "Passing-game Snaps": 592, "Run-blocking snaps": 379, "Pass-blocking snaps": 15, "Overall Grade": 65.3, "Receiving Grade": 65.1, "Pass-blocking Grade": 70.0, "Run-blocking Grade": 58.2}, {"Name": "Hergy Mayala", "Team": "MONTREAL", "Total Snaps": 302, "Passing-game Snaps": 222, "Run-blocking snaps": 72, "Pass-blocking snaps": 8, "Overall Grade": 46.1, "Receiving Grade": 47.3, "Pass-blocking Grade": 42.6, "Run-blocking Grade": 39.2}, {"Name": "Justin McInnis", "Team": "BC", "Total Snaps": 809, "Passing-game Snaps": 586, "Run-blocking snaps": 210, "Pass-blocking snaps": 13, "Overall Grade": 67.3, "Receiving Grade": 68.6, "Pass-blocking Grade": 77.3, "Run-blocking Grade": 45.6}, {"Name": "Terry Godwin II", "Team": "HAMILTON", "Total Snaps": 1021, "Passing-game Snaps": 683, "Run-blocking snaps": 337, "Pass-blocking snaps": 1, "Overall Grade": 66.0, "Receiving Grade": 66.2, "Pass-blocking Grade": 60.9, "Run-blocking Grade": 59.1}, {"Name": "Malik Henry", "Team": "CALGARY", "Total Snaps": 144, "Passing-game Snaps": 96, "Run-blocking snaps": 48, "Pass-blocking snaps": 0, "Overall Grade": 57.5, "Receiving Grade": 58.2, "Pass-blocking Grade": "", "Run-blocking Grade": 59.9}, {"Name": "Jake Wieneke", "Team": "SASKATCH", "Total Snaps": 367, "Passing-game Snaps": 257, "Run-blocking snaps": 110, "Pass-blocking snaps": 0, "Overall Grade": 51.6, "Receiving Grade": 51.7, "Pass-blocking Grade": "", "Run-blocking Grade": 53.2}, {"Name": "Steven Dunbar Jr.", "Team": "EDMONTON", "Total Snaps": 581, "Passing-game Snaps": 401, "Run-blocking snaps": 178, "Pass-blocking snaps": 2, "Overall Grade": 61.8, "Receiving Grade": 63.9, "Pass-blocking Grade": 68.8, "Run-blocking Grade": 42.0}, {"Name": "Greg McCrae", "Team": "WINNIPEG", "Total Snaps": 204, "Passing-game Snaps": 125, "Run-blocking snaps": 54, "Pass-blocking snaps": 2, "Overall Grade": 64.1, "Receiving Grade": 63.4, "Pass-blocking Grade": 69.7, "Run-blocking Grade": 37.5}, {"Name": "CJ Lewis", "Team": "OTTAWA", "Total Snaps": 42, "Passing-game Snaps": 31, "Run-blocking snaps": 11, "Pass-blocking snaps": 0, "Overall Grade": 52.0, "Receiving Grade": 52.1, "Pass-blocking Grade": "", "Run-blocking Grade": 62.2}, {"Name": "Damonte Coxie", "Team": "TORONTO", "Total Snaps": 822, "Passing-game Snaps": 496, "Run-blocking snaps": 324, "Pass-blocking snaps": 2, "Overall Grade": 65.1, "Receiving Grade": 64.9, "Pass-blocking Grade": 36.4, "Run-blocking Grade": 63.0}, {"Name": "Floyd Allen", "Team": "CALGARY", "Total Snaps": 60, "Passing-game Snaps": 35, "Run-blocking snaps": 25, "Pass-blocking snaps": 0, "Overall Grade": 56.8, "Receiving Grade": 56.8, "Pass-blocking Grade": "", "Run-blocking Grade": 59.1}, {"Name": "Cole Tucker", "Team": "CALGARY", "Total Snaps": 337, "Passing-game Snaps": 265, "Run-blocking snaps": 68, "Pass-blocking snaps": 4, "Overall Grade": 56.1, "Receiving Grade": 56.8, "Pass-blocking Grade": 77.7, "Run-blocking Grade": 41.4}, {"Name": "Jeremiah Haydel", "Team": "TORONTO", "Total Snaps": 137, "Passing-game Snaps": 80, "Run-blocking snaps": 57, "Pass-blocking snaps": 0, "Overall Grade": 57.7, "Receiving Grade": 58.0, "Pass-blocking Grade": "", "Run-blocking Grade": 53.7}, {"Name": "Savon Scarver", "Team": "OTTAWA", "Total Snaps": 125, "Passing-game Snaps": 109, "Run-blocking snaps": 16, "Pass-blocking snaps": 0, "Overall Grade": 54.5, "Receiving Grade": 55.7, "Pass-blocking Grade": "", "Run-blocking Grade": 36.0}, {"Name": "Alexander Hollins", "Team": "BC", "Total Snaps": 1011, "Passing-game Snaps": 764, "Run-blocking snaps": 244, "Pass-blocking snaps": 2, "Overall Grade": 71.7, "Receiving Grade": 72.0, "Pass-blocking Grade": 75.8, "Run-blocking Grade": 53.2}, {"Name": "Raphael Leonard", "Team": "OTTAWA", "Total Snaps": 31, "Passing-game Snaps": 26, "Run-blocking snaps": 5, "Pass-blocking snaps": 0, "Overall Grade": 51.8, "Receiving Grade": 52.2, "Pass-blocking Grade": "", "Run-blocking Grade": 60.4}, {"Name": "Kendall Watson", "Team": "SASKATCH", "Total Snaps": 161, "Passing-game Snaps": 125, "Run-blocking snaps": 35, "Pass-blocking snaps": 1, "Overall Grade": 62.5, "Receiving Grade": 63.1, "Pass-blocking Grade": 61.0, "Run-blocking Grade": 48.9}, {"Name": "Clark Barnes", "Team": "CALGARY", "Total Snaps": 361, "Passing-game Snaps": 287, "Run-blocking snaps": 73, "Pass-blocking snaps": 1, "Overall Grade": 57.2, "Receiving Grade": 57.0, "Pass-blocking Grade": 71.1, "Run-blocking Grade": 56.5}, {"Name": "Deontez Alexander", "Team": "EDMONTON", "Total Snaps": 11, "Passing-game Snaps": 8, "Run-blocking snaps": 3, "Pass-blocking snaps": 0, "Overall Grade": 54.2, "Receiving Grade": 54.9, "Pass-blocking Grade": "", "Run-blocking Grade": 60.2}, {"Name": "Samuel Emilus", "Team": "SASKATCH", "Total Snaps": 1049, "Passing-game Snaps": 731, "Run-blocking snaps": 317, "Pass-blocking snaps": 1, "Overall Grade": 66.2, "Receiving Grade": 66.4, "Pass-blocking Grade": 61.0, "Run-blocking Grade": 64.6}, {"Name": "Terry Williams", "Team": "BC", "Total Snaps": 46, "Passing-game Snaps": 29, "Run-blocking snaps": 17, "Pass-blocking snaps": 0, "Overall Grade": 54.0, "Receiving Grade": 56.0, "Pass-blocking Grade": "", "Run-blocking Grade": 44.1}, {"Name": "Brayden Lenius", "Team": "SASKATCH", "Total Snaps": 51, "Passing-game Snaps": 43, "Run-blocking snaps": 6, "Pass-blocking snaps": 2, "Overall Grade": 48.4, "Receiving Grade": 48.3, "Pass-blocking Grade": 72.5, "Run-blocking Grade": 60.9}, {"Name": "Siaosi Mariner", "Team": "OTTAWA", "Total Snaps": 476, "Passing-game Snaps": 333, "Run-blocking snaps": 142, "Pass-blocking snaps": 1, "Overall Grade": 53.2, "Receiving Grade": 53.2, "Pass-blocking Grade": 63.9, "Run-blocking Grade": 55.7}, {"Name": "Tyler Snead", "Team": "MONTREAL", "Total Snaps": 948, "Passing-game Snaps": 622, "Run-blocking snaps": 315, "Pass-blocking snaps": 11, "Overall Grade": 67.0, "Receiving Grade": 72.0, "Pass-blocking Grade": 54.0, "Run-blocking Grade": 34.4}, {"Name": "Shawn Bane Jr.", "Team": "SASKATCH", "Total Snaps": 974, "Passing-game Snaps": 719, "Run-blocking snaps": 244, "Pass-blocking snaps": 7, "Overall Grade": 64.7, "Receiving Grade": 65.3, "Pass-blocking Grade": 60.6, "Run-blocking Grade": 52.2}, {"Name": "Keshunn Abram", "Team": "MONTREAL", "Total Snaps": 81, "Passing-game Snaps": 53, "Run-blocking snaps": 28, "Pass-blocking snaps": 0, "Overall Grade": 51.1, "Receiving Grade": 50.4, "Pass-blocking Grade": "", "Run-blocking Grade": 60.6}, {"Name": "RaJae' Johnson", "Team": "TORONTO", "Total Snaps": 37, "Passing-game Snaps": 23, "Run-blocking snaps": 13, "Pass-blocking snaps": 1, "Overall Grade": 54.8, "Receiving Grade": 57.2, "Pass-blocking Grade": 64.5, "Run-blocking Grade": 62.0}, {"Name": "Jerreth Sterns", "Team": "SASKATCH", "Total Snaps": 430, "Passing-game Snaps": 349, "Run-blocking snaps": 78, "Pass-blocking snaps": 3, "Overall Grade": 62.7, "Receiving Grade": 63.0, "Pass-blocking Grade": 9.5, "Run-blocking Grade": 54.9}, {"Name": "BJ Byrd", "Team": "TORONTO", "Total Snaps": 3, "Passing-game Snaps": 2, "Run-blocking snaps": 1, "Pass-blocking snaps": 0, "Overall Grade": 47.5, "Receiving Grade": 57.3, "Pass-blocking Grade": "", "Run-blocking Grade": 37.6}, {"Name": "Ravi Alston", "Team": "WINNIPEG", "Total Snaps": 27, "Passing-game Snaps": 21, "Run-blocking snaps": 6, "Pass-blocking snaps": 0, "Overall Grade": 52.2, "Receiving Grade": 52.7, "Pass-blocking Grade": "", "Run-blocking Grade": 75.0}, {"Name": "Tyreik McAllister", "Team": "HAMILTON", "Total Snaps": 325, "Passing-game Snaps": 263, "Run-blocking snaps": 26, "Pass-blocking snaps": 22, "Overall Grade": 67.5, "Receiving Grade": 67.4, "Pass-blocking Grade": 72.4, "Run-blocking Grade": 59.1}, {"Name": "Tyson Philpot", "Team": "MONTREAL", "Total Snaps": 754, "Passing-game Snaps": 507, "Run-blocking snaps": 241, "Pass-blocking snaps": 4, "Overall Grade": 64.3, "Receiving Grade": 65.2, "Pass-blocking Grade": 77.3, "Run-blocking Grade": 52.6}, {"Name": "Jake Harty", "Team": "MONTREAL", "Total Snaps": 209, "Passing-game Snaps": 142, "Run-blocking snaps": 52, "Pass-blocking snaps": 15, "Overall Grade": 51.2, "Receiving Grade": 52.5, "Pass-blocking Grade": 55.9, "Run-blocking Grade": 46.4}, {"Name": "Richie Sindani", "Team": "TORONTO", "Total Snaps": 227, "Passing-game Snaps": 162, "Run-blocking snaps": 54, "Pass-blocking snaps": 11, "Overall Grade": 56.8, "Receiving Grade": 57.2, "Pass-blocking Grade": 37.7, "Run-blocking Grade": 54.0}, {"Name": "Nate Behar", "Team": "OTTAWA", "Total Snaps": 607, "Passing-game Snaps": 416, "Run-blocking snaps": 184, "Pass-blocking snaps": 7, "Overall Grade": 60.3, "Receiving Grade": 59.9, "Pass-blocking Grade": 63.7, "Run-blocking Grade": 66.7}, {"Name": "Kiondre Smith", "Team": "HAMILTON", "Total Snaps": 907, "Passing-game Snaps": 666, "Run-blocking snaps": 233, "Pass-blocking snaps": 8, "Overall Grade": 56.0, "Receiving Grade": 55.6, "Pass-blocking Grade": 62.5, "Run-blocking Grade": 58.2}, {"Name": "Kian Schaffer-Baker", "Team": "SASKATCH", "Total Snaps": 481, "Passing-game Snaps": 336, "Run-blocking snaps": 144, "Pass-blocking snaps": 0, "Overall Grade": 61.4, "Receiving Grade": 63.2, "Pass-blocking Grade": "", "Run-blocking Grade": 50.1}, {"Name": "Gavin Cobb", "Team": "EDMONTON", "Total Snaps": 318, "Passing-game Snaps": 251, "Run-blocking snaps": 65, "Pass-blocking snaps": 2, "Overall Grade": 56.0, "Receiving Grade": 56.1, "Pass-blocking Grade": 65.6, "Run-blocking Grade": 52.0}, {"Name": "Nic Demski", "Team": "WINNIPEG", "Total Snaps": 1025, "Passing-game Snaps": 574, "Run-blocking snaps": 411, "Pass-blocking snaps": 19, "Overall Grade": 76.1, "Receiving Grade": 77.2, "Pass-blocking Grade": 62.7, "Run-blocking Grade": 61.1}, {"Name": "Daniel Petermann", "Team": "BC", "Total Snaps": 22, "Passing-game Snaps": 7, "Run-blocking snaps": 15, "Pass-blocking snaps": 0, "Overall Grade": 54.6, "Receiving Grade": 54.8, "Pass-blocking Grade": "", "Run-blocking Grade": 59.2}, {"Name": "Tyson Middlemost", "Team": "CALGARY", "Total Snaps": 47, "Passing-game Snaps": 20, "Run-blocking snaps": 27, "Pass-blocking snaps": 0, "Overall Grade": 47.2, "Receiving Grade": 53.5, "Pass-blocking Grade": "", "Run-blocking Grade": 47.5}, {"Name": "Tommy Nield", "Team": "TORONTO", "Total Snaps": 412, "Passing-game Snaps": 247, "Run-blocking snaps": 151, "Pass-blocking snaps": 14, "Overall Grade": 69.8, "Receiving Grade": 71.7, "Pass-blocking Grade": 58.4, "Run-blocking Grade": 49.4}, {"Name": "Chris Osei-Kusi", "Team": "HAMILTON", "Total Snaps": 114, "Passing-game Snaps": 92, "Run-blocking snaps": 22, "Pass-blocking snaps": 0, "Overall Grade": 44.6, "Receiving Grade": 46.9, "Pass-blocking Grade": "", "Run-blocking Grade": 60.8}, {"Name": "Mitchell Picton", "Team": "SASKATCH", "Total Snaps": 412, "Passing-game Snaps": 283, "Run-blocking snaps": 124, "Pass-blocking snaps": 5, "Overall Grade": 55.8, "Receiving Grade": 56.4, "Pass-blocking Grade": 47.6, "Run-blocking Grade": 54.8}, {"Name": "Cole Spieker", "Team": "MONTREAL", "Total Snaps": 533, "Passing-game Snaps": 357, "Run-blocking snaps": 162, "Pass-blocking snaps": 14, "Overall Grade": 62.0, "Receiving Grade": 62.7, "Pass-blocking Grade": 48.1, "Run-blocking Grade": 56.6}, {"Name": "Vincent Forbes-Mombleau", "Team": "EDMONTON", "Total Snaps": 341, "Passing-game Snaps": 278, "Run-blocking snaps": 60, "Pass-blocking snaps": 3, "Overall Grade": 51.7, "Receiving Grade": 52.4, "Pass-blocking Grade": 67.0, "Run-blocking Grade": 39.6}, {"Name": "Marco Dubois", "Team": "OTTAWA", "Total Snaps": 156, "Passing-game Snaps": 45, "Run-blocking snaps": 107, "Pass-blocking snaps": 4, "Overall Grade": 58.3, "Receiving Grade": 72.1, "Pass-blocking Grade": 52.5, "Run-blocking Grade": 40.9}, {"Name": "Tyler Ternowski", "Team": "HAMILTON", "Total Snaps": 105, "Passing-game Snaps": 95, "Run-blocking snaps": 10, "Pass-blocking snaps": 0, "Overall Grade": 55.6, "Receiving Grade": 56.5, "Pass-blocking Grade": "", "Run-blocking Grade": 42.1}, {"Name": "Kurleigh Gittens Jr.", "Team": "TORONTO", "Total Snaps": 469, "Passing-game Snaps": 280, "Run-blocking snaps": 183, "Pass-blocking snaps": 3, "Overall Grade": 67.1, "Receiving Grade": 68.3, "Pass-blocking Grade": 85.1, "Run-blocking Grade": 55.7}, {"Name": "Colton Hunchak", "Team": "CALGARY", "Total Snaps": 177, "Passing-game Snaps": 110, "Run-blocking snaps": 64, "Pass-blocking snaps": 3, "Overall Grade": 56.1, "Receiving Grade": 55.3, "Pass-blocking Grade": 51.8, "Run-blocking Grade": 65.2}, {"Name": "Luther Hakunavanhu", "Team": "CALGARY", "Total Snaps": 819, "Passing-game Snaps": 561, "Run-blocking snaps": 257, "Pass-blocking snaps": 0, "Overall Grade": 49.7, "Receiving Grade": 49.6, "Pass-blocking Grade": "", "Run-blocking Grade": 52.4}, {"Name": "Kevin Kaya", "Team": "MONTREAL", "Total Snaps": 5, "Passing-game Snaps": 2, "Run-blocking snaps": 3, "Pass-blocking snaps": 0, "Overall Grade": 76.9, "Receiving Grade": 72.9, "Pass-blocking Grade": "", "Run-blocking Grade": 60.0}, {"Name": "Jevon Cottoy", "Team": "BC", "Total Snaps": 1090, "Passing-game Snaps": 704, "Run-blocking snaps": 297, "Pass-blocking snaps": 89, "Overall Grade": 65.3, "Receiving Grade": 64.7, "Pass-blocking Grade": 60.3, "Run-blocking Grade": 64.8}, {"Name": "Kaion Julien-Grant", "Team": "MONTREAL", "Total Snaps": 451, "Passing-game Snaps": 314, "Run-blocking snaps": 135, "Pass-blocking snaps": 2, "Overall Grade": 68.9, "Receiving Grade": 69.7, "Pass-blocking Grade": 76.9, "Run-blocking Grade": 50.3}, {"Name": "Jeremy Murphy", "Team": "WINNIPEG", "Total Snaps": 16, "Passing-game Snaps": 7, "Run-blocking snaps": 9, "Pass-blocking snaps": 0, "Overall Grade": 56.8, "Receiving Grade": 56.6, "Pass-blocking Grade": "", "Run-blocking Grade": 61.6}, {"Name": "Daniel Oladejo", "Team": "OTTAWA", "Total Snaps": 8, "Passing-game Snaps": 6, "Run-blocking snaps": 1, "Pass-blocking snaps": 1, "Overall Grade": 70.2, "Receiving Grade": 67.8, "Pass-blocking Grade": 67.3, "Run-blocking Grade": 60.0}, {"Name": "Lio'undre Gallimore", "Team": "HAMILTON", "Total Snaps": 1, "Passing-game Snaps": 0, "Run-blocking snaps": 1, "Pass-blocking snaps": 0, "Overall Grade": 60.0, "Receiving Grade": "", "Pass-blocking Grade": "", "Run-blocking Grade": 60.0}, {"Name": "Shedler Fervius", "Team": "MONTREAL", "Total Snaps": 20, "Passing-game Snaps": 10, "Run-blocking snaps": 10, "Pass-blocking snaps": 0, "Overall Grade": 53.8, "Receiving Grade": 53.7, "Pass-blocking Grade": "", "Run-blocking Grade": 61.3}, {"Name": "James Letcher Jr.", "Team": "MONTREAL", "Total Snaps": 24, "Passing-game Snaps": 16, "Run-blocking snaps": 8, "Pass-blocking snaps": 0, "Overall Grade": 54.2, "Receiving Grade": 54.4, "Pass-blocking Grade": "", "Run-blocking Grade": 59.8}], "TE": [{"Name": "Bruno LaBelle", "Team": "SASKATCH", "Total Snaps": 150, "Passing-game Snaps": 15, "Run-blocking snaps": 86, "Pass-blocking snaps": 49, "Overall Grade": 48.7, "Receiving Grade": 46.6, "Pass-blocking Grade": 53.0, "Run-blocking Grade": 56.3}, {"Name": "Regis Cibasu", "Team": "MONTREAL", "Total Snaps": 211, "Passing-game Snaps": 103, "Run-blocking snaps": 80, "Pass-blocking snaps": 28, "Overall Grade": 52.9, "Receiving Grade": 59.9, "Pass-blocking Grade": 60.9, "Run-blocking Grade": 42.8}, {"Name": "Rysen John", "Team": "CALGARY", "Total Snaps": 117, "Passing-game Snaps": 70, "Run-blocking snaps": 38, "Pass-blocking snaps": 9, "Overall Grade": 48.6, "Receiving Grade": 48.1, "Pass-blocking Grade": 65.8, "Run-blocking Grade": 51.4}, {"Name": "Keaton Bruggeling", "Team": "OTTAWA", "Total Snaps": 54, "Passing-game Snaps": 21, "Run-blocking snaps": 32, "Pass-blocking snaps": 1, "Overall Grade": 51.9, "Receiving Grade": 53.4, "Pass-blocking Grade": 17.7, "Run-blocking Grade": 60.6}, {"Name": "Mario Villamizar", "Team": "EDMONTON", "Total Snaps": 26, "Passing-game Snaps": 2, "Run-blocking snaps": 24, "Pass-blocking snaps": 0, "Overall Grade": 49.8, "Receiving Grade": 56.1, "Pass-blocking Grade": "", "Run-blocking Grade": 49.2}], "T": [{"Name": "Stanley Bryant", "Team": "WINNIPEG", "Total Snaps": 1133, "Run-blocking Snaps": 492, "Pass-blocking Snaps": 641, "Overall Grade": 66.6, "Pass-blocking Grade": 67.8, "Run-blocking Grade": 62.1, "Total Pressures Allowed": 29, "Pressure Rate": 0.0492}, {"Name": "Jermarcus Hardrick", "Team": "WINNIPEG", "Total Snaps": 1181, "Run-blocking Snaps": 515, "Pass-blocking Snaps": 666, "Overall Grade": 72.9, "Pass-blocking Grade": 71.4, "Run-blocking Grade": 71.4, "Total Pressures Allowed": 27, "Pressure Rate": 0.0441}, {"Name": "Hugh Thornton", "Team": "CALGARY", "Total Snaps": 105, "Run-blocking Snaps": 32, "Pass-blocking Snaps": 73, "Overall Grade": 48.8, "Pass-blocking Grade": 41.3, "Run-blocking Grade": 52.4, "Total Pressures Allowed": 6, "Pressure Rate": 0.0845}, {"Name": "Colin Kelly", "Team": "SASKATCH", "Total Snaps": 504, "Run-blocking Snaps": 160, "Pass-blocking Snaps": 344, "Overall Grade": 66.3, "Pass-blocking Grade": 68.7, "Run-blocking Grade": 59.9, "Total Pressures Allowed": 11, "Pressure Rate": 0.0335}, {"Name": "Brett Boyko", "Team": "EDMONTON", "Total Snaps": 690, "Run-blocking Snaps": 246, "Pass-blocking Snaps": 440, "Overall Grade": 71.9, "Pass-blocking Grade": 73.0, "Run-blocking Grade": 66.9, "Total Pressures Allowed": 18, "Pressure Rate": 0.043}, {"Name": "Caleb Benenoch", "Team": "CALGARY", "Total Snaps": 98, "Run-blocking Snaps": 39, "Pass-blocking Snaps": 59, "Overall Grade": 42.5, "Pass-blocking Grade": 42.9, "Run-blocking Grade": 41.7, "Total Pressures Allowed": 2, "Pressure Rate": 0.0351}, {"Name": "Isiah Cage", "Team": "TORONTO", "Total Snaps": 595, "Run-blocking Snaps": 233, "Pass-blocking Snaps": 362, "Overall Grade": 58.8, "Pass-blocking Grade": 64.4, "Run-blocking Grade": 57.5, "Total Pressures Allowed": 15, "Pressure Rate": 0.0441}, {"Name": "Jarell Broxton", "Team": "BC", "Total Snaps": 1060, "Run-blocking Snaps": 293, "Pass-blocking Snaps": 767, "Overall Grade": 73.1, "Pass-blocking Grade": 68.5, "Run-blocking Grade": 72.4, "Total Pressures Allowed": 39, "Pressure Rate": 0.0532}, {"Name": "Eric Lofton", "Team": "SASKATCH", "Total Snaps": 829, "Run-blocking Snaps": 250, "Pass-blocking Snaps": 579, "Overall Grade": 51.5, "Pass-blocking Grade": 46.5, "Run-blocking Grade": 53.2, "Total Pressures Allowed": 33, "Pressure Rate": 0.0598}, {"Name": "Josiah St. John", "Team": "EDMONTON", "Total Snaps": 321, "Run-blocking Snaps": 143, "Pass-blocking Snaps": 167, "Overall Grade": 40.9, "Pass-blocking Grade": 17.9, "Run-blocking Grade": 53.3, "Total Pressures Allowed": 23, "Pressure Rate": 0.1465}, {"Name": "Nick Callender", "Team": "MONTREAL", "Total Snaps": 1110, "Run-blocking Snaps": 385, "Pass-blocking Snaps": 725, "Overall Grade": 77.6, "Pass-blocking Grade": 73.7, "Run-blocking Grade": 75.1, "Total Pressures Allowed": 39, "Pressure Rate": 0.056}, {"Name": "Chris Schleuger", "Team": "BC", "Total Snaps": 62, "Run-blocking Snaps": 10, "Pass-blocking Snaps": 52, "Overall Grade": 66.4, "Pass-blocking Grade": 64.2, "Run-blocking Grade": 67.3, "Total Pressures Allowed": 3, "Pressure Rate": 0.0612}, {"Name": "Brandon Council", "Team": "SASKATCH", "Total Snaps": 713, "Run-blocking Snaps": 204, "Pass-blocking Snaps": 509, "Overall Grade": 48.7, "Pass-blocking Grade": 43.6, "Run-blocking Grade": 56.3, "Total Pressures Allowed": 33, "Pressure Rate": 0.0675}, {"Name": "Shane Richards", "Team": "TORONTO", "Total Snaps": 10, "Run-blocking Snaps": 5, "Pass-blocking Snaps": 5, "Overall Grade": 63.2, "Pass-blocking Grade": 27.0, "Run-blocking Grade": 70.1, "Total Pressures Allowed": 3, "Pressure Rate": 0.6}, {"Name": "David Knevel", "Team": "BC", "Total Snaps": 416, "Run-blocking Snaps": 128, "Pass-blocking Snaps": 288, "Overall Grade": 59.0, "Pass-blocking Grade": 53.6, "Run-blocking Grade": 57.8, "Total Pressures Allowed": 24, "Pressure Rate": 0.0866}, {"Name": "Martez Ivey", "Team": "EDMONTON", "Total Snaps": 792, "Run-blocking Snaps": 277, "Pass-blocking Snaps": 514, "Overall Grade": 67.9, "Pass-blocking Grade": 59.1, "Run-blocking Grade": 77.7, "Total Pressures Allowed": 27, "Pressure Rate": 0.0549}, {"Name": "Dejon Allen", "Team": "TORONTO", "Total Snaps": 878, "Run-blocking Snaps": 347, "Pass-blocking Snaps": 531, "Overall Grade": 71.4, "Pass-blocking Grade": 80.8, "Run-blocking Grade": 65.4, "Total Pressures Allowed": 11, "Pressure Rate": 0.022}, {"Name": "Drew Richmond", "Team": "WINNIPEG", "Total Snaps": 69, "Run-blocking Snaps": 39, "Pass-blocking Snaps": 30, "Overall Grade": 52.7, "Pass-blocking Grade": 47.5, "Run-blocking Grade": 53.1, "Total Pressures Allowed": 4, "Pressure Rate": 0.1429}, {"Name": "Andrew Garnett", "Team": "EDMONTON", "Total Snaps": 123, "Run-blocking Snaps": 36, "Pass-blocking Snaps": 87, "Overall Grade": 45.9, "Pass-blocking Grade": 36.8, "Run-blocking Grade": 55.5, "Total Pressures Allowed": 9, "Pressure Rate": 0.1098}, {"Name": "Kyle Saxelid", "Team": "HAMILTON", "Total Snaps": 22, "Run-blocking Snaps": 8, "Pass-blocking Snaps": 13, "Overall Grade": 55.4, "Pass-blocking Grade": 54.5, "Run-blocking Grade": 56.0, "Total Pressures Allowed": 1, "Pressure Rate": 0.0833}, {"Name": "Trevon Tate", "Team": "TORONTO", "Total Snaps": 522, "Run-blocking Snaps": 199, "Pass-blocking Snaps": 323, "Overall Grade": 49.0, "Pass-blocking Grade": 59.1, "Run-blocking Grade": 42.2, "Total Pressures Allowed": 22, "Pressure Rate": 0.0724}, {"Name": "Dino Boyd", "Team": "OTTAWA", "Total Snaps": 1057, "Run-blocking Snaps": 360, "Pass-blocking Snaps": 697, "Overall Grade": 58.3, "Pass-blocking Grade": 60.8, "Run-blocking Grade": 55.6, "Total Pressures Allowed": 31, "Pressure Rate": 0.0465}, {"Name": "Jordan Murray", "Team": "HAMILTON", "Total Snaps": 469, "Run-blocking Snaps": 180, "Pass-blocking Snaps": 289, "Overall Grade": 60.3, "Pass-blocking Grade": 66.7, "Run-blocking Grade": 53.9, "Total Pressures Allowed": 15, "Pressure Rate": 0.0534}, {"Name": "Kent Perkins", "Team": "BC", "Total Snaps": 1134, "Run-blocking Snaps": 311, "Pass-blocking Snaps": 823, "Overall Grade": 64.5, "Pass-blocking Grade": 66.5, "Run-blocking Grade": 57.5, "Total Pressures Allowed": 31, "Pressure Rate": 0.0395}, {"Name": "Jamar McGloster", "Team": "MONTREAL", "Total Snaps": 658, "Run-blocking Snaps": 244, "Pass-blocking Snaps": 414, "Overall Grade": 66.4, "Pass-blocking Grade": 73.2, "Run-blocking Grade": 58.5, "Total Pressures Allowed": 20, "Pressure Rate": 0.05}, {"Name": "Tyrone Riley", "Team": "HAMILTON", "Total Snaps": 461, "Run-blocking Snaps": 163, "Pass-blocking Snaps": 298, "Overall Grade": 58.7, "Pass-blocking Grade": 53.2, "Run-blocking Grade": 63.7, "Total Pressures Allowed": 29, "Pressure Rate": 0.1003}, {"Name": "Liam Dobson", "Team": "WINNIPEG", "Total Snaps": 485, "Run-blocking Snaps": 303, "Pass-blocking Snaps": 119, "Overall Grade": 71.6, "Pass-blocking Grade": 55.2, "Run-blocking Grade": 83.5, "Total Pressures Allowed": 4, "Pressure Rate": 0.0374}, {"Name": "Kendrick Sartor", "Team": "HAMILTON", "Total Snaps": 323, "Run-blocking Snaps": 92, "Pass-blocking Snaps": 231, "Overall Grade": 55.7, "Pass-blocking Grade": 56.7, "Run-blocking Grade": 51.3, "Total Pressures Allowed": 16, "Pressure Rate": 0.0702}, {"Name": "Patrick Davis", "Team": "MONTREAL", "Total Snaps": 16, "Run-blocking Snaps": 9, "Pass-blocking Snaps": 7, "Overall Grade": 60.6, "Pass-blocking Grade": 65.6, "Run-blocking Grade": 58.8, "Total Pressures Allowed": 1, "Pressure Rate": 0.1429}, {"Name": "D'Antne Demery", "Team": "CALGARY", "Total Snaps": 601, "Run-blocking Snaps": 194, "Pass-blocking Snaps": 407, "Overall Grade": 56.9, "Pass-blocking Grade": 61.4, "Run-blocking Grade": 52.1, "Total Pressures Allowed": 24, "Pressure Rate": 0.0609}, {"Name": "Dontae Bull", "Team": "OTTAWA", "Total Snaps": 421, "Run-blocking Snaps": 162, "Pass-blocking Snaps": 259, "Overall Grade": 37.3, "Pass-blocking Grade": 12.9, "Run-blocking Grade": 54.2, "Total Pressures Allowed": 27, "Pressure Rate": 0.1111}, {"Name": "Drake Centers", "Team": "OTTAWA", "Total Snaps": 54, "Run-blocking Snaps": 12, "Pass-blocking Snaps": 42, "Overall Grade": 57.8, "Pass-blocking Grade": 59.9, "Run-blocking Grade": 53.7, "Total Pressures Allowed": 1, "Pressure Rate": 0.0238}, {"Name": "Joshua Coker", "Team": "CALGARY", "Total Snaps": 616, "Run-blocking Snaps": 221, "Pass-blocking Snaps": 395, "Overall Grade": 69.1, "Pass-blocking Grade": 69.8, "Run-blocking Grade": 66.9, "Total Pressures Allowed": 30, "Pressure Rate": 0.0792}, {"Name": "Brandon Kemp", "Team": "HAMILTON", "Total Snaps": 558, "Run-blocking Snaps": 161, "Pass-blocking Snaps": 397, "Overall Grade": 55.3, "Pass-blocking Grade": 41.9, "Run-blocking Grade": 66.7, "Total Pressures Allowed": 42, "Pressure Rate": 0.1082}, {"Name": "Joel Figueroa", "Team": "HAMILTON", "Total Snaps": 260, "Run-blocking Snaps": 76, "Pass-blocking Snaps": 184, "Overall Grade": 61.5, "Pass-blocking Grade": 61.7, "Run-blocking Grade": 57.8, "Total Pressures Allowed": 10, "Pressure Rate": 0.0556}, {"Name": "Tyler Packer", "Team": "BC", "Total Snaps": 1, "Run-blocking Snaps": 1, "Pass-blocking Snaps": 0, "Overall Grade": 60.0, "Pass-blocking Grade": "", "Run-blocking Grade": 60.0, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Landon Rice", "Team": "MONTREAL", "Total Snaps": 555, "Run-blocking Snaps": 189, "Pass-blocking Snaps": 362, "Overall Grade": 75.1, "Pass-blocking Grade": 69.7, "Run-blocking Grade": 76.2, "Total Pressures Allowed": 19, "Pressure Rate": 0.0548}, {"Name": "Jakub Szott", "Team": "HAMILTON", "Total Snaps": 23, "Run-blocking Snaps": 17, "Pass-blocking Snaps": 6, "Overall Grade": 51.1, "Pass-blocking Grade": 52.3, "Run-blocking Grade": 49.6, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Noah Zerr", "Team": "HAMILTON", "Total Snaps": 3, "Run-blocking Snaps": 3, "Pass-blocking Snaps": 0, "Overall Grade": 54.3, "Pass-blocking Grade": "", "Run-blocking Grade": 53.9, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Sean Jamieson", "Team": "MONTREAL", "Total Snaps": 5, "Run-blocking Snaps": 5, "Pass-blocking Snaps": 0, "Overall Grade": 60.0, "Pass-blocking Grade": "", "Run-blocking Grade": 60.0, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Jesse Gibbon", "Team": "MONTREAL", "Total Snaps": 54, "Run-blocking Snaps": 45, "Pass-blocking Snaps": 5, "Overall Grade": 57.1, "Pass-blocking Grade": 75.5, "Run-blocking Grade": 56.1, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Bryce Bell", "Team": "CALGARY", "Total Snaps": 634, "Run-blocking Snaps": 232, "Pass-blocking Snaps": 395, "Overall Grade": 57.8, "Pass-blocking Grade": 46.4, "Run-blocking Grade": 62.7, "Total Pressures Allowed": 34, "Pressure Rate": 0.0899}, {"Name": "Jamal Campbell", "Team": "CALGARY", "Total Snaps": 32, "Run-blocking Snaps": 23, "Pass-blocking Snaps": 7, "Overall Grade": 66.4, "Pass-blocking Grade": 61.3, "Run-blocking Grade": 67.8, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Zack Pelehos", "Team": "OTTAWA", "Total Snaps": 535, "Run-blocking Snaps": 171, "Pass-blocking Snaps": 363, "Overall Grade": 57.0, "Pass-blocking Grade": 39.3, "Run-blocking Grade": 71.8, "Total Pressures Allowed": 27, "Pressure Rate": 0.0771}], "G": [{"Name": "Philip Blake", "Team": "SASKATCH", "Total Snaps": 310, "Run-blocking Snaps": 95, "Pass-blocking Snaps": 215, "Overall Grade": 60.4, "Pass-blocking Grade": 65.2, "Run-blocking Grade": 55.6, "Total Pressures Allowed": 5, "Pressure Rate": 0.0242}, {"Name": "David Foucault", "Team": "EDMONTON", "Total Snaps": 874, "Run-blocking Snaps": 290, "Pass-blocking Snaps": 584, "Overall Grade": 60.4, "Pass-blocking Grade": 60.9, "Run-blocking Grade": 56.6, "Total Pressures Allowed": 31, "Pressure Rate": 0.0558}, {"Name": "Jerald Hawkins", "Team": "SASKATCH", "Total Snaps": 18, "Run-blocking Snaps": 7, "Pass-blocking Snaps": 11, "Overall Grade": 34.9, "Pass-blocking Grade": 0.0, "Run-blocking Grade": 56.6, "Total Pressures Allowed": 2, "Pressure Rate": 0.1818}, {"Name": "Geoff Gray", "Team": "WINNIPEG", "Total Snaps": 1132, "Run-blocking Snaps": 500, "Pass-blocking Snaps": 632, "Overall Grade": 56.5, "Pass-blocking Grade": 28.0, "Run-blocking Grade": 63.4, "Total Pressures Allowed": 32, "Pressure Rate": 0.0551}, {"Name": "Jacob Ruby", "Team": "OTTAWA", "Total Snaps": 1057, "Run-blocking Snaps": 360, "Pass-blocking Snaps": 697, "Overall Grade": 50.3, "Pass-blocking Grade": 38.7, "Run-blocking Grade": 50.3, "Total Pressures Allowed": 50, "Pressure Rate": 0.0751}, {"Name": "Tomas Jack-Kurdyla", "Team": "EDMONTON", "Total Snaps": 930, "Run-blocking Snaps": 315, "Pass-blocking Snaps": 615, "Overall Grade": 58.9, "Pass-blocking Grade": 55.4, "Run-blocking Grade": 57.9, "Total Pressures Allowed": 34, "Pressure Rate": 0.0579}, {"Name": "Ryan Hunter", "Team": "TORONTO", "Total Snaps": 1035, "Run-blocking Snaps": 408, "Pass-blocking Snaps": 621, "Overall Grade": 66.3, "Pass-blocking Grade": 65.1, "Run-blocking Grade": 66.9, "Total Pressures Allowed": 17, "Pressure Rate": 0.0292}, {"Name": "Gregor Mackellar", "Team": "TORONTO", "Total Snaps": 205, "Run-blocking Snaps": 109, "Pass-blocking Snaps": 96, "Overall Grade": 54.9, "Pass-blocking Grade": 25.4, "Run-blocking Grade": 59.1, "Total Pressures Allowed": 8, "Pressure Rate": 0.0909}, {"Name": "Brandon Weldon", "Team": "CALGARY", "Total Snaps": 179, "Run-blocking Snaps": 60, "Pass-blocking Snaps": 119, "Overall Grade": 42.7, "Pass-blocking Grade": 17.2, "Run-blocking Grade": 60.5, "Total Pressures Allowed": 13, "Pressure Rate": 0.1161}, {"Name": "Pier-Olivier Lestage", "Team": "MONTREAL", "Total Snaps": 885, "Run-blocking Snaps": 300, "Pass-blocking Snaps": 580, "Overall Grade": 75.7, "Pass-blocking Grade": 76.9, "Run-blocking Grade": 81.7, "Total Pressures Allowed": 17, "Pressure Rate": 0.0308}, {"Name": "Drew Desjarlais", "Team": "OTTAWA", "Total Snaps": 762, "Run-blocking Snaps": 277, "Pass-blocking Snaps": 485, "Overall Grade": 62.2, "Pass-blocking Grade": 64.7, "Run-blocking Grade": 61.9, "Total Pressures Allowed": 19, "Pressure Rate": 0.0409}, {"Name": "Hunter Steward", "Team": "OTTAWA", "Total Snaps": 431, "Run-blocking Snaps": 170, "Pass-blocking Snaps": 252, "Overall Grade": 66.0, "Pass-blocking Grade": 70.2, "Run-blocking Grade": 66.2, "Total Pressures Allowed": 14, "Pressure Rate": 0.0586}, {"Name": "Kristian Matte", "Team": "MONTREAL", "Total Snaps": 1089, "Run-blocking Snaps": 383, "Pass-blocking Snaps": 706, "Overall Grade": 68.2, "Pass-blocking Grade": 71.5, "Run-blocking Grade": 65.0, "Total Pressures Allowed": 20, "Pressure Rate": 0.0295}, {"Name": "Rodeem Brown", "Team": "CALGARY", "Total Snaps": 69, "Run-blocking Snaps": 19, "Pass-blocking Snaps": 50, "Overall Grade": 49.5, "Pass-blocking Grade": 52.0, "Run-blocking Grade": 48.0, "Total Pressures Allowed": 2, "Pressure Rate": 0.0417}, {"Name": "Peter Nicastro", "Team": "TORONTO", "Total Snaps": 967, "Run-blocking Snaps": 383, "Pass-blocking Snaps": 584, "Overall Grade": 71.5, "Pass-blocking Grade": 63.5, "Run-blocking Grade": 74.4, "Total Pressures Allowed": 18, "Pressure Rate": 0.0327}, {"Name": "Sukh Chungh", "Team": "BC", "Total Snaps": 1058, "Run-blocking Snaps": 286, "Pass-blocking Snaps": 772, "Overall Grade": 55.5, "Pass-blocking Grade": 50.6, "Run-blocking Grade": 53.9, "Total Pressures Allowed": 37, "Pressure Rate": 0.0503}, {"Name": "Ryan Sceviour", "Team": "CALGARY", "Total Snaps": 1065, "Run-blocking Snaps": 364, "Pass-blocking Snaps": 701, "Overall Grade": 59.4, "Pass-blocking Grade": 49.6, "Run-blocking Grade": 61.4, "Total Pressures Allowed": 35, "Pressure Rate": 0.052}, {"Name": "Brandon Revenberg", "Team": "HAMILTON", "Total Snaps": 1080, "Run-blocking Snaps": 353, "Pass-blocking Snaps": 727, "Overall Grade": 76.3, "Pass-blocking Grade": 74.9, "Run-blocking Grade": 77.3, "Total Pressures Allowed": 22, "Pressure Rate": 0.031}, {"Name": "Coulter Woodmansey", "Team": "HAMILTON", "Total Snaps": 964, "Run-blocking Snaps": 330, "Pass-blocking Snaps": 634, "Overall Grade": 64.8, "Pass-blocking Grade": 64.4, "Run-blocking Grade": 64.5, "Total Pressures Allowed": 22, "Pressure Rate": 0.0356}, {"Name": "Eric Starczala", "Team": "OTTAWA", "Total Snaps": 20, "Run-blocking Snaps": 14, "Pass-blocking Snaps": 6, "Overall Grade": 81.0, "Pass-blocking Grade": 77.1, "Run-blocking Grade": 82.1, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Zack Williams", "Team": "CALGARY", "Total Snaps": 1012, "Run-blocking Snaps": 351, "Pass-blocking Snaps": 661, "Overall Grade": 61.4, "Pass-blocking Grade": 63.1, "Run-blocking Grade": 57.4, "Total Pressures Allowed": 35, "Pressure Rate": 0.0552}, {"Name": "Chris Van Zeyl", "Team": "HAMILTON", "Total Snaps": 69, "Run-blocking Snaps": 16, "Pass-blocking Snaps": 53, "Overall Grade": 57.1, "Pass-blocking Grade": 32.2, "Run-blocking Grade": 69.9, "Total Pressures Allowed": 5, "Pressure Rate": 0.0962}, {"Name": "Logan Ferland", "Team": "SASKATCH", "Total Snaps": 1074, "Run-blocking Snaps": 325, "Pass-blocking Snaps": 749, "Overall Grade": 57.0, "Pass-blocking Grade": 50.4, "Run-blocking Grade": 55.9, "Total Pressures Allowed": 28, "Pressure Rate": 0.0391}, {"Name": "Evan Johnson", "Team": "SASKATCH", "Total Snaps": 755, "Run-blocking Snaps": 237, "Pass-blocking Snaps": 518, "Overall Grade": 54.9, "Pass-blocking Grade": 44.6, "Run-blocking Grade": 57.6, "Total Pressures Allowed": 16, "Pressure Rate": 0.0323}, {"Name": "Patrick Neufeld", "Team": "WINNIPEG", "Total Snaps": 1126, "Run-blocking Snaps": 508, "Pass-blocking Snaps": 618, "Overall Grade": 65.2, "Pass-blocking Grade": 61.7, "Run-blocking Grade": 65.4, "Total Pressures Allowed": 25, "Pressure Rate": 0.0441}, {"Name": "Dylan Giffen", "Team": "TORONTO", "Total Snaps": 170, "Run-blocking Snaps": 85, "Pass-blocking Snaps": 85, "Overall Grade": 67.9, "Pass-blocking Grade": 29.2, "Run-blocking Grade": 77.4, "Total Pressures Allowed": 2, "Pressure Rate": 0.0256}, {"Name": "Philippe Gagnon", "Team": "MONTREAL", "Total Snaps": 368, "Run-blocking Snaps": 151, "Pass-blocking Snaps": 217, "Overall Grade": 72.5, "Pass-blocking Grade": 75.6, "Run-blocking Grade": 70.6, "Total Pressures Allowed": 6, "Pressure Rate": 0.0283}, {"Name": "Braydon Noll", "Team": "TORONTO", "Total Snaps": 7, "Run-blocking Snaps": 7, "Pass-blocking Snaps": 0, "Overall Grade": 67.3, "Pass-blocking Grade": "", "Run-blocking Grade": 67.3, "Total Pressures Allowed": 0, "Pressure Rate": 0.0}, {"Name": "Andrew Peirson", "Team": "BC", "Total Snaps": 836, "Run-blocking Snaps": 245, "Pass-blocking Snaps": 591, "Overall Grade": 49.5, "Pass-blocking Grade": 32.9, "Run-blocking Grade": 52.5, "Total Pressures Allowed": 44, "Pressure Rate": 0.0783}, {"Name": "Phillip Grohovac", "Team": "EDMONTON", "Total Snaps": 204, "Run-blocking Snaps": 107, "Pass-blocking Snaps": 92, "Overall Grade": 46.7, "Pass-blocking Grade": 30.0, "Run-blocking Grade": 50.1, "Total Pressures Allowed": 6, "Pressure Rate": 0.0674}, {"Name": "Dayton Black", "Team": "HAMILTON", "Total Snaps": 341, "Run-blocking Snaps": 197, "Pass-blocking Snaps": 127, "Overall Grade": 44.5, "Pass-blocking Grade": 28.0, "Run-blocking Grade": 54.2, "Total Pressures Allowed": 11, "Pressure Rate": 0.0894}], "C": [{"Name": "Sean McEwen", "Team": "CALGARY", "Total Snaps": 999, "Run-blocking Snaps": 346, "Pass-blocking Snaps": 653, "Overall Grade": 60.0, "Pass-blocking Grade": 54.2, "Run-blocking Grade": 59.8, "Total Pressures Allowed": 46, "Pressure Rate": 0.0734}, {"Name": "Peter Godber", "Team": "SASKATCH", "Total Snaps": 888, "Run-blocking Snaps": 272, "Pass-blocking Snaps": 616, "Overall Grade": 69.4, "Pass-blocking Grade": 77.8, "Run-blocking Grade": 65.4, "Total Pressures Allowed": 11, "Pressure Rate": 0.0188}, {"Name": "Asotui Eli", "Team": "WINNIPEG", "Total Snaps": 305, "Run-blocking Snaps": 206, "Pass-blocking Snaps": 88, "Overall Grade": 75.7, "Pass-blocking Grade": 30.3, "Run-blocking Grade": 83.6, "Total Pressures Allowed": 6, "Pressure Rate": 0.0741}, {"Name": "David Beard", "Team": "HAMILTON", "Total Snaps": 1077, "Run-blocking Snaps": 350, "Pass-blocking Snaps": 727, "Overall Grade": 69.2, "Pass-blocking Grade": 79.4, "Run-blocking Grade": 61.1, "Total Pressures Allowed": 23, "Pressure Rate": 0.0324}, {"Name": "Justin Lawrence", "Team": "MONTREAL", "Total Snaps": 1122, "Run-blocking Snaps": 393, "Pass-blocking Snaps": 729, "Overall Grade": 66.5, "Pass-blocking Grade": 71.0, "Run-blocking Grade": 61.6, "Total Pressures Allowed": 25, "Pressure Rate": 0.0356}, {"Name": "Mark Korte", "Team": "EDMONTON", "Total Snaps": 930, "Run-blocking Snaps": 315, "Pass-blocking Snaps": 615, "Overall Grade": 64.1, "Pass-blocking Grade": 71.5, "Run-blocking Grade": 58.8, "Total Pressures Allowed": 22, "Pressure Rate": 0.0375}, {"Name": "Darius Ciraco", "Team": "TORONTO", "Total Snaps": 875, "Run-blocking Snaps": 340, "Pass-blocking Snaps": 535, "Overall Grade": 68.1, "Pass-blocking Grade": 78.1, "Run-blocking Grade": 63.9, "Total Pressures Allowed": 18, "Pressure Rate": 0.0357}, {"Name": "Logan Bandy", "Team": "SASKATCH", "Total Snaps": 326, "Run-blocking Snaps": 115, "Pass-blocking Snaps": 210, "Overall Grade": 49.2, "Pass-blocking Grade": 23.3, "Run-blocking Grade": 60.3, "Total Pressures Allowed": 17, "Pressure Rate": 0.0833}, {"Name": "Michael Couture", "Team": "BC", "Total Snaps": 1134, "Run-blocking Snaps": 311, "Pass-blocking Snaps": 823, "Overall Grade": 56.2, "Pass-blocking Grade": 51.4, "Run-blocking Grade": 56.7, "Total Pressures Allowed": 54, "Pressure Rate": 0.0688}, {"Name": "Cyrille Hogan-Saindon", "Team": "OTTAWA", "Total Snaps": 1057, "Run-blocking Snaps": 360, "Pass-blocking Snaps": 697, "Overall Grade": 51.9, "Pass-blocking Grade": 40.8, "Run-blocking Grade": 55.2, "Total Pressures Allowed": 46, "Pressure Rate": 0.0691}, {"Name": "Chris Kolankowski", "Team": "WINNIPEG", "Total Snaps": 1185, "Run-blocking Snaps": 526, "Pass-blocking Snaps": 659, "Overall Grade": 72.3, "Pass-blocking Grade": 64.7, "Run-blocking Grade": 73.7, "Total Pressures Allowed": 31, "Pressure Rate": 0.0512}], "DI": [{"Name": "Micah Johnson", "Team": "SASKATCH", "Total Snaps": 761, "Run-defense Snaps": 269, "Pass-rush Snaps": 489, "Coverage Snaps": 3, "Overall Grade": 73.9, "Run-defense Grade": 66.5, "Pass-rush Grade": 78.0, "Coverage Grade": 52.6}, {"Name": "Terrell McClain", "Team": "CALGARY", "Total Snaps": 101, "Run-defense Snaps": 41, "Pass-rush Snaps": 59, "Coverage Snaps": 1, "Overall Grade": 68.0, "Run-defense Grade": 59.1, "Pass-rush Grade": 71.2, "Coverage Grade": 61.6}, {"Name": "Damontre Moore", "Team": "CALGARY", "Total Snaps": 38, "Run-defense Snaps": 22, "Pass-rush Snaps": 16, "Coverage Snaps": 0, "Overall Grade": 63.5, "Run-defense Grade": 63.6, "Pass-rush Grade": 60.1, "Coverage Grade": ""}, {"Name": "Kony Ealy", "Team": "EDMONTON", "Total Snaps": 544, "Run-defense Snaps": 232, "Pass-rush Snaps": 308, "Coverage Snaps": 4, "Overall Grade": 51.6, "Run-defense Grade": 41.1, "Pass-rush Grade": 68.6, "Coverage Grade": 59.9}, {"Name": "Dylan Wynn", "Team": "HAMILTON", "Total Snaps": 198, "Run-defense Snaps": 81, "Pass-rush Snaps": 115, "Coverage Snaps": 2, "Overall Grade": 65.9, "Run-defense Grade": 66.9, "Pass-rush Grade": 65.1, "Coverage Grade": 51.0}, {"Name": "Cleyon Laing", "Team": "OTTAWA", "Total Snaps": 830, "Run-defense Snaps": 282, "Pass-rush Snaps": 546, "Coverage Snaps": 2, "Overall Grade": 60.8, "Run-defense Grade": 56.2, "Pass-rush Grade": 61.7, "Coverage Grade": 72.0}, {"Name": "Mike Rose", "Team": "CALGARY", "Total Snaps": 756, "Run-defense Snaps": 277, "Pass-rush Snaps": 479, "Coverage Snaps": 0, "Overall Grade": 72.5, "Run-defense Grade": 56.9, "Pass-rush Grade": 82.6, "Coverage Grade": 59.6}, {"Name": "Casey Sayles", "Team": "HAMILTON", "Total Snaps": 885, "Run-defense Snaps": 340, "Pass-rush Snaps": 543, "Coverage Snaps": 2, "Overall Grade": 83.1, "Run-defense Grade": 76.1, "Pass-rush Grade": 84.0, "Coverage Grade": 62.5}, {"Name": "Josh Banks", "Team": "BC", "Total Snaps": 519, "Run-defense Snaps": 225, "Pass-rush Snaps": 294, "Coverage Snaps": 0, "Overall Grade": 83.7, "Run-defense Grade": 79.0, "Pass-rush Grade": 80.7, "Coverage Grade": 60.0}, {"Name": "Woody Baron", "Team": "BC", "Total Snaps": 702, "Run-defense Snaps": 221, "Pass-rush Snaps": 480, "Coverage Snaps": 1, "Overall Grade": 79.8, "Run-defense Grade": 65.8, "Pass-rush Grade": 89.7, "Coverage Grade": 57.2}, {"Name": "Shawn Oakman", "Team": "TORONTO", "Total Snaps": 632, "Run-defense Snaps": 193, "Pass-rush Snaps": 439, "Coverage Snaps": 0, "Overall Grade": 74.1, "Run-defense Grade": 65.5, "Pass-rush Grade": 77.1, "Coverage Grade": 62.0}, {"Name": "Tre Hornbuckle", "Team": "OTTAWA", "Total Snaps": 55, "Run-defense Snaps": 24, "Pass-rush Snaps": 31, "Coverage Snaps": 0, "Overall Grade": 54.6, "Run-defense Grade": 54.3, "Pass-rush Grade": 56.6, "Coverage Grade": ""}, {"Name": "Charbel Dabire", "Team": "SASKATCH", "Total Snaps": 291, "Run-defense Snaps": 152, "Pass-rush Snaps": 139, "Coverage Snaps": 0, "Overall Grade": 58.1, "Run-defense Grade": 54.4, "Pass-rush Grade": 61.9, "Coverage Grade": 59.0}, {"Name": "Miles Brown", "Team": "SASKATCH", "Total Snaps": 427, "Run-defense Snaps": 160, "Pass-rush Snaps": 267, "Coverage Snaps": 0, "Overall Grade": 74.6, "Run-defense Grade": 79.3, "Pass-rush Grade": 64.8, "Coverage Grade": ""}, {"Name": "Thomas Schaffer", "Team": "OTTAWA", "Total Snaps": 70, "Run-defense Snaps": 36, "Pass-rush Snaps": 34, "Coverage Snaps": 0, "Overall Grade": 69.6, "Run-defense Grade": 72.8, "Pass-rush Grade": 58.0, "Coverage Grade": 60.0}, {"Name": "Jarrod Hewitt", "Team": "HAMILTON", "Total Snaps": 162, "Run-defense Snaps": 66, "Pass-rush Snaps": 96, "Coverage Snaps": 0, "Overall Grade": 61.6, "Run-defense Grade": 64.5, "Pass-rush Grade": 60.2, "Coverage Grade": ""}, {"Name": "Marcus Moore", "Team": "BC", "Total Snaps": 59, "Run-defense Snaps": 29, "Pass-rush Snaps": 30, "Coverage Snaps": 0, "Overall Grade": 84.7, "Run-defense Grade": 73.9, "Pass-rush Grade": 67.1, "Coverage Grade": 68.3}, {"Name": "Dewayne Hendrix", "Team": "TORONTO", "Total Snaps": 713, "Run-defense Snaps": 214, "Pass-rush Snaps": 499, "Coverage Snaps": 0, "Overall Grade": 68.2, "Run-defense Grade": 55.9, "Pass-rush Grade": 74.2, "Coverage Grade": 64.2}, {"Name": "Ricky Walker", "Team": "WINNIPEG", "Total Snaps": 674, "Run-defense Snaps": 220, "Pass-rush Snaps": 454, "Coverage Snaps": 0, "Overall Grade": 77.5, "Run-defense Grade": 75.8, "Pass-rush Grade": 75.0, "Coverage Grade": 64.6}, {"Name": "Cedric Wilcots II", "Team": "HAMILTON", "Total Snaps": 2, "Run-defense Snaps": 1, "Pass-rush Snaps": 1, "Coverage Snaps": 0, "Overall Grade": 61.3, "Run-defense Grade": 60.0, "Pass-rush Grade": 60.0, "Coverage Grade": ""}, {"Name": "DeMarcus Christmas", "Team": "SASKATCH", "Total Snaps": 452, "Run-defense Snaps": 189, "Pass-rush Snaps": 263, "Coverage Snaps": 0, "Overall Grade": 68.2, "Run-defense Grade": 67.8, "Pass-rush Grade": 69.1, "Coverage Grade": 60.0}, {"Name": "Miles Fox", "Team": "WINNIPEG", "Total Snaps": 60, "Run-defense Snaps": 25, "Pass-rush Snaps": 35, "Coverage Snaps": 0, "Overall Grade": 69.5, "Run-defense Grade": 69.3, "Pass-rush Grade": 63.9, "Coverage Grade": ""}, {"Name": "Daniel Ross", "Team": "EDMONTON", "Total Snaps": 209, "Run-defense Snaps": 96, "Pass-rush Snaps": 112, "Coverage Snaps": 1, "Overall Grade": 46.8, "Run-defense Grade": 38.8, "Pass-rush Grade": 61.2, "Coverage Grade": 58.8}, {"Name": "Tyler Williams", "Team": "TORONTO", "Total Snaps": 31, "Run-defense Snaps": 10, "Pass-rush Snaps": 21, "Coverage Snaps": 0, "Overall Grade": 65.6, "Run-defense Grade": 68.4, "Pass-rush Grade": 58.9, "Coverage Grade": ""}, {"Name": "Christian Albright", "Team": "SASKATCH", "Total Snaps": 158, "Run-defense Snaps": 60, "Pass-rush Snaps": 96, "Coverage Snaps": 2, "Overall Grade": 78.6, "Run-defense Grade": 78.5, "Pass-rush Grade": 69.7, "Coverage Grade": 70.4}, {"Name": "Marcus Valdez", "Team": "MONTREAL", "Total Snaps": 27, "Run-defense Snaps": 15, "Pass-rush Snaps": 12, "Coverage Snaps": 0, "Overall Grade": 39.9, "Run-defense Grade": 46.5, "Pass-rush Grade": 57.2, "Coverage Grade": ""}, {"Name": "Chris Mulumba", "Team": "HAMILTON", "Total Snaps": 7, "Run-defense Snaps": 4, "Pass-rush Snaps": 3, "Coverage Snaps": 0, "Overall Grade": 63.2, "Run-defense Grade": 60.4, "Pass-rush Grade": 59.6, "Coverage Grade": ""}, {"Name": "Jared Brinkman", "Team": "TORONTO", "Total Snaps": 346, "Run-defense Snaps": 101, "Pass-rush Snaps": 245, "Coverage Snaps": 0, "Overall Grade": 74.0, "Run-defense Grade": 80.5, "Pass-rush Grade": 67.1, "Coverage Grade": 61.4}, {"Name": "T.J. Rayam", "Team": "CALGARY", "Total Snaps": 284, "Run-defense Snaps": 110, "Pass-rush Snaps": 174, "Coverage Snaps": 0, "Overall Grade": 71.0, "Run-defense Grade": 70.0, "Pass-rush Grade": 65.3, "Coverage Grade": 64.4}, {"Name": "Tibo Debaillie", "Team": "BC", "Total Snaps": 472, "Run-defense Snaps": 200, "Pass-rush Snaps": 272, "Coverage Snaps": 0, "Overall Grade": 76.8, "Run-defense Grade": 72.8, "Pass-rush Grade": 74.5, "Coverage Grade": 60.0}, {"Name": "Blessman Ta'ala", "Team": "OTTAWA", "Total Snaps": 239, "Run-defense Snaps": 94, "Pass-rush Snaps": 145, "Coverage Snaps": 0, "Overall Grade": 65.2, "Run-defense Grade": 59.0, "Pass-rush Grade": 65.8, "Coverage Grade": 61.8}, {"Name": "Caleb Sanders", "Team": "SASKATCH", "Total Snaps": 25, "Run-defense Snaps": 20, "Pass-rush Snaps": 5, "Coverage Snaps": 0, "Overall Grade": 67.9, "Run-defense Grade": 68.7, "Pass-rush Grade": 57.2, "Coverage Grade": ""}, {"Name": "Alex Tchangam", "Team": "CALGARY", "Total Snaps": 33, "Run-defense Snaps": 11, "Pass-rush Snaps": 18, "Coverage Snaps": 4, "Overall Grade": 72.9, "Run-defense Grade": 73.5, "Pass-rush Grade": 57.8, "Coverage Grade": 70.7}, {"Name": "Mustafa Johnson", "Team": "MONTREAL", "Total Snaps": 1024, "Run-defense Snaps": 366, "Pass-rush Snaps": 641, "Coverage Snaps": 17, "Overall Grade": 86.3, "Run-defense Grade": 79.1, "Pass-rush Grade": 87.9, "Coverage Grade": 63.1}, {"Name": "Israel Antwine", "Team": "MONTREAL", "Total Snaps": 179, "Run-defense Snaps": 74, "Pass-rush Snaps": 105, "Coverage Snaps": 0, "Overall Grade": 58.7, "Run-defense Grade": 63.6, "Pass-rush Grade": 55.7, "Coverage Grade": ""}, {"Name": "Mohamed Diallo", "Team": "HAMILTON", "Total Snaps": 297, "Run-defense Snaps": 122, "Pass-rush Snaps": 175, "Coverage Snaps": 0, "Overall Grade": 44.2, "Run-defense Grade": 32.4, "Pass-rush Grade": 64.5, "Coverage Grade": 60.0}, {"Name": "Francis Bemiy", "Team": "BC", "Total Snaps": 174, "Run-defense Snaps": 86, "Pass-rush Snaps": 88, "Coverage Snaps": 0, "Overall Grade": 61.6, "Run-defense Grade": 56.3, "Pass-rush Grade": 65.7, "Coverage Grade": 60.0}, {"Name": "Cody Roscoe", "Team": "SASKATCH", "Total Snaps": 83, "Run-defense Snaps": 44, "Pass-rush Snaps": 38, "Coverage Snaps": 1, "Overall Grade": 62.3, "Run-defense Grade": 54.4, "Pass-rush Grade": 73.9, "Coverage Grade": 60.0}, {"Name": "Ted Laurent", "Team": "HAMILTON", "Total Snaps": 463, "Run-defense Snaps": 202, "Pass-rush Snaps": 261, "Coverage Snaps": 0, "Overall Grade": 71.9, "Run-defense Grade": 57.8, "Pass-rush Grade": 80.0, "Coverage Grade": 64.7}, {"Name": "Darel Middleton", "Team": "EDMONTON", "Total Snaps": 23, "Run-defense Snaps": 18, "Pass-rush Snaps": 5, "Coverage Snaps": 0, "Overall Grade": 61.4, "Run-defense Grade": 62.1, "Pass-rush Grade": 57.2, "Coverage Grade": ""}, {"Name": "Olivier Charles-Pierre", "Team": "EDMONTON", "Total Snaps": 73, "Run-defense Snaps": 46, "Pass-rush Snaps": 27, "Coverage Snaps": 0, "Overall Grade": 64.1, "Run-defense Grade": 60.6, "Pass-rush Grade": 67.1, "Coverage Grade": ""}, {"Name": "Deionte Knight", "Team": "TORONTO", "Total Snaps": 475, "Run-defense Snaps": 142, "Pass-rush Snaps": 333, "Coverage Snaps": 0, "Overall Grade": 47.4, "Run-defense Grade": 45.1, "Pass-rush Grade": 52.0, "Coverage Grade": 62.2}, {"Name": "Almondo Sewell", "Team": "MONTREAL", "Total Snaps": 674, "Run-defense Snaps": 285, "Pass-rush Snaps": 384, "Coverage Snaps": 5, "Overall Grade": 64.5, "Run-defense Grade": 58.8, "Pass-rush Grade": 71.3, "Coverage Grade": 66.0}, {"Name": "Jake Thomas", "Team": "WINNIPEG", "Total Snaps": 646, "Run-defense Snaps": 192, "Pass-rush Snaps": 454, "Coverage Snaps": 0, "Overall Grade": 62.5, "Run-defense Grade": 51.2, "Pass-rush Grade": 67.3, "Coverage Grade": 62.7}, {"Name": "Cole Nelson", "Team": "EDMONTON", "Total Snaps": 234, "Run-defense Snaps": 127, "Pass-rush Snaps": 107, "Coverage Snaps": 0, "Overall Grade": 53.7, "Run-defense Grade": 50.8, "Pass-rush Grade": 61.7, "Coverage Grade": ""}, {"Name": "Elliot Graham", "Team": "CALGARY", "Total Snaps": 13, "Run-defense Snaps": 5, "Pass-rush Snaps": 8, "Coverage Snaps": 0, "Overall Grade": 65.6, "Run-defense Grade": 60.5, "Pass-rush Grade": 56.8, "Coverage Grade": 60.0}, {"Name": "J-Min Pelley", "Team": "EDMONTON", "Total Snaps": 287, "Run-defense Snaps": 143, "Pass-rush Snaps": 144, "Coverage Snaps": 0, "Overall Grade": 53.3, "Run-defense Grade": 45.3, "Pass-rush Grade": 63.2, "Coverage Grade": 78.0}, {"Name": "Brock Gowanlock", "Team": "MONTREAL", "Total Snaps": 15, "Run-defense Snaps": 5, "Pass-rush Snaps": 8, "Coverage Snaps": 2, "Overall Grade": 74.1, "Run-defense Grade": 64.1, "Pass-rush Grade": 69.5, "Coverage Grade": 62.9}, {"Name": "Derek Wiggan", "Team": "CALGARY", "Total Snaps": 682, "Run-defense Snaps": 259, "Pass-rush Snaps": 423, "Coverage Snaps": 0, "Overall Grade": 65.6, "Run-defense Grade": 64.1, "Pass-rush Grade": 61.4, "Coverage Grade": 67.4}, {"Name": "Cameron Lawson", "Team": "WINNIPEG", "Total Snaps": 448, "Run-defense Snaps": 155, "Pass-rush Snaps": 293, "Coverage Snaps": 0, "Overall Grade": 66.8, "Run-defense Grade": 60.7, "Pass-rush Grade": 68.9, "Coverage Grade": 62.4}, {"Name": "Nicholas Dheilly", "Team": "SASKATCH", "Total Snaps": 10, "Run-defense Snaps": 2, "Pass-rush Snaps": 6, "Coverage Snaps": 2, "Overall Grade": 72.3, "Run-defense Grade": 66.9, "Pass-rush Grade": 62.0, "Coverage Grade": 60.6}, {"Name": "Nathan Cherry", "Team": "BC", "Total Snaps": 202, "Run-defense Snaps": 74, "Pass-rush Snaps": 128, "Coverage Snaps": 0, "Overall Grade": 69.7, "Run-defense Grade": 71.0, "Pass-rush Grade": 69.6, "Coverage Grade": 60.0}, {"Name": "Vincent Desjardins", "Team": "MONTREAL", "Total Snaps": 22, "Run-defense Snaps": 14, "Pass-rush Snaps": 8, "Coverage Snaps": 0, "Overall Grade": 65.8, "Run-defense Grade": 66.3, "Pass-rush Grade": 58.6, "Coverage Grade": ""}, {"Name": "Samuel Acheampong", "Team": "EDMONTON", "Total Snaps": 367, "Run-defense Snaps": 143, "Pass-rush Snaps": 223, "Coverage Snaps": 1, "Overall Grade": 63.5, "Run-defense Grade": 50.9, "Pass-rush Grade": 73.2, "Coverage Grade": 60.4}, {"Name": "Thiadric Hansen", "Team": "WINNIPEG", "Total Snaps": 70, "Run-defense Snaps": 19, "Pass-rush Snaps": 51, "Coverage Snaps": 0, "Overall Grade": 55.6, "Run-defense Grade": 61.3, "Pass-rush Grade": 52.4, "Coverage Grade": 60.0}, {"Name": "Tanner Schmekel", "Team": "WINNIPEG", "Total Snaps": 38, "Run-defense Snaps": 21, "Pass-rush Snaps": 17, "Coverage Snaps": 0, "Overall Grade": 56.3, "Run-defense Grade": 53.9, "Pass-rush Grade": 60.5, "Coverage Grade": 60.0}], "EDGE": [{"Name": "Ja'Gared Davis", "Team": "HAMILTON", "Total Snaps": 508, "Run-defense Snaps": 158, "Pass-rush Snaps": 307, "Coverage Snaps": 43, "Overall Grade": 58.6, "Run-defense Grade": 59.2, "Pass-rush Grade": 61.7, "Coverage Grade": 55.3}, {"Name": "Willie Jefferson", "Team": "WINNIPEG", "Total Snaps": 907, "Run-defense Snaps": 240, "Pass-rush Snaps": 654, "Coverage Snaps": 13, "Overall Grade": 71.6, "Run-defense Grade": 44.6, "Pass-rush Grade": 83.1, "Coverage Grade": 71.4}, {"Name": "A.C. Leonard", "Team": "EDMONTON", "Total Snaps": 798, "Run-defense Snaps": 302, "Pass-rush Snaps": 369, "Coverage Snaps": 127, "Overall Grade": 60.5, "Run-defense Grade": 50.7, "Pass-rush Grade": 79.6, "Coverage Grade": 45.7}, {"Name": "Jackson Jeffcoat", "Team": "WINNIPEG", "Total Snaps": 552, "Run-defense Snaps": 143, "Pass-rush Snaps": 408, "Coverage Snaps": 1, "Overall Grade": 83.0, "Run-defense Grade": 79.0, "Pass-rush Grade": 79.6, "Coverage Grade": 70.0}, {"Name": "Lorenzo Mauldin IV", "Team": "OTTAWA", "Total Snaps": 880, "Run-defense Snaps": 288, "Pass-rush Snaps": 588, "Coverage Snaps": 4, "Overall Grade": 66.7, "Run-defense Grade": 60.5, "Pass-rush Grade": 66.7, "Coverage Grade": 81.1}, {"Name": "James Vaughters", "Team": "CALGARY", "Total Snaps": 284, "Run-defense Snaps": 102, "Pass-rush Snaps": 182, "Coverage Snaps": 0, "Overall Grade": 73.3, "Run-defense Grade": 60.3, "Pass-rush Grade": 74.2, "Coverage Grade": 75.7}, {"Name": "Julian Howsare", "Team": "CALGARY", "Total Snaps": 915, "Run-defense Snaps": 335, "Pass-rush Snaps": 520, "Coverage Snaps": 60, "Overall Grade": 78.3, "Run-defense Grade": 67.6, "Pass-rush Grade": 81.9, "Coverage Grade": 66.8}, {"Name": "Shawn Lemon", "Team": "MONTREAL", "Total Snaps": 782, "Run-defense Snaps": 258, "Pass-rush Snaps": 481, "Coverage Snaps": 43, "Overall Grade": 68.8, "Run-defense Grade": 54.1, "Pass-rush Grade": 68.1, "Coverage Grade": 87.9}, {"Name": "Pete Robertson", "Team": "SASKATCH", "Total Snaps": 871, "Run-defense Snaps": 322, "Pass-rush Snaps": 450, "Coverage Snaps": 99, "Overall Grade": 61.8, "Run-defense Grade": 61.9, "Pass-rush Grade": 64.4, "Coverage Grade": 56.4}, {"Name": "Michael Wakefield", "Team": "OTTAWA", "Total Snaps": 934, "Run-defense Snaps": 311, "Pass-rush Snaps": 620, "Coverage Snaps": 3, "Overall Grade": 67.2, "Run-defense Grade": 69.7, "Pass-rush Grade": 63.2, "Coverage Grade": 61.5}, {"Name": "Anthony Lanier II", "Team": "SASKATCH", "Total Snaps": 543, "Run-defense Snaps": 208, "Pass-rush Snaps": 328, "Coverage Snaps": 7, "Overall Grade": 72.0, "Run-defense Grade": 60.8, "Pass-rush Grade": 83.5, "Coverage Grade": 56.9}, {"Name": "Jake Ceresna", "Team": "EDMONTON", "Total Snaps": 816, "Run-defense Snaps": 336, "Pass-rush Snaps": 472, "Coverage Snaps": 8, "Overall Grade": 78.7, "Run-defense Grade": 64.6, "Pass-rush Grade": 83.5, "Coverage Grade": 83.0}, {"Name": "Bryan Cox Jr.", "Team": "SASKATCH", "Total Snaps": 228, "Run-defense Snaps": 71, "Pass-rush Snaps": 154, "Coverage Snaps": 3, "Overall Grade": 78.0, "Run-defense Grade": 74.4, "Pass-rush Grade": 72.2, "Coverage Grade": 72.0}, {"Name": "Folarin Orimolade", "Team": "TORONTO", "Total Snaps": 791, "Run-defense Snaps": 233, "Pass-rush Snaps": 500, "Coverage Snaps": 58, "Overall Grade": 72.6, "Run-defense Grade": 56.4, "Pass-rush Grade": 85.1, "Coverage Grade": 49.8}, {"Name": "Nick Usher", "Team": "BC", "Total Snaps": 272, "Run-defense Snaps": 102, "Pass-rush Snaps": 169, "Coverage Snaps": 1, "Overall Grade": 61.6, "Run-defense Grade": 62.8, "Pass-rush Grade": 60.3, "Coverage Grade": 60.9}, {"Name": "Mike Moore", "Team": "CALGARY", "Total Snaps": 358, "Run-defense Snaps": 141, "Pass-rush Snaps": 216, "Coverage Snaps": 1, "Overall Grade": 62.1, "Run-defense Grade": 55.6, "Pass-rush Grade": 67.6, "Coverage Grade": 57.0}, {"Name": "Mason Bennett", "Team": "HAMILTON", "Total Snaps": 139, "Run-defense Snaps": 59, "Pass-rush Snaps": 74, "Coverage Snaps": 6, "Overall Grade": 51.0, "Run-defense Grade": 49.8, "Pass-rush Grade": 56.2, "Coverage Grade": 60.7}, {"Name": "Jamal Davis II", "Team": "HAMILTON", "Total Snaps": 593, "Run-defense Snaps": 204, "Pass-rush Snaps": 384, "Coverage Snaps": 5, "Overall Grade": 65.9, "Run-defense Grade": 69.8, "Pass-rush Grade": 64.4, "Coverage Grade": 82.5}, {"Name": "Anthony Bennett", "Team": "WINNIPEG", "Total Snaps": 235, "Run-defense Snaps": 80, "Pass-rush Snaps": 155, "Coverage Snaps": 0, "Overall Grade": 58.2, "Run-defense Grade": 69.3, "Pass-rush Grade": 52.9, "Coverage Grade": 60.4}, {"Name": "Jonathan Kongbo", "Team": "HAMILTON", "Total Snaps": 309, "Run-defense Snaps": 106, "Pass-rush Snaps": 195, "Coverage Snaps": 8, "Overall Grade": 61.4, "Run-defense Grade": 69.6, "Pass-rush Grade": 57.3, "Coverage Grade": 52.8}, {"Name": "Nick Heninger", "Team": "MONTREAL", "Total Snaps": 21, "Run-defense Snaps": 7, "Pass-rush Snaps": 14, "Coverage Snaps": 0, "Overall Grade": 71.0, "Run-defense Grade": 66.5, "Pass-rush Grade": 66.7, "Coverage Grade": ""}, {"Name": "Isaac Adeyemi-Berglund", "Team": "CALGARY", "Total Snaps": 680, "Run-defense Snaps": 249, "Pass-rush Snaps": 417, "Coverage Snaps": 14, "Overall Grade": 60.7, "Run-defense Grade": 57.6, "Pass-rush Grade": 62.0, "Coverage Grade": 55.8}, {"Name": "Brandon Barlow", "Team": "TORONTO", "Total Snaps": 464, "Run-defense Snaps": 147, "Pass-rush Snaps": 301, "Coverage Snaps": 16, "Overall Grade": 79.5, "Run-defense Grade": 76.4, "Pass-rush Grade": 73.7, "Coverage Grade": 72.3}, {"Name": "DeShawn Stevens", "Team": "OTTAWA", "Total Snaps": 13, "Run-defense Snaps": 11, "Pass-rush Snaps": 2, "Coverage Snaps": 0, "Overall Grade": 65.6, "Run-defense Grade": 65.0, "Pass-rush Grade": 58.8, "Coverage Grade": ""}, {"Name": "Bryce Carter", "Team": "OTTAWA", "Total Snaps": 845, "Run-defense Snaps": 291, "Pass-rush Snaps": 548, "Coverage Snaps": 6, "Overall Grade": 79.7, "Run-defense Grade": 76.0, "Pass-rush Grade": 76.5, "Coverage Grade": 68.4}, {"Name": "T.J. Brunson", "Team": "SASKATCH", "Total Snaps": 59, "Run-defense Snaps": 34, "Pass-rush Snaps": 6, "Coverage Snaps": 19, "Overall Grade": 66.4, "Run-defense Grade": 71.3, "Pass-rush Grade": 55.7, "Coverage Grade": 60.6}, {"Name": "Emeke Egbule", "Team": "EDMONTON", "Total Snaps": 77, "Run-defense Snaps": 35, "Pass-rush Snaps": 37, "Coverage Snaps": 5, "Overall Grade": 48.6, "Run-defense Grade": 47.0, "Pass-rush Grade": 52.1, "Coverage Grade": 61.6}, {"Name": "Malik Carney", "Team": "HAMILTON", "Total Snaps": 847, "Run-defense Snaps": 307, "Pass-rush Snaps": 491, "Coverage Snaps": 49, "Overall Grade": 73.3, "Run-defense Grade": 67.2, "Pass-rush Grade": 74.9, "Coverage Grade": 67.7}, {"Name": "Avery Ellis", "Team": "MONTREAL", "Total Snaps": 373, "Run-defense Snaps": 131, "Pass-rush Snaps": 189, "Coverage Snaps": 53, "Overall Grade": 66.8, "Run-defense Grade": 64.8, "Pass-rush Grade": 65.6, "Coverage Grade": 60.8}, {"Name": "Sione Teuhema", "Team": "BC", "Total Snaps": 679, "Run-defense Snaps": 224, "Pass-rush Snaps": 448, "Coverage Snaps": 7, "Overall Grade": 65.3, "Run-defense Grade": 74.8, "Pass-rush Grade": 62.6, "Coverage Grade": 52.1}, {"Name": "Penei Pavihi", "Team": "HAMILTON", "Total Snaps": 43, "Run-defense Snaps": 36, "Pass-rush Snaps": 1, "Coverage Snaps": 6, "Overall Grade": 58.4, "Run-defense Grade": 77.1, "Pass-rush Grade": 60.0, "Coverage Grade": 29.7}, {"Name": "Carthell Flowers-Lloyd", "Team": "HAMILTON", "Total Snaps": 8, "Run-defense Snaps": 6, "Pass-rush Snaps": 1, "Coverage Snaps": 1, "Overall Grade": 66.0, "Run-defense Grade": 60.0, "Pass-rush Grade": 60.0, "Coverage Grade": 61.1}, {"Name": "TyJuan Garbutt", "Team": "WINNIPEG", "Total Snaps": 19, "Run-defense Snaps": 8, "Pass-rush Snaps": 11, "Coverage Snaps": 0, "Overall Grade": 42.3, "Run-defense Grade": 47.3, "Pass-rush Grade": 48.8, "Coverage Grade": ""}, {"Name": "Toby Ndukwe", "Team": "CALGARY", "Total Snaps": 29, "Run-defense Snaps": 19, "Pass-rush Snaps": 10, "Coverage Snaps": 0, "Overall Grade": 54.0, "Run-defense Grade": 50.1, "Pass-rush Grade": 61.6, "Coverage Grade": ""}, {"Name": "T.D. Moultry", "Team": "MONTREAL", "Total Snaps": 27, "Run-defense Snaps": 6, "Pass-rush Snaps": 21, "Coverage Snaps": 0, "Overall Grade": 86.7, "Run-defense Grade": 63.3, "Pass-rush Grade": 65.5, "Coverage Grade": 83.1}, {"Name": "Tre' Crawford", "Team": "HAMILTON", "Total Snaps": 324, "Run-defense Snaps": 132, "Pass-rush Snaps": 179, "Coverage Snaps": 13, "Overall Grade": 63.1, "Run-defense Grade": 66.7, "Pass-rush Grade": 62.0, "Coverage Grade": 59.9}, {"Name": "Elliott Brown", "Team": "EDMONTON", "Total Snaps": 246, "Run-defense Snaps": 106, "Pass-rush Snaps": 115, "Coverage Snaps": 25, "Overall Grade": 64.4, "Run-defense Grade": 64.2, "Pass-rush Grade": 62.6, "Coverage Grade": 65.1}, {"Name": "Lwal Uguak", "Team": "MONTREAL", "Total Snaps": 589, "Run-defense Snaps": 212, "Pass-rush Snaps": 355, "Coverage Snaps": 22, "Overall Grade": 65.5, "Run-defense Grade": 69.7, "Pass-rush Grade": 61.8, "Coverage Grade": 60.8}, {"Name": "Habakkuk Baldonado", "Team": "SASKATCH", "Total Snaps": 11, "Run-defense Snaps": 8, "Pass-rush Snaps": 3, "Coverage Snaps": 0, "Overall Grade": 81.4, "Run-defense Grade": 76.2, "Pass-rush Grade": 67.4, "Coverage Grade": ""}, {"Name": "Amir Siddiq", "Team": "BC", "Total Snaps": 216, "Run-defense Snaps": 75, "Pass-rush Snaps": 140, "Coverage Snaps": 1, "Overall Grade": 62.6, "Run-defense Grade": 60.0, "Pass-rush Grade": 63.9, "Coverage Grade": 74.7}, {"Name": "Mathieu Betts", "Team": "BC", "Total Snaps": 788, "Run-defense Snaps": 233, "Pass-rush Snaps": 514, "Coverage Snaps": 41, "Overall Grade": 78.5, "Run-defense Grade": 52.9, "Pass-rush Grade": 90.4, "Coverage Grade": 79.9}, {"Name": "Thomas Costigan", "Team": "TORONTO", "Total Snaps": 430, "Run-defense Snaps": 104, "Pass-rush Snaps": 308, "Coverage Snaps": 18, "Overall Grade": 73.0, "Run-defense Grade": 74.2, "Pass-rush Grade": 69.6, "Coverage Grade": 63.7}, {"Name": "Brayden Thomas", "Team": "SASKATCH", "Total Snaps": 7, "Run-defense Snaps": 4, "Pass-rush Snaps": 2, "Coverage Snaps": 1, "Overall Grade": 46.4, "Run-defense Grade": 52.1, "Pass-rush Grade": 57.7, "Coverage Grade": 60.0}, {"Name": "Woodly Appolon", "Team": "EDMONTON", "Total Snaps": 28, "Run-defense Snaps": 17, "Pass-rush Snaps": 6, "Coverage Snaps": 5, "Overall Grade": 51.2, "Run-defense Grade": 48.4, "Pass-rush Grade": 56.8, "Coverage Grade": 61.7}, {"Name": "Celestin Haba", "Team": "WINNIPEG", "Total Snaps": 236, "Run-defense Snaps": 73, "Pass-rush Snaps": 160, "Coverage Snaps": 3, "Overall Grade": 73.3, "Run-defense Grade": 63.1, "Pass-rush Grade": 75.0, "Coverage Grade": 58.4}, {"Name": "Noah Curtis", "Team": "EDMONTON", "Total Snaps": 464, "Run-defense Snaps": 211, "Pass-rush Snaps": 241, "Coverage Snaps": 12, "Overall Grade": 58.7, "Run-defense Grade": 58.9, "Pass-rush Grade": 59.9, "Coverage Grade": 66.6}, {"Name": "Jacob Plamondon", "Team": "EDMONTON", "Total Snaps": 27, "Run-defense Snaps": 6, "Pass-rush Snaps": 21, "Coverage Snaps": 0, "Overall Grade": 64.4, "Run-defense Grade": 47.7, "Pass-rush Grade": 72.2, "Coverage Grade": ""}, {"Name": "Charlie Moore", "Team": "CALGARY", "Total Snaps": 11, "Run-defense Snaps": 8, "Pass-rush Snaps": 1, "Coverage Snaps": 2, "Overall Grade": 54.0, "Run-defense Grade": 60.0, "Pass-rush Grade": 59.8, "Coverage Grade": 60.7}, {"Name": "Kene Onyeka", "Team": "OTTAWA", "Total Snaps": 224, "Run-defense Snaps": 65, "Pass-rush Snaps": 158, "Coverage Snaps": 1, "Overall Grade": 60.4, "Run-defense Grade": 58.0, "Pass-rush Grade": 63.3, "Coverage Grade": 55.1}, {"Name": "Joshua Archibald", "Team": "BC", "Total Snaps": 29, "Run-defense Snaps": 18, "Pass-rush Snaps": 11, "Coverage Snaps": 0, "Overall Grade": 58.4, "Run-defense Grade": 56.7, "Pass-rush Grade": 60.1, "Coverage Grade": ""}, {"Name": "Anthony Federico", "Team": "HAMILTON", "Total Snaps": 5, "Run-defense Snaps": 0, "Pass-rush Snaps": 4, "Coverage Snaps": 1, "Overall Grade": 57.6, "Run-defense Grade": "", "Pass-rush Grade": 56.4, "Coverage Grade": 60.0}, {"Name": "Nigel Romick", "Team": "OTTAWA", "Total Snaps": 7, "Run-defense Snaps": 5, "Pass-rush Snaps": 2, "Coverage Snaps": 0, "Overall Grade": 60.7, "Run-defense Grade": 60.0, "Pass-rush Grade": 58.7, "Coverage Grade": ""}, {"Name": "Robbie Smith", "Team": "TORONTO", "Total Snaps": 584, "Run-defense Snaps": 162, "Pass-rush Snaps": 384, "Coverage Snaps": 38, "Overall Grade": 66.4, "Run-defense Grade": 72.1, "Pass-rush Grade": 59.1, "Coverage Grade": 67.5}, {"Name": "David Menard", "Team": "BC", "Total Snaps": 603, "Run-defense Snaps": 155, "Pass-rush Snaps": 423, "Coverage Snaps": 25, "Overall Grade": 64.2, "Run-defense Grade": 59.0, "Pass-rush Grade": 64.1, "Coverage Grade": 67.0}, {"Name": "Benoit Marion", "Team": "TORONTO", "Total Snaps": 63, "Run-defense Snaps": 15, "Pass-rush Snaps": 47, "Coverage Snaps": 1, "Overall Grade": 54.7, "Run-defense Grade": 54.9, "Pass-rush Grade": 55.5, "Coverage Grade": 60.0}, {"Name": "Kelon Thomas", "Team": "CALGARY", "Total Snaps": 65, "Run-defense Snaps": 39, "Pass-rush Snaps": 26, "Coverage Snaps": 0, "Overall Grade": 58.0, "Run-defense Grade": 54.8, "Pass-rush Grade": 60.8, "Coverage Grade": ""}, {"Name": "Aidan John", "Team": "OTTAWA", "Total Snaps": 29, "Run-defense Snaps": 7, "Pass-rush Snaps": 22, "Coverage Snaps": 0, "Overall Grade": 62.0, "Run-defense Grade": 72.1, "Pass-rush Grade": 52.7, "Coverage Grade": ""}, {"Name": "Lake Korte-Moore", "Team": "SASKATCH", "Total Snaps": 227, "Run-defense Snaps": 103, "Pass-rush Snaps": 113, "Coverage Snaps": 11, "Overall Grade": 59.6, "Run-defense Grade": 59.3, "Pass-rush Grade": 53.3, "Coverage Grade": 72.7}], "LB": [{"Name": "Simoni Lawrence", "Team": "HAMILTON", "Total Snaps": 1009, "Run-defense Snaps": 369, "Pass-rush Snaps": 128, "Coverage Snaps": 512, "Overall Grade": 62.6, "Run-defense Grade": 70.0, "Pass-rush Grade": 72.4, "Coverage Grade": 51.7}, {"Name": "Larry Dean", "Team": "SASKATCH", "Total Snaps": 995, "Run-defense Snaps": 377, "Pass-rush Snaps": 116, "Coverage Snaps": 502, "Overall Grade": 62.8, "Run-defense Grade": 73.3, "Pass-rush Grade": 49.2, "Coverage Grade": 60.5}, {"Name": "Adarius Taylor", "Team": "CALGARY", "Total Snaps": 75, "Run-defense Snaps": 30, "Pass-rush Snaps": 6, "Coverage Snaps": 39, "Overall Grade": 88.2, "Run-defense Grade": 93.1, "Pass-rush Grade": 64.9, "Coverage Grade": 69.2}, {"Name": "Micah Awe", "Team": "CALGARY", "Total Snaps": 1081, "Run-defense Snaps": 397, "Pass-rush Snaps": 114, "Coverage Snaps": 570, "Overall Grade": 58.6, "Run-defense Grade": 55.7, "Pass-rush Grade": 64.5, "Coverage Grade": 63.0}, {"Name": "Kyrie Wilson", "Team": "WINNIPEG", "Total Snaps": 528, "Run-defense Snaps": 144, "Pass-rush Snaps": 81, "Coverage Snaps": 303, "Overall Grade": 76.0, "Run-defense Grade": 82.5, "Pass-rush Grade": 62.1, "Coverage Grade": 76.3}, {"Name": "Wynton McManis", "Team": "TORONTO", "Total Snaps": 927, "Run-defense Snaps": 256, "Pass-rush Snaps": 171, "Coverage Snaps": 500, "Overall Grade": 75.7, "Run-defense Grade": 72.2, "Pass-rush Grade": 64.4, "Coverage Grade": 84.7}, {"Name": "Chris Edwards", "Team": "HAMILTON", "Total Snaps": 985, "Run-defense Snaps": 329, "Pass-rush Snaps": 121, "Coverage Snaps": 535, "Overall Grade": 65.2, "Run-defense Grade": 66.7, "Pass-rush Grade": 60.2, "Coverage Grade": 68.9}, {"Name": "Darnell Sankey", "Team": "MONTREAL", "Total Snaps": 516, "Run-defense Snaps": 166, "Pass-rush Snaps": 57, "Coverage Snaps": 293, "Overall Grade": 42.0, "Run-defense Grade": 27.8, "Pass-rush Grade": 69.5, "Coverage Grade": 52.0}, {"Name": "Boseko Lokombo", "Team": "BC", "Total Snaps": 848, "Run-defense Snaps": 284, "Pass-rush Snaps": 128, "Coverage Snaps": 436, "Overall Grade": 64.0, "Run-defense Grade": 52.3, "Pass-rush Grade": 70.0, "Coverage Grade": 69.5}, {"Name": "Adam Bighill", "Team": "WINNIPEG", "Total Snaps": 879, "Run-defense Snaps": 248, "Pass-rush Snaps": 155, "Coverage Snaps": 476, "Overall Grade": 56.5, "Run-defense Grade": 64.5, "Pass-rush Grade": 60.7, "Coverage Grade": 47.9}, {"Name": "Avery Williams", "Team": "MONTREAL", "Total Snaps": 511, "Run-defense Snaps": 136, "Pass-rush Snaps": 73, "Coverage Snaps": 302, "Overall Grade": 61.4, "Run-defense Grade": 54.7, "Pass-rush Grade": 57.2, "Coverage Grade": 66.2}, {"Name": "Jovan Santos-Knox", "Team": "OTTAWA", "Total Snaps": 603, "Run-defense Snaps": 205, "Pass-rush Snaps": 83, "Coverage Snaps": 315, "Overall Grade": 68.3, "Run-defense Grade": 88.4, "Pass-rush Grade": 60.6, "Coverage Grade": 48.0}, {"Name": "Kevin Francis", "Team": "OTTAWA", "Total Snaps": 16, "Run-defense Snaps": 14, "Pass-rush Snaps": 1, "Coverage Snaps": 1, "Overall Grade": 66.8, "Run-defense Grade": 66.1, "Pass-rush Grade": 60.0, "Coverage Grade": 60.0}, {"Name": "Jameer Thurman", "Team": "HAMILTON", "Total Snaps": 1023, "Run-defense Snaps": 372, "Pass-rush Snaps": 149, "Coverage Snaps": 502, "Overall Grade": 63.3, "Run-defense Grade": 52.6, "Pass-rush Grade": 66.8, "Coverage Grade": 71.0}, {"Name": "Tyrice Beverette", "Team": "MONTREAL", "Total Snaps": 1195, "Run-defense Snaps": 411, "Pass-rush Snaps": 256, "Coverage Snaps": 528, "Overall Grade": 72.9, "Run-defense Grade": 66.9, "Pass-rush Grade": 72.2, "Coverage Grade": 77.1}, {"Name": "Jordan Herdman-Reed", "Team": "CALGARY", "Total Snaps": 19, "Run-defense Snaps": 17, "Pass-rush Snaps": 1, "Coverage Snaps": 1, "Overall Grade": 64.6, "Run-defense Grade": 64.8, "Pass-rush Grade": 60.0, "Coverage Grade": 60.0}, {"Name": "Eli Mencer", "Team": "EDMONTON", "Total Snaps": 1, "Run-defense Snaps": 0, "Pass-rush Snaps": 0, "Coverage Snaps": 1, "Overall Grade": 60.4, "Run-defense Grade": "", "Pass-rush Grade": "", "Coverage Grade": 60.0}, {"Name": "Brian Cole II", "Team": "WINNIPEG", "Total Snaps": 111, "Run-defense Snaps": 18, "Pass-rush Snaps": 25, "Coverage Snaps": 68, "Overall Grade": 78.5, "Run-defense Grade": 91.2, "Pass-rush Grade": 71.1, "Coverage Grade": 70.7}, {"Name": "Josh Woods", "Team": "BC", "Total Snaps": 690, "Run-defense Snaps": 244, "Pass-rush Snaps": 139, "Coverage Snaps": 307, "Overall Grade": 64.5, "Run-defense Grade": 61.2, "Pass-rush Grade": 57.5, "Coverage Grade": 70.7}, {"Name": "Malik Clements", "Team": "WINNIPEG", "Total Snaps": 378, "Run-defense Snaps": 87, "Pass-rush Snaps": 70, "Coverage Snaps": 221, "Overall Grade": 61.0, "Run-defense Grade": 49.3, "Pass-rush Grade": 62.7, "Coverage Grade": 66.2}, {"Name": "Frankie Griffin", "Team": "OTTAWA", "Total Snaps": 628, "Run-defense Snaps": 212, "Pass-rush Snaps": 84, "Coverage Snaps": 332, "Overall Grade": 59.3, "Run-defense Grade": 72.2, "Pass-rush Grade": 59.3, "Coverage Grade": 50.2}, {"Name": "Chris Moore", "Team": "MONTREAL", "Total Snaps": 21, "Run-defense Snaps": 7, "Pass-rush Snaps": 9, "Coverage Snaps": 5, "Overall Grade": 57.0, "Run-defense Grade": 48.6, "Pass-rush Grade": 57.5, "Coverage Grade": 65.4}, {"Name": "Bryce Notree", "Team": "MONTREAL", "Total Snaps": 277, "Run-defense Snaps": 116, "Pass-rush Snaps": 39, "Coverage Snaps": 122, "Overall Grade": 54.4, "Run-defense Grade": 45.7, "Pass-rush Grade": 62.9, "Coverage Grade": 67.4}, {"Name": "Jonathan Jones", "Team": "TORONTO", "Total Snaps": 621, "Run-defense Snaps": 190, "Pass-rush Snaps": 135, "Coverage Snaps": 296, "Overall Grade": 59.3, "Run-defense Grade": 68.7, "Pass-rush Grade": 68.4, "Coverage Grade": 45.6}, {"Name": "Perry Young", "Team": "CALGARY", "Total Snaps": 7, "Run-defense Snaps": 6, "Pass-rush Snaps": 0, "Coverage Snaps": 1, "Overall Grade": 65.7, "Run-defense Grade": 63.3, "Pass-rush Grade": "", "Coverage Grade": 60.0}, {"Name": "Les Maruo", "Team": "WINNIPEG", "Total Snaps": 95, "Run-defense Snaps": 28, "Pass-rush Snaps": 35, "Coverage Snaps": 32, "Overall Grade": 69.0, "Run-defense Grade": 75.0, "Pass-rush Grade": 56.2, "Coverage Grade": 69.2}, {"Name": "Robert Priester", "Team": "TORONTO", "Total Snaps": 44, "Run-defense Snaps": 4, "Pass-rush Snaps": 2, "Coverage Snaps": 38, "Overall Grade": 63.3, "Run-defense Grade": 60.0, "Pass-rush Grade": 66.6, "Coverage Grade": 62.0}, {"Name": "Jordan Williams", "Team": "TORONTO", "Total Snaps": 660, "Run-defense Snaps": 199, "Pass-rush Snaps": 108, "Coverage Snaps": 353, "Overall Grade": 54.2, "Run-defense Grade": 78.8, "Pass-rush Grade": 53.0, "Coverage Grade": 38.9}, {"Name": "Nyles Morgan", "Team": "EDMONTON", "Total Snaps": 832, "Run-defense Snaps": 344, "Pass-rush Snaps": 75, "Coverage Snaps": 413, "Overall Grade": 46.9, "Run-defense Grade": 52.2, "Pass-rush Grade": 64.4, "Coverage Grade": 38.7}, {"Name": "Kyle Wilson", "Team": "HAMILTON", "Total Snaps": 89, "Run-defense Snaps": 58, "Pass-rush Snaps": 8, "Coverage Snaps": 23, "Overall Grade": 68.6, "Run-defense Grade": 71.5, "Pass-rush Grade": 59.6, "Coverage Grade": 62.3}, {"Name": "Cameron Judge", "Team": "CALGARY", "Total Snaps": 1000, "Run-defense Snaps": 355, "Pass-rush Snaps": 125, "Coverage Snaps": 520, "Overall Grade": 76.3, "Run-defense Grade": 61.6, "Pass-rush Grade": 69.7, "Coverage Grade": 88.8}, {"Name": "Vosean Joseph", "Team": "OTTAWA", "Total Snaps": 5, "Run-defense Snaps": 5, "Pass-rush Snaps": 0, "Coverage Snaps": 0, "Overall Grade": 50.0, "Run-defense Grade": 59.2, "Pass-rush Grade": "", "Coverage Grade": ""}, {"Name": "Derrick Moncrief", "Team": "SASKATCH", "Total Snaps": 730, "Run-defense Snaps": 283, "Pass-rush Snaps": 38, "Coverage Snaps": 409, "Overall Grade": 52.3, "Run-defense Grade": 58.8, "Pass-rush Grade": 63.7, "Coverage Grade": 50.4}, {"Name": "Adarius Pickett", "Team": "TORONTO", "Total Snaps": 1092, "Run-defense Snaps": 297, "Pass-rush Snaps": 187, "Coverage Snaps": 608, "Overall Grade": 78.9, "Run-defense Grade": 81.6, "Pass-rush Grade": 71.8, "Coverage Grade": 78.7}, {"Name": "Kobe Williams", "Team": "CALGARY", "Total Snaps": 1087, "Run-defense Snaps": 401, "Pass-rush Snaps": 10, "Coverage Snaps": 676, "Overall Grade": 79.1, "Run-defense Grade": 73.2, "Pass-rush Grade": 75.7, "Coverage Grade": 79.1}, {"Name": "Tony Jones", "Team": "EDMONTON", "Total Snaps": 370, "Run-defense Snaps": 190, "Pass-rush Snaps": 19, "Coverage Snaps": 161, "Overall Grade": 61.7, "Run-defense Grade": 59.3, "Pass-rush Grade": 65.8, "Coverage Grade": 61.4}, {"Name": "Silas Stewart", "Team": "CALGARY", "Total Snaps": 143, "Run-defense Snaps": 66, "Pass-rush Snaps": 16, "Coverage Snaps": 61, "Overall Grade": 45.2, "Run-defense Grade": 54.5, "Pass-rush Grade": 58.0, "Coverage Grade": 42.7}, {"Name": "Titus Wall", "Team": "CALGARY", "Total Snaps": 537, "Run-defense Snaps": 172, "Pass-rush Snaps": 39, "Coverage Snaps": 326, "Overall Grade": 68.5, "Run-defense Grade": 73.2, "Pass-rush Grade": 55.1, "Coverage Grade": 69.5}, {"Name": "Tyrell Richards", "Team": "MONTREAL", "Total Snaps": 98, "Run-defense Snaps": 48, "Pass-rush Snaps": 19, "Coverage Snaps": 31, "Overall Grade": 78.4, "Run-defense Grade": 69.5, "Pass-rush Grade": 75.1, "Coverage Grade": 78.6}, {"Name": "Gary Johnson Jr.", "Team": "OTTAWA", "Total Snaps": 15, "Run-defense Snaps": 9, "Pass-rush Snaps": 1, "Coverage Snaps": 5, "Overall Grade": 68.6, "Run-defense Grade": 67.8, "Pass-rush Grade": 59.4, "Coverage Grade": 62.2}, {"Name": "Brooks Parker", "Team": "BC", "Total Snaps": 1, "Run-defense Snaps": 1, "Pass-rush Snaps": 0, "Coverage Snaps": 0, "Overall Grade": 60.0, "Run-defense Grade": 60.0, "Pass-rush Grade": "", "Coverage Grade": ""}, {"Name": "Tyron Vrede", "Team": "OTTAWA", "Total Snaps": 111, "Run-defense Snaps": 45, "Pass-rush Snaps": 1, "Coverage Snaps": 65, "Overall Grade": 69.4, "Run-defense Grade": 68.3, "Pass-rush Grade": 59.7, "Coverage Grade": 71.3}, {"Name": "Darius Williams", "Team": "CALGARY", "Total Snaps": 71, "Run-defense Snaps": 37, "Pass-rush Snaps": 5, "Coverage Snaps": 29, "Overall Grade": 51.0, "Run-defense Grade": 55.3, "Pass-rush Grade": 46.3, "Coverage Grade": 53.7}, {"Name": "Enock Makonzo", "Team": "EDMONTON", "Total Snaps": 230, "Run-defense Snaps": 104, "Pass-rush Snaps": 16, "Coverage Snaps": 110, "Overall Grade": 61.6, "Run-defense Grade": 73.8, "Pass-rush Grade": 58.1, "Coverage Grade": 55.7}, {"Name": "Ryan Saddler", "Team": "OTTAWA", "Total Snaps": 37, "Run-defense Snaps": 8, "Pass-rush Snaps": 2, "Coverage Snaps": 27, "Overall Grade": 35.2, "Run-defense Grade": 69.0, "Pass-rush Grade": 58.6, "Coverage Grade": 30.4}, {"Name": "Chizi Umunakwe", "Team": "OTTAWA", "Total Snaps": 92, "Run-defense Snaps": 43, "Pass-rush Snaps": 8, "Coverage Snaps": 41, "Overall Grade": 46.6, "Run-defense Grade": 75.0, "Pass-rush Grade": 51.2, "Coverage Grade": 37.5}, {"Name": "Brody Buck", "Team": "MONTREAL", "Total Snaps": 36, "Run-defense Snaps": 7, "Pass-rush Snaps": 7, "Coverage Snaps": 22, "Overall Grade": 57.0, "Run-defense Grade": 51.8, "Pass-rush Grade": 53.5, "Coverage Grade": 62.8}, {"Name": "Bailey Feltmate", "Team": "HAMILTON", "Total Snaps": 27, "Run-defense Snaps": 26, "Pass-rush Snaps": 1, "Coverage Snaps": 0, "Overall Grade": 73.4, "Run-defense Grade": 72.3, "Pass-rush Grade": 60.0, "Coverage Grade": ""}, {"Name": "Jayden Dalke", "Team": "SASKATCH", "Total Snaps": 653, "Run-defense Snaps": 239, "Pass-rush Snaps": 16, "Coverage Snaps": 398, "Overall Grade": 57.4, "Run-defense Grade": 58.5, "Pass-rush Grade": 74.6, "Coverage Grade": 56.4}, {"Name": "Ben Hladik", "Team": "BC", "Total Snaps": 999, "Run-defense Snaps": 320, "Pass-rush Snaps": 117, "Coverage Snaps": 562, "Overall Grade": 64.5, "Run-defense Grade": 59.7, "Pass-rush Grade": 71.4, "Coverage Grade": 62.3}, {"Name": "Micah Teitz", "Team": "SASKATCH", "Total Snaps": 776, "Run-defense Snaps": 311, "Pass-rush Snaps": 98, "Coverage Snaps": 367, "Overall Grade": 50.0, "Run-defense Grade": 64.4, "Pass-rush Grade": 53.8, "Coverage Grade": 38.6}, {"Name": "Adam Konar", "Team": "EDMONTON", "Total Snaps": 899, "Run-defense Snaps": 369, "Pass-rush Snaps": 50, "Coverage Snaps": 480, "Overall Grade": 52.3, "Run-defense Grade": 53.5, "Pass-rush Grade": 63.3, "Coverage Grade": 47.1}, {"Name": "Trevor Hoyte", "Team": "TORONTO", "Total Snaps": 10, "Run-defense Snaps": 6, "Pass-rush Snaps": 1, "Coverage Snaps": 3, "Overall Grade": 41.4, "Run-defense Grade": 62.9, "Pass-rush Grade": 60.0, "Coverage Grade": 38.7}, {"Name": "Jack Cassar", "Team": "TORONTO", "Total Snaps": 61, "Run-defense Snaps": 28, "Pass-rush Snaps": 6, "Coverage Snaps": 27, "Overall Grade": 61.5, "Run-defense Grade": 61.5, "Pass-rush Grade": 55.0, "Coverage Grade": 62.2}, {"Name": "A.J. Allen", "Team": "SASKATCH", "Total Snaps": 190, "Run-defense Snaps": 67, "Pass-rush Snaps": 23, "Coverage Snaps": 100, "Overall Grade": 68.9, "Run-defense Grade": 72.4, "Pass-rush Grade": 60.3, "Coverage Grade": 66.4}, {"Name": "Maxime Rouyer", "Team": "BC", "Total Snaps": 9, "Run-defense Snaps": 8, "Pass-rush Snaps": 0, "Coverage Snaps": 1, "Overall Grade": 78.9, "Run-defense Grade": 77.6, "Pass-rush Grade": "", "Coverage Grade": 60.0}, {"Name": "Jesse Briggs", "Team": "WINNIPEG", "Total Snaps": 110, "Run-defense Snaps": 10, "Pass-rush Snaps": 42, "Coverage Snaps": 58, "Overall Grade": 56.4, "Run-defense Grade": 55.3, "Pass-rush Grade": 58.1, "Coverage Grade": 56.7}, {"Name": "Justin Herdman-Reed", "Team": "SASKATCH", "Total Snaps": 9, "Run-defense Snaps": 8, "Pass-rush Snaps": 0, "Coverage Snaps": 1, "Overall Grade": 51.4, "Run-defense Grade": 51.1, "Pass-rush Grade": "", "Coverage Grade": 60.0}, {"Name": "Fraser Sopik", "Team": "HAMILTON", "Total Snaps": 9, "Run-defense Snaps": 6, "Pass-rush Snaps": 2, "Coverage Snaps": 1, "Overall Grade": 73.8, "Run-defense Grade": 74.3, "Pass-rush Grade": 59.0, "Coverage Grade": 60.0}, {"Name": "Shayne Gauthier", "Team": "WINNIPEG", "Total Snaps": 81, "Run-defense Snaps": 24, "Pass-rush Snaps": 13, "Coverage Snaps": 44, "Overall Grade": 65.4, "Run-defense Grade": 67.7, "Pass-rush Grade": 67.0, "Coverage Grade": 68.9}, {"Name": "Adam Auclair", "Team": "OTTAWA", "Total Snaps": 542, "Run-defense Snaps": 172, "Pass-rush Snaps": 66, "Coverage Snaps": 304, "Overall Grade": 61.3, "Run-defense Grade": 78.3, "Pass-rush Grade": 59.3, "Coverage Grade": 48.5}, {"Name": "Alexandre Gagne", "Team": "MONTREAL", "Total Snaps": 6, "Run-defense Snaps": 5, "Pass-rush Snaps": 0, "Coverage Snaps": 1, "Overall Grade": 69.5, "Run-defense Grade": 66.0, "Pass-rush Grade": "", "Coverage Grade": 61.0}, {"Name": "Tanner Gaskill-Cadwallader", "Team": "WINNIPEG", "Total Snaps": 50, "Run-defense Snaps": 29, "Pass-rush Snaps": 3, "Coverage Snaps": 18, "Overall Grade": 58.2, "Run-defense Grade": 44.1, "Pass-rush Grade": 60.0, "Coverage Grade": 70.6}, {"Name": "Isaiah Guzylak-Messam", "Team": "BC", "Total Snaps": 2, "Run-defense Snaps": 2, "Pass-rush Snaps": 0, "Coverage Snaps": 0, "Overall Grade": 64.4, "Run-defense Grade": 61.4, "Pass-rush Grade": "", "Coverage Grade": ""}, {"Name": "Brad Cowan", "Team": "CALGARY", "Total Snaps": 6, "Run-defense Snaps": 5, "Pass-rush Snaps": 1, "Coverage Snaps": 0, "Overall Grade": 62.6, "Run-defense Grade": 60.0, "Pass-rush Grade": 60.0, "Coverage Grade": ""}, {"Name": "Brian Harelimana", "Team": "SASKATCH", "Total Snaps": 11, "Run-defense Snaps": 9, "Pass-rush Snaps": 1, "Coverage Snaps": 1, "Overall Grade": 70.1, "Run-defense Grade": 70.9, "Pass-rush Grade": 59.4, "Coverage Grade": 60.0}, {"Name": "Frederic Chagnon", "Team": "MONTREAL", "Total Snaps": 385, "Run-defense Snaps": 150, "Pass-rush Snaps": 72, "Coverage Snaps": 163, "Overall Grade": 39.2, "Run-defense Grade": 47.1, "Pass-rush Grade": 47.4, "Coverage Grade": 39.9}, {"Name": "Ryder Varga", "Team": "BC", "Total Snaps": 133, "Run-defense Snaps": 70, "Pass-rush Snaps": 16, "Coverage Snaps": 47, "Overall Grade": 56.9, "Run-defense Grade": 60.6, "Pass-rush Grade": 59.6, "Coverage Grade": 52.1}, {"Name": "Jacob Taylor", "Team": "EDMONTON", "Total Snaps": 32, "Run-defense Snaps": 11, "Pass-rush Snaps": 4, "Coverage Snaps": 17, "Overall Grade": 49.0, "Run-defense Grade": 60.5, "Pass-rush Grade": 56.4, "Coverage Grade": 46.7}, {"Name": "Jack Hinsperger", "Team": "BC", "Total Snaps": 2, "Run-defense Snaps": 2, "Pass-rush Snaps": 0, "Coverage Snaps": 0, "Overall Grade": 61.0, "Run-defense Grade": 60.0, "Pass-rush Grade": "", "Coverage Grade": ""}, {"Name": "Matt Dean", "Team": "SASKATCH", "Total Snaps": 4, "Run-defense Snaps": 4, "Pass-rush Snaps": 0, "Coverage Snaps": 0, "Overall Grade": 60.8, "Run-defense Grade": 60.0, "Pass-rush Grade": "", "Coverage Grade": ""}], "CB": [{"Name": "Abdul Kanneh", "Team": "OTTAWA", "Total Snaps": 554, "Run-defense Snaps": 165, "Pass-rush Snaps": 11, "Coverage Snaps": 378, "Overall Grade": 58.3, "Run-defense Grade": 52.7, "Pass-rush Grade": 74.9, "Coverage Grade": 58.8}, {"Name": "Desmond Lawrence", "Team": "WINNIPEG", "Total Snaps": 160, "Run-defense Snaps": 34, "Pass-rush Snaps": 0, "Coverage Snaps": 126, "Overall Grade": 71.9, "Run-defense Grade": 76.3, "Pass-rush Grade": "", "Coverage Grade": 70.4}, {"Name": "Cariel Brooks", "Team": "OTTAWA", "Total Snaps": 413, "Run-defense Snaps": 137, "Pass-rush Snaps": 20, "Coverage Snaps": 256, "Overall Grade": 68.3, "Run-defense Grade": 63.0, "Pass-rush Grade": 56.7, "Coverage Grade": 69.6}, {"Name": "Nick Marshall", "Team": "SASKATCH", "Total Snaps": 949, "Run-defense Snaps": 371, "Pass-rush Snaps": 0, "Coverage Snaps": 578, "Overall Grade": 72.0, "Run-defense Grade": 47.7, "Pass-rush Grade": "", "Coverage Grade": 77.2}, {"Name": "Garry Peters", "Team": "BC", "Total Snaps": 1147, "Run-defense Snaps": 373, "Pass-rush Snaps": 1, "Coverage Snaps": 773, "Overall Grade": 89.4, "Run-defense Grade": 73.3, "Pass-rush Grade": 60.0, "Coverage Grade": 89.6}, {"Name": "Richard Leonard", "Team": "HAMILTON", "Total Snaps": 896, "Run-defense Snaps": 335, "Pass-rush Snaps": 2, "Coverage Snaps": 559, "Overall Grade": 89.9, "Run-defense Grade": 81.7, "Pass-rush Grade": 58.9, "Coverage Grade": 89.1}, {"Name": "Winston Rose", "Team": "WINNIPEG", "Total Snaps": 482, "Run-defense Snaps": 138, "Pass-rush Snaps": 1, "Coverage Snaps": 343, "Overall Grade": 71.6, "Run-defense Grade": 76.9, "Pass-rush Grade": 60.0, "Coverage Grade": 69.9}, {"Name": "Rolan Milligan", "Team": "SASKATCH", "Total Snaps": 188, "Run-defense Snaps": 67, "Pass-rush Snaps": 0, "Coverage Snaps": 121, "Overall Grade": 75.5, "Run-defense Grade": 74.6, "Pass-rush Grade": "", "Coverage Grade": 74.1}, {"Name": "Tre Roberson", "Team": "CALGARY", "Total Snaps": 982, "Run-defense Snaps": 360, "Pass-rush Snaps": 0, "Coverage Snaps": 622, "Overall Grade": 74.4, "Run-defense Grade": 67.8, "Pass-rush Grade": "", "Coverage Grade": 75.3}, {"Name": "Jeremy Clark", "Team": "SASKATCH", "Total Snaps": 709, "Run-defense Snaps": 274, "Pass-rush Snaps": 0, "Coverage Snaps": 435, "Overall Grade": 64.3, "Run-defense Grade": 87.1, "Pass-rush Grade": "", "Coverage Grade": 62.0}, {"Name": "Jonathan Moxey", "Team": "CALGARY", "Total Snaps": 946, "Run-defense Snaps": 344, "Pass-rush Snaps": 5, "Coverage Snaps": 597, "Overall Grade": 71.0, "Run-defense Grade": 67.2, "Pass-rush Grade": 65.7, "Coverage Grade": 71.9}, {"Name": "Marcus Sayles", "Team": "BC", "Total Snaps": 984, "Run-defense Snaps": 276, "Pass-rush Snaps": 4, "Coverage Snaps": 704, "Overall Grade": 70.6, "Run-defense Grade": 59.2, "Pass-rush Grade": 57.2, "Coverage Grade": 72.4}, {"Name": "Najee Murray", "Team": "MONTREAL", "Total Snaps": 319, "Run-defense Snaps": 104, "Pass-rush Snaps": 10, "Coverage Snaps": 205, "Overall Grade": 76.8, "Run-defense Grade": 73.5, "Pass-rush Grade": 67.3, "Coverage Grade": 76.1}, {"Name": "Sherrod Baltimore", "Team": "OTTAWA", "Total Snaps": 489, "Run-defense Snaps": 135, "Pass-rush Snaps": 1, "Coverage Snaps": 353, "Overall Grade": 82.3, "Run-defense Grade": 72.1, "Pass-rush Grade": 60.0, "Coverage Grade": 81.9}, {"Name": "Reggie Stubblefield", "Team": "MONTREAL", "Total Snaps": 777, "Run-defense Snaps": 251, "Pass-rush Snaps": 83, "Coverage Snaps": 443, "Overall Grade": 90.9, "Run-defense Grade": 77.2, "Pass-rush Grade": 74.1, "Coverage Grade": 91.6}, {"Name": "Evan Holm", "Team": "WINNIPEG", "Total Snaps": 974, "Run-defense Snaps": 267, "Pass-rush Snaps": 7, "Coverage Snaps": 700, "Overall Grade": 79.4, "Run-defense Grade": 76.2, "Pass-rush Grade": 71.4, "Coverage Grade": 79.7}, {"Name": "Kabion Ento", "Team": "MONTREAL", "Total Snaps": 995, "Run-defense Snaps": 343, "Pass-rush Snaps": 2, "Coverage Snaps": 650, "Overall Grade": 87.8, "Run-defense Grade": 84.4, "Pass-rush Grade": 53.9, "Coverage Grade": 86.1}, {"Name": "Marcus Lewis", "Team": "EDMONTON", "Total Snaps": 645, "Run-defense Snaps": 253, "Pass-rush Snaps": 3, "Coverage Snaps": 389, "Overall Grade": 68.5, "Run-defense Grade": 73.1, "Pass-rush Grade": 52.4, "Coverage Grade": 67.8}, {"Name": "Jamal Parker Jr.", "Team": "WINNIPEG", "Total Snaps": 237, "Run-defense Snaps": 53, "Pass-rush Snaps": 1, "Coverage Snaps": 183, "Overall Grade": 71.3, "Run-defense Grade": 75.1, "Pass-rush Grade": 55.4, "Coverage Grade": 70.3}, {"Name": "Amari Henderson", "Team": "SASKATCH", "Total Snaps": 938, "Run-defense Snaps": 370, "Pass-rush Snaps": 1, "Coverage Snaps": 567, "Overall Grade": 70.5, "Run-defense Grade": 47.6, "Pass-rush Grade": 60.0, "Coverage Grade": 76.4}, {"Name": "Will Sunderland", "Team": "HAMILTON", "Total Snaps": 266, "Run-defense Snaps": 86, "Pass-rush Snaps": 0, "Coverage Snaps": 180, "Overall Grade": 72.3, "Run-defense Grade": 62.6, "Pass-rush Grade": "", "Coverage Grade": 72.5}, {"Name": "Jamal Peters", "Team": "TORONTO", "Total Snaps": 760, "Run-defense Snaps": 185, "Pass-rush Snaps": 5, "Coverage Snaps": 570, "Overall Grade": 82.1, "Run-defense Grade": 69.4, "Pass-rush Grade": 75.6, "Coverage Grade": 84.6}, {"Name": "Nafees Lyon", "Team": "MONTREAL", "Total Snaps": 53, "Run-defense Snaps": 14, "Pass-rush Snaps": 0, "Coverage Snaps": 39, "Overall Grade": 67.3, "Run-defense Grade": 62.5, "Pass-rush Grade": "", "Coverage Grade": 66.9}, {"Name": "Kai Gray", "Team": "EDMONTON", "Total Snaps": 1026, "Run-defense Snaps": 432, "Pass-rush Snaps": 5, "Coverage Snaps": 589, "Overall Grade": 72.4, "Run-defense Grade": 65.1, "Pass-rush Grade": 57.2, "Coverage Grade": 73.0}, {"Name": "Tyrique McGhee", "Team": "WINNIPEG", "Total Snaps": 24, "Run-defense Snaps": 10, "Pass-rush Snaps": 0, "Coverage Snaps": 14, "Overall Grade": 61.0, "Run-defense Grade": 62.3, "Pass-rush Grade": "", "Coverage Grade": 59.9}, {"Name": "Rodney Clemons", "Team": "SASKATCH", "Total Snaps": 6, "Run-defense Snaps": 6, "Pass-rush Snaps": 0, "Coverage Snaps": 0, "Overall Grade": 61.7, "Run-defense Grade": 60.7, "Pass-rush Grade": "", "Coverage Grade": ""}, {"Name": "Monshadrik Hunter", "Team": "OTTAWA", "Total Snaps": 231, "Run-defense Snaps": 87, "Pass-rush Snaps": 0, "Coverage Snaps": 144, "Overall Grade": 62.2, "Run-defense Grade": 65.0, "Pass-rush Grade": "", "Coverage Grade": 64.1}, {"Name": "Mike Jones", "Team": "BC", "Total Snaps": 340, "Run-defense Snaps": 123, "Pass-rush Snaps": 0, "Coverage Snaps": 217, "Overall Grade": 61.7, "Run-defense Grade": 53.2, "Pass-rush Grade": "", "Coverage Grade": 62.6}, {"Name": "Abu Daramy-Swaray", "Team": "WINNIPEG", "Total Snaps": 271, "Run-defense Snaps": 70, "Pass-rush Snaps": 0, "Coverage Snaps": 201, "Overall Grade": 69.1, "Run-defense Grade": 67.0, "Pass-rush Grade": "", "Coverage Grade": 68.5}, {"Name": "Demerio Houston", "Team": "WINNIPEG", "Total Snaps": 817, "Run-defense Snaps": 227, "Pass-rush Snaps": 1, "Coverage Snaps": 589, "Overall Grade": 77.0, "Run-defense Grade": 59.5, "Pass-rush Grade": 59.4, "Coverage Grade": 78.1}, {"Name": "Emmanuel Rugamba", "Team": "BC", "Total Snaps": 917, "Run-defense Snaps": 286, "Pass-rush Snaps": 93, "Coverage Snaps": 538, "Overall Grade": 70.0, "Run-defense Grade": 80.6, "Pass-rush Grade": 72.8, "Coverage Grade": 64.8}, {"Name": "Trumaine Washington", "Team": "SASKATCH", "Total Snaps": 234, "Run-defense Snaps": 97, "Pass-rush Snaps": 0, "Coverage Snaps": 137, "Overall Grade": 62.0, "Run-defense Grade": 66.5, "Pass-rush Grade": "", "Coverage Grade": 60.3}, {"Name": "Natrell Jamerson", "Team": "CALGARY", "Total Snaps": 185, "Run-defense Snaps": 62, "Pass-rush Snaps": 0, "Coverage Snaps": 123, "Overall Grade": 57.7, "Run-defense Grade": 66.9, "Pass-rush Grade": "", "Coverage Grade": 57.8}, {"Name": "Tarvarus McFadden", "Team": "TORONTO", "Total Snaps": 787, "Run-defense Snaps": 210, "Pass-rush Snaps": 0, "Coverage Snaps": 577, "Overall Grade": 77.5, "Run-defense Grade": 71.3, "Pass-rush Grade": "", "Coverage Grade": 78.7}, {"Name": "DaShaun Amos", "Team": "TORONTO", "Total Snaps": 491, "Run-defense Snaps": 142, "Pass-rush Snaps": 0, "Coverage Snaps": 349, "Overall Grade": 75.4, "Run-defense Grade": 62.4, "Pass-rush Grade": "", "Coverage Grade": 77.0}, {"Name": "Donovan Olumba", "Team": "EDMONTON", "Total Snaps": 145, "Run-defense Snaps": 64, "Pass-rush Snaps": 0, "Coverage Snaps": 81, "Overall Grade": 57.3, "Run-defense Grade": 68.7, "Pass-rush Grade": "", "Coverage Grade": 57.1}, {"Name": "Brad Muhammad", "Team": "CALGARY", "Total Snaps": 337, "Run-defense Snaps": 119, "Pass-rush Snaps": 6, "Coverage Snaps": 212, "Overall Grade": 65.8, "Run-defense Grade": 74.1, "Pass-rush Grade": 54.6, "Coverage Grade": 64.5}, {"Name": "Kordell Rodgers", "Team": "MONTREAL", "Total Snaps": 653, "Run-defense Snaps": 227, "Pass-rush Snaps": 0, "Coverage Snaps": 426, "Overall Grade": 73.5, "Run-defense Grade": 63.8, "Pass-rush Grade": "", "Coverage Grade": 73.6}, {"Name": "Hakeem Bailey", "Team": "OTTAWA", "Total Snaps": 220, "Run-defense Snaps": 88, "Pass-rush Snaps": 2, "Coverage Snaps": 130, "Overall Grade": 81.4, "Run-defense Grade": 76.5, "Pass-rush Grade": 58.2, "Coverage Grade": 80.6}, {"Name": "Deandre Lamont", "Team": "OTTAWA", "Total Snaps": 402, "Run-defense Snaps": 96, "Pass-rush Snaps": 8, "Coverage Snaps": 298, "Overall Grade": 57.5, "Run-defense Grade": 67.3, "Pass-rush Grade": 56.2, "Coverage Grade": 56.5}, {"Name": "William Poole", "Team": "SASKATCH", "Total Snaps": 21, "Run-defense Snaps": 7, "Pass-rush Snaps": 0, "Coverage Snaps": 14, "Overall Grade": 54.4, "Run-defense Grade": 60.6, "Pass-rush Grade": "", "Coverage Grade": 53.9}, {"Name": "Josh Valentine-Turner", "Team": "OTTAWA", "Total Snaps": 61, "Run-defense Snaps": 19, "Pass-rush Snaps": 0, "Coverage Snaps": 42, "Overall Grade": 56.1, "Run-defense Grade": 71.7, "Pass-rush Grade": "", "Coverage Grade": 53.3}, {"Name": "Shaquille St-Lot", "Team": "CALGARY", "Total Snaps": 5, "Run-defense Snaps": 3, "Pass-rush Snaps": 0, "Coverage Snaps": 2, "Overall Grade": 64.3, "Run-defense Grade": 61.7, "Pass-rush Grade": "", "Coverage Grade": 61.0}, {"Name": "Dionte Ruffin", "Team": "MONTREAL", "Total Snaps": 735, "Run-defense Snaps": 212, "Pass-rush Snaps": 1, "Coverage Snaps": 522, "Overall Grade": 65.9, "Run-defense Grade": 52.1, "Pass-rush Grade": 59.7, "Coverage Grade": 67.8}, {"Name": "Darrius Bratton", "Team": "EDMONTON", "Total Snaps": 1030, "Run-defense Snaps": 436, "Pass-rush Snaps": 5, "Coverage Snaps": 589, "Overall Grade": 68.9, "Run-defense Grade": 62.7, "Pass-rush Grade": 66.3, "Coverage Grade": 69.8}, {"Name": "Ciante Evans", "Team": "MONTREAL", "Total Snaps": 733, "Run-defense Snaps": 228, "Pass-rush Snaps": 0, "Coverage Snaps": 505, "Overall Grade": 74.6, "Run-defense Grade": 72.4, "Pass-rush Grade": "", "Coverage Grade": 73.8}, {"Name": "Dexter Lawson Jr.", "Team": "HAMILTON", "Total Snaps": 482, "Run-defense Snaps": 163, "Pass-rush Snaps": 0, "Coverage Snaps": 319, "Overall Grade": 54.6, "Run-defense Grade": 65.7, "Pass-rush Grade": "", "Coverage Grade": 51.8}, {"Name": "Deontai Williams", "Team": "SASKATCH", "Total Snaps": 771, "Run-defense Snaps": 297, "Pass-rush Snaps": 3, "Coverage Snaps": 471, "Overall Grade": 62.2, "Run-defense Grade": 63.7, "Pass-rush Grade": 59.2, "Coverage Grade": 61.0}, {"Name": "Kenneth George Jr.", "Team": "HAMILTON", "Total Snaps": 993, "Run-defense Snaps": 335, "Pass-rush Snaps": 6, "Coverage Snaps": 652, "Overall Grade": 66.4, "Run-defense Grade": 68.8, "Pass-rush Grade": 71.5, "Coverage Grade": 65.2}, {"Name": "Dishon McNary", "Team": "MONTREAL", "Total Snaps": 11, "Run-defense Snaps": 0, "Pass-rush Snaps": 0, "Coverage Snaps": 11, "Overall Grade": 59.3, "Run-defense Grade": "", "Pass-rush Grade": "", "Coverage Grade": 59.3}, {"Name": "Tobias Harris", "Team": "OTTAWA", "Total Snaps": 1, "Run-defense Snaps": 0, "Pass-rush Snaps": 0, "Coverage Snaps": 1, "Overall Grade": 59.5, "Run-defense Grade": "", "Pass-rush Grade": "", "Coverage Grade": 60.0}, {"Name": "Benjie Franklin", "Team": "TORONTO", "Total Snaps": 49, "Run-defense Snaps": 13, "Pass-rush Snaps": 0, "Coverage Snaps": 36, "Overall Grade": 71.8, "Run-defense Grade": 46.2, "Pass-rush Grade": "", "Coverage Grade": 75.0}, {"Name": "Lawrence Woods III", "Team": "HAMILTON", "Total Snaps": 264, "Run-defense Snaps": 91, "Pass-rush Snaps": 0, "Coverage Snaps": 173, "Overall Grade": 61.1, "Run-defense Grade": 72.5, "Pass-rush Grade": "", "Coverage Grade": 59.0}, {"Name": "Brandin Dandridge", "Team": "OTTAWA", "Total Snaps": 711, "Run-defense Snaps": 236, "Pass-rush Snaps": 1, "Coverage Snaps": 474, "Overall Grade": 75.5, "Run-defense Grade": 60.2, "Pass-rush Grade": 60.0, "Coverage Grade": 78.0}, {"Name": "David Vereen", "Team": "HAMILTON", "Total Snaps": 39, "Run-defense Snaps": 11, "Pass-rush Snaps": 0, "Coverage Snaps": 28, "Overall Grade": 60.2, "Run-defense Grade": 61.6, "Pass-rush Grade": "", "Coverage Grade": 59.6}, {"Name": "Ed Gainey", "Team": "EDMONTON", "Total Snaps": 626, "Run-defense Snaps": 242, "Pass-rush Snaps": 14, "Coverage Snaps": 370, "Overall Grade": 65.4, "Run-defense Grade": 64.3, "Pass-rush Grade": 70.2, "Coverage Grade": 67.9}, {"Name": "Nick Taylor", "Team": "CALGARY", "Total Snaps": 604, "Run-defense Snaps": 225, "Pass-rush Snaps": 12, "Coverage Snaps": 367, "Overall Grade": 65.6, "Run-defense Grade": 68.5, "Pass-rush Grade": 71.3, "Coverage Grade": 64.2}, {"Name": "Kosi Onyeka", "Team": "SASKATCH", "Total Snaps": 32, "Run-defense Snaps": 22, "Pass-rush Snaps": 0, "Coverage Snaps": 10, "Overall Grade": 61.1, "Run-defense Grade": 64.8, "Pass-rush Grade": "", "Coverage Grade": 58.5}, {"Name": "Raheem Wilson", "Team": "MONTREAL", "Total Snaps": 50, "Run-defense Snaps": 18, "Pass-rush Snaps": 0, "Coverage Snaps": 32, "Overall Grade": 53.1, "Run-defense Grade": 53.9, "Pass-rush Grade": "", "Coverage Grade": 53.7}, {"Name": "Jalon Edwards-Cooper", "Team": "BC", "Total Snaps": 678, "Run-defense Snaps": 211, "Pass-rush Snaps": 1, "Coverage Snaps": 466, "Overall Grade": 78.7, "Run-defense Grade": 87.7, "Pass-rush Grade": 57.8, "Coverage Grade": 77.0}, {"Name": "Souleymane Karamoko", "Team": "WINNIPEG", "Total Snaps": 24, "Run-defense Snaps": 10, "Pass-rush Snaps": 0, "Coverage Snaps": 14, "Overall Grade": 47.1, "Run-defense Grade": 32.8, "Pass-rush Grade": "", "Coverage Grade": 58.8}, {"Name": "Malcolm Thompson", "Team": "CALGARY", "Total Snaps": 20, "Run-defense Snaps": 5, "Pass-rush Snaps": 0, "Coverage Snaps": 15, "Overall Grade": 73.9, "Run-defense Grade": 60.0, "Pass-rush Grade": "", "Coverage Grade": 74.3}, {"Name": "Kerfalla-Emmanuel Exume", "Team": "WINNIPEG", "Total Snaps": 13, "Run-defense Snaps": 5, "Pass-rush Snaps": 1, "Coverage Snaps": 7, "Overall Grade": 50.5, "Run-defense Grade": 60.0, "Pass-rush Grade": 60.0, "Coverage Grade": 50.7}, {"Name": "Jamie Harry", "Team": "TORONTO", "Total Snaps": 213, "Run-defense Snaps": 61, "Pass-rush Snaps": 0, "Coverage Snaps": 152, "Overall Grade": 63.7, "Run-defense Grade": 57.5, "Pass-rush Grade": "", "Coverage Grade": 66.8}, {"Name": "Daniel Valente", "Team": "TORONTO", "Total Snaps": 1, "Run-defense Snaps": 0, "Pass-rush Snaps": 0, "Coverage Snaps": 1, "Overall Grade": 60.0, "Run-defense Grade": "", "Pass-rush Grade": "", "Coverage Grade": 60.0}, {"Name": "Tysen-Otis Copeland", "Team": "MONTREAL", "Total Snaps": 13, "Run-defense Snaps": 9, "Pass-rush Snaps": 0, "Coverage Snaps": 4, "Overall Grade": 55.6, "Run-defense Grade": 62.0, "Pass-rush Grade": "", "Coverage Grade": 53.8}, {"Name": "Julian Charles", "Team": "CALGARY", "Total Snaps": 154, "Run-defense Snaps": 48, "Pass-rush Snaps": 0, "Coverage Snaps": 106, "Overall Grade": 64.3, "Run-defense Grade": 58.9, "Pass-rush Grade": "", "Coverage Grade": 64.5}, {"Name": "Qwan'tez Stiggers", "Team": "TORONTO", "Total Snaps": 972, "Run-defense Snaps": 283, "Pass-rush Snaps": 4, "Coverage Snaps": 685, "Overall Grade": 85.3, "Run-defense Grade": 73.4, "Pass-rush Grade": 70.8, "Coverage Grade": 85.0}, {"Name": "Jake Kelly", "Team": "WINNIPEG", "Total Snaps": 44, "Run-defense Snaps": 15, "Pass-rush Snaps": 2, "Coverage Snaps": 27, "Overall Grade": 66.0, "Run-defense Grade": 66.6, "Pass-rush Grade": 65.6, "Coverage Grade": 62.1}, {"Name": "Lucas Cormier", "Team": "OTTAWA", "Total Snaps": 7, "Run-defense Snaps": 1, "Pass-rush Snaps": 1, "Coverage Snaps": 5, "Overall Grade": 51.9, "Run-defense Grade": 60.0, "Pass-rush Grade": 57.8, "Coverage Grade": 53.4}, {"Name": "Patrick Burke Jr.", "Team": "HAMILTON", "Total Snaps": 19, "Run-defense Snaps": 4, "Pass-rush Snaps": 3, "Coverage Snaps": 12, "Overall Grade": 49.9, "Run-defense Grade": 66.7, "Pass-rush Grade": 57.7, "Coverage Grade": 45.8}, {"Name": "Siriman Harrison Bagayogo", "Team": "BC", "Total Snaps": 50, "Run-defense Snaps": 12, "Pass-rush Snaps": 0, "Coverage Snaps": 38, "Overall Grade": 38.1, "Run-defense Grade": 60.8, "Pass-rush Grade": "", "Coverage Grade": 36.5}, {"Name": "Alijah McGhee", "Team": "OTTAWA", "Total Snaps": 120, "Run-defense Snaps": 37, "Pass-rush Snaps": 0, "Coverage Snaps": 83, "Overall Grade": 74.7, "Run-defense Grade": 95.1, "Pass-rush Grade": "", "Coverage Grade": 68.4}], "S": [{"Name": "Shaquille Richardson", "Team": "CALGARY", "Total Snaps": 106, "Run-defense Snaps": 43, "Pass-rush Snaps": 2, "Coverage Snaps": 61, "Overall Grade": 46.8, "Run-defense Grade": 52.5, "Pass-rush Grade": 59.8, "Coverage Grade": 45.8}, {"Name": "Loucheiz Purifoy", "Team": "EDMONTON", "Total Snaps": 852, "Run-defense Snaps": 373, "Pass-rush Snaps": 28, "Coverage Snaps": 451, "Overall Grade": 72.8, "Run-defense Grade": 73.8, "Pass-rush Grade": 60.9, "Coverage Grade": 72.9}, {"Name": "Alden Darby Jr.", "Team": "WINNIPEG", "Total Snaps": 319, "Run-defense Snaps": 78, "Pass-rush Snaps": 26, "Coverage Snaps": 215, "Overall Grade": 64.2, "Run-defense Grade": 60.0, "Pass-rush Grade": 53.9, "Coverage Grade": 66.6}, {"Name": "Robertson Daniel", "Team": "TORONTO", "Total Snaps": 584, "Run-defense Snaps": 156, "Pass-rush Snaps": 41, "Coverage Snaps": 387, "Overall Grade": 79.3, "Run-defense Grade": 63.9, "Pass-rush Grade": 64.9, "Coverage Grade": 82.2}, {"Name": "Javien Elliott", "Team": "HAMILTON", "Total Snaps": 763, "Run-defense Snaps": 285, "Pass-rush Snaps": 10, "Coverage Snaps": 468, "Overall Grade": 64.9, "Run-defense Grade": 59.0, "Pass-rush Grade": 60.4, "Coverage Grade": 65.6}, {"Name": "Quincy Mauger", "Team": "BC", "Total Snaps": 1006, "Run-defense Snaps": 305, "Pass-rush Snaps": 34, "Coverage Snaps": 667, "Overall Grade": 81.8, "Run-defense Grade": 68.7, "Pass-rush Grade": 71.2, "Coverage Grade": 86.4}, {"Name": "Tobi Antigha", "Team": "EDMONTON", "Total Snaps": 16, "Run-defense Snaps": 12, "Pass-rush Snaps": 0, "Coverage Snaps": 4, "Overall Grade": 52.2, "Run-defense Grade": 59.2, "Pass-rush Grade": "", "Coverage Grade": 50.5}, {"Name": "Branden Dozier", "Team": "CALGARY", "Total Snaps": 908, "Run-defense Snaps": 322, "Pass-rush Snaps": 70, "Coverage Snaps": 516, "Overall Grade": 65.3, "Run-defense Grade": 59.5, "Pass-rush Grade": 69.8, "Coverage Grade": 66.6}, {"Name": "Brandon Alexander", "Team": "WINNIPEG", "Total Snaps": 938, "Run-defense Snaps": 256, "Pass-rush Snaps": 17, "Coverage Snaps": 665, "Overall Grade": 74.2, "Run-defense Grade": 73.2, "Pass-rush Grade": 55.8, "Coverage Grade": 77.7}, {"Name": "J.R. Reed", "Team": "MONTREAL", "Total Snaps": 329, "Run-defense Snaps": 129, "Pass-rush Snaps": 23, "Coverage Snaps": 177, "Overall Grade": 60.9, "Run-defense Grade": 78.7, "Pass-rush Grade": 51.3, "Coverage Grade": 63.4}, {"Name": "Marloshawn Franklin Jr.", "Team": "EDMONTON", "Total Snaps": 424, "Run-defense Snaps": 154, "Pass-rush Snaps": 10, "Coverage Snaps": 260, "Overall Grade": 67.4, "Run-defense Grade": 50.6, "Pass-rush Grade": 56.7, "Coverage Grade": 76.3}, {"Name": "Eric Sutton", "Team": "TORONTO", "Total Snaps": 13, "Run-defense Snaps": 2, "Pass-rush Snaps": 0, "Coverage Snaps": 11, "Overall Grade": 67.4, "Run-defense Grade": 60.0, "Pass-rush Grade": "", "Coverage Grade": 67.7}, {"Name": "C.J. Reavis", "Team": "SASKATCH", "Total Snaps": 596, "Run-defense Snaps": 223, "Pass-rush Snaps": 63, "Coverage Snaps": 310, "Overall Grade": 60.9, "Run-defense Grade": 70.7, "Pass-rush Grade": 62.0, "Coverage Grade": 56.0}, {"Name": "Alonzo Addae", "Team": "OTTAWA", "Total Snaps": 507, "Run-defense Snaps": 147, "Pass-rush Snaps": 26, "Coverage Snaps": 334, "Overall Grade": 63.3, "Run-defense Grade": 65.3, "Pass-rush Grade": 72.0, "Coverage Grade": 61.4}, {"Name": "Patrice Rene", "Team": "BC", "Total Snaps": 2, "Run-defense Snaps": 2, "Pass-rush Snaps": 0, "Coverage Snaps": 0, "Overall Grade": 60.0, "Run-defense Grade": 60.0, "Pass-rush Grade": "", "Coverage Grade": ""}, {"Name": "Mark McLaurin", "Team": "EDMONTON", "Total Snaps": 469, "Run-defense Snaps": 181, "Pass-rush Snaps": 15, "Coverage Snaps": 273, "Overall Grade": 68.6, "Run-defense Grade": 77.7, "Pass-rush Grade": 74.1, "Coverage Grade": 65.2}, {"Name": "Damon Webb", "Team": "OTTAWA", "Total Snaps": 756, "Run-defense Snaps": 232, "Pass-rush Snaps": 23, "Coverage Snaps": 501, "Overall Grade": 73.4, "Run-defense Grade": 76.5, "Pass-rush Grade": 78.3, "Coverage Grade": 70.3}, {"Name": "Douglas Coleman II", "Team": "OTTAWA", "Total Snaps": 929, "Run-defense Snaps": 310, "Pass-rush Snaps": 93, "Coverage Snaps": 526, "Overall Grade": 68.7, "Run-defense Grade": 67.9, "Pass-rush Grade": 67.9, "Coverage Grade": 69.3}, {"Name": "Deatrick Nichols", "Team": "WINNIPEG", "Total Snaps": 968, "Run-defense Snaps": 264, "Pass-rush Snaps": 46, "Coverage Snaps": 658, "Overall Grade": 61.3, "Run-defense Grade": 69.4, "Pass-rush Grade": 54.6, "Coverage Grade": 58.8}, {"Name": "Wesley Sutton", "Team": "MONTREAL", "Total Snaps": 1054, "Run-defense Snaps": 349, "Pass-rush Snaps": 63, "Coverage Snaps": 642, "Overall Grade": 64.5, "Run-defense Grade": 68.7, "Pass-rush Grade": 59.3, "Coverage Grade": 62.4}, {"Name": "Jeremie Dominique", "Team": "EDMONTON", "Total Snaps": 55, "Run-defense Snaps": 27, "Pass-rush Snaps": 3, "Coverage Snaps": 25, "Overall Grade": 58.4, "Run-defense Grade": 52.1, "Pass-rush Grade": 56.4, "Coverage Grade": 62.8}, {"Name": "Tae Daley", "Team": "CALGARY", "Total Snaps": 67, "Run-defense Snaps": 22, "Pass-rush Snaps": 2, "Coverage Snaps": 43, "Overall Grade": 49.3, "Run-defense Grade": 71.0, "Pass-rush Grade": 57.6, "Coverage Grade": 44.7}, {"Name": "Marc-Antoine Dequoy", "Team": "MONTREAL", "Total Snaps": 1196, "Run-defense Snaps": 413, "Pass-rush Snaps": 20, "Coverage Snaps": 763, "Overall Grade": 93.0, "Run-defense Grade": 69.1, "Pass-rush Grade": 65.4, "Coverage Grade": 92.9}, {"Name": "Michael Griffin II", "Team": "CALGARY", "Total Snaps": 400, "Run-defense Snaps": 148, "Pass-rush Snaps": 14, "Coverage Snaps": 238, "Overall Grade": 56.3, "Run-defense Grade": 72.3, "Pass-rush Grade": 55.5, "Coverage Grade": 50.0}, {"Name": "Dwayne Thompson II", "Team": "EDMONTON", "Total Snaps": 458, "Run-defense Snaps": 208, "Pass-rush Snaps": 9, "Coverage Snaps": 241, "Overall Grade": 57.0, "Run-defense Grade": 56.3, "Pass-rush Grade": 62.7, "Coverage Grade": 56.4}, {"Name": "T.J. Lee", "Team": "BC", "Total Snaps": 1104, "Run-defense Snaps": 354, "Pass-rush Snaps": 23, "Coverage Snaps": 727, "Overall Grade": 66.2, "Run-defense Grade": 70.8, "Pass-rush Grade": 61.8, "Coverage Grade": 64.4}, {"Name": "Stavros Katsantonis", "Team": "HAMILTON", "Total Snaps": 882, "Run-defense Snaps": 303, "Pass-rush Snaps": 26, "Coverage Snaps": 553, "Overall Grade": 80.2, "Run-defense Grade": 60.9, "Pass-rush Grade": 64.7, "Coverage Grade": 87.9}, {"Name": "Nic Cross", "Team": "HAMILTON", "Total Snaps": 38, "Run-defense Snaps": 4, "Pass-rush Snaps": 1, "Coverage Snaps": 33, "Overall Grade": 55.2, "Run-defense Grade": 60.0, "Pass-rush Grade": 59.4, "Coverage Grade": 59.4}, {"Name": "Nick Statz", "Team": "CALGARY", "Total Snaps": 143, "Run-defense Snaps": 60, "Pass-rush Snaps": 5, "Coverage Snaps": 78, "Overall Grade": 75.3, "Run-defense Grade": 74.8, "Pass-rush Grade": 54.0, "Coverage Grade": 75.1}, {"Name": "Tunde Adeleke", "Team": "HAMILTON", "Total Snaps": 506, "Run-defense Snaps": 203, "Pass-rush Snaps": 3, "Coverage Snaps": 300, "Overall Grade": 67.6, "Run-defense Grade": 74.4, "Pass-rush Grade": 65.7, "Coverage Grade": 64.4}, {"Name": "Justin Howell", "Team": "OTTAWA", "Total Snaps": 556, "Run-defense Snaps": 178, "Pass-rush Snaps": 6, "Coverage Snaps": 372, "Overall Grade": 63.1, "Run-defense Grade": 77.5, "Pass-rush Grade": 81.0, "Coverage Grade": 57.7}, {"Name": "Jonathan Edouard", "Team": "TORONTO", "Total Snaps": 103, "Run-defense Snaps": 23, "Pass-rush Snaps": 1, "Coverage Snaps": 79, "Overall Grade": 65.2, "Run-defense Grade": 66.1, "Pass-rush Grade": 71.3, "Coverage Grade": 63.1}, {"Name": "Royce Metchie", "Team": "TORONTO", "Total Snaps": 1138, "Run-defense Snaps": 319, "Pass-rush Snaps": 7, "Coverage Snaps": 812, "Overall Grade": 77.4, "Run-defense Grade": 80.3, "Pass-rush Grade": 46.8, "Coverage Grade": 80.0}, {"Name": "Nelson Lokombo", "Team": "SASKATCH", "Total Snaps": 105, "Run-defense Snaps": 38, "Pass-rush Snaps": 0, "Coverage Snaps": 67, "Overall Grade": 52.9, "Run-defense Grade": 62.8, "Pass-rush Grade": "", "Coverage Grade": 50.3}, {"Name": "Joshua Hagerty", "Team": "TORONTO", "Total Snaps": 78, "Run-defense Snaps": 31, "Pass-rush Snaps": 0, "Coverage Snaps": 47, "Overall Grade": 42.2, "Run-defense Grade": 63.9, "Pass-rush Grade": "", "Coverage Grade": 34.7}, {"Name": "Adrian Greene", "Team": "BC", "Total Snaps": 434, "Run-defense Snaps": 125, "Pass-rush Snaps": 7, "Coverage Snaps": 302, "Overall Grade": 70.1, "Run-defense Grade": 74.2, "Pass-rush Grade": 55.9, "Coverage Grade": 69.5}, {"Name": "Nick Hallett", "Team": "WINNIPEG", "Total Snaps": 80, "Run-defense Snaps": 29, "Pass-rush Snaps": 3, "Coverage Snaps": 48, "Overall Grade": 73.1, "Run-defense Grade": 55.4, "Pass-rush Grade": 65.3, "Coverage Grade": 76.6}, {"Name": "Zach Lindley", "Team": "MONTREAL", "Total Snaps": 20, "Run-defense Snaps": 5, "Pass-rush Snaps": 0, "Coverage Snaps": 15, "Overall Grade": 66.6, "Run-defense Grade": 62.5, "Pass-rush Grade": "", "Coverage Grade": 61.6}, {"Name": "Scott Hutter", "Team": "EDMONTON", "Total Snaps": 82, "Run-defense Snaps": 28, "Pass-rush Snaps": 4, "Coverage Snaps": 50, "Overall Grade": 62.1, "Run-defense Grade": 57.4, "Pass-rush Grade": 55.3, "Coverage Grade": 64.0}, {"Name": "Redha Kramdi", "Team": "WINNIPEG", "Total Snaps": 636, "Run-defense Snaps": 170, "Pass-rush Snaps": 52, "Coverage Snaps": 414, "Overall Grade": 66.2, "Run-defense Grade": 62.0, "Pass-rush Grade": 59.5, "Coverage Grade": 68.0}, {"Name": "Ty Cranston", "Team": "OTTAWA", "Total Snaps": 59, "Run-defense Snaps": 12, "Pass-rush Snaps": 6, "Coverage Snaps": 41, "Overall Grade": 74.7, "Run-defense Grade": 50.2, "Pass-rush Grade": 55.0, "Coverage Grade": 82.3}, {"Name": "Bailey Devine-Scott", "Team": "CALGARY", "Total Snaps": 12, "Run-defense Snaps": 3, "Pass-rush Snaps": 1, "Coverage Snaps": 8, "Overall Grade": 68.4, "Run-defense Grade": 60.0, "Pass-rush Grade": 60.0, "Coverage Grade": 68.7}, {"Name": "Mason Pierce", "Team": "TORONTO", "Total Snaps": 542, "Run-defense Snaps": 134, "Pass-rush Snaps": 34, "Coverage Snaps": 374, "Overall Grade": 91.3, "Run-defense Grade": 64.6, "Pass-rush Grade": 66.4, "Coverage Grade": 91.7}, {"Name": "Jaxon Ford", "Team": "SASKATCH", "Total Snaps": 172, "Run-defense Snaps": 85, "Pass-rush Snaps": 4, "Coverage Snaps": 83, "Overall Grade": 70.8, "Run-defense Grade": 50.1, "Pass-rush Grade": 66.3, "Coverage Grade": 78.2}]
+    };
+
+    const gradeColors = [
+      { min: 90, color: '#0087A4' },
+      { min: 80, color: '#009B47' },
+      { min: 70, color: '#76C101' },
+      { min: 60, color: '#FFD002' },
+      { min: 50, color: '#FE9D00' },
+      { min: 40, color: '#FC6900' },
+      { min: 30, color: '#E04215' },
+      { min: 0,  color: '#C61A2A' }
+    ];
+
+    let currentData = [];
+    let currentSortCol = "Overall Grade";
+    let currentSortDir = "desc";
+
+    function loadPosition(pos) {
+      document.querySelectorAll('.position-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent === pos) btn.classList.add('active');
+      });
+      currentData = embeddedData[pos].slice();
+      sortAndRender();
+    }
+
+    function sortAndRender() {
+      if (currentSortCol) {
+        currentData.sort((a, b) => {
+          const valA = parseFloat(a[currentSortCol]) || a[currentSortCol];
+          const valB = parseFloat(b[currentSortCol]) || b[currentSortCol];
+          if (valA < valB) return currentSortDir === "asc" ? -1 : 1;
+          if (valA > valB) return currentSortDir === "asc" ? 1 : -1;
+          return 0;
+        });
+      }
+      renderTable(currentData);
+      setupSearch();
+    }
+
+    function renderTable(data) {
+      const table = document.getElementById('gradesTable');
+      const thead = table.querySelector('thead');
+      const tbody = table.querySelector('tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      if (data.length === 0) return;
+
+      const headers = Object.keys(data[0]);
+      const headerRow = document.createElement('tr');
+
+      headers.forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        th.onclick = () => {
+          if (currentSortCol === h) {
+            currentSortDir = currentSortDir === "asc" ? "desc" : "asc";
+          } else {
+            currentSortCol = h;
+            currentSortDir = "desc";
+          }
+          sortAndRender();
+        };
+        if (h === currentSortCol) {
+          th.classList.add(currentSortDir === "asc" ? "sort-asc" : "sort-desc");
+        }
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach((key) => {
+          const td = document.createElement('td');
+          let value = row[key];
+          if (key.toLowerCase().includes('grade') && !isNaN(parseFloat(value))) {
+              value = parseFloat(value).toFixed(1);
+          }
+          td.style.backgroundColor = 'white';
+          td.style.color = 'black';
+          td.textContent = value;
+          if (key === "Name") {
+            td.classList.add("name-cell");
+          }
+          if (['Name', 'Team', 'Total Snaps'].includes(key)) {
+              td.style.backgroundColor = 'white';
+              td.style.color = 'black';
+          } else if (key.toLowerCase().includes('grade') && !isNaN(parseFloat(row[key]))) {
+            const grade = parseFloat(row[key]);
+            for (const scale of gradeColors) {
+              if (grade >= scale.min) {
+                td.style.backgroundColor = scale.color;
+                td.style.color = '#fff';
+                td.style.fontWeight = 'bold';
+                break;
+              }
+            }
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    loadPosition('QB');
+
+    
+  
+    function setupSearch() {
+      const searchBox = document.getElementById('searchInput');
+      if (!searchBox) return;
+
+      searchBox.addEventListener('input', function () {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#gradesTable tbody tr');
+        rows.forEach(row => {
+          const nameCell = row.querySelector('td');
+          if (nameCell && nameCell.textContent.toLowerCase().includes(query)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+    
+document.getElementById("exportBtn").addEventListener("click", function () {
+  const table = document.getElementById("gradesTable");
+  let csv = [];
+  const rows = table.querySelectorAll("tr");
+
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i].style.display === "none") continue;
+    const row = [], cols = rows[i].querySelectorAll("th, td");
+    for (let j = 0; j < cols.length; j++) {
+      let text = cols[j].innerText.replace(/"/g, '""');
+      row.push(`"${text}"`);
+    }
+    csv.push(row.join(","));
+  }
+
+  const csvBlob = new Blob([csv.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(csvBlob);
+  const a = document.createElement("a");
+  a.setAttribute("hidden", "");
+  a.setAttribute("href", url);
+  a.setAttribute("download", "cfl_player_data.csv");
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
+
+
+function createColumnToggles() {
+  const table = document.getElementById("gradesTable");
+  const headerCells = table.querySelectorAll("thead th");
+  const toggleContainer = document.getElementById("columnToggles");
+
+  headerCells.forEach((th, index) => {
+    if (index < 2) return; // Skip sticky columns
+    const label = document.createElement("label");
+    label.style.marginRight = "10px";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = true;
+    checkbox.dataset.colIndex = index;
+    checkbox.onchange = () => {
+      const colIdx = parseInt(checkbox.dataset.colIndex);
+      table.querySelectorAll("tr").forEach(row => {
+        const cell = row.children[colIdx];
+        if (cell) cell.style.display = checkbox.checked ? "" : "none";
+      });
+    };
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(" " + th.textContent));
+    toggleContainer.appendChild(label);
+  });
+}
+
+window.addEventListener("DOMContentLoaded", createColumnToggles);
+
+
+function createColumnToggles() {
+  const table = document.getElementById("gradesTable");
+  const headerCells = table.querySelectorAll("thead th");
+  const toggleContainer = document.getElementById("columnToggles");
+
+  headerCells.forEach((th, index) => {
+    if (index < 2) return; // Skip sticky columns
+    const label = document.createElement("label");
+    label.style.marginRight = "10px";
+    label.style.whiteSpace = "nowrap";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = true;
+    checkbox.dataset.colIndex = index;
+    checkbox.style.marginRight = "4px";
+    checkbox.onchange = () => {
+      const colIdx = parseInt(checkbox.dataset.colIndex);
+      table.querySelectorAll("tr").forEach(row => {
+        const cell = row.children[colIdx];
+        if (cell) cell.style.display = checkbox.checked ? "" : "none";
+      });
+    };
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(th.textContent));
+    toggleContainer.appendChild(label);
+  });
+}
+
+window.addEventListener("DOMContentLoaded", createColumnToggles);
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  function rebuildColumnToggles() {
+    const table = document.getElementById("gradesTable");
+    const toggleContainer = document.getElementById("columnToggles");
+    if (!toggleContainer || !table) return;
+    toggleContainer.innerHTML = ""; // Clear old toggles
+
+    const headerCells = table.querySelectorAll("thead th");
+    headerCells.forEach((th, index) => {
+      if (index < 2) return; // Skip sticky columns
+      const label = document.createElement("label");
+      label.style.marginRight = "10px";
+      label.style.whiteSpace = "nowrap";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      checkbox.dataset.colIndex = index;
+      checkbox.style.marginRight = "4px";
+      checkbox.onchange = () => {
+        const colIdx = parseInt(checkbox.dataset.colIndex);
+        table.querySelectorAll("tr").forEach(row => {
+          const cell = row.children[colIdx];
+          if (cell) cell.style.display = checkbox.checked ? "" : "none";
+        });
+      };
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(th.textContent));
+      toggleContainer.appendChild(label);
+    });
+  }
+
+  // Initial run
+  rebuildColumnToggles();
+
+  // On position button click
+  const buttons = document.querySelectorAll(".button-group button");
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      setTimeout(rebuildColumnToggles, 100);
+    });
+  });
+});
+
+
+function setupShowMore() {
+  const rows = Array.from(document.querySelectorAll("#gradesTable tbody tr"));
+  const btn = document.getElementById("showMoreButton");
+  const batchSize = 20;
+  let shown = 20;
+
+  function showNextBatch() {
+    const nextBatch = rows.slice(shown, shown + batchSize);
+    nextBatch.forEach(row => row.style.display = "");
+    shown += batchSize;
+    if (shown >= rows.length) {
+      btn.style.display = "none";
+    }
+  }
+
+  rows.forEach((row, index) => {
+    row.style.display = index < shown ? "" : "none";
+  });
+
+  if (btn) {
+    btn.onclick = showNextBatch;
+    btn.style.display = shown >= rows.length ? "none" : "inline-block";
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  setupShowMore();
+  document.querySelectorAll(".button-group button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      setTimeout(setupShowMore, 200);
+    });
+  });
+});
+
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const showMore = document.getElementById("showMoreButton");
+    if (!showMore) return;
+    showMore.addEventListener("click", function () {
+      const rows = document.querySelectorAll("#gradesTable tbody tr");
+      rows.forEach(row => row.style.display = "");
+      this.style.display = "none";
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const snapSlider = document.getElementById("snapSlider");
+    if (!snapSlider) return;
+
+    snapSlider.addEventListener("input", function () {
+      const minSnaps = parseInt(this.value);
+      document.getElementById("snapValue").textContent = minSnaps;
+      const rows = document.querySelectorAll("#gradesTable tbody tr");
+
+      rows.forEach(row => {
+        const snapCell = row.children[2]; // 3rd column = Total Snaps
+        const snapCount = parseInt(snapCell ? snapCell.textContent : "0");
+        row.style.display = snapCount >= minSnaps ? "" : "none";
+      });
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let currentMinSnaps = 0;
+    const snapSlider = document.getElementById("snapSlider");
+    const snapValue = document.getElementById("snapValue");
+
+    function applySnapFilter(minSnaps) {
+      const rows = document.querySelectorAll("#gradesTable tbody tr");
+      rows.forEach(row => {
+        const snapCell = row.children[2];
+        const snapCount = parseInt(snapCell ? snapCell.textContent : "0");
+        row.style.display = snapCount >= minSnaps ? "" : "none";
+      });
+    }
+
+    if (snapSlider) {
+      snapSlider.addEventListener("input", function () {
+        currentMinSnaps = parseInt(this.value);
+        snapValue.textContent = currentMinSnaps;
+        applySnapFilter(currentMinSnaps);
+      });
+    }
+
+    // Patch sortTable to reapply snap filtering
+    const origSortTable = window.sortTable;
+    if (origSortTable) {
+      window.sortTable = function(n) {
+        origSortTable(n);
+        if (currentMinSnaps > 0) {
+          applySnapFilter(currentMinSnaps);
+        }
+      };
+    }
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const snapSlider = document.getElementById("snapSlider");
+    const snapValue = document.getElementById("snapValue");
+    const tableBody = document.querySelector("#gradesTable tbody");
+
+    // Store all rows at start
+    const allRows = Array.from(tableBody.querySelectorAll("tr"));
+
+    function rebuildTable(minSnaps) {
+      // Clear table
+      tableBody.innerHTML = "";
+
+      // Re-add only rows meeting min snaps
+      allRows.forEach(row => {
+        const snapCell = row.children[2];
+        const snapCount = parseInt(snapCell ? snapCell.textContent : "0");
+        if (snapCount >= minSnaps) {
+          tableBody.appendChild(row);
+        }
+      });
+    }
+
+    if (snapSlider) {
+      snapSlider.addEventListener("change", function () {
+        const minSnaps = parseInt(this.value);
+        snapValue.textContent = minSnaps;
+        rebuildTable(minSnaps);
+      });
+
+      snapSlider.addEventListener("input", function () {
+        snapValue.textContent = parseInt(this.value);
+      });
+    }
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const table = document.getElementById("gradesTable");
+  const thead = table.querySelector("thead");
+  const tbody = table.querySelector("tbody");
+  const topXInput = document.getElementById("topXInput");
+  const topYSelect = document.getElementById("topYSelect");
+  const applyTopXBtn = document.getElementById("applyTopXBtn");
+
+  function regenerateDropdown() {
+    topYSelect.innerHTML = "";
+    const headers = Array.from(thead.querySelectorAll("th"));
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const seen = new Set();
+
+    headers.forEach((th, idx) => {
+      const cleanText = th.textContent.trim().replace(/▼|▲/g, "");
+      const sample = rows.find(row => row.style.display !== "none")?.cells[idx]?.textContent.trim();
+      if (!isNaN(parseFloat(sample)) && !seen.has(cleanText)) {
+        seen.add(cleanText);
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = cleanText;
+        topYSelect.appendChild(opt);
+      }
+    });
+  }
+
+  function applyTopXMinimal() {
+    const x = parseInt(topXInput.value);
+    const colIdx = parseInt(topYSelect.value);
+    const rows = Array.from(tbody.querySelectorAll("tr"))
+      .filter(row => row.style.display !== "none");
+
+    const sortedRows = [...rows].sort((a, b) => {
+      const aVal = parseFloat(a.cells[colIdx]?.textContent.trim()) || -Infinity;
+      const bVal = parseFloat(b.cells[colIdx]?.textContent.trim()) || -Infinity;
+      return bVal - aVal;
+    });
+
+    rows.forEach(row => row.style.display = "none");
+
+    sortedRows.slice(0, x).forEach(row => {
+      [...row.cells].forEach((cell, idx) => {
+        cell.style.display = (idx === 0 || idx === 1 || idx === colIdx) ? "" : "none";
+      });
+      row.style.display = "";
+    });
+
+    const ths = thead.querySelectorAll("th");
+    ths.forEach((th, idx) => {
+      th.style.display = (idx === 0 || idx === 1 || idx === colIdx) ? "" : "none";
+    });
+
+    sortedRows.slice(0, x).forEach(row => tbody.appendChild(row));
+  }
+
+  // Bind listeners
+  applyTopXBtn.addEventListener("click", applyTopXMinimal);
+
+  // Ensure dropdown resets with new table view on position change
+  const positionButtons = document.querySelectorAll(".position-button");
+  positionButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      setTimeout(regenerateDropdown, 200);
+    });
+  });
+
+  regenerateDropdown();
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const showMoreBtn = document.getElementById("showMoreBtn");
+  const table = document.getElementById("gradesTable");
+  const tbody = table.querySelector("tbody");
+  const thead = table.querySelector("thead");
+  let currentLimit = 10;
+
+  showMoreBtn.addEventListener("click", function () {
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    // Restore all hidden columns and headers
+    thead.querySelectorAll("th").forEach(th => th.style.display = "");
+    rows.forEach(row => {
+      row.style.display = "";
+      Array.from(row.cells).forEach(cell => cell.style.display = "");
+    });
+
+    // Increase limit and show more rows if hidden
+    const hiddenRows = rows.filter(row => row.style.display === "none");
+    if (hiddenRows.length === 0) return;
+
+    currentLimit += 10;
+    rows.slice(0, currentLimit).forEach(row => row.style.display = "");
+  });
+});
+</script>
+<script>
+function formatPressureRates() {
+  const table = document.getElementById("playerTable");
+  if (!table) return;
+
+  const headerCells = Array.from(table.querySelectorAll("thead th"));
+  const pressureRateIndexes = headerCells.map((th, idx) => {
+    const text = th.textContent.trim().toLowerCase();
+    return (text.includes("pressure") && text.includes("rate")) ? idx : -1;
+  }).filter(i => i !== -1);
+
+  const rows = table.querySelectorAll("tbody tr");
+  rows.forEach(row => {
+    pressureRateIndexes.forEach(i => {
+      const cell = row.children[i];
+      if (!cell) return;
+      let val = parseFloat(cell.textContent);
+      if (!isNaN(val)) {
+        if (val <= 1) val *= 100;
+        cell.textContent = val.toFixed(1) + "%";
+      }
+    });
+  });
+}
+</script><script>
+function showMoreRows() {
+  const table = document.getElementById("playerTable");
+  const thead = table.querySelector("thead");
+  const rows = Array.from(table.querySelectorAll("tbody tr"));
+
+  // Reset column visibility
+  const allHeaders = table.querySelectorAll("thead th");
+  allHeaders.forEach(th => {
+    th.style.display = "";
+  });
+
+  rows.forEach(row => {
+    row.querySelectorAll("td").forEach(td => td.style.display = "");
+    row.style.display = "";
+  });
+
+  // Show 10 more rows if any were previously hidden
+  let shown = 0;
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i].style.display === "none") {
+      rows[i].style.display = "";
+      shown++;
+      if (shown >= 10) break;
+    }
+  }
+}
+</script></body>
+</html>
