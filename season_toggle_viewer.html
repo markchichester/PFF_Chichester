@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CFL Season Toggle</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 658px;
+      margin: auto;
+      padding: 20px;
+    }
+    .toggle-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .toggle-buttons button {
+      background-color: #0B1533;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .toggle-buttons button:hover,
+    .toggle-buttons button.active {
+      background-color: #006BFF;
+    }
+    iframe {
+      width: 100%;
+      height: 1300px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="toggle-buttons">
+    <button class="season-btn active" data-year="2023">2023</button>
+    <button class="season-btn" data-year="2024">2024</button>
+    <button class="season-btn" data-year="2025">2025</button>
+  </div>
+  <iframe id="seasonFrame" src="2023_all_positions.html"></iframe>
+
+  <script>
+    const buttons = document.querySelectorAll(".season-btn");
+    const iframe = document.getElementById("seasonFrame");
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const year = btn.getAttribute("data-year");
+        iframe.src = `${year}_all_positions.html`;
+      });
+    });
+  </script>
+</body>
+</html>
