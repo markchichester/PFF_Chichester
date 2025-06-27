@@ -1,0 +1,164 @@
+<!-- Archivo Font -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  * { box-sizing: border-box; }
+  body { line-height: 1.4; }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  .tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: #1E1E1E;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -110px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 13px;
+    line-height: 1.5;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    font-weight: 600;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .offer-panel {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(135deg, #0074FF, #005BD8);
+    color: #fff;
+    padding: 40px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    gap: 24px;
+    animation: slideFade 0.5s ease forwards;
+  }
+
+  @keyframes slideFade {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .offer-panel h3 {
+    font-size: 28px;
+    font-weight: 700;
+    max-width: 90%;
+  }
+
+  .offer-panel a,
+  .offer-panel button {
+    background: linear-gradient(135deg, #FFC900, #FFD833);
+    color: black;
+    padding: 14px 28px;
+    font-weight: 700;
+    font-size: 17px;
+    text-decoration: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+    border: none;
+    cursor: pointer;
+  }
+
+  .offer-panel a:hover,
+  .offer-panel button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .offer-panel button {
+    background: transparent;
+    color: #FFC900;
+    border: 2px solid #FFC900;
+    text-shadow: none;
+    margin-top: 10px;
+  }
+
+  .peel-corner {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 70px;
+    height: 70px;
+    background: #FFC900;
+    clip-path: path('M70,0 Q70,70 0,70 L70,70 Z');
+    cursor: pointer;
+    z-index: 2;
+    animation: pulseCorner 2.5s infinite;
+  }
+
+  @keyframes pulseCorner {
+    0% { box-shadow: 0 0 0 rgba(255,201,0,0.0); }
+    50% { box-shadow: 0 0 10px rgba(255,201,0,0.8); }
+    100% { box-shadow: 0 0 0 rgba(255,201,0,0.0); }
+  }
+
+  #payout.flash {
+    animation: payoutPop 0.6s ease;
+  }
+
+  @keyframes payoutPop {
+    0%   { background: #FFC900; color: black; padding: 2px 6px; border-radius: 6px; }
+    100% { background: transparent; color: white; }
+  }
+
+  @media (max-width: 500px) {
+    .peel-corner {
+      display: none;
+    }
+  }
+</style>
+
+<div style="font-family:'Archivo',sans-serif; max-width:658px; width:100%; margin:auto; position:relative; min-height:240px;">
+  <div id="mainWidget" style="background: radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 70%), linear-gradient(to top, rgba(255,255,255,0.06), rgba(255,255,255,0)), linear-gradient(135deg, #0074FF, #005BD8); border-radius:12px; padding:16px; color:#fff; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.3); position:relative;">
+    <div style="display:flex; justify-content:center; align-items:center; gap:16px;">
+      <img src="https://media.pff.com/2025/06/PFF-Logo.png" alt="PFF" style="height:32px;">
+      <img src="https://media.pff.com/2025/06/FanDuel-white-scaled.png" alt="FanDuel" style="height:64px;">
+    </div>
+    <div style="margin:12px 0;">
+      <span style="font-size:20px; font-weight:500;">$</span>
+      <input id="betAmount" type="number" placeholder="Enter bet" oninput="const odds=550; const b=parseFloat(this.value)||0; const ret=b*(odds/100+1); const roi=((ret-b)/b)*100; const prob=100/(odds+100)*100; const payout=document.getElementById('payout'); payout.textContent='$'+ret.toFixed(2); payout.classList.add('flash'); setTimeout(()=>payout.classList.remove('flash'), 600); document.getElementById('roi').textContent=roi.toFixed(0)+'%'; document.getElementById('impliedProb').textContent=prob.toFixed(2)+'%';" style="padding:10px 14px; font-size:18px; font-weight:500; border:none; border-radius:8px; font-family:'Archivo',sans-serif; width:160px; text-align:center;">
+    </div>
+    <div style="font-size:18px; font-weight:600; display:flex; flex-wrap:wrap; justify-content:center; gap:24px;">
+      <div>Odds: +550</div>
+      <div>Return: <span id="payout">$0.00</span></div>
+      <div class="tooltip">ROI<span class="tooltip-text">ROI, or Return on Investment, in a betting context measures how profitable your wagers are by comparing your net profit to the total amount you've risked.</span>: <span id="roi">0%</span></div>
+      <div class="tooltip">Implied Probability<span class="tooltip-text">Implied probability in betting shows how likely a bet is to win based on the odds. It helps you understand what the bookmaker thinks the chances are.</span>: <span id=\"impliedProb\">15.38%</span></div>
+    </div>
+    <a href="https://sportsbook-redirect.com" target="_blank" style="background: linear-gradient(135deg, #FFC900, #FFD833); color: black; padding: 12px 30px; font-weight: 700; font-size: 17px; text-decoration: none; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s ease; text-shadow: 0 1px 0 rgba(255,255,255,0.3); display:inline-block; margin-top:14px;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 12px rgba(255, 201, 0, 0.7)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.2)'"><strong>BET NOW</strong></a>
+    <div class="peel-corner" title="Click to reveal exclusive offer" onclick="document.getElementById('mainWidget').style.display='none'; document.getElementById('offerPanel').style.display='flex';"></div>
+  </div>
+  <div class="offer-panel" id="offerPanel">
+    <h3>🎁 Bet $50, Get $250 in Bonus Bets!</h3>
+    <a href="https://sportsbook-redirect.com/offer" target="_blank">CLAIM OFFER</a>
+    <button onclick="document.getElementById('offerPanel').style.display='none'; document.getElementById('mainWidget').style.display='block';">← Back to Bet</button>
+  </div>
+</div>
