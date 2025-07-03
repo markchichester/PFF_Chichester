@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>QB Rankings Widget - Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Archivo', sans-serif; padding: 20px; }
+    h1 { text-align: center; margin: 10px 0; }
+    #main-container { display: flex; gap: 20px; justify-content: center; align-items: flex-start; }
+    #ranking-panel, #player-panel { width: 45%; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 6px; font-size: 13px; text-align: center; }
+    th { background-color: #f2f2f2; cursor: pointer; user-select: none; }
+    tr.clickable:hover { background-color: #eef; }
+    th.sorted-asc::after { content: ' ▲'; }
+    th.sorted-desc::after { content: ' ▼'; }
+    img { height: 32px; border-radius: 50%; }
+    #searchInput { width: 100%; padding: 5px; margin-bottom: 10px; }
+    #player-table-wrapper { max-height: 660px; overflow-y: auto; overflow-x: auto; }
+    button { margin: 5px; padding: 8px 12px; font-weight: bold; cursor: pointer; }
+    #title-input { display: block; margin: 0 auto 20px auto; width: 80%; padding: 8px; font-size: 1.5rem; text-align: center; }
+    .tier-row td { background-color: #ddd; }
+  </style>
+<style>
+#top10ImageContainer table, 
+#top10ImageContainer th, 
+#top10ImageContainer td {
+  border: none !important;
+}
+</style>
+<style>
+  #ranking-table, #ranking-table * {
+    cursor: move !important; /* Left table (draggable) */
+  }
+
+  #players-table, #players-table * {
+    cursor: pointer !important; /* Right table (clickable) */
+  }
+</style>
+<script>const data = [
+{"id": 46601, "pos": "QB", "player": "Josh Allen", "headshot": "https://media.pff.com/player-photos/nfl/46601.webp", "team": "BUF", "Grade": 92, "FantasyPts": 341.4},
+{"id": 97993, "pos": "QB", "player": "Jayden Daniels", "headshot": "https://media.pff.com/player-photos/nfl/97993.webp", "team": "WAS", "Grade": 90.6, "FantasyPts": 339.5},
+{"id": 46416, "pos": "QB", "player": "Lamar Jackson", "headshot": "https://media.pff.com/player-photos/nfl/46416.webp", "team": "BLT", "Grade": 95.3, "FantasyPts": 338.5},
+{"id": 84270, "pos": "WR", "player": "Ja'Marr Chase", "headshot": "https://media.pff.com/player-photos/nfl/84270.webp", "team": "CIN", "Grade": 85.8, "FantasyPts": 333.4},
+{"id": 40291, "pos": "QB", "player": "Jalen Hurts", "headshot": "https://media.pff.com/player-photos/nfl/40291.webp", "team": "PHI", "Grade": 82, "FantasyPts": 333.3},
+{"id": 28022, "pos": "QB", "player": "Joe Burrow", "headshot": "https://media.pff.com/player-photos/nfl/28022.webp", "team": "CIN", "Grade": 94.2, "FantasyPts": 314.9},
+{"id": 11765, "pos": "QB", "player": "Patrick Mahomes", "headshot": "https://media.pff.com/player-photos/nfl/11765.webp", "team": "KC", "Grade": 84, "FantasyPts": 306.9},
+{"id": 123126, "pos": "RB", "player": "Bijan Robinson", "headshot": "https://media.pff.com/player-photos/nfl/123126.webp", "team": "ATL", "Grade": 92.8, "FantasyPts": 299.4},
+{"id": 46518, "pos": "QB", "player": "Baker Mayfield", "headshot": "https://media.pff.com/player-photos/nfl/46518.webp", "team": "TB", "Grade": 86.1, "FantasyPts": 297},
+{"id": 122474, "pos": "RB", "player": "Jahmyr Gibbs", "headshot": "https://media.pff.com/player-photos/nfl/122474.webp", "team": "DET", "Grade": 90.3, "FantasyPts": 295.1},
+{"id": 61398, "pos": "WR", "player": "Justin Jefferson", "headshot": "https://media.pff.com/player-photos/nfl/61398.webp", "team": "MIN", "Grade": 86.6, "FantasyPts": 291.2},
+{"id": 157196, "pos": "RB", "player": "Ashton Jeanty", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LV", "Grade": 94.9, "FantasyPts": 290.3},
+{"id": 77672, "pos": "QB", "player": "Brock Purdy", "headshot": "https://media.pff.com/player-photos/nfl/77672.webp", "team": "SF", "Grade": 82.9, "FantasyPts": 288.3},
+{"id": 146760, "pos": "WR", "player": "Brian Thomas Jr.", "headshot": "https://media.pff.com/player-photos/nfl/146760.webp", "team": "JAX", "Grade": 82.3, "FantasyPts": 287.1},
+{"id": 45791, "pos": "RB", "player": "Saquon Barkley", "headshot": "https://media.pff.com/player-photos/nfl/45791.webp", "team": "PHI", "Grade": 85.7, "FantasyPts": 285.5},
+{"id": 100632, "pos": "WR", "player": "Puka Nacua", "headshot": "https://media.pff.com/player-photos/nfl/100632.webp", "team": "LA", "Grade": 92.5, "FantasyPts": 285.3},
+{"id": 144970, "pos": "RB", "player": "Bucky Irving", "headshot": "https://media.pff.com/player-photos/nfl/144970.webp", "team": "TB", "Grade": 90.8, "FantasyPts": 281.8},
+{"id": 97790, "pos": "QB", "player": "Bo Nix", "headshot": "https://media.pff.com/player-photos/nfl/97790.webp", "team": "DEN", "Grade": 79.2, "FantasyPts": 279.9},
+{"id": 38334, "pos": "QB", "player": "Kyler Murray", "headshot": "https://media.pff.com/player-photos/nfl/38334.webp", "team": "ARZ", "Grade": 82.7, "FantasyPts": 277.8},
+{"id": 82118, "pos": "QB", "player": "Justin Fields", "headshot": "https://media.pff.com/player-photos/nfl/82118.webp", "team": "NYJ", "Grade": 72, "FantasyPts": 277.8},
+{"id": 61441, "pos": "WR", "player": "Nico Collins", "headshot": "https://media.pff.com/player-photos/nfl/61441.webp", "team": "HST", "Grade": 92.3, "FantasyPts": 277.3},
+{"id": 11763, "pos": "RB", "player": "Christian McCaffrey", "headshot": "https://media.pff.com/player-photos/nfl/11763.webp", "team": "SF", "Grade": 71.3, "FantasyPts": 277.2},
+{"id": 10769, "pos": "QB", "player": "Dak Prescott", "headshot": "https://media.pff.com/player-photos/nfl/10769.webp", "team": "DAL", "Grade": 68.2, "FantasyPts": 276.1},
+{"id": 10635, "pos": "QB", "player": "Jared Goff", "headshot": "https://media.pff.com/player-photos/nfl/10635.webp", "team": "DET", "Grade": 79, "FantasyPts": 276},
+{"id": 124305, "pos": "RB", "player": "De'Von Achane", "headshot": "https://media.pff.com/player-photos/nfl/124305.webp", "team": "MIA", "Grade": 81.6, "FantasyPts": 275.6},
+{"id": 28237, "pos": "QB", "player": "Justin Herbert", "headshot": "https://media.pff.com/player-photos/nfl/28237.webp", "team": "LAC", "Grade": 91.2, "FantasyPts": 275},
+{"id": 61570, "pos": "WR", "player": "CeeDee Lamb", "headshot": "https://media.pff.com/player-photos/nfl/61570.webp", "team": "DAL", "Grade": 78.3, "FantasyPts": 274.6},
+{"id": 84470, "pos": "WR", "player": "Amon-Ra St. Brown", "headshot": "https://media.pff.com/player-photos/nfl/84470.webp", "team": "DET", "Grade": 89.3, "FantasyPts": 270},
+{"id": 40306, "pos": "QB", "player": "Jordan Love", "headshot": "https://media.pff.com/player-photos/nfl/40306.webp", "team": "GB", "Grade": 75.8, "FantasyPts": 266},
+{"id": 146759, "pos": "WR", "player": "Malik Nabers", "headshot": "https://media.pff.com/player-photos/nfl/146759.webp", "team": "NYG", "Grade": 87, "FantasyPts": 266},
+{"id": 60326, "pos": "QB", "player": "Tua Tagovailoa", "headshot": "https://media.pff.com/player-photos/nfl/60326.webp", "team": "MIA", "Grade": 70.9, "FantasyPts": 264.2},
+{"id": 7820, "pos": "QB", "player": "Geno Smith", "headshot": "https://media.pff.com/player-photos/nfl/7820.webp", "team": "LV", "Grade": 83.2, "FantasyPts": 260.3},
+{"id": 86519, "pos": "WR", "player": "Drake London", "headshot": "https://media.pff.com/player-photos/nfl/86519.webp", "team": "ATL", "Grade": 87.8, "FantasyPts": 259.4},
+{"id": 129759, "pos": "QB", "player": "C.J. Stroud", "headshot": "https://media.pff.com/player-photos/nfl/129759.webp", "team": "HST", "Grade": 80.6, "FantasyPts": 259.2},
+{"id": 144918, "pos": "QB", "player": "J.J. McCarthy", "headshot": "https://media.pff.com/player-photos/nfl/144918.webp", "team": "MIN", "Grade": 0, "FantasyPts": 257.3},
+{"id": 48327, "pos": "WR", "player": "A.J. Brown", "headshot": "https://media.pff.com/player-photos/nfl/48327.webp", "team": "PHI", "Grade": 90.4, "FantasyPts": 255.7},
+{"id": 29048, "pos": "QB", "player": "Sam Darnold", "headshot": "https://media.pff.com/player-photos/nfl/29048.webp", "team": "SEA", "Grade": 82, "FantasyPts": 254.8},
+{"id": 2241, "pos": "QB", "player": "Aaron Rodgers", "headshot": "https://media.pff.com/player-photos/nfl/2241.webp", "team": "PIT", "Grade": 78.9, "FantasyPts": 254.1},
+{"id": 77632, "pos": "QB", "player": "Trevor Lawrence", "headshot": "https://media.pff.com/player-photos/nfl/77632.webp", "team": "JAX", "Grade": 77.2, "FantasyPts": 254},
+{"id": 4924, "pos": "QB", "player": "Matthew Stafford", "headshot": "https://media.pff.com/player-photos/nfl/4924.webp", "team": "LA", "Grade": 74.7, "FantasyPts": 253.8},
+{"id": 10679, "pos": "RB", "player": "Derrick Henry", "headshot": "https://media.pff.com/player-photos/nfl/10679.webp", "team": "BLT", "Grade": 94.3, "FantasyPts": 252.5},
+{"id": 45953, "pos": "RB", "player": "Josh Jacobs", "headshot": "https://media.pff.com/player-photos/nfl/45953.webp", "team": "GB", "Grade": 92.4, "FantasyPts": 252},
+{"id": 124030, "pos": "WR", "player": "Ladd McConkey", "headshot": "https://media.pff.com/player-photos/nfl/124030.webp", "team": "LAC", "Grade": 84.7, "FantasyPts": 249.7},
+{"id": 143969, "pos": "QB", "player": "Drake Maye", "headshot": "https://media.pff.com/player-photos/nfl/143969.webp", "team": "NE", "Grade": 70.7, "FantasyPts": 249.3},
+{"id": 97199, "pos": "RB", "player": "Kenneth Walker III", "headshot": "https://media.pff.com/player-photos/nfl/97199.webp", "team": "SEA", "Grade": 88.6, "FantasyPts": 248.1},
+{"id": 146715, "pos": "TE", "player": "Brock Bowers", "headshot": "https://media.pff.com/player-photos/nfl/146715.webp", "team": "LV", "Grade": 85.4, "FantasyPts": 245.9},
+{"id": 61211, "pos": "WR", "player": "Tee Higgins", "headshot": "https://media.pff.com/player-photos/nfl/61211.webp", "team": "CIN", "Grade": 88.6, "FantasyPts": 245.7},
+{"id": 57488, "pos": "RB", "player": "Jonathan Taylor", "headshot": "https://media.pff.com/player-photos/nfl/57488.webp", "team": "IND", "Grade": 57.5, "FantasyPts": 242.7},
+{"id": 133244, "pos": "QB", "player": "Cam Ward", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "TEN", "Grade": 92.9, "FantasyPts": 242.3},
+{"id": 97118, "pos": "RB", "player": "Kyren Williams", "headshot": "https://media.pff.com/player-photos/nfl/97118.webp", "team": "LA", "Grade": 69.1, "FantasyPts": 241.9},
+{"id": 144622, "pos": "QB", "player": "Caleb Williams", "headshot": "https://media.pff.com/player-photos/nfl/144622.webp", "team": "CHI", "Grade": 68.5, "FantasyPts": 240.2},
+{"id": 97405, "pos": "WR", "player": "Garrett Wilson", "headshot": "https://media.pff.com/player-photos/nfl/97405.webp", "team": "NYJ", "Grade": 79.7, "FantasyPts": 239.6},
+{"id": 124393, "pos": "QB", "player": "Anthony Richardson", "headshot": "https://media.pff.com/player-photos/nfl/124393.webp", "team": "IND", "Grade": 62.6, "FantasyPts": 237.2},
+{"id": 75916, "pos": "TE", "player": "Trey McBride", "headshot": "https://media.pff.com/player-photos/nfl/75916.webp", "team": "ARZ", "Grade": 87.2, "FantasyPts": 235.9},
+{"id": 48229, "pos": "WR", "player": "Terry McLaurin", "headshot": "https://media.pff.com/player-photos/nfl/48229.webp", "team": "WAS", "Grade": 82.1, "FantasyPts": 235},
+{"id": 82134, "pos": "QB", "player": "Michael Penix Jr.", "headshot": "https://media.pff.com/player-photos/nfl/82134.webp", "team": "ATL", "Grade": 87.9, "FantasyPts": 234.7},
+{"id": 145056, "pos": "WR", "player": "Marvin Harrison Jr.", "headshot": "https://media.pff.com/player-photos/nfl/145056.webp", "team": "ARZ", "Grade": 77.8, "FantasyPts": 233.1},
+{"id": 83537, "pos": "QB", "player": "Tyler Shough", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NO", "Grade": 87.7, "FantasyPts": 232.9},
+{"id": 8642, "pos": "WR", "player": "Mike Evans", "headshot": "https://media.pff.com/player-photos/nfl/8642.webp", "team": "TB", "Grade": 90.4, "FantasyPts": 232.6},
+{"id": 83666, "pos": "RB", "player": "James Cook", "headshot": "https://media.pff.com/player-photos/nfl/83666.webp", "team": "BUF", "Grade": 86.7, "FantasyPts": 231.7},
+{"id": 162750, "pos": "RB", "player": "Omarion Hampton", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LAC", "Grade": 88.4, "FantasyPts": 227.9},
+{"id": 97605, "pos": "WR", "player": "Rashee Rice", "headshot": "https://media.pff.com/player-photos/nfl/97605.webp", "team": "KC", "Grade": 85.1, "FantasyPts": 227.5},
+{"id": 77787, "pos": "RB", "player": "Chase Brown", "headshot": "https://media.pff.com/player-photos/nfl/77787.webp", "team": "CIN", "Grade": 75.7, "FantasyPts": 225.9},
+{"id": 8688, "pos": "WR", "player": "Davante Adams", "headshot": "https://media.pff.com/player-photos/nfl/8688.webp", "team": "LA", "Grade": 75.8, "FantasyPts": 225.2},
+{"id": 47864, "pos": "WR", "player": "D.K. Metcalf", "headshot": "https://media.pff.com/player-photos/nfl/47864.webp", "team": "PIT", "Grade": 74.3, "FantasyPts": 223.4},
+{"id": 48267, "pos": "WR", "player": "DJ Moore", "headshot": "https://media.pff.com/player-photos/nfl/48267.webp", "team": "CHI", "Grade": 73.8, "FantasyPts": 223.4},
+{"id": 97636, "pos": "RB", "player": "Breece Hall", "headshot": "https://media.pff.com/player-photos/nfl/97636.webp", "team": "NYJ", "Grade": 62.9, "FantasyPts": 223.3},
+{"id": 123943, "pos": "QB", "player": "Bryce Young", "headshot": "https://media.pff.com/player-photos/nfl/123943.webp", "team": "CAR", "Grade": 75.9, "FantasyPts": 223.1},
+{"id": 11822, "pos": "RB", "player": "Alvin Kamara", "headshot": "https://media.pff.com/player-photos/nfl/11822.webp", "team": "NO", "Grade": 73.7, "FantasyPts": 221.6},
+{"id": 99622, "pos": "RB", "player": "RJ Harvey", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "DEN", "Grade": 85.5, "FantasyPts": 220},
+{"id": 157128, "pos": "RB", "player": "Quinshon Judkins", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CLV", "Grade": 88.8, "FantasyPts": 219.1},
+{"id": 11860, "pos": "RB", "player": "James Conner", "headshot": "https://media.pff.com/player-photos/nfl/11860.webp", "team": "ARZ", "Grade": 90.4, "FantasyPts": 218.8},
+{"id": 10799, "pos": "WR", "player": "Tyreek Hill", "headshot": "https://media.pff.com/player-photos/nfl/10799.webp", "team": "MIA", "Grade": 72.7, "FantasyPts": 217.9},
+{"id": 129758, "pos": "WR", "player": "Jaxon Smith-Njigba", "headshot": "https://media.pff.com/player-photos/nfl/129758.webp", "team": "SEA", "Grade": 81.3, "FantasyPts": 217.9},
+{"id": 11803, "pos": "RB", "player": "Joe Mixon", "headshot": "https://media.pff.com/player-photos/nfl/11803.webp", "team": "HST", "Grade": 77, "FantasyPts": 217.2},
+{"id": 57373, "pos": "RB", "player": "Chuba Hubbard", "headshot": "https://media.pff.com/player-photos/nfl/57373.webp", "team": "CAR", "Grade": 75.4, "FantasyPts": 216.7},
+{"id": 158735, "pos": "WR", "player": "Tetairoa McMillan", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CAR", "Grade": 84.8, "FantasyPts": 216.1},
+{"id": 160766, "pos": "WR", "player": "Travis Hunter", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "JAX", "Grade": 86.3, "FantasyPts": 215.5},
+{"id": 101701, "pos": "WR", "player": "Jameson Williams", "headshot": "https://media.pff.com/player-photos/nfl/101701.webp", "team": "DET", "Grade": 74.5, "FantasyPts": 215.1},
+{"id": 61100, "pos": "WR", "player": "DeVonta Smith", "headshot": "https://media.pff.com/player-photos/nfl/61100.webp", "team": "PHI", "Grade": 81.5, "FantasyPts": 214.1},
+{"id": 144718, "pos": "WR", "player": "Xavier Worthy", "headshot": "https://media.pff.com/player-photos/nfl/144718.webp", "team": "KC", "Grade": 72.4, "FantasyPts": 213.6},
+{"id": 97268, "pos": "WR", "player": "Zay Flowers", "headshot": "https://media.pff.com/player-photos/nfl/97268.webp", "team": "BLT", "Grade": 82.5, "FantasyPts": 212.7},
+{"id": 84088, "pos": "WR", "player": "Jaylen Waddle", "headshot": "https://media.pff.com/player-photos/nfl/84088.webp", "team": "MIA", "Grade": 72.1, "FantasyPts": 210},
+{"id": 60515, "pos": "QB", "player": "Kenny Pickett", "headshot": "https://media.pff.com/player-photos/nfl/60515.webp", "team": "CLV", "Grade": 65.7, "FantasyPts": 209.8},
+{"id": 11901, "pos": "TE", "player": "George Kittle", "headshot": "https://media.pff.com/player-photos/nfl/11901.webp", "team": "SF", "Grade": 92.3, "FantasyPts": 209.3},
+{"id": 57212, "pos": "RB", "player": "D'Andre Swift", "headshot": "https://media.pff.com/player-photos/nfl/57212.webp", "team": "CHI", "Grade": 61.3, "FantasyPts": 209},
+{"id": 7077, "pos": "QB", "player": "Russell Wilson", "headshot": "https://media.pff.com/player-photos/nfl/7077.webp", "team": "NYG", "Grade": 79.8, "FantasyPts": 208},
+{"id": 11937, "pos": "RB", "player": "Aaron Jones", "headshot": "https://media.pff.com/player-photos/nfl/11937.webp", "team": "MIN", "Grade": 75.4, "FantasyPts": 205.8},
+{"id": 27126, "pos": "RB", "player": "Tony Pollard", "headshot": "https://media.pff.com/player-photos/nfl/27126.webp", "team": "TEN", "Grade": 69.2, "FantasyPts": 205.1},
+{"id": 48164, "pos": "WR", "player": "Courtland Sutton", "headshot": "https://media.pff.com/player-photos/nfl/48164.webp", "team": "DEN", "Grade": 75.5, "FantasyPts": 202.6},
+{"id": 48274, "pos": "WR", "player": "Deebo Samuel", "headshot": "https://media.pff.com/player-photos/nfl/48274.webp", "team": "WAS", "Grade": 71.3, "FantasyPts": 198.4},
+{"id": 11839, "pos": "WR", "player": "Chris Godwin", "headshot": "https://media.pff.com/player-photos/nfl/11839.webp", "team": "TB", "Grade": 86.4, "FantasyPts": 197.7},
+{"id": 123000, "pos": "WR", "player": "Jordan Addison", "headshot": "https://media.pff.com/player-photos/nfl/123000.webp", "team": "MIN", "Grade": 73.2, "FantasyPts": 196.9},
+{"id": 47468, "pos": "WR", "player": "Jakobi Meyers", "headshot": "https://media.pff.com/player-photos/nfl/47468.webp", "team": "LV", "Grade": 77.7, "FantasyPts": 196.7},
+{"id": 84355, "pos": "WR", "player": "Chris Olave", "headshot": "https://media.pff.com/player-photos/nfl/84355.webp", "team": "NO", "Grade": 82.4, "FantasyPts": 195.8},
+{"id": 84109, "pos": "WR", "player": "Brandon Aiyuk", "headshot": "https://media.pff.com/player-photos/nfl/84109.webp", "team": "SF", "Grade": 74.6, "FantasyPts": 195.6},
+{"id": 61103, "pos": "WR", "player": "Jerry Jeudy", "headshot": "https://media.pff.com/player-photos/nfl/61103.webp", "team": "CLV", "Grade": 74, "FantasyPts": 195.2},
+{"id": 84140, "pos": "WR", "player": "Khalil Shakir", "headshot": "https://media.pff.com/player-photos/nfl/84140.webp", "team": "BUF", "Grade": 78.9, "FantasyPts": 193.8},
+{"id": 47546, "pos": "WR", "player": "Christian Kirk", "headshot": "https://media.pff.com/player-photos/nfl/47546.webp", "team": "HST", "Grade": 67.9, "FantasyPts": 191.8},
+{"id": 48262, "pos": "WR", "player": "Calvin Ridley", "headshot": "https://media.pff.com/player-photos/nfl/48262.webp", "team": "TEN", "Grade": 73.1, "FantasyPts": 191.6},
+{"id": 99229, "pos": "WR", "player": "George Pickens", "headshot": "https://media.pff.com/player-photos/nfl/99229.webp", "team": "DAL", "Grade": 79, "FantasyPts": 191.1},
+{"id": 48027, "pos": "WR", "player": "Jauan Jennings", "headshot": "https://media.pff.com/player-photos/nfl/48027.webp", "team": "SF", "Grade": 83.5, "FantasyPts": 189.8},
+{"id": 84434, "pos": "WR", "player": "Cedric Tillman", "headshot": "https://media.pff.com/player-photos/nfl/84434.webp", "team": "CLV", "Grade": 63.6, "FantasyPts": 189.5},
+{"id": 73774, "pos": "WR", "player": "Rome Odunze", "headshot": "https://media.pff.com/player-photos/nfl/73774.webp", "team": "CHI", "Grade": 63.7, "FantasyPts": 188.8},
+{"id": 83747, "pos": "RB", "player": "Isiah Pacheco", "headshot": "https://media.pff.com/player-photos/nfl/83747.webp", "team": "KC", "Grade": 63.3, "FantasyPts": 188.2},
+{"id": 98692, "pos": "RB", "player": "Jaylen Warren", "headshot": "https://media.pff.com/player-photos/nfl/98692.webp", "team": "PIT", "Grade": 64.3, "FantasyPts": 188.2},
+{"id": 78171, "pos": "WR", "player": "Jayden Reed", "headshot": "https://media.pff.com/player-photos/nfl/78171.webp", "team": "GB", "Grade": 71.7, "FantasyPts": 187.7},
+{"id": 45719, "pos": "RB", "player": "David Montgomery", "headshot": "https://media.pff.com/player-photos/nfl/45719.webp", "team": "DET", "Grade": 86.6, "FantasyPts": 187.1},
+{"id": 40912, "pos": "TE", "player": "T.J. Hockenson", "headshot": "https://media.pff.com/player-photos/nfl/40912.webp", "team": "MIN", "Grade": 74.8, "FantasyPts": 186.8},
+{"id": 101690, "pos": "TE", "player": "Sam LaPorta", "headshot": "https://media.pff.com/player-photos/nfl/101690.webp", "team": "DET", "Grade": 74.4, "FantasyPts": 182.5},
+{"id": 48236, "pos": "WR", "player": "Darnell Mooney", "headshot": "https://media.pff.com/player-photos/nfl/48236.webp", "team": "ATL", "Grade": 74, "FantasyPts": 182},
+{"id": 63707, "pos": "WR", "player": "Rashid Shaheed", "headshot": "https://media.pff.com/player-photos/nfl/63707.webp", "team": "NO", "Grade": 69.7, "FantasyPts": 181.5},
+{"id": 122832, "pos": "WR", "player": "Josh Downs", "headshot": "https://media.pff.com/player-photos/nfl/122832.webp", "team": "IND", "Grade": 84.8, "FantasyPts": 181.4},
+{"id": 156165, "pos": "WR", "player": "Matthew Golden", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "GB", "Grade": 74.3, "FantasyPts": 180.2},
+{"id": 11855, "pos": "TE", "player": "Jonnu Smith", "headshot": "https://media.pff.com/player-photos/nfl/11855.webp", "team": "MIA", "Grade": 78.6, "FantasyPts": 179.8},
+{"id": 101735, "pos": "WR", "player": "Wan'Dale Robinson", "headshot": "https://media.pff.com/player-photos/nfl/101735.webp", "team": "NYG", "Grade": 63.4, "FantasyPts": 177.8},
+{"id": 11824, "pos": "WR", "player": "Cooper Kupp", "headshot": "https://media.pff.com/player-photos/nfl/11824.webp", "team": "SEA", "Grade": 71.4, "FantasyPts": 176.8},
+{"id": 123085, "pos": "WR", "player": "Quentin Johnston", "headshot": "https://media.pff.com/player-photos/nfl/123085.webp", "team": "LAC", "Grade": 67.3, "FantasyPts": 174.6},
+{"id": 11784, "pos": "TE", "player": "David Njoku", "headshot": "https://media.pff.com/player-photos/nfl/11784.webp", "team": "CLV", "Grade": 64.5, "FantasyPts": 174.4},
+{"id": 9579, "pos": "WR", "player": "Stefon Diggs", "headshot": "https://media.pff.com/player-photos/nfl/9579.webp", "team": "NE", "Grade": 79.1, "FantasyPts": 173.6},
+{"id": 144949, "pos": "WR", "player": "Keon Coleman", "headshot": "https://media.pff.com/player-photos/nfl/144949.webp", "team": "BUF", "Grade": 69.2, "FantasyPts": 173.4},
+{"id": 84329, "pos": "WR", "player": "Romeo Doubs", "headshot": "https://media.pff.com/player-photos/nfl/84329.webp", "team": "GB", "Grade": 70.1, "FantasyPts": 171.2},
+{"id": 29049, "pos": "WR", "player": "Michael Pittman Jr.", "headshot": "https://media.pff.com/player-photos/nfl/29049.webp", "team": "IND", "Grade": 72.6, "FantasyPts": 170.1},
+{"id": 57120, "pos": "RB", "player": "Brian Robinson", "headshot": "https://media.pff.com/player-photos/nfl/57120.webp", "team": "WAS", "Grade": 72, "FantasyPts": 170},
+{"id": 98689, "pos": "RB", "player": "Rhamondre Stevenson", "headshot": "https://media.pff.com/player-photos/nfl/98689.webp", "team": "NE", "Grade": 69.6, "FantasyPts": 169.6},
+{"id": 145059, "pos": "RB", "player": "TreVeyon Henderson", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NE", "Grade": 88.4, "FantasyPts": 166.4},
+{"id": 8288, "pos": "WR", "player": "Adam Thielen", "headshot": "https://media.pff.com/player-photos/nfl/8288.webp", "team": "CAR", "Grade": 76.9, "FantasyPts": 165.3},
+{"id": 61418, "pos": "WR", "player": "Calvin Austin III", "headshot": "https://media.pff.com/player-photos/nfl/61418.webp", "team": "PIT", "Grade": 63.8, "FantasyPts": 164.2},
+{"id": 84226, "pos": "RB", "player": "Tyrone Tracy", "headshot": "https://media.pff.com/player-photos/nfl/84226.webp", "team": "NYG", "Grade": 58.4, "FantasyPts": 164},
+{"id": 7844, "pos": "TE", "player": "Travis Kelce", "headshot": "https://media.pff.com/player-photos/nfl/7844.webp", "team": "KC", "Grade": 71.7, "FantasyPts": 158.9},
+{"id": 57185, "pos": "RB", "player": "Travis Etienne Jr.", "headshot": "https://media.pff.com/player-photos/nfl/57185.webp", "team": "JAX", "Grade": 60.7, "FantasyPts": 158.8},
+{"id": 158540, "pos": "TE", "player": "Colston Loveland", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CHI", "Grade": 85.9, "FantasyPts": 158.8},
+{"id": 122937, "pos": "WR", "player": "Marvin Mims Jr.", "headshot": "https://media.pff.com/player-photos/nfl/122937.webp", "team": "DEN", "Grade": 68.6, "FantasyPts": 158.5},
+{"id": 77803, "pos": "RB", "player": "Javonte Williams", "headshot": "https://media.pff.com/player-photos/nfl/77803.webp", "team": "DAL", "Grade": 61.7, "FantasyPts": 158.2},
+{"id": 61568, "pos": "WR", "player": "Marquise Brown", "headshot": "https://media.pff.com/player-photos/nfl/61568.webp", "team": "KC", "Grade": 65.5, "FantasyPts": 157.8},
+{"id": 147787, "pos": "RB", "player": "Cam Skattebo", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NYG", "Grade": 93.3, "FantasyPts": 157.6},
+{"id": 121959, "pos": "K", "player": "Jake Bates", "headshot": "https://media.pff.com/player-photos/nfl/121959.webp", "team": "DET", "Grade": 91.1, "FantasyPts": 155.5},
+{"id": 156419, "pos": "RB", "player": "Kaleb Johnson", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "PIT", "Grade": 86.5, "FantasyPts": 155.3},
+{"id": 47436, "pos": "TE", "player": "Mark Andrews", "headshot": "https://media.pff.com/player-photos/nfl/47436.webp", "team": "BLT", "Grade": 83.5, "FantasyPts": 154.8},
+{"id": 97630, "pos": "RB", "player": "Zach Charbonnet", "headshot": "https://media.pff.com/player-photos/nfl/97630.webp", "team": "SEA", "Grade": 77.5, "FantasyPts": 153.9},
+{"id": 104034, "pos": "TE", "player": "Tucker Kraft", "headshot": "https://media.pff.com/player-photos/nfl/104034.webp", "team": "GB", "Grade": 68.2, "FantasyPts": 153.2},
+{"id": 11908, "pos": "K", "player": "Jake Elliott", "headshot": "https://media.pff.com/player-photos/nfl/11908.webp", "team": "PHI", "Grade": 52.8, "FantasyPts": 152.7},
+{"id": 84085, "pos": "TE", "player": "Pat Freiermuth", "headshot": "https://media.pff.com/player-photos/nfl/84085.webp", "team": "PIT", "Grade": 67.2, "FantasyPts": 151.9},
+{"id": 156112, "pos": "K", "player": "Brandon Aubrey", "headshot": "https://media.pff.com/player-photos/nfl/156112.webp", "team": "DAL", "Grade": 95.8, "FantasyPts": 151.8},
+{"id": 129798, "pos": "TE", "player": "Tyler Warren", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "IND", "Grade": 91.3, "FantasyPts": 151.4},
+{"id": 33010, "pos": "K", "player": "Tyler Bass", "headshot": "https://media.pff.com/player-photos/nfl/33010.webp", "team": "BUF", "Grade": 72.5, "FantasyPts": 151.1},
+{"id": 8437, "pos": "K", "player": "Brandon McManus", "headshot": "https://media.pff.com/player-photos/nfl/8437.webp", "team": "GB", "Grade": 81.6, "FantasyPts": 150.7},
+{"id": 97195, "pos": "RB", "player": "Tyjae Spears", "headshot": "https://media.pff.com/player-photos/nfl/97195.webp", "team": "TEN", "Grade": 68, "FantasyPts": 150.6},
+{"id": 47895, "pos": "WR", "player": "Ray-Ray McCloud III", "headshot": "https://media.pff.com/player-photos/nfl/47895.webp", "team": "ATL", "Grade": 63, "FantasyPts": 150.6},
+{"id": 11778, "pos": "TE", "player": "Evan Engram", "headshot": "https://media.pff.com/player-photos/nfl/11778.webp", "team": "DEN", "Grade": 72.5, "FantasyPts": 150.2},
+{"id": 8990, "pos": "K", "player": "Chris Boswell", "headshot": "https://media.pff.com/player-photos/nfl/8990.webp", "team": "PIT", "Grade": 92.3, "FantasyPts": 150.2},
+{"id": 33285, "pos": "K", "player": "Chase McLaughlin", "headshot": "https://media.pff.com/player-photos/nfl/33285.webp", "team": "TB", "Grade": 87.6, "FantasyPts": 150.2},
+{"id": 82583, "pos": "K", "player": "Evan McPherson", "headshot": "https://media.pff.com/player-photos/nfl/82583.webp", "team": "CIN", "Grade": 56.2, "FantasyPts": 150.2},
+{"id": 77069, "pos": "K", "player": "Cameron Dicker", "headshot": "https://media.pff.com/player-photos/nfl/77069.webp", "team": "LAC", "Grade": 76, "FantasyPts": 150.1},
+{"id": 91791, "pos": "TE", "player": "Dalton Kincaid", "headshot": "https://media.pff.com/player-photos/nfl/91791.webp", "team": "BUF", "Grade": 71.5, "FantasyPts": 150},
+{"id": 131582, "pos": "K", "player": "Tyler Loop", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "BLT", "Grade": 0, "FantasyPts": 149.6},
+{"id": 146771, "pos": "WR", "player": "Jack Bech", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LV", "Grade": 83.3, "FantasyPts": 149.3},
+{"id": 47272, "pos": "TE", "player": "Dallas Goedert", "headshot": "https://media.pff.com/player-photos/nfl/47272.webp", "team": "PHI", "Grade": 72.6, "FantasyPts": 148.9},
+{"id": 11988, "pos": "K", "player": "Harrison Butker", "headshot": "https://media.pff.com/player-photos/nfl/11988.webp", "team": "KC", "Grade": 66.5, "FantasyPts": 148.7},
+{"id": 57643, "pos": "K", "player": "Matt Gay", "headshot": "https://media.pff.com/player-photos/nfl/57643.webp", "team": "WAS", "Grade": 72.9, "FantasyPts": 147.7},
+{"id": 12164, "pos": "RB", "player": "Austin Ekeler", "headshot": "https://media.pff.com/player-photos/nfl/12164.webp", "team": "WAS", "Grade": 69.8, "FantasyPts": 147.6},
+{"id": 29578, "pos": "K", "player": "Jason Sanders", "headshot": "https://media.pff.com/player-photos/nfl/29578.webp", "team": "MIA", "Grade": 82.9, "FantasyPts": 147.6},
+{"id": 10207, "pos": "K", "player": "Jason Myers", "headshot": "https://media.pff.com/player-photos/nfl/10207.webp", "team": "SEA", "Grade": 91.2, "FantasyPts": 146.6},
+{"id": 61081, "pos": "TE", "player": "Jake Ferguson", "headshot": "https://media.pff.com/player-photos/nfl/61081.webp", "team": "DAL", "Grade": 57.3, "FantasyPts": 146.3},
+{"id": 131765, "pos": "K", "player": "Joshua Karty", "headshot": "https://media.pff.com/player-photos/nfl/131765.webp", "team": "LA", "Grade": 63.4, "FantasyPts": 145.9},
+{"id": 146646, "pos": "K", "player": "Cam Little", "headshot": "https://media.pff.com/player-photos/nfl/146646.webp", "team": "JAX", "Grade": 90.2, "FantasyPts": 145.3},
+{"id": 84296, "pos": "WR", "player": "Rashod Bateman", "headshot": "https://media.pff.com/player-photos/nfl/84296.webp", "team": "BLT", "Grade": 71.8, "FantasyPts": 145.2},
+{"id": 28121, "pos": "K", "player": "Daniel Carlson", "headshot": "https://media.pff.com/player-photos/nfl/28121.webp", "team": "LV", "Grade": 69.7, "FantasyPts": 145.1},
+{"id": 104155, "pos": "WR", "player": "Demario Douglas", "headshot": "https://media.pff.com/player-photos/nfl/104155.webp", "team": "NE", "Grade": 70, "FantasyPts": 144.5},
+{"id": 5443, "pos": "K", "player": "Graham Gano", "headshot": "https://media.pff.com/player-photos/nfl/5443.webp", "team": "NYG", "Grade": 78.7, "FantasyPts": 144.5},
+{"id": 11161, "pos": "K", "player": "Ka'imi Fairbairn", "headshot": "https://media.pff.com/player-photos/nfl/11161.webp", "team": "HST", "Grade": 71.2, "FantasyPts": 144.4},
+{"id": 82603, "pos": "K", "player": "Jake Moody", "headshot": "https://media.pff.com/player-photos/nfl/82603.webp", "team": "SF", "Grade": 44.8, "FantasyPts": 143.4},
+{"id": 77083, "pos": "K", "player": "Chad Ryland", "headshot": "https://media.pff.com/player-photos/nfl/77083.webp", "team": "ARZ", "Grade": 90.2, "FantasyPts": 142.7},
+{"id": 100974, "pos": "K", "player": "Spencer Shrader", "headshot": "https://media.pff.com/player-photos/nfl/100974.webp", "team": "IND", "Grade": 76.2, "FantasyPts": 142.5},
+{"id": 12042, "pos": "K", "player": "Younghoe Koo", "headshot": "https://media.pff.com/player-photos/nfl/12042.webp", "team": "ATL", "Grade": 69, "FantasyPts": 142.4},
+{"id": 11096, "pos": "K", "player": "Wil Lutz", "headshot": "https://media.pff.com/player-photos/nfl/11096.webp", "team": "DEN", "Grade": 83.5, "FantasyPts": 141.3},
+{"id": 8932, "pos": "K", "player": "Cairo Santos", "headshot": "https://media.pff.com/player-photos/nfl/8932.webp", "team": "CHI", "Grade": 87.9, "FantasyPts": 140.4},
+{"id": 7958, "pos": "K", "player": "Dustin Hopkins", "headshot": "https://media.pff.com/player-photos/nfl/7958.webp", "team": "CLV", "Grade": 27.9, "FantasyPts": 139.6},
+{"id": 84423, "pos": "WR", "player": "Michael Wilson", "headshot": "https://media.pff.com/player-photos/nfl/84423.webp", "team": "ARZ", "Grade": 63.6, "FantasyPts": 139.3},
+{"id": 39675, "pos": "K", "player": "Matthew Wright", "headshot": "https://media.pff.com/player-photos/nfl/39675.webp", "team": "CAR", "Grade": 76.4, "FantasyPts": 138.7},
+{"id": 57502, "pos": "K", "player": "Blake Grupe", "headshot": "https://media.pff.com/player-photos/nfl/57502.webp", "team": "NO", "Grade": 76.1, "FantasyPts": 138.5},
+{"id": 83964, "pos": "TE", "player": "Kyle Pitts", "headshot": "https://media.pff.com/player-photos/nfl/83964.webp", "team": "ATL", "Grade": 60.4, "FantasyPts": 138.2},
+{"id": 98965, "pos": "K", "player": "Will Reichard", "headshot": "https://media.pff.com/player-photos/nfl/98965.webp", "team": "MIN", "Grade": 70.4, "FantasyPts": 137.9},
+{"id": 39235, "pos": "K", "player": "Joey Slye", "headshot": "https://media.pff.com/player-photos/nfl/39235.webp", "team": "TEN", "Grade": 74, "FantasyPts": 137.4},
+{"id": 143934, "pos": "K", "player": "Andres Borregales", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NE", "Grade": 91, "FantasyPts": 137.3},
+{"id": 84000, "pos": "TE", "player": "Chigoziem Okonkwo", "headshot": "https://media.pff.com/player-photos/nfl/84000.webp", "team": "TEN", "Grade": 60.8, "FantasyPts": 136.8},
+{"id": 98964, "pos": "K", "player": "Caden Davis", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NYJ", "Grade": 0, "FantasyPts": 136.6},
+{"id": 100660, "pos": "WR", "player": "Ricky Pearsall", "headshot": "https://media.pff.com/player-photos/nfl/100660.webp", "team": "SF", "Grade": 63.9, "FantasyPts": 136.4},
+{"id": 9502, "pos": "WR", "player": "Tyler Lockett", "headshot": "https://media.pff.com/player-photos/nfl/9502.webp", "team": "TEN", "Grade": 65.2, "FantasyPts": 135},
+{"id": 10669, "pos": "TE", "player": "Hunter Henry", "headshot": "https://media.pff.com/player-photos/nfl/10669.webp", "team": "NE", "Grade": 70.8, "FantasyPts": 134.2},
+{"id": 101694, "pos": "TE", "player": "Brenton Strange", "headshot": "https://media.pff.com/player-photos/nfl/101694.webp", "team": "JAX", "Grade": 66.6, "FantasyPts": 133.8},
+{"id": 7816, "pos": "TE", "player": "Zach Ertz", "headshot": "https://media.pff.com/player-photos/nfl/7816.webp", "team": "WAS", "Grade": 68.6, "FantasyPts": 130},
+{"id": 61071, "pos": "TE", "player": "Cade Otton", "headshot": "https://media.pff.com/player-photos/nfl/61071.webp", "team": "TB", "Grade": 65.6, "FantasyPts": 129.1},
+{"id": 145055, "pos": "WR", "player": "Emeka Egbuka", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "TB", "Grade": 79.5, "FantasyPts": 128.9},
+{"id": 47153, "pos": "TE", "player": "Mike Gesicki", "headshot": "https://media.pff.com/player-photos/nfl/47153.webp", "team": "CIN", "Grade": 71.5, "FantasyPts": 128.4},
+{"id": 33441, "pos": "WR", "player": "Diontae Johnson", "headshot": "https://media.pff.com/player-photos/nfl/33441.webp", "team": "CLV", "Grade": 65.1, "FantasyPts": 127.6},
+{"id": 62979, "pos": "WR", "player": "Joshua Palmer", "headshot": "https://media.pff.com/player-photos/nfl/62979.webp", "team": "BUF", "Grade": 67, "FantasyPts": 127.4},
+{"id": 83955, "pos": "TE", "player": "Isaiah Likely", "headshot": "https://media.pff.com/player-photos/nfl/83955.webp", "team": "BLT", "Grade": 75.6, "FantasyPts": 126.5},
+{"id": 62946, "pos": "RB", "player": "Jordan Mason", "headshot": "https://media.pff.com/player-photos/nfl/62946.webp", "team": "MIN", "Grade": 72.7, "FantasyPts": 126},
+{"id": 123091, "pos": "RB", "player": "Kendre Miller", "headshot": "https://media.pff.com/player-photos/nfl/123091.webp", "team": "NO", "Grade": 73.3, "FantasyPts": 125.9},
+{"id": 25578, "pos": "WR", "player": "Darius Slayton", "headshot": "https://media.pff.com/player-photos/nfl/25578.webp", "team": "NYG", "Grade": 59.7, "FantasyPts": 125.9},
+{"id": 131633, "pos": "RB", "player": "Rachaad White", "headshot": "https://media.pff.com/player-photos/nfl/131633.webp", "team": "TB", "Grade": 73.8, "FantasyPts": 125},
+{"id": 101106, "pos": "WR", "player": "Tre Tucker", "headshot": "https://media.pff.com/player-photos/nfl/101106.webp", "team": "LV", "Grade": 57.5, "FantasyPts": 123.8},
+{"id": 47304, "pos": "TE", "player": "Dalton Schultz", "headshot": "https://media.pff.com/player-photos/nfl/47304.webp", "team": "HST", "Grade": 61.4, "FantasyPts": 123.4},
+{"id": 77965, "pos": "WR", "player": "Tutu Atwell", "headshot": "https://media.pff.com/player-photos/nfl/77965.webp", "team": "LA", "Grade": 72.7, "FantasyPts": 122.4},
+{"id": 1, "pos": "D/ST", "player": "Steelers DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "PIT", "Grade": 78.2, "FantasyPts": 120.2},
+{"id": 2, "pos": "D/ST", "player": "Bills DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "BUF", "Grade": 60, "FantasyPts": 119.5},
+{"id": 3, "pos": "D/ST", "player": "49ers DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "SF", "Grade": 68.9, "FantasyPts": 118.6},
+{"id": 123974, "pos": "RB", "player": "Tank Bigsby", "headshot": "https://media.pff.com/player-photos/nfl/123974.webp", "team": "JAX", "Grade": 68.1, "FantasyPts": 118.3},
+{"id": 4, "pos": "D/ST", "player": "Lions DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "DET", "Grade": 77, "FantasyPts": 117.6},
+{"id": 5, "pos": "D/ST", "player": "Browns DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "CLV", "Grade": 75.4, "FantasyPts": 117},
+{"id": 150240, "pos": "WR", "player": "Jayden Higgins", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "HST", "Grade": 90.5, "FantasyPts": 116.6},
+{"id": 45865, "pos": "RB", "player": "Justice Hill", "headshot": "https://media.pff.com/player-photos/nfl/45865.webp", "team": "BLT", "Grade": 79.5, "FantasyPts": 116.5},
+{"id": 99197, "pos": "WR", "player": "Xavier Legette", "headshot": "https://media.pff.com/player-photos/nfl/99197.webp", "team": "CAR", "Grade": 59.1, "FantasyPts": 116},
+{"id": 61637, "pos": "WR", "player": "Jalen Tolbert", "headshot": "https://media.pff.com/player-photos/nfl/61637.webp", "team": "DAL", "Grade": 61, "FantasyPts": 114.5},
+{"id": 6, "pos": "D/ST", "player": "Cowboys DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "DAL", "Grade": 63.5, "FantasyPts": 114.4},
+{"id": 7, "pos": "D/ST", "player": "Eagles DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "PHI", "Grade": 91.3, "FantasyPts": 114.1},
+{"id": 109811, "pos": "WR", "player": "Andrei Iosivas", "headshot": "https://media.pff.com/player-photos/nfl/109811.webp", "team": "CIN", "Grade": 53, "FantasyPts": 113.5},
+{"id": 8, "pos": "D/ST", "player": "Broncos DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "DEN", "Grade": 74.9, "FantasyPts": 113.3},
+{"id": 129604, "pos": "WR", "player": "Roman Wilson", "headshot": "https://media.pff.com/player-photos/nfl/129604.webp", "team": "PIT", "Grade": 56.7, "FantasyPts": 113},
+{"id": 28305, "pos": "TE", "player": "Juwan Johnson", "headshot": "https://media.pff.com/player-photos/nfl/28305.webp", "team": "NO", "Grade": 67.2, "FantasyPts": 112.7},
+{"id": 11993, "pos": "WR", "player": "Noah Brown", "headshot": "https://media.pff.com/player-photos/nfl/11993.webp", "team": "WAS", "Grade": 70.7, "FantasyPts": 112.3},
+{"id": 9, "pos": "D/ST", "player": "Vikings DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "MIN", "Grade": 71, "FantasyPts": 112.2},
+{"id": 10, "pos": "D/ST", "player": "Packers DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "GB", "Grade": 71.3, "FantasyPts": 111.9},
+{"id": 11, "pos": "D/ST", "player": "Patriots DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "NE", "Grade": 64.5, "FantasyPts": 111.6},
+{"id": 12, "pos": "D/ST", "player": "Rams DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "LA", "Grade": 70.2, "FantasyPts": 111.6},
+{"id": 13, "pos": "D/ST", "player": "Texans DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "HST", "Grade": 75.1, "FantasyPts": 111.5},
+{"id": 129787, "pos": "TE", "player": "Theo Johnson", "headshot": "https://media.pff.com/player-photos/nfl/129787.webp", "team": "NYG", "Grade": 53.5, "FantasyPts": 110.8},
+{"id": 83806, "pos": "RB", "player": "Isaac Guerendo", "headshot": "https://media.pff.com/player-photos/nfl/83806.webp", "team": "SF", "Grade": 64.6, "FantasyPts": 110.3},
+{"id": 99467, "pos": "RB", "player": "Roschon Johnson", "headshot": "https://media.pff.com/player-photos/nfl/99467.webp", "team": "CHI", "Grade": 69.5, "FantasyPts": 110.3},
+{"id": 8655, "pos": "WR", "player": "Brandin Cooks", "headshot": "https://media.pff.com/player-photos/nfl/8655.webp", "team": "NO", "Grade": 63.2, "FantasyPts": 110.3},
+{"id": 14, "pos": "D/ST", "player": "Buccaneers DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "TB", "Grade": 67.2, "FantasyPts": 110.2},
+{"id": 157122, "pos": "TE", "player": "Mason Taylor", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NYJ", "Grade": 69.1, "FantasyPts": 110.1},
+{"id": 15, "pos": "D/ST", "player": "Giants DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "NYG", "Grade": 67, "FantasyPts": 110.1},
+{"id": 16, "pos": "D/ST", "player": "Seahawks DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "SEA", "Grade": 70, "FantasyPts": 110.1},
+{"id": 157303, "pos": "RB", "player": "Jaydon Blue", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "DAL", "Grade": 73.1, "FantasyPts": 110},
+{"id": 17, "pos": "D/ST", "player": "Dolphins DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "MIA", "Grade": 68.2, "FantasyPts": 110},
+{"id": 144717, "pos": "TE", "player": "Ja'Tavion Sanders", "headshot": "https://media.pff.com/player-photos/nfl/144717.webp", "team": "CAR", "Grade": 53.5, "FantasyPts": 109.8},
+{"id": 18, "pos": "D/ST", "player": "Colts DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "IND", "Grade": 74.5, "FantasyPts": 108.9},
+{"id": 19, "pos": "D/ST", "player": "Jets DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "NYJ", "Grade": 64.4, "FantasyPts": 108.9},
+{"id": 57366, "pos": "RB", "player": "J.K. Dobbins", "headshot": "https://media.pff.com/player-photos/nfl/57366.webp", "team": "DEN", "Grade": 66.6, "FantasyPts": 108.8},
+{"id": 20, "pos": "D/ST", "player": "Bengals DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "CIN", "Grade": 66.3, "FantasyPts": 108.8},
+{"id": 131705, "pos": "RB", "player": "Trey Benson", "headshot": "https://media.pff.com/player-photos/nfl/131705.webp", "team": "ARZ", "Grade": 62.8, "FantasyPts": 108.5},
+{"id": 21, "pos": "D/ST", "player": "Saints DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "NO", "Grade": 57.8, "FantasyPts": 108.4},
+{"id": 22, "pos": "D/ST", "player": "Cardinals DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "ARI", "Grade": 65.4, "FantasyPts": 108.2},
+{"id": 23, "pos": "D/ST", "player": "Jaguars DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "JAX", "Grade": 63.3, "FantasyPts": 108.1},
+{"id": 24, "pos": "D/ST", "player": "Falcons DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "ATL", "Grade": 68.6, "FantasyPts": 107.7},
+{"id": 25, "pos": "D/ST", "player": "Bears DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "CHI", "Grade": 71.8, "FantasyPts": 107.3},
+{"id": 47124, "pos": "TE", "player": "Tyler Conklin", "headshot": "https://media.pff.com/player-photos/nfl/47124.webp", "team": "LAC", "Grade": 58.8, "FantasyPts": 106.9},
+{"id": 26, "pos": "D/ST", "player": "Chiefs DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "KC", "Grade": 79.8, "FantasyPts": 106.5},
+{"id": 27, "pos": "D/ST", "player": "Raiders DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "LV", "Grade": 57.6, "FantasyPts": 105.5},
+{"id": 28, "pos": "D/ST", "player": "Titans DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "TEN", "Grade": 67.2, "FantasyPts": 105.4},
+{"id": 29, "pos": "D/ST", "player": "Commanders DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "WAS", "Grade": 55.3, "FantasyPts": 105.4},
+{"id": 122676, "pos": "WR", "player": "Tre Harris", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LAC", "Grade": 89.9, "FantasyPts": 104.7},
+{"id": 30, "pos": "D/ST", "player": "Chargers DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "LAC", "Grade": 78.8, "FantasyPts": 104.5},
+{"id": 31, "pos": "D/ST", "player": "Ravens DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "BAL", "Grade": 75.8, "FantasyPts": 104.4},
+{"id": 7808, "pos": "WR", "player": "DeAndre Hopkins", "headshot": "https://media.pff.com/player-photos/nfl/7808.webp", "team": "BLT", "Grade": 77.8, "FantasyPts": 102.9},
+{"id": 40693, "pos": "RB", "player": "Rico Dowdle", "headshot": "https://media.pff.com/player-photos/nfl/40693.webp", "team": "CAR", "Grade": 73.9, "FantasyPts": 102.8},
+{"id": 101072, "pos": "RB", "player": "Ray Davis", "headshot": "https://media.pff.com/player-photos/nfl/101072.webp", "team": "BUF", "Grade": 70.4, "FantasyPts": 102.6},
+{"id": 83639, "pos": "RB", "player": "Tyler Allgeier", "headshot": "https://media.pff.com/player-photos/nfl/83639.webp", "team": "ATL", "Grade": 86.4, "FantasyPts": 101.7},
+{"id": 146934, "pos": "RB", "player": "Jaylen Wright", "headshot": "https://media.pff.com/player-photos/nfl/146934.webp", "team": "MIA", "Grade": 65.3, "FantasyPts": 101.1},
+{"id": 42388, "pos": "TE", "player": "Noah Fant", "headshot": "https://media.pff.com/player-photos/nfl/42388.webp", "team": "SEA", "Grade": 66, "FantasyPts": 101.1},
+{"id": 163772, "pos": "RB", "player": "Dylan Sampson", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CLV", "Grade": 90.5, "FantasyPts": 101},
+{"id": 78038, "pos": "WR", "player": "Alec Pierce", "headshot": "https://media.pff.com/player-photos/nfl/78038.webp", "team": "IND", "Grade": 74.3, "FantasyPts": 99.9},
+{"id": 10744, "pos": "TE", "player": "Tyler Higbee", "headshot": "https://media.pff.com/player-photos/nfl/10744.webp", "team": "LA", "Grade": 76.4, "FantasyPts": 99.9},
+{"id": 157170, "pos": "WR", "player": "Luther Burden III", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CHI", "Grade": 77.9, "FantasyPts": 98.5},
+{"id": 131905, "pos": "WR", "player": "Jalen McMillan", "headshot": "https://media.pff.com/player-photos/nfl/131905.webp", "team": "TB", "Grade": 61.6, "FantasyPts": 98.2},
+{"id": 32, "pos": "D/ST", "player": "Panthers DST", "headshot": "https://media.pff.com/player-photos/nfl/.webp", "team": "CAR", "Grade": 45, "FantasyPts": 97.7},
+{"id": 124247, "pos": "RB", "player": "MarShawn Lloyd", "headshot": "https://media.pff.com/player-photos/nfl/124247.webp", "team": "GB", "Grade": 53.3, "FantasyPts": 95.5},
+{"id": 57121, "pos": "RB", "player": "Najee Harris", "headshot": "https://media.pff.com/player-photos/nfl/57121.webp", "team": "LAC", "Grade": 77.8, "FantasyPts": 95},
+{"id": 47861, "pos": "WR", "player": "Nick Westbrook-Ikhine", "headshot": "https://media.pff.com/player-photos/nfl/47861.webp", "team": "MIA", "Grade": 63.3, "FantasyPts": 94.2},
+{"id": 77986, "pos": "WR", "player": "Dyami Brown", "headshot": "https://media.pff.com/player-photos/nfl/77986.webp", "team": "JAX", "Grade": 66.9, "FantasyPts": 91},
+{"id": 11762, "pos": "WR", "player": "Mike Williams", "headshot": "https://media.pff.com/player-photos/nfl/11762.webp", "team": "LAC", "Grade": 58.8, "FantasyPts": 89.7},
+{"id": 47658, "pos": "WR", "player": "KaVontae Turpin", "headshot": "https://media.pff.com/player-photos/nfl/47658.webp", "team": "DAL", "Grade": 71.2, "FantasyPts": 89.5},
+{"id": 12270, "pos": "WR", "player": "Kendrick Bourne", "headshot": "https://media.pff.com/player-photos/nfl/12270.webp", "team": "NE", "Grade": 62.6, "FantasyPts": 89.4},
+{"id": 47809, "pos": "WR", "player": "Marquez Valdes-Scantling", "headshot": "https://media.pff.com/player-photos/nfl/47809.webp", "team": "SEA", "Grade": 61.6, "FantasyPts": 88.9},
+{"id": 100637, "pos": "WR", "player": "Devaughn Vele", "headshot": "https://media.pff.com/player-photos/nfl/100637.webp", "team": "DEN", "Grade": 69.3, "FantasyPts": 88.6},
+{"id": 128374, "pos": "WR", "player": "Kyle Williams", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NE", "Grade": 80.2, "FantasyPts": 87.6},
+{"id": 30762, "pos": "TE", "player": "Will Dissly", "headshot": "https://media.pff.com/player-photos/nfl/30762.webp", "team": "LAC", "Grade": 68.8, "FantasyPts": 85.4},
+{"id": 143933, "pos": "TE", "player": "Elijah Arroyo", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "SEA", "Grade": 71.6, "FantasyPts": 84.5},
+{"id": 60878, "pos": "TE", "player": "Noah Gray", "headshot": "https://media.pff.com/player-photos/nfl/60878.webp", "team": "KC", "Grade": 71.3, "FantasyPts": 84.2},
+{"id": 145159, "pos": "RB", "player": "Braelon Allen", "headshot": "https://media.pff.com/player-photos/nfl/145159.webp", "team": "NYJ", "Grade": 73.6, "FantasyPts": 83.7},
+{"id": 12087, "pos": "WR", "player": "Tim Patrick", "headshot": "https://media.pff.com/player-photos/nfl/12087.webp", "team": "DET", "Grade": 66.8, "FantasyPts": 83.2},
+{"id": 122906, "pos": "TE", "player": "Michael Mayer", "headshot": "https://media.pff.com/player-photos/nfl/122906.webp", "team": "LV", "Grade": 57.6, "FantasyPts": 83},
+{"id": 10715, "pos": "TE", "player": "Austin Hooper", "headshot": "https://media.pff.com/player-photos/nfl/10715.webp", "team": "NE", "Grade": 75.8, "FantasyPts": 81},
+{"id": 124039, "pos": "WR", "player": "Arian Smith", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NYJ", "Grade": 58, "FantasyPts": 79.9},
+{"id": 45817, "pos": "RB", "player": "Alexander Mattison", "headshot": "https://media.pff.com/player-photos/nfl/45817.webp", "team": "MIA", "Grade": 61.4, "FantasyPts": 78.7},
+{"id": 144800, "pos": "WR", "player": "Pat Bryant", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "DEN", "Grade": 85.2, "FantasyPts": 78.1},
+{"id": 146567, "pos": "WR", "player": "Troy Franklin", "headshot": "https://media.pff.com/player-photos/nfl/146567.webp", "team": "DEN", "Grade": 54.9, "FantasyPts": 77},
+{"id": 11841, "pos": "RB", "player": "Kareem Hunt", "headshot": "https://media.pff.com/player-photos/nfl/11841.webp", "team": "KC", "Grade": 74.4, "FantasyPts": 76.6},
+{"id": 84292, "pos": "WR", "player": "Jalen Nailor", "headshot": "https://media.pff.com/player-photos/nfl/84292.webp", "team": "MIN", "Grade": 59.7, "FantasyPts": 75.2},
+{"id": 146712, "pos": "WR", "player": "Adonai Mitchell", "headshot": "https://media.pff.com/player-photos/nfl/146712.webp", "team": "IND", "Grade": 57.8, "FantasyPts": 74.2},
+{"id": 9783, "pos": "RB", "player": "Raheem Mostert", "headshot": "https://media.pff.com/player-photos/nfl/9783.webp", "team": "LV", "Grade": 69.3, "FantasyPts": 73.6},
+{"id": 99711, "pos": "WR", "player": "Dontayvion Wicks", "headshot": "https://media.pff.com/player-photos/nfl/99711.webp", "team": "GB", "Grade": 65.6, "FantasyPts": 73.6},
+{"id": 35883, "pos": "TE", "player": "Dawson Knox", "headshot": "https://media.pff.com/player-photos/nfl/35883.webp", "team": "BUF", "Grade": 57.6, "FantasyPts": 72.8},
+{"id": 11869, "pos": "RB", "player": "Samaje Perine", "headshot": "https://media.pff.com/player-photos/nfl/11869.webp", "team": "CIN", "Grade": 67.2, "FantasyPts": 72.5},
+{"id": 45783, "pos": "RB", "player": "Nick Chubb", "headshot": "https://media.pff.com/player-photos/nfl/45783.webp", "team": "HST", "Grade": 57.5, "FantasyPts": 72.4},
+{"id": 124179, "pos": "RB", "player": "Woody Marks", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "HST", "Grade": 83.1, "FantasyPts": 72.4},
+{"id": 97623, "pos": "WR", "player": "Jordan Whittington", "headshot": "https://media.pff.com/player-photos/nfl/97623.webp", "team": "LA", "Grade": 78.3, "FantasyPts": 72.1},
+{"id": 47043, "pos": "TE", "player": "Foster Moreau", "headshot": "https://media.pff.com/player-photos/nfl/47043.webp", "team": "NO", "Grade": 71.6, "FantasyPts": 71.5},
+{"id": 129574, "pos": "RB", "player": "Blake Corum", "headshot": "https://media.pff.com/player-photos/nfl/129574.webp", "team": "LA", "Grade": 72, "FantasyPts": 71.4},
+{"id": 129799, "pos": "WR", "player": "Parker Washington", "headshot": "https://media.pff.com/player-photos/nfl/129799.webp", "team": "JAX", "Grade": 59.7, "FantasyPts": 71.3},
+{"id": 57165, "pos": "RB", "player": "AJ Dillon", "headshot": "https://media.pff.com/player-photos/nfl/57165.webp", "team": "PHI", "Grade": 0, "FantasyPts": 71.2},
+{"id": 47447, "pos": "WR", "player": "Van Jefferson", "headshot": "https://media.pff.com/player-photos/nfl/47447.webp", "team": "TEN", "Grade": 57.2, "FantasyPts": 69.6},
+{"id": 39395, "pos": "QB", "player": "Daniel Jones", "headshot": "https://media.pff.com/player-photos/nfl/39395.webp", "team": "IND", "Grade": 72.6, "FantasyPts": 69.1},
+{"id": 40341, "pos": "RB", "player": "Zack Moss", "headshot": "https://media.pff.com/player-photos/nfl/40341.webp", "team": "CIN", "Grade": 58.2, "FantasyPts": 68.5},
+{"id": 57272, "pos": "RB", "player": "Elijah Mitchell", "headshot": "https://media.pff.com/player-photos/nfl/57272.webp", "team": "KC", "Grade": 0, "FantasyPts": 67.2},
+{"id": 40555, "pos": "RB", "player": "Miles Sanders", "headshot": "https://media.pff.com/player-photos/nfl/40555.webp", "team": "DAL", "Grade": 67.9, "FantasyPts": 66.3},
+{"id": 11872, "pos": "WR", "player": "Josh Reynolds", "headshot": "https://media.pff.com/player-photos/nfl/11872.webp", "team": "NYJ", "Grade": 61.2, "FantasyPts": 65.9},
+{"id": 45769, "pos": "RB", "player": "Ty Johnson", "headshot": "https://media.pff.com/player-photos/nfl/45769.webp", "team": "BUF", "Grade": 73.3, "FantasyPts": 64.8},
+{"id": 163442, "pos": "WR", "player": "Jalen Royals", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "KC", "Grade": 79.6, "FantasyPts": 64.3},
+{"id": 84375, "pos": "WR", "player": "Jahan Dotson", "headshot": "https://media.pff.com/player-photos/nfl/84375.webp", "team": "PHI", "Grade": 54.7, "FantasyPts": 64.1},
+{"id": 143068, "pos": "WR", "player": "Jalen Coker", "headshot": "https://media.pff.com/player-photos/nfl/143068.webp", "team": "CAR", "Grade": 72.8, "FantasyPts": 63.4},
+{"id": 97108, "pos": "WR", "player": "Malik Washington", "headshot": "https://media.pff.com/player-photos/nfl/97108.webp", "team": "MIA", "Grade": 57.7, "FantasyPts": 63.1},
+{"id": 150568, "pos": "RB", "player": "Bhayshul Tuten", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "JAX", "Grade": 77.5, "FantasyPts": 62.9},
+{"id": 77763, "pos": "RB", "player": "Emari Demercado", "headshot": "https://media.pff.com/player-photos/nfl/77763.webp", "team": "ARZ", "Grade": 70.8, "FantasyPts": 62.8},
+{"id": 154173, "pos": "RB", "player": "Emanuel Wilson", "headshot": "https://media.pff.com/player-photos/nfl/154173.webp", "team": "GB", "Grade": 83.7, "FantasyPts": 60.1},
+{"id": 129918, "pos": "WR", "player": "Chimere Dike", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "TEN", "Grade": 72.9, "FantasyPts": 58.9},
+{"id": 146563, "pos": "TE", "player": "Terrance Ferguson", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LA", "Grade": 73.9, "FantasyPts": 58.6},
+{"id": 40485, "pos": "RB", "player": "Devin Singletary", "headshot": "https://media.pff.com/player-photos/nfl/40485.webp", "team": "NYG", "Grade": 62.1, "FantasyPts": 58.1},
+{"id": 7822, "pos": "WR", "player": "Robert Woods", "headshot": "https://media.pff.com/player-photos/nfl/7822.webp", "team": "PIT", "Grade": 58.8, "FantasyPts": 57},
+{"id": 138299, "pos": "RB", "player": "Isaiah Davis", "headshot": "https://media.pff.com/player-photos/nfl/138299.webp", "team": "NYJ", "Grade": 75.7, "FantasyPts": 56.6},
+{"id": 11795, "pos": "WR", "player": "Curtis Samuel", "headshot": "https://media.pff.com/player-photos/nfl/11795.webp", "team": "BUF", "Grade": 65.5, "FantasyPts": 55.1},
+{"id": 146409, "pos": "QB", "player": "Jaxson Dart", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NYG", "Grade": 92.6, "FantasyPts": 54.9},
+{"id": 42237, "pos": "WR", "player": "Greg Dortch", "headshot": "https://media.pff.com/player-photos/nfl/42237.webp", "team": "ARZ", "Grade": 63.9, "FantasyPts": 54.4},
+{"id": 124017, "pos": "WR", "player": "Jermaine Burton", "headshot": "https://media.pff.com/player-photos/nfl/124017.webp", "team": "CIN", "Grade": 58.4, "FantasyPts": 52.6},
+{"id": 11817, "pos": "WR", "player": "JuJu Smith-Schuster", "headshot": "https://media.pff.com/player-photos/nfl/11817.webp", "team": "KC", "Grade": 59.4, "FantasyPts": 51.1},
+{"id": 10760, "pos": "WR", "player": "Demarcus Robinson", "headshot": "https://media.pff.com/player-photos/nfl/10760.webp", "team": "SF", "Grade": 65, "FantasyPts": 50.6},
+{"id": 84302, "pos": "WR", "player": "Elijah Moore", "headshot": "https://media.pff.com/player-photos/nfl/84302.webp", "team": "BUF", "Grade": 58.5, "FantasyPts": 50.3},
+{"id": 84025, "pos": "TE", "player": "Tommy Tremble", "headshot": "https://media.pff.com/player-photos/nfl/84025.webp", "team": "CAR", "Grade": 54.3, "FantasyPts": 50},
+{"id": 122616, "pos": "TE", "player": "Ben Sinnott", "headshot": "https://media.pff.com/player-photos/nfl/122616.webp", "team": "WAS", "Grade": 54.3, "FantasyPts": 49.2},
+{"id": 48135, "pos": "WR", "player": "Allen Lazard", "headshot": "https://media.pff.com/player-photos/nfl/48135.webp", "team": "NYJ", "Grade": 63, "FantasyPts": 48.2},
+{"id": 47083, "pos": "TE", "player": "Josh Oliver", "headshot": "https://media.pff.com/player-photos/nfl/47083.webp", "team": "MIN", "Grade": 75.1, "FantasyPts": 48},
+{"id": 11028, "pos": "WR", "player": "Kalif Raymond", "headshot": "https://media.pff.com/player-photos/nfl/11028.webp", "team": "DET", "Grade": 71.1, "FantasyPts": 47.7},
+{"id": 84005, "pos": "TE", "player": "Luke Schoonmaker", "headshot": "https://media.pff.com/player-photos/nfl/84005.webp", "team": "DAL", "Grade": 58.2, "FantasyPts": 47.3},
+{"id": 83601, "pos": "RB", "player": "Jerome Ford", "headshot": "https://media.pff.com/player-photos/nfl/83601.webp", "team": "CLV", "Grade": 71.2, "FantasyPts": 47.2},
+{"id": 66924, "pos": "TE", "player": "Tanner Hudson", "headshot": "https://media.pff.com/player-photos/nfl/66924.webp", "team": "CIN", "Grade": 67.4, "FantasyPts": 47.2},
+{"id": 123826, "pos": "RB", "player": "Keaton Mitchell", "headshot": "https://media.pff.com/player-photos/nfl/123826.webp", "team": "BLT", "Grade": 50.8, "FantasyPts": 47},
+{"id": 101486, "pos": "TE", "player": "Cade Stover", "headshot": "https://media.pff.com/player-photos/nfl/101486.webp", "team": "HST", "Grade": 53, "FantasyPts": 46.9},
+{"id": 144595, "pos": "RB", "player": "DJ Giddens", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "IND", "Grade": 75.7, "FantasyPts": 46.4},
+{"id": 163104, "pos": "TE", "player": "Harold Fannin Jr.", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CLV", "Grade": 96.2, "FantasyPts": 46.2},
+{"id": 54037, "pos": "TE", "player": "Josh Whyle", "headshot": "https://media.pff.com/player-photos/nfl/54037.webp", "team": "TEN", "Grade": 65.6, "FantasyPts": 45.5},
+{"id": 98027, "pos": "TE", "player": "Elijah Higgins", "headshot": "https://media.pff.com/player-photos/nfl/98027.webp", "team": "ARZ", "Grade": 62.7, "FantasyPts": 45.2},
+{"id": 121811, "pos": "WR", "player": "Jaylin Lane", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "WAS", "Grade": 71.1, "FantasyPts": 44.1},
+{"id": 157730, "pos": "RB", "player": "Trevor Etienne", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CAR", "Grade": 82.5, "FantasyPts": 43.8},
+{"id": 60997, "pos": "TE", "player": "Grant Calcaterra", "headshot": "https://media.pff.com/player-photos/nfl/60997.webp", "team": "PHI", "Grade": 54, "FantasyPts": 43.7},
+{"id": 60995, "pos": "TE", "player": "Cole Kmet", "headshot": "https://media.pff.com/player-photos/nfl/60995.webp", "team": "CHI", "Grade": 60.9, "FantasyPts": 43.2},
+{"id": 124044, "pos": "TE", "player": "Darnell Washington", "headshot": "https://media.pff.com/player-photos/nfl/124044.webp", "team": "PIT", "Grade": 72.7, "FantasyPts": 42.7},
+{"id": 47259, "pos": "TE", "player": "Drew Sample", "headshot": "https://media.pff.com/player-photos/nfl/47259.webp", "team": "CIN", "Grade": 48.5, "FantasyPts": 42.1},
+{"id": 172430, "pos": "WR", "player": "Isaac TeSlaa", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "DET", "Grade": 69.6, "FantasyPts": 41.5},
+{"id": 98499, "pos": "TE", "player": "Luke Musgrave", "headshot": "https://media.pff.com/player-photos/nfl/98499.webp", "team": "GB", "Grade": 47, "FantasyPts": 40.5},
+{"id": 125155, "pos": "WR", "player": "Jaylin Noel", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "HST", "Grade": 80.8, "FantasyPts": 40},
+{"id": 27948, "pos": "WR", "player": "Ben Skowronek", "headshot": "https://media.pff.com/player-photos/nfl/27948.webp", "team": "PIT", "Grade": 69.5, "FantasyPts": 39.8},
+{"id": 128232, "pos": "WR", "player": "Tory Horton", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "SEA", "Grade": 82.3, "FantasyPts": 39.6},
+{"id": 77997, "pos": "WR", "player": "Jake Bobo", "headshot": "https://media.pff.com/player-photos/nfl/77997.webp", "team": "SEA", "Grade": 56.3, "FantasyPts": 39},
+{"id": 46569, "pos": "QB", "player": "Mason Rudolph", "headshot": "https://media.pff.com/player-photos/nfl/46569.webp", "team": "PIT", "Grade": 63.3, "FantasyPts": 38.5},
+{"id": 146547, "pos": "WR", "player": "Dont'e Thornton Jr.", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LV", "Grade": 80.2, "FantasyPts": 38.3},
+{"id": 124282, "pos": "WR", "player": "Jalin Hyatt", "headshot": "https://media.pff.com/player-photos/nfl/124282.webp", "team": "NYG", "Grade": 48, "FantasyPts": 37.9},
+{"id": 7912, "pos": "RB", "player": "Kyle Juszczyk", "headshot": "https://media.pff.com/player-photos/nfl/7912.webp", "team": "SF", "Grade": 61.8, "FantasyPts": 37.8},
+{"id": 146662, "pos": "RB", "player": "Jarquez Hunter", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LA", "Grade": 81.6, "FantasyPts": 37.8},
+{"id": 97400, "pos": "WR", "player": "John Metchie III", "headshot": "https://media.pff.com/player-photos/nfl/97400.webp", "team": "HST", "Grade": 59.3, "FantasyPts": 37.7},
+{"id": 8697, "pos": "QB", "player": "Jimmy Garoppolo", "headshot": "https://media.pff.com/player-photos/nfl/8697.webp", "team": "LA", "Grade": 70.8, "FantasyPts": 36.1},
+{"id": 82151, "pos": "QB", "player": "Joe Milton III", "headshot": "https://media.pff.com/player-photos/nfl/82151.webp", "team": "DAL", "Grade": 95.8, "FantasyPts": 35.3},
+{"id": 99218, "pos": "WR", "player": "Treylon Burks", "headshot": "https://media.pff.com/player-photos/nfl/99218.webp", "team": "TEN", "Grade": 52.1, "FantasyPts": 35.1},
+{"id": 4332, "pos": "QB", "player": "Joe Flacco", "headshot": "https://media.pff.com/player-photos/nfl/4332.webp", "team": "CLV", "Grade": 71.6, "FantasyPts": 34.7},
+{"id": 41401, "pos": "QB", "player": "Gardner Minshew", "headshot": "https://media.pff.com/player-photos/nfl/41401.webp", "team": "KC", "Grade": 61.1, "FantasyPts": 34.3},
+{"id": 123101, "pos": "WR", "player": "Savion Williams", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "GB", "Grade": 78.9, "FantasyPts": 34},
+{"id": 109795, "pos": "TE", "player": "Adam Trautman", "headshot": "https://media.pff.com/player-photos/nfl/109795.webp", "team": "DEN", "Grade": 56.9, "FantasyPts": 33.2},
+{"id": 144138, "pos": "RB", "player": "Will Shipley", "headshot": "https://media.pff.com/player-photos/nfl/144138.webp", "team": "PHI", "Grade": 67.6, "FantasyPts": 33.1},
+{"id": 11792, "pos": "WR", "player": "Zay Jones", "headshot": "https://media.pff.com/player-photos/nfl/11792.webp", "team": "ARZ", "Grade": 53.1, "FantasyPts": 32.9},
+{"id": 144726, "pos": "TE", "player": "Gunnar Helm", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "TEN", "Grade": 63.1, "FantasyPts": 32.8},
+{"id": 10674, "pos": "WR", "player": "Sterling Shepard", "headshot": "https://media.pff.com/player-photos/nfl/10674.webp", "team": "TB", "Grade": 55.7, "FantasyPts": 32.3},
+{"id": 52266, "pos": "TE", "player": "Colby Parkinson", "headshot": "https://media.pff.com/player-photos/nfl/52266.webp", "team": "LA", "Grade": 64.3, "FantasyPts": 32.3},
+{"id": 146590, "pos": "QB", "player": "Jalen Milroe", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "SEA", "Grade": 87.7, "FantasyPts": 32.2},
+{"id": 46401, "pos": "QB", "player": "Jake Browning", "headshot": "https://media.pff.com/player-photos/nfl/46401.webp", "team": "CIN", "Grade": 61, "FantasyPts": 32},
+{"id": 157263, "pos": "WR", "player": "Elic Ayomanor", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "TEN", "Grade": 74.4, "FantasyPts": 31.7},
+{"id": 129433, "pos": "TE", "player": "AJ Barner", "headshot": "https://media.pff.com/player-photos/nfl/129433.webp", "team": "SEA", "Grade": 61.7, "FantasyPts": 31.6},
+{"id": 9434, "pos": "QB", "player": "Jameis Winston", "headshot": "https://media.pff.com/player-photos/nfl/9434.webp", "team": "NYG", "Grade": 74.1, "FantasyPts": 31},
+{"id": 88685, "pos": "TE", "player": "Julian Hill", "headshot": "https://media.pff.com/player-photos/nfl/88685.webp", "team": "MIA", "Grade": 39.4, "FantasyPts": 30.8},
+{"id": 60516, "pos": "QB", "player": "Aidan O'Connell", "headshot": "https://media.pff.com/player-photos/nfl/60516.webp", "team": "LV", "Grade": 61.2, "FantasyPts": 30.5},
+{"id": 60323, "pos": "QB", "player": "Mac Jones", "headshot": "https://media.pff.com/player-photos/nfl/60323.webp", "team": "SF", "Grade": 65.8, "FantasyPts": 30.2},
+{"id": 9435, "pos": "QB", "player": "Marcus Mariota", "headshot": "https://media.pff.com/player-photos/nfl/9435.webp", "team": "WAS", "Grade": 88.4, "FantasyPts": 29.7},
+{"id": 82096, "pos": "QB", "player": "Zach Wilson", "headshot": "https://media.pff.com/player-photos/nfl/82096.webp", "team": "MIA", "Grade": 0, "FantasyPts": 29.7},
+{"id": 84041, "pos": "TE", "player": "Daniel Bellinger", "headshot": "https://media.pff.com/player-photos/nfl/84041.webp", "team": "NYG", "Grade": 58, "FantasyPts": 29.4},
+{"id": 109239, "pos": "RB", "player": "Julius Chestnut", "headshot": "https://media.pff.com/player-photos/nfl/109239.webp", "team": "TEN", "Grade": 70.6, "FantasyPts": 28.6},
+{"id": 77737, "pos": "RB", "player": "Kenneth Gainwell", "headshot": "https://media.pff.com/player-photos/nfl/77737.webp", "team": "PIT", "Grade": 56, "FantasyPts": 28.4},
+{"id": 11757, "pos": "QB", "player": "Mitch Trubisky", "headshot": "https://media.pff.com/player-photos/nfl/11757.webp", "team": "BUF", "Grade": 50.9, "FantasyPts": 28.3},
+{"id": 101634, "pos": "WR", "player": "Luke McCaffrey", "headshot": "https://media.pff.com/player-photos/nfl/101634.webp", "team": "WAS", "Grade": 54.3, "FantasyPts": 28.2},
+{"id": 123153, "pos": "WR", "player": "Ja'Lynn Polk", "headshot": "https://media.pff.com/player-photos/nfl/123153.webp", "team": "NE", "Grade": 43.6, "FantasyPts": 28.1},
+{"id": 60593, "pos": "QB", "player": "Hendon Hooker", "headshot": "https://media.pff.com/player-photos/nfl/60593.webp", "team": "DET", "Grade": 74.1, "FantasyPts": 28},
+{"id": 84424, "pos": "WR", "player": "Simi Fehoko", "headshot": "https://media.pff.com/player-photos/nfl/84424.webp", "team": "ARZ", "Grade": 55, "FantasyPts": 27.9},
+{"id": 60492, "pos": "TE", "player": "Stone Smartt", "headshot": "https://media.pff.com/player-photos/nfl/60492.webp", "team": "NYJ", "Grade": 66.3, "FantasyPts": 27.9},
+{"id": 12324, "pos": "QB", "player": "Cooper Rush", "headshot": "https://media.pff.com/player-photos/nfl/12324.webp", "team": "BLT", "Grade": 52.9, "FantasyPts": 27.8},
+{"id": 97774, "pos": "WR", "player": "Jonathan Mingo", "headshot": "https://media.pff.com/player-photos/nfl/97774.webp", "team": "DAL", "Grade": 49.9, "FantasyPts": 27.8},
+{"id": 97599, "pos": "QB", "player": "Sam Howell", "headshot": "https://media.pff.com/player-photos/nfl/97599.webp", "team": "MIN", "Grade": 27, "FantasyPts": 27.6},
+{"id": 42257, "pos": "TE", "player": "Charlie Woerner", "headshot": "https://media.pff.com/player-photos/nfl/42257.webp", "team": "ATL", "Grade": 59.9, "FantasyPts": 27.6},
+{"id": 163295, "pos": "RB", "player": "Jordan James", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "SF", "Grade": 86.4, "FantasyPts": 27.5},
+{"id": 10725, "pos": "QB", "player": "Jacoby Brissett", "headshot": "https://media.pff.com/player-photos/nfl/10725.webp", "team": "ARZ", "Grade": 59.1, "FantasyPts": 27.2},
+{"id": 76366, "pos": "WR", "player": "Johnny Wilson", "headshot": "https://media.pff.com/player-photos/nfl/76366.webp", "team": "PHI", "Grade": 48.4, "FantasyPts": 27},
+{"id": 97399, "pos": "WR", "player": "Jamari Thrash", "headshot": "https://media.pff.com/player-photos/nfl/97399.webp", "team": "CLV", "Grade": 42.9, "FantasyPts": 27},
+{"id": 131770, "pos": "QB", "player": "Tanner McKee", "headshot": "https://media.pff.com/player-photos/nfl/131770.webp", "team": "PHI", "Grade": 71.8, "FantasyPts": 26.9},
+{"id": 11917, "pos": "RB", "player": "Jeremy McNichols", "headshot": "https://media.pff.com/player-photos/nfl/11917.webp", "team": "WAS", "Grade": 72, "FantasyPts": 26.6},
+{"id": 34934, "pos": "RB", "player": "Alec Ingold", "headshot": "https://media.pff.com/player-photos/nfl/34934.webp", "team": "MIA", "Grade": 45.7, "FantasyPts": 26.6},
+{"id": 144046, "pos": "TE", "player": "Oronde Gadsden II", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LAC", "Grade": 82.6, "FantasyPts": 26.6},
+{"id": 52269, "pos": "QB", "player": "Davis Mills", "headshot": "https://media.pff.com/player-photos/nfl/52269.webp", "team": "HST", "Grade": 68.5, "FantasyPts": 26},
+{"id": 97119, "pos": "RB", "player": "Sincere McCormick", "headshot": "https://media.pff.com/player-photos/nfl/97119.webp", "team": "LV", "Grade": 76.1, "FantasyPts": 25.9},
+{"id": 7102, "pos": "QB", "player": "Kirk Cousins", "headshot": "https://media.pff.com/player-photos/nfl/7102.webp", "team": "ATL", "Grade": 74.3, "FantasyPts": 25.7},
+{"id": 97408, "pos": "QB", "player": "Spencer Rattler", "headshot": "https://media.pff.com/player-photos/nfl/97408.webp", "team": "NO", "Grade": 52, "FantasyPts": 25.7},
+{"id": 12282, "pos": "QB", "player": "Nick Mullens", "headshot": "https://media.pff.com/player-photos/nfl/12282.webp", "team": "JAX", "Grade": 76.1, "FantasyPts": 25.5},
+{"id": 7810, "pos": "RB", "player": "Cordarrelle Patterson", "headshot": "https://media.pff.com/player-photos/nfl/7810.webp", "team": "PIT", "Grade": 67.6, "FantasyPts": 25.5},
+{"id": 147476, "pos": "RB", "player": "Audric Estime", "headshot": "https://media.pff.com/player-photos/nfl/147476.webp", "team": "DEN", "Grade": 62.3, "FantasyPts": 25.5},
+{"id": 78050, "pos": "RB", "player": "Antonio Gibson", "headshot": "https://media.pff.com/player-photos/nfl/78050.webp", "team": "NE", "Grade": 72.5, "FantasyPts": 25.1},
+{"id": 60994, "pos": "TE", "player": "Brock Wright", "headshot": "https://media.pff.com/player-photos/nfl/60994.webp", "team": "DET", "Grade": 52, "FantasyPts": 25},
+{"id": 129789, "pos": "WR", "player": "KeAndre Lambert-Smith", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LAC", "Grade": 78.6, "FantasyPts": 24.9},
+{"id": 83542, "pos": "QB", "player": "Will Levis", "headshot": "https://media.pff.com/player-photos/nfl/83542.webp", "team": "TEN", "Grade": 55.5, "FantasyPts": 24.7},
+{"id": 60917, "pos": "TE", "player": "Charlie Kolar", "headshot": "https://media.pff.com/player-photos/nfl/60917.webp", "team": "BLT", "Grade": 72.8, "FantasyPts": 24.4},
+{"id": 48054, "pos": "WR", "player": "Tyler Johnson", "headshot": "https://media.pff.com/player-photos/nfl/48054.webp", "team": "NYJ", "Grade": 67, "FantasyPts": 24.2},
+{"id": 40630, "pos": "TE", "player": "Kylen Granson", "headshot": "https://media.pff.com/player-photos/nfl/40630.webp", "team": "PHI", "Grade": 58.3, "FantasyPts": 24.1},
+{"id": 6332, "pos": "QB", "player": "Tyrod Taylor", "headshot": "https://media.pff.com/player-photos/nfl/6332.webp", "team": "NYJ", "Grade": 74.5, "FantasyPts": 23.8},
+{"id": 60341, "pos": "QB", "player": "Malik Willis", "headshot": "https://media.pff.com/player-photos/nfl/60341.webp", "team": "GB", "Grade": 70.3, "FantasyPts": 23.6},
+{"id": 6187, "pos": "QB", "player": "Andy Dalton", "headshot": "https://media.pff.com/player-photos/nfl/6187.webp", "team": "CAR", "Grade": 68.1, "FantasyPts": 23},
+{"id": 12247, "pos": "TE", "player": "Pharaoh Brown", "headshot": "https://media.pff.com/player-photos/nfl/12247.webp", "team": "MIA", "Grade": 47, "FantasyPts": 22.4},
+{"id": 98847, "pos": "WR", "player": "Bub Means", "headshot": "https://media.pff.com/player-photos/nfl/98847.webp", "team": "NO", "Grade": 59.9, "FantasyPts": 22.2},
+{"id": 9896, "pos": "QB", "player": "Taylor Heinicke", "headshot": "https://media.pff.com/player-photos/nfl/9896.webp", "team": "LAC", "Grade": 74.7, "FantasyPts": 22.1},
+{"id": 42275, "pos": "TE", "player": "John Bates", "headshot": "https://media.pff.com/player-photos/nfl/42275.webp", "team": "WAS", "Grade": 47.2, "FantasyPts": 22.1},
+{"id": 13725, "pos": "QB", "player": "Jarrett Stidham", "headshot": "https://media.pff.com/player-photos/nfl/13725.webp", "team": "DEN", "Grade": 68.7, "FantasyPts": 21.9},
+{"id": 11890, "pos": "QB", "player": "Joshua Dobbs", "headshot": "https://media.pff.com/player-photos/nfl/11890.webp", "team": "NE", "Grade": 56.7, "FantasyPts": 21.5},
+{"id": 84037, "pos": "TE", "player": "Payne Durham", "headshot": "https://media.pff.com/player-photos/nfl/84037.webp", "team": "TB", "Grade": 62.2, "FantasyPts": 21.5},
+{"id": 39987, "pos": "QB", "player": "Kyle Trask", "headshot": "https://media.pff.com/player-photos/nfl/39987.webp", "team": "TB", "Grade": 63.8, "FantasyPts": 21.4},
+{"id": 123056, "pos": "RB", "player": "Sean Tucker", "headshot": "https://media.pff.com/player-photos/nfl/123056.webp", "team": "TB", "Grade": 80, "FantasyPts": 21.3},
+{"id": 84029, "pos": "TE", "player": "Jeremy Ruckert", "headshot": "https://media.pff.com/player-photos/nfl/84029.webp", "team": "NYJ", "Grade": 46.6, "FantasyPts": 21.2},
+{"id": 7323, "pos": "QB", "player": "Case Keenum", "headshot": "https://media.pff.com/player-photos/nfl/7323.webp", "team": "CHI", "Grade": 0, "FantasyPts": 20.9},
+{"id": 47940, "pos": "WR", "player": "Parris Campbell", "headshot": "https://media.pff.com/player-photos/nfl/47940.webp", "team": "DAL", "Grade": 54.8, "FantasyPts": 20.8},
+{"id": 12078, "pos": "TE", "player": "Mo Alie-Cox", "headshot": "https://media.pff.com/player-photos/nfl/12078.webp", "team": "IND", "Grade": 65.4, "FantasyPts": 20.5},
+{"id": 84006, "pos": "TE", "player": "Brevyn Spann-Ford", "headshot": "https://media.pff.com/player-photos/nfl/84006.webp", "team": "DAL", "Grade": 54.8, "FantasyPts": 20.5},
+{"id": 44920, "pos": "WR", "player": "Olamide Zaccheaus", "headshot": "https://media.pff.com/player-photos/nfl/44920.webp", "team": "CHI", "Grade": 69.2, "FantasyPts": 20.1},
+{"id": 61577, "pos": "WR", "player": "Tylan Wallace", "headshot": "https://media.pff.com/player-photos/nfl/61577.webp", "team": "BLT", "Grade": 66.2, "FantasyPts": 20.1},
+{"id": 98508, "pos": "TE", "player": "Jared Wiley", "headshot": "https://media.pff.com/player-photos/nfl/98508.webp", "team": "KC", "Grade": 51.5, "FantasyPts": 19.5},
+{"id": 26394, "pos": "TE", "player": "Harrison Bryant", "headshot": "https://media.pff.com/player-photos/nfl/26394.webp", "team": "PHI", "Grade": 60, "FantasyPts": 19.3},
+{"id": 52195, "pos": "WR", "player": "Austin Trammell", "headshot": "https://media.pff.com/player-photos/nfl/52195.webp", "team": "JAX", "Grade": 64.9, "FantasyPts": 19.1},
+{"id": 61324, "pos": "WR", "player": "Ihmir Smith-Marsette", "headshot": "https://media.pff.com/player-photos/nfl/61324.webp", "team": "NYG", "Grade": 53.1, "FantasyPts": 19.1},
+{"id": 57301, "pos": "TE", "player": "Connor Heyward", "headshot": "https://media.pff.com/player-photos/nfl/57301.webp", "team": "PIT", "Grade": 58.4, "FantasyPts": 19.1},
+{"id": 63268, "pos": "RB", "player": "Carlos Washington Jr.", "headshot": "https://media.pff.com/player-photos/nfl/63268.webp", "team": "ATL", "Grade": 0, "FantasyPts": 19},
+{"id": 12303, "pos": "WR", "player": "Zach Pascal", "headshot": "https://media.pff.com/player-photos/nfl/12303.webp", "team": "NYG", "Grade": 44.3, "FantasyPts": 19},
+{"id": 94383, "pos": "RB", "player": "Craig Reynolds", "headshot": "https://media.pff.com/player-photos/nfl/94383.webp", "team": "DET", "Grade": 57.6, "FantasyPts": 18.8},
+{"id": 123727, "pos": "RB", "player": "Kimani Vidal", "headshot": "https://media.pff.com/player-photos/nfl/123727.webp", "team": "LAC", "Grade": 55.8, "FantasyPts": 18.7},
+{"id": 42353, "pos": "TE", "player": "Luke Farrell", "headshot": "https://media.pff.com/player-photos/nfl/42353.webp", "team": "SF", "Grade": 60, "FantasyPts": 18.4},
+{"id": 9859, "pos": "WR", "player": "DeAndre Carter", "headshot": "https://media.pff.com/player-photos/nfl/9859.webp", "team": "CLV", "Grade": 53.3, "FantasyPts": 18.3},
+{"id": 78196, "pos": "WR", "player": "Derius Davis", "headshot": "https://media.pff.com/player-photos/nfl/78196.webp", "team": "LAC", "Grade": 74.4, "FantasyPts": 18.2},
+{"id": 129891, "pos": "RB", "player": "Kyle Monangai", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CHI", "Grade": 77.3, "FantasyPts": 17.5},
+{"id": 124087, "pos": "WR", "player": "Kayshon Boutte", "headshot": "https://media.pff.com/player-photos/nfl/124087.webp", "team": "NE", "Grade": 61.4, "FantasyPts": 17.5},
+{"id": 11981, "pos": "WR", "player": "David Moore", "headshot": "https://media.pff.com/player-photos/nfl/11981.webp", "team": "CAR", "Grade": 63.6, "FantasyPts": 17},
+{"id": 12206, "pos": "TE", "player": "Johnny Mundt", "headshot": "https://media.pff.com/player-photos/nfl/12206.webp", "team": "JAX", "Grade": 57.9, "FantasyPts": 16.8},
+{"id": 55038, "pos": "WR", "player": "Charlie Jones", "headshot": "https://media.pff.com/player-photos/nfl/55038.webp", "team": "CIN", "Grade": 51.6, "FantasyPts": 16.2},
+{"id": 87625, "pos": "TE", "player": "Nate Adkins", "headshot": "https://media.pff.com/player-photos/nfl/87625.webp", "team": "DEN", "Grade": 63.9, "FantasyPts": 16.2},
+{"id": 100894, "pos": "WR", "player": "Jacob Cowing", "headshot": "https://media.pff.com/player-photos/nfl/100894.webp", "team": "SF", "Grade": 62.4, "FantasyPts": 16},
+{"id": 109374, "pos": "TE", "player": "Jackson Hawes", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "BUF", "Grade": 68.5, "FantasyPts": 15.8},
+{"id": 42130, "pos": "TE", "player": "Ian Thomas", "headshot": "https://media.pff.com/player-photos/nfl/42130.webp", "team": "LV", "Grade": 52.8, "FantasyPts": 15.7},
+{"id": 104136, "pos": "WR", "player": "Xavier Gipson", "headshot": "https://media.pff.com/player-photos/nfl/104136.webp", "team": "NYJ", "Grade": 48.5, "FantasyPts": 15.6},
+{"id": 145598, "pos": "WR", "player": "Konata Mumpfield", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LA", "Grade": 70, "FantasyPts": 15.4},
+{"id": 62942, "pos": "RB", "player": "Ty Chandler", "headshot": "https://media.pff.com/player-photos/nfl/62942.webp", "team": "MIN", "Grade": 52.3, "FantasyPts": 15.3},
+{"id": 144558, "pos": "RB", "player": "Devin Neal", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "NO", "Grade": 88, "FantasyPts": 14.9},
+{"id": 102585, "pos": "WR", "player": "Xavier Smith", "headshot": "https://media.pff.com/player-photos/nfl/102585.webp", "team": "LA", "Grade": 73.8, "FantasyPts": 14.9},
+{"id": 86272, "pos": "QB", "player": "Dillon Gabriel", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CLV", "Grade": 86.8, "FantasyPts": 14.5},
+{"id": 131396, "pos": "QB", "player": "Shedeur Sanders", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CLV", "Grade": 91, "FantasyPts": 14.5},
+{"id": 99158, "pos": "RB", "player": "Kenny McIntosh", "headshot": "https://media.pff.com/player-photos/nfl/99158.webp", "team": "SEA", "Grade": 67.3, "FantasyPts": 14.5},
+{"id": 83689, "pos": "RB", "player": "Chris Rodriguez Jr.", "headshot": "https://media.pff.com/player-photos/nfl/83689.webp", "team": "WAS", "Grade": 88.4, "FantasyPts": 13.5},
+{"id": 91319, "pos": "RB", "player": "Hunter Luepke", "headshot": "https://media.pff.com/player-photos/nfl/91319.webp", "team": "DAL", "Grade": 55.1, "FantasyPts": 13.1},
+{"id": 62890, "pos": "WR", "player": "Rondale Moore", "headshot": "https://media.pff.com/player-photos/nfl/62890.webp", "team": "MIN", "Grade": 0, "FantasyPts": 12.9},
+{"id": 47257, "pos": "TE", "player": "Durham Smythe", "headshot": "https://media.pff.com/player-photos/nfl/47257.webp", "team": "CHI", "Grade": 45.2, "FantasyPts": 12.9},
+{"id": 41668, "pos": "RB", "player": "Khalil Herbert", "headshot": "https://media.pff.com/player-photos/nfl/41668.webp", "team": "IND", "Grade": 52, "FantasyPts": 12.7},
+{"id": 83644, "pos": "RB", "player": "Chris Brooks", "headshot": "https://media.pff.com/player-photos/nfl/83644.webp", "team": "GB", "Grade": 65.6, "FantasyPts": 12.7},
+{"id": 91479, "pos": "WR", "player": "Ashton Dulin", "headshot": "https://media.pff.com/player-photos/nfl/91479.webp", "team": "IND", "Grade": 56.3, "FantasyPts": 12.6},
+{"id": 129423, "pos": "TE", "player": "Tip Reiman", "headshot": "https://media.pff.com/player-photos/nfl/129423.webp", "team": "ARZ", "Grade": 53.3, "FantasyPts": 12.6},
+{"id": 99207, "pos": "WR", "player": "Ainias Smith", "headshot": "https://media.pff.com/player-photos/nfl/99207.webp", "team": "PHI", "Grade": 55.2, "FantasyPts": 11.9},
+{"id": 138351, "pos": "TE", "player": "Andrew Ogletree", "headshot": "https://media.pff.com/player-photos/nfl/138351.webp", "team": "IND", "Grade": 69.1, "FantasyPts": 11.3},
+{"id": 129590, "pos": "RB", "player": "Kalel Mullings", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "TEN", "Grade": 87.3, "FantasyPts": 10.9},
+{"id": 143786, "pos": "TE", "player": "Shane Zylstra", "headshot": "https://media.pff.com/player-photos/nfl/143786.webp", "team": "DET", "Grade": 49.6, "FantasyPts": 10.7},
+{"id": 60859, "pos": "TE", "player": "Hunter Long", "headshot": "https://media.pff.com/player-photos/nfl/60859.webp", "team": "JAX", "Grade": 69.3, "FantasyPts": 10.5},
+{"id": 145632, "pos": "RB", "player": "Carson Steele", "headshot": "https://media.pff.com/player-photos/nfl/145632.webp", "team": "KC", "Grade": 52.6, "FantasyPts": 10.3},
+{"id": 111284, "pos": "WR", "player": "Jalen Brooks", "headshot": "https://media.pff.com/player-photos/nfl/111284.webp", "team": "DAL", "Grade": 59.2, "FantasyPts": 10.3},
+{"id": 147646, "pos": "WR", "player": "Tommy Mellott", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "LV", "Grade": 94.1, "FantasyPts": 10.3},
+{"id": 99697, "pos": "TE", "player": "Davis Allen", "headshot": "https://media.pff.com/player-photos/nfl/99697.webp", "team": "LA", "Grade": 46.3, "FantasyPts": 10.3},
+{"id": 29573, "pos": "WR", "player": "D'Wayne Eskridge", "headshot": "https://media.pff.com/player-photos/nfl/29573.webp", "team": "MIA", "Grade": 71.4, "FantasyPts": 10.2},
+{"id": 48170, "pos": "WR", "player": "Cedrick Wilson Jr.", "headshot": "https://media.pff.com/player-photos/nfl/48170.webp", "team": "NO", "Grade": 63.4, "FantasyPts": 10.2},
+{"id": 122730, "pos": "WR", "player": "Jordan Watkins", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "SF", "Grade": 74.3, "FantasyPts": 10.2},
+{"id": 40666, "pos": "WR", "player": "Brandon Johnson", "headshot": "https://media.pff.com/player-photos/nfl/40666.webp", "team": "PIT", "Grade": 65.2, "FantasyPts": 10},
+{"id": 77887, "pos": "TE", "player": "Brevin Jordan", "headshot": "https://media.pff.com/player-photos/nfl/77887.webp", "team": "HST", "Grade": 65.7, "FantasyPts": 9.9},
+{"id": 47481, "pos": "WR", "player": "Scott Miller", "headshot": "https://media.pff.com/player-photos/nfl/47481.webp", "team": "PIT", "Grade": 61.9, "FantasyPts": 9.8},
+{"id": 61220, "pos": "WR", "player": "Laviska Shenault Jr.", "headshot": "https://media.pff.com/player-photos/nfl/61220.webp", "team": "BUF", "Grade": 56.7, "FantasyPts": 9.8},
+{"id": 83962, "pos": "TE", "player": "Lucas Krull", "headshot": "https://media.pff.com/player-photos/nfl/83962.webp", "team": "DEN", "Grade": 52.3, "FantasyPts": 9.8},
+{"id": 144013, "pos": "TE", "player": "Gavin Bartholomew", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "MIN", "Grade": 57.6, "FantasyPts": 9.8},
+{"id": 61448, "pos": "WR", "player": "Cody White", "headshot": "https://media.pff.com/player-photos/nfl/61448.webp", "team": "SEA", "Grade": 66.6, "FantasyPts": 9.7},
+{"id": 48341, "pos": "WR", "player": "Steven Sims", "headshot": "https://media.pff.com/player-photos/nfl/48341.webp", "team": "SEA", "Grade": 56.1, "FantasyPts": 9.6},
+{"id": 9601, "pos": "RB", "player": "Michael Burton", "headshot": "https://media.pff.com/player-photos/nfl/9601.webp", "team": "DEN", "Grade": 65.9, "FantasyPts": 9.5},
+{"id": 11347, "pos": "RB", "player": "C.J. Ham", "headshot": "https://media.pff.com/player-photos/nfl/11347.webp", "team": "MIN", "Grade": 51, "FantasyPts": 9.5},
+{"id": 48021, "pos": "WR", "player": "Trent Sherfield", "headshot": "https://media.pff.com/player-photos/nfl/48021.webp", "team": "DEN", "Grade": 68.8, "FantasyPts": 9.4},
+{"id": 123616, "pos": "WR", "player": "LaJohntay Wester", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "BLT", "Grade": 74, "FantasyPts": 9.4},
+{"id": 145773, "pos": "WR", "player": "Devontez Walker", "headshot": "https://media.pff.com/player-photos/nfl/145773.webp", "team": "BLT", "Grade": 64.8, "FantasyPts": 9.3},
+{"id": 12329, "pos": "RB", "player": "Dare Ogunbowale", "headshot": "https://media.pff.com/player-photos/nfl/12329.webp", "team": "HST", "Grade": 61.5, "FantasyPts": 9.2},
+{"id": 57279, "pos": "RB", "player": "Clyde Edwards-Helaire", "headshot": "https://media.pff.com/player-photos/nfl/57279.webp", "team": "NO", "Grade": 57.4, "FantasyPts": 9.2},
+{"id": 26104, "pos": "WR", "player": "KhaDarel Hodge", "headshot": "https://media.pff.com/player-photos/nfl/26104.webp", "team": "ATL", "Grade": 62.8, "FantasyPts": 9.2},
+{"id": 10211, "pos": "TE", "player": "Chris Manhertz", "headshot": "https://media.pff.com/player-photos/nfl/10211.webp", "team": "NYG", "Grade": 69.3, "FantasyPts": 9},
+{"id": 42058, "pos": "TE", "player": "Jack Stoll", "headshot": "https://media.pff.com/player-photos/nfl/42058.webp", "team": "NO", "Grade": 48.3, "FantasyPts": 8.8},
+{"id": 40006, "pos": "WR", "player": "Devin Duvernay", "headshot": "https://media.pff.com/player-photos/nfl/40006.webp", "team": "CHI", "Grade": 59.2, "FantasyPts": 8.6},
+{"id": 48113, "pos": "WR", "player": "Dante Pettis", "headshot": "https://media.pff.com/player-photos/nfl/48113.webp", "team": "NO", "Grade": 70.2, "FantasyPts": 8.5},
+{"id": 84345, "pos": "WR", "player": "Kevin Austin Jr.", "headshot": "https://media.pff.com/player-photos/nfl/84345.webp", "team": "NO", "Grade": 56.7, "FantasyPts": 8.4},
+{"id": 77918, "pos": "TE", "player": "Ben Sims", "headshot": "https://media.pff.com/player-photos/nfl/77918.webp", "team": "GB", "Grade": 54.2, "FantasyPts": 7.9},
+{"id": 143951, "pos": "RB", "player": "Brashard Smith", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "KC", "Grade": 90.2, "FantasyPts": 7.2},
+{"id": 55632, "pos": "RB", "player": "DeeJay Dallas", "headshot": "https://media.pff.com/player-photos/nfl/55632.webp", "team": "ARZ", "Grade": 75.8, "FantasyPts": 7.1},
+{"id": 162437, "pos": "RB", "player": "Damien Martinez", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "SEA", "Grade": 91.2, "FantasyPts": 7.1},
+{"id": 146594, "pos": "TE", "player": "Robbie Ouzts", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "SEA", "Grade": 60.4, "FantasyPts": 6.9},
+{"id": 101659, "pos": "RB", "player": "Tyler Goodson", "headshot": "https://media.pff.com/player-photos/nfl/101659.webp", "team": "IND", "Grade": 61.2, "FantasyPts": 6.6},
+{"id": 57385, "pos": "RB", "player": "Raheem Blackshear", "headshot": "https://media.pff.com/player-photos/nfl/57385.webp", "team": "CAR", "Grade": 58.9, "FantasyPts": 6.4},
+{"id": 84096, "pos": "WR", "player": "Chris Blair", "headshot": "https://media.pff.com/player-photos/nfl/84096.webp", "team": "ATL", "Grade": 64.3, "FantasyPts": 6.3},
+{"id": 45859, "pos": "RB", "player": "Travis Homer", "headshot": "https://media.pff.com/player-photos/nfl/45859.webp", "team": "CHI", "Grade": 62.1, "FantasyPts": 6},
+{"id": 158505, "pos": "RB", "player": "Sione Vaki", "headshot": "https://media.pff.com/player-photos/nfl/158505.webp", "team": "DET", "Grade": 66.9, "FantasyPts": 6},
+{"id": 40951, "pos": "RB", "player": "Reggie Gilliam", "headshot": "https://media.pff.com/player-photos/nfl/40951.webp", "team": "BUF", "Grade": 63.4, "FantasyPts": 5.9},
+{"id": 32565, "pos": "RB", "player": "Jakob Johnson", "headshot": "https://media.pff.com/player-photos/nfl/32565.webp", "team": "HST", "Grade": 41.7, "FantasyPts": 5.7},
+{"id": 42873, "pos": "RB", "player": "Avery Williams", "headshot": "https://media.pff.com/player-photos/nfl/42873.webp", "team": "PHI", "Grade": 60, "FantasyPts": 5.7},
+{"id": 48862, "pos": "RB", "player": "Patrick Ricard", "headshot": "https://media.pff.com/player-photos/nfl/48862.webp", "team": "BLT", "Grade": 56.8, "FantasyPts": 5.7},
+{"id": 78108, "pos": "TE", "player": "John Stephens Jr.", "headshot": "https://media.pff.com/player-photos/nfl/78108.webp", "team": "DAL", "Grade": 0, "FantasyPts": 5.5},
+{"id": 84150, "pos": "WR", "player": "Nikko Remigio", "headshot": "https://media.pff.com/player-photos/nfl/84150.webp", "team": "KC", "Grade": 76.9, "FantasyPts": 5.4},
+{"id": 97116, "pos": "WR", "player": "Skyy Moore", "headshot": "https://media.pff.com/player-photos/nfl/97116.webp", "team": "KC", "Grade": 39.7, "FantasyPts": 5.4},
+{"id": 99143, "pos": "RB", "player": "Eric Gray", "headshot": "https://media.pff.com/player-photos/nfl/99143.webp", "team": "NYG", "Grade": 48.5, "FantasyPts": 5.2},
+{"id": 20994, "pos": "TE", "player": "Ross Dwelley", "headshot": "https://media.pff.com/player-photos/nfl/20994.webp", "team": "SF", "Grade": 54.7, "FantasyPts": 5.2},
+{"id": 78148, "pos": "WR", "player": "Erik Ezukanma", "headshot": "https://media.pff.com/player-photos/nfl/78148.webp", "team": "MIA", "Grade": 52.4, "FantasyPts": 5.1},
+{"id": 41372, "pos": "TE", "player": "Ko Kieft", "headshot": "https://media.pff.com/player-photos/nfl/41372.webp", "team": "TB", "Grade": 60.9, "FantasyPts": 5.1},
+{"id": 47808, "pos": "WR", "player": "Collin Johnson", "headshot": "https://media.pff.com/player-photos/nfl/47808.webp", "team": "LV", "Grade": 53, "FantasyPts": 5},
+{"id": 77888, "pos": "TE", "player": "Will Mallory", "headshot": "https://media.pff.com/player-photos/nfl/77888.webp", "team": "IND", "Grade": 50.3, "FantasyPts": 4.9},
+{"id": 77881, "pos": "TE", "player": "Blake Whiteheart", "headshot": "https://media.pff.com/player-photos/nfl/77881.webp", "team": "CLV", "Grade": 60.6, "FantasyPts": 4.7},
+{"id": 84036, "pos": "TE", "player": "Teagan Quitoriano", "headshot": "https://media.pff.com/player-photos/nfl/84036.webp", "team": "ATL", "Grade": 45.2, "FantasyPts": 4.7},
+{"id": 84271, "pos": "WR", "player": "Terrace Marshall Jr.", "headshot": "https://media.pff.com/player-photos/nfl/84271.webp", "team": "PHI", "Grade": 51.9, "FantasyPts": 4.5},
+{"id": 124225, "pos": "TE", "player": "Jaheim Bell", "headshot": "https://media.pff.com/player-photos/nfl/124225.webp", "team": "NE", "Grade": 60.2, "FantasyPts": 4.5},
+{"id": 147486, "pos": "TE", "player": "Mitchell Evans", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CAR", "Grade": 66.3, "FantasyPts": 4.5},
+{"id": 144886, "pos": "WR", "player": "Tai Felton", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "MIN", "Grade": 78.1, "FantasyPts": 3.8},
+{"id": 23503, "pos": "WR", "player": "K.J. Osborn", "headshot": "https://media.pff.com/player-photos/nfl/23503.webp", "team": "WAS", "Grade": 52.1, "FantasyPts": 2.8},
+{"id": 48160, "pos": "WR", "player": "Anthony Miller", "headshot": "https://media.pff.com/player-photos/nfl/48160.webp", "team": "BLT", "Grade": 71.3, "FantasyPts": 2.8},
+{"id": 97989, "pos": "WR", "player": "David Bell", "headshot": "https://media.pff.com/player-photos/nfl/97989.webp", "team": "CLV", "Grade": 78.7, "FantasyPts": 2.7},
+{"id": 123133, "pos": "RB", "player": "Tahj Brooks", "headshot": "https://media.pff.com/2025/07/Slide1-1.png", "team": "CIN", "Grade": 83.4, "FantasyPts": 2.1},
+{"id": 40448, "pos": "RB", "player": "Patrick Taylor", "headshot": "https://media.pff.com/player-photos/nfl/40448.webp", "team": "SF", "Grade": 60.4, "FantasyPts": 0},
+{"id": 40547, "pos": "RB", "player": "Kene Nwangwu", "headshot": "https://media.pff.com/player-photos/nfl/40547.webp", "team": "NYJ", "Grade": 60, "FantasyPts": 0},
+{"id": 66619, "pos": "RB", "player": "Pierre Strong Jr.", "headshot": "https://media.pff.com/player-photos/nfl/66619.webp", "team": "CLV", "Grade": 58.4, "FantasyPts": 0},
+{"id": 83659, "pos": "RB", "player": "Dameon Pierce", "headshot": "https://media.pff.com/player-photos/nfl/83659.webp", "team": "HST", "Grade": 73.5, "FantasyPts": 0},
+{"id": 83714, "pos": "RB", "player": "Tyler Badie", "headshot": "https://media.pff.com/player-photos/nfl/83714.webp", "team": "DEN", "Grade": 63, "FantasyPts": 0},
+{"id": 121717, "pos": "RB", "player": "Rasheen Ali", "headshot": "https://media.pff.com/player-photos/nfl/121717.webp", "team": "BLT", "Grade": 57, "FantasyPts": 0},
+{"id": 142677, "pos": "RB", "player": "Chris Collier", "headshot": "https://media.pff.com/player-photos/nfl/142677.webp", "team": "LV", "Grade": 51.3, "FantasyPts": 0},
+{"id": 32933, "pos": "WR", "player": "Britain Covey", "headshot": "https://media.pff.com/player-photos/nfl/32933.webp", "team": "LA", "Grade": 65.4, "FantasyPts": 0},
+{"id": 42683, "pos": "WR", "player": "Mecole Hardman Jr.", "headshot": "https://media.pff.com/player-photos/nfl/42683.webp", "team": "GB", "Grade": 74.2, "FantasyPts": 0},
+{"id": 47961, "pos": "WR", "player": "Braxton Berrios", "headshot": "https://media.pff.com/player-photos/nfl/47961.webp", "team": "HST", "Grade": 44.9, "FantasyPts": 0},
+{"id": 48037, "pos": "WR", "player": "James Proche II", "headshot": "https://media.pff.com/player-photos/nfl/48037.webp", "team": "TEN", "Grade": 67.8, "FantasyPts": 0},
+{"id": 61610, "pos": "WR", "player": "Bo Melton", "headshot": "https://media.pff.com/player-photos/nfl/61610.webp", "team": "GB", "Grade": 63.2, "FantasyPts": 0},
+{"id": 61669, "pos": "WR", "player": "Tim Jones", "headshot": "https://media.pff.com/player-photos/nfl/61669.webp", "team": "MIN", "Grade": 48.2, "FantasyPts": 0},
+{"id": 61697, "pos": "WR", "player": "Jalen Reagor", "headshot": "https://media.pff.com/player-photos/nfl/61697.webp", "team": "LAC", "Grade": 56.2, "FantasyPts": 0},
+{"id": 78187, "pos": "WR", "player": "Dylan Drummond", "headshot": "https://media.pff.com/player-photos/nfl/78187.webp", "team": "ATL", "Grade": 0, "FantasyPts": 0},
+{"id": 83782, "pos": "WR", "player": "Kazmeir Allen", "headshot": "https://media.pff.com/player-photos/nfl/83782.webp", "team": "WAS", "Grade": 0, "FantasyPts": 0},
+{"id": 94379, "pos": "WR", "player": "Tom Kennedy", "headshot": "https://media.pff.com/player-photos/nfl/94379.webp", "team": "DET", "Grade": 54.2, "FantasyPts": 0},
+{"id": 97078, "pos": "WR", "player": "Anthony Gould", "headshot": "https://media.pff.com/player-photos/nfl/97078.webp", "team": "IND", "Grade": 69.6, "FantasyPts": 0},
+{"id": 99248, "pos": "WR", "player": "Trey Palmer", "headshot": "https://media.pff.com/player-photos/nfl/99248.webp", "team": "TB", "Grade": 58.1, "FantasyPts": 0},
+{"id": 101135, "pos": "WR", "player": "Jha'Quan Jackson", "headshot": "https://media.pff.com/player-photos/nfl/101135.webp", "team": "TEN", "Grade": 69.3, "FantasyPts": 0},
+{"id": 123904, "pos": "WR", "player": "Javon Baker", "headshot": "https://media.pff.com/player-photos/nfl/123904.webp", "team": "NE", "Grade": 52.5, "FantasyPts": 0},
+{"id": 129519, "pos": "WR", "player": "Rakim Jarrett", "headshot": "https://media.pff.com/player-photos/nfl/129519.webp", "team": "TB", "Grade": 59.5, "FantasyPts": 0}];</script></head>
+<body>
+<h1 contenteditable="true" id="live-title" style="cursor:text;">My Fantasy Rankings</h1>
+<div id="main-container">
+<div id="ranking-panel">
+<table id="ranking-table">
+<thead>
+<tr><th>Rank No.</th><th></th><th>Player (Team)</th><th>Projected Points</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+<div style="text-align:center;">
+<button id="clearAll" type="button">Clear All</button>
+<button id="addTier" type="button">Add Tier</button>
+<button id="exportCSV" type="button">Export CSV</button>
+<button id="exportTop10Image" type="button">Export Top 10 Image</button>
+</div>
+</div>
+<div id="player-panel">
+<input id="searchInput" onkeyup="filterTable()" placeholder="Search players..." type="text"/>
+<div id="player-table-wrapper">
+<table id="players-table">
+<thead>
+<tr><th></th><th>Pos.</th><th>Player</th><th>Team</th><th>2024 Grade</th><th>Projected Fantasy Points</th></tr>
+</thead>
+<tbody id="player-rows"></tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="top10ImageContainer" style="position:absolute;left:-9999px;top:-9999px;padding:20px;font-family:'Archivo',sans-serif;background:white;"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:8px;"><h2 style="font-size:36px;margin:0;padding:0;margin-top: 20px; margin-bottom: 10px;">Top 10 K Rankings</h2><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAACAAAAAKrCAYAAABlDG1TAACIN0lEQVR4nOzdeZhcZ3Xg/+97q6q7JVuWbEveZVvedwtvGLPY7DhAgIQAyYQkTEJWhpDMZJgnM/mFkEmGIZBlshCSkB3CDmExEAwYjHcby/u+4BXvsiVL3V1V9/z+KBmM3ZZ6ee+91V3fz/P4EUh9zzlSV1ffvu95zwuSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmS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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAw8/4XpZPQH9/4YykAAAAASUVORK5CYII=" style="margin:-18px auto 4px auto;max-width:180px;auto; 10px; display: block; margin-left: auto; margin-right: auto; 0px; display: block; margin-left: auto; margin-right: auto;margin-top: -34px; display: block; margin-left: auto; margin-right: auto;height: 44px; margin-top: -34px; display: block; margin-left: auto; margin-right: auto;margin-bottom: 20px;"/></div>
+<table style="width:100%;border-collapse:collapse;">
+<thead>
+<tr style="background:#f2f2f2;">
+<th style="border:1px solid #ccc;padding:6px;font-size:18px;">Rank</th>
+<th style="border:1px solid #ccc;padding:6px;font-size:18px;">Player</th>
+<th style="border:1px solid #ccc;padding:6px;font-size:18px;">Team</th>
+<th style="border:1px solid #ccc;padding:6px;font-size:18px;">FantasyPts</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script>
+    document.getElementById('clearAll').addEventListener('click', () => location.reload());
+
+    document.getElementById('exportCSV').addEventListener('click', () => {
+      const rows = document.querySelectorAll('#ranking-table tbody .ranking-item');
+      let csvContent = 'Rank,Player,Team,FantasyPts\n';
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const rank = cells[0].innerText;
+        const playerTeam = cells[2].innerText;
+        const match = playerTeam.match(/^(.*) \((.*)\)$/);
+        if (!match) return;
+        const [_, player, team] = match;
+        const fantasyPts = cells[3].innerText;
+        csvContent += `${rank},"${player}",${team},${fantasyPts}\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'fantasy_rankings.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    document.getElementById('exportTop10Image').addEventListener('click', () => {
+      const top10Rows = Array.from(document.querySelectorAll('#ranking-table tbody .ranking-item')).slice(0, 10);
+      const exportTableBody = document.querySelector('#top10ImageContainer tbody');
+      exportTableBody.innerHTML = '';
+
+      top10Rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const rank = cells[0].innerText;
+        const playerTeam = cells[2].innerText;
+        const match = playerTeam.match(/^(.*) \((.*)\)$/);
+        if (!match) return;
+        const [_, player, team] = match;
+        const fantasyPts = cells[3].innerText;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="border:1px solid #ccc;padding:6px;">${rank}</td>
+          <td style="border:1px solid #ccc;padding:6px;">${player}</td>
+          <td style="border:1px solid #ccc;padding:6px;">${team}</td>
+          <td style="border:1px solid #ccc;padding:6px;">${fantasyPts}</td>
+        `;
+        exportTableBody.appendChild(tr);
+      });
+
+      html2canvas(document.querySelector('#top10ImageContainer')).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'top10_rankings.png';
+        link.click();
+      });
+    });
+  </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const playersTbody = document.getElementById('player-rows');
+  data.sort((a, b) => b.FantasyPts - a.FantasyPts);
+
+  data.forEach(item => {
+    const tr = document.createElement('tr');
+  tr.innerHTML = `
+  <td><img src="${item.headshot}" style="width:36px;height:36px;"></td>
+  <td>${item.pos}</td>
+  <td>${item.player}</td>
+  <td>${item.team}</td>
+  <td>${item.Grade.toFixed(1)}</td>
+  <td>${item.FantasyPts.toFixed(1)}</td>
+`;
+
+const gradeCell = tr.children[4];
+const gradeVal = parseFloat(gradeCell.innerText);
+
+if (gradeVal === 0) {
+    gradeCell.style.backgroundColor = 'white';
+    gradeCell.style.color = 'white';
+} else if (gradeVal >= 90) {
+    gradeCell.style.backgroundColor = '#0087A4';
+    gradeCell.style.color = '#fff';
+} else if (gradeVal >= 80) {
+    gradeCell.style.backgroundColor = '#009B47';
+    gradeCell.style.color = '#fff';
+} else if (gradeVal >= 70) {
+    gradeCell.style.backgroundColor = '#76C101';
+    gradeCell.style.color = '#fff';
+} else if (gradeVal >= 60) {
+    gradeCell.style.backgroundColor = '#FFD002';
+    gradeCell.style.color = '#fff';
+} else if (gradeVal >= 50) {
+    gradeCell.style.backgroundColor = '#FE9D00';
+    gradeCell.style.color = '#fff';
+} else if (gradeVal >= 40) {
+    gradeCell.style.backgroundColor = '#FC6900';
+    gradeCell.style.color = '#fff';
+} else if (gradeVal >= 30) {
+    gradeCell.style.backgroundColor = '#E04215';
+    gradeCell.style.color = '#fff';
+} else {
+    gradeCell.style.backgroundColor = '#C61A2A';
+    gradeCell.style.color = '#fff';
+}
+
+gradeCell.style.fontWeight = 'bold';
+
+    tr.addEventListener('click', () => {
+      const rankTbody = document.querySelector('#ranking-table tbody');
+      const existingItems = rankTbody.querySelectorAll('tr.ranking-item');
+      const rank = existingItems.length + 1;
+      const row = document.createElement('tr');
+      row.classList.add('ranking-item');
+      row.innerHTML = `
+        <td>${rank}</td>
+        <td><img src="${item.headshot}" /></td>
+        <td>${item.player} (${item.team})</td>
+        <td>${item.FantasyPts.toFixed(1)}</td>
+      `;
+      rankTbody.appendChild(row);
+      tr.remove();
+    });
+
+    playersTbody.appendChild(tr);
+  });
+
+  // Sorting
+  document.querySelectorAll('#players-table thead th').forEach(header => {
+    header.addEventListener('click', () => {
+      const table = header.closest('table');
+      const tbody = table.querySelector('tbody');
+      const idx = Array.from(header.parentNode.children).indexOf(header);
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const asc = header.dataset.asc !== 'true';
+      rows.sort((a, b) => {
+        const aText = a.children[idx].innerText.trim().replace('%','');
+        const bText = b.children[idx].innerText.trim().replace('%','');
+        return asc ? aText.localeCompare(bText, undefined, {numeric: true}) 
+                   : bText.localeCompare(aText, undefined, {numeric: true});
+      });
+      rows.forEach(r => tbody.appendChild(r));
+      table.querySelectorAll('th').forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
+      header.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
+      header.dataset.asc = asc;
+    });
+  });
+
+  // Tier logic
+  let currentTier = 1;
+  const rankTbody = document.querySelector('#ranking-table tbody');
+  function addTier(tier) {
+    const tr = document.createElement('tr');
+    tr.classList.add('tier-row');
+    const td = document.createElement('td');
+    td.colSpan = 4;
+    td.style.fontWeight = 'bold';
+    td.style.textAlign = 'center';
+    td.textContent = `Tier ${tier}`;
+    tr.appendChild(td);
+    rankTbody.appendChild(tr);
+  }
+  addTier(currentTier);
+  document.getElementById('addTier').addEventListener('click', () => {
+    currentTier += 1;
+    addTier(currentTier);
+  });
+
+  // Enable drag-sort
+  new Sortable(rankTbody, {
+    animation: 150,
+    onEnd: () => {
+      const tableElements = document.getElementsByClassName("ranking-item");
+      for(let i = 0; i < tableElements.length; i++) {
+        tableElements[i].children[0].innerHTML = i + 1;
+      }
+    }
+  });
+});
+</script></body>
+</html>

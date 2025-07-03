@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fantasy Rankings - Unified Tool</title>
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; }
+    .nav {
+      background: #333; padding: 10px; text-align: center; position: sticky; top: 0; z-index: 1000;
+    }
+    .nav button {
+      background: #555; color: white; border: none;
+      padding: 10px 15px; margin: 0 5px;
+      font-size: 16px; cursor: pointer; border-radius: 4px;
+    }
+    .nav button.active { background: #009B47; }
+    .section { display: none; padding: 0; }
+    .section.active { display: block; }
+    #fullscreen-btn, #minimize-btn {
+      display: block; margin: 10px auto; padding: 12px 20px;
+      font-size: 18px; background: #009B47; color: #fff;
+      border: none; border-radius: 5px; cursor: pointer;
+    }
+    #minimize-btn { background: #FF4444; display: none; }
+    #rotate-msg {
+      display: none; text-align: center; color: #fff; background: #f00;
+      padding: 10px; font-size: 16px; position: fixed; top: 0; width: 100%;
+      z-index: 1001;
+    }
+    .fullscreen { height: 100vh; width: 100vw; }
+  </style>
+</head>
+<body>
+
+<div id="rotate-msg">🔄 Rotate your device for best experience</div>
+<button id="fullscreen-btn">VIEW IN FULL SCREEN</button>
+<button id="minimize-btn">MINIMIZE</button>
+
+<div class="nav">
+  <button onclick="showSection('all')" id="btn-all" class="active">ALL</button>
+  <button onclick="showSection('qb')" id="btn-qb">QB</button>
+  <button onclick="showSection('rb')" id="btn-rb">RB</button>
+  <button onclick="showSection('wr')" id="btn-wr">WR</button>
+  <button onclick="showSection('te')" id="btn-te">TE</button>
+  <button onclick="showSection('k')" id="btn-k">K</button>
+  <button onclick="showSection('dst')" id="btn-dst">D/ST</button>
+</div>
+
+<div id="all" class="section active"><iframe src="All.html" width="100%" height="1100px" frameborder="0"></iframe></div>
+<div id="qb" class="section"><iframe src="QBs.html" width="100%" height="1100px" frameborder="0"></iframe></div>
+<div id="rb" class="section"><iframe src="RBs finished.html" width="100%" height="1100px" frameborder="0"></iframe></div>
+<div id="wr" class="section"><iframe src="WRs.html" width="100%" height="1100px" frameborder="0"></iframe></div>
+<div id="te" class="section"><iframe src="TEs.html" width="100%" height="1100px" frameborder="0"></iframe></div>
+<div id="k" class="section"><iframe src="Ks.html" width="100%" height="1100px" frameborder="0"></iframe></div>
+<div id="dst" class="section"><iframe src="D_ST.html" width="100%" height="1100px" frameborder="0"></iframe></div>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + id).classList.add('active');
+  }
+
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  const minimizeBtn = document.getElementById('minimize-btn');
+  const rotateMsg = document.getElementById('rotate-msg');
+
+  fullscreenBtn.addEventListener('click', () => {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    }
+    document.body.classList.add('fullscreen');
+    fullscreenBtn.style.display = 'none';
+    minimizeBtn.style.display = 'block';
+    
+    // Try to force landscape orientation on mobile
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('landscape').catch(() => {
+        console.log('Orientation lock not supported');
+      });
+    }
+  });
+
+  minimizeBtn.addEventListener('click', () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+    document.body.classList.remove('fullscreen');
+    minimizeBtn.style.display = 'none';
+    fullscreenBtn.style.display = 'block';
+  });
+
+  window.addEventListener('orientationchange', () => {
+    if (window.innerHeight > window.innerWidth) {
+      rotateMsg.style.display = 'block';
+    } else {
+      rotateMsg.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>

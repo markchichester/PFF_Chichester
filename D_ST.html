@@ -83,328 +83,38 @@
 </table>
 </div>
 <script>
-const data = [
-  {
-    "team": "Cardinals DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ari.png",
-    "FantasyPts": 108.2,
-    "DefenseGrade": 65.4,
-    "RunDefense": 64.7,
-    "PassRush": 59.0,
-    "Coverage": 66.1,
-    "EPA": 0.04
-  },
-  {
-    "team": "Falcons DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/atl.png",
-    "FantasyPts": 107.6,
-    "DefenseGrade": 68.6,
-    "RunDefense": 66.4,
-    "PassRush": 59.0,
-    "Coverage": 75.7,
-    "EPA": 0.02
-  },
-  {
-    "team": "Ravens DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/bal.png",
-    "FantasyPts": 104.4,
-    "DefenseGrade": 75.8,
-    "RunDefense": 75.1,
-    "PassRush": 71.0,
-    "Coverage": 76.4,
-    "EPA": -0.04
-  },
-  {
-    "team": "Bills DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/buf.png",
-    "FantasyPts": 119.5,
-    "DefenseGrade": 60.0,
-    "RunDefense": 58.8,
-    "PassRush": 74.9,
-    "Coverage": 37.7,
-    "EPA": -0.01
-  },
-  {
-    "team": "Panthers DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/car.png",
-    "FantasyPts": 97.7,
-    "DefenseGrade": 45.0,
-    "RunDefense": 37.5,
-    "PassRush": 51.9,
-    "Coverage": 50.3,
-    "EPA": 0.12
-  },
-  {
-    "team": "Bears DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/chi.png",
-    "FantasyPts": 106.9,
-    "DefenseGrade": 71.8,
-    "RunDefense": 64.8,
-    "PassRush": 68.9,
-    "Coverage": 74.4,
-    "EPA": -0.02
-  },
-  {
-    "team": "Bengals DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/cin.png",
-    "FantasyPts": 108.8,
-    "DefenseGrade": 66.3,
-    "RunDefense": 66.1,
-    "PassRush": 64.2,
-    "Coverage": 61.4,
-    "EPA": 0.02
-  },
-  {
-    "team": "Browns DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/cle.png",
-    "FantasyPts": 116.8,
-    "DefenseGrade": 75.4,
-    "RunDefense": 81.3,
-    "PassRush": 81.0,
-    "Coverage": 49.5,
-    "EPA": -0.01
-  },
-  {
-    "team": "Cowboys DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/dal.png",
-    "FantasyPts": 113.7,
-    "DefenseGrade": 63.5,
-    "RunDefense": 48.0,
-    "PassRush": 79.1,
-    "Coverage": 61.4,
-    "EPA": 0.05
-  },
-  {
-    "team": "Broncos DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/den.png",
-    "FantasyPts": 113.0,
-    "DefenseGrade": 74.9,
-    "RunDefense": 67.6,
-    "PassRush": 76.7,
-    "Coverage": 73.8,
-    "EPA": -0.09
-  },
-  {
-    "team": "Lions DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/det.png",
-    "FantasyPts": 117.3,
-    "DefenseGrade": 77.0,
-    "RunDefense": 71.6,
-    "PassRush": 73.3,
-    "Coverage": 79.5,
-    "EPA": -0.01
-  },
-  {
-    "team": "Packers DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/gb.png",
-    "FantasyPts": 111.4,
-    "DefenseGrade": 71.3,
-    "RunDefense": 59.6,
-    "PassRush": 68.3,
-    "Coverage": 83.4,
-    "EPA": -0.07
-  },
-  {
-    "team": "Texans DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/hou.png",
-    "FantasyPts": 111.5,
-    "DefenseGrade": 75.1,
-    "RunDefense": 68.5,
-    "PassRush": 73.5,
-    "Coverage": 78.9,
-    "EPA": -0.08
-  },
-  {
-    "team": "Colts DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ind.png",
-    "FantasyPts": 108.8,
-    "DefenseGrade": 74.5,
-    "RunDefense": 75.8,
-    "PassRush": 67.9,
-    "Coverage": 71.0,
-    "EPA": -0.01
-  },
-  {
-    "team": "Jaguars DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/jax.png",
-    "FantasyPts": 108.1,
-    "DefenseGrade": 63.3,
-    "RunDefense": 64.1,
-    "PassRush": 65.1,
-    "Coverage": 55.9,
-    "EPA": 0.11
-  },
-  {
-    "team": "Chiefs DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/kc.png",
-    "FantasyPts": 106.0,
-    "DefenseGrade": 79.8,
-    "RunDefense": 73.4,
-    "PassRush": 75.7,
-    "Coverage": 82.1,
-    "EPA": -0.01
-  },
-  {
-    "team": "Dolphins DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/mia.png",
-    "FantasyPts": 109.8,
-    "DefenseGrade": 68.2,
-    "RunDefense": 73.7,
-    "PassRush": 67.7,
-    "Coverage": 55.6,
-    "EPA": -0.06
-  },
-  {
-    "team": "Vikings DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/min.png",
-    "FantasyPts": 111.8,
-    "DefenseGrade": 71.0,
-    "RunDefense": 75.3,
-    "PassRush": 65.3,
-    "Coverage": 64.2,
-    "EPA": -0.1
-  },
-  {
-    "team": "Patriots DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ne.png",
-    "FantasyPts": 111.5,
-    "DefenseGrade": 64.5,
-    "RunDefense": 58.2,
-    "PassRush": 62.1,
-    "Coverage": 68.8,
-    "EPA": 0.06
-  },
-  {
-    "team": "Saints DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/no.png",
-    "FantasyPts": 108.3,
-    "DefenseGrade": 57.8,
-    "RunDefense": 48.0,
-    "PassRush": 65.6,
-    "Coverage": 56.5,
-    "EPA": 0.04
-  },
-  {
-    "team": "Giants DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/nyg.png",
-    "FantasyPts": 109.8,
-    "DefenseGrade": 67.0,
-    "RunDefense": 64.1,
-    "PassRush": 76.3,
-    "Coverage": 52.5,
-    "EPA": 0.03
-  },
-  {
-    "team": "Jets DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/nyj.png",
-    "FantasyPts": 110.0,
-    "DefenseGrade": 64.4,
-    "RunDefense": 58.6,
-    "PassRush": 66.5,
-    "Coverage": 69.8,
-    "EPA": 0.02
-  },
-  {
-    "team": "Raiders DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lv.png",
-    "FantasyPts": 105.2,
-    "DefenseGrade": 57.6,
-    "RunDefense": 69.9,
-    "PassRush": 64.1,
-    "Coverage": 32.0,
-    "EPA": -0.0
-  },
-  {
-    "team": "Eagles DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/phi.png",
-    "FantasyPts": 113.5,
-    "DefenseGrade": 91.3,
-    "RunDefense": 76.9,
-    "PassRush": 90.0,
-    "Coverage": 93.8,
-    "EPA": -0.13
-  },
-  {
-    "team": "Steelers DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/pit.png",
-    "FantasyPts": 120.2,
-    "DefenseGrade": 78.2,
-    "RunDefense": 71.1,
-    "PassRush": 90.5,
-    "Coverage": 57.6,
-    "EPA": -0.03
-  },
-  {
-    "team": "Rams DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lar.png",
-    "FantasyPts": 111.6,
-    "DefenseGrade": 70.2,
-    "RunDefense": 67.8,
-    "PassRush": 76.6,
-    "Coverage": 60.5,
-    "EPA": 0.02
-  },
-  {
-    "team": "Chargers DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lac.png",
-    "FantasyPts": 104.2,
-    "DefenseGrade": 78.8,
-    "RunDefense": 73.3,
-    "PassRush": 71.1,
-    "Coverage": 87.8,
-    "EPA": -0.07
-  },
-  {
-    "team": "49ers DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sf.png",
-    "FantasyPts": 118.4,
-    "DefenseGrade": 68.9,
-    "RunDefense": 54.6,
-    "PassRush": 68.1,
-    "Coverage": 83.5,
-    "EPA": 0.01
-  },
-  {
-    "team": "Seahawks DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sea.png",
-    "FantasyPts": 110.0,
-    "DefenseGrade": 70.0,
-    "RunDefense": 65.5,
-    "PassRush": 70.3,
-    "Coverage": 70.3,
-    "EPA": -0.04
-  },
-  {
-    "team": "Buccaneers DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/tb.png",
-    "FantasyPts": 110.2,
-    "DefenseGrade": 67.2,
-    "RunDefense": 67.8,
-    "PassRush": 67.5,
-    "Coverage": 62.4,
-    "EPA": -0.0
-  },
-  {
-    "team": "Titans DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ten.png",
-    "FantasyPts": 105.4,
-    "DefenseGrade": 67.2,
-    "RunDefense": 72.2,
-    "PassRush": 62.1,
-    "Coverage": 60.0,
-    "EPA": 0.03
-  },
-  {
-    "team": "Commanders DST",
-    "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/was.png",
-    "FantasyPts": 105.0,
-    "DefenseGrade": 55.3,
-    "RunDefense": 49.6,
-    "PassRush": 69.2,
-    "Coverage": 44.9,
-    "EPA": 0.05
-  }
-];
+const data = [{"team": "Cardinals DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ari.png", "FantasyPts": 108.2, "DefenseGrade": 65.4, "RunDefense": 64.7, "PassRush": 59, "Coverage": 66.1, "EPA": 0.0438210332103321},
+{"team": "Falcons DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/atl.png", "FantasyPts": 107.7, "DefenseGrade": 68.6, "RunDefense": 66.4, "PassRush": 59, "Coverage": 75.7, "EPA": 0.0227491039426523},
+{"team": "Ravens DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/bal.png", "FantasyPts": 104.4, "DefenseGrade": 75.8, "RunDefense": 75.1, "PassRush": 71, "Coverage": 76.4, "EPA": -0.0367489911218725},
+{"team": "Bills DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/buf.png", "FantasyPts": 119.5, "DefenseGrade": 60, "RunDefense": 58.8, "PassRush": 74.9, "Coverage": 37.7, "EPA": -0.00688147566718991},
+{"team": "Panthers DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/car.png", "FantasyPts": 97.7, "DefenseGrade": 45, "RunDefense": 37.5, "PassRush": 51.9, "Coverage": 50.3, "EPA": 0.12241461412151},
+{"team": "Bears DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/chi.png", "FantasyPts": 107.3, "DefenseGrade": 71.8, "RunDefense": 64.8, "PassRush": 68.9, "Coverage": 74.4, "EPA": -0.0240402999062793},
+{"team": "Bengals DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/cin.png", "FantasyPts": 108.8, "DefenseGrade": 66.3, "RunDefense": 66.1, "PassRush": 64.2, "Coverage": 61.4, "EPA": 0.0182147887323943},
+{"team": "Browns DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/cle.png", "FantasyPts": 117, "DefenseGrade": 75.4, "RunDefense": 81.3, "PassRush": 81, "Coverage": 49.5, "EPA": -0.00773543015726179},
+{"team": "Cowboys DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/dal.png", "FantasyPts": 114.4, "DefenseGrade": 63.5, "RunDefense": 48, "PassRush": 79.1, "Coverage": 61.4, "EPA": 0.0466999093381685},
+{"team": "Broncos DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/den.png", "FantasyPts": 113.3, "DefenseGrade": 74.9, "RunDefense": 67.6, "PassRush": 76.7, "Coverage": 73.8, "EPA": -0.0912133008921331},
+{"team": "Lions DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/det.png", "FantasyPts": 117.6, "DefenseGrade": 77, "RunDefense": 71.6, "PassRush": 73.3, "Coverage": 79.5, "EPA": -0.0131488451668092},
+{"team": "Packers DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/gb.png", "FantasyPts": 111.9, "DefenseGrade": 71.3, "RunDefense": 59.6, "PassRush": 68.3, "Coverage": 83.4, "EPA": -0.0731857018308631},
+{"team": "Texans DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/hou.png", "FantasyPts": 111.5, "DefenseGrade": 75.1, "RunDefense": 68.5, "PassRush": 73.5, "Coverage": 78.9, "EPA": -0.0786968438538206},
+{"team": "Colts DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ind.png", "FantasyPts": 108.9, "DefenseGrade": 74.5, "RunDefense": 75.8, "PassRush": 67.9, "Coverage": 71, "EPA": -0.0142238547968885},
+{"team": "Jaguars DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/jax.png", "FantasyPts": 108.1, "DefenseGrade": 63.3, "RunDefense": 64.1, "PassRush": 65.1, "Coverage": 55.9, "EPA": 0.107394319131161},
+{"team": "Chiefs DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/kc.png", "FantasyPts": 106.5, "DefenseGrade": 79.8, "RunDefense": 73.4, "PassRush": 75.7, "Coverage": 82.1, "EPA": -0.00885725308641976},
+{"team": "Dolphins DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/mia.png", "FantasyPts": 110, "DefenseGrade": 68.2, "RunDefense": 73.7, "PassRush": 67.7, "Coverage": 55.6, "EPA": -0.058269483568075},
+{"team": "Vikings DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/min.png", "FantasyPts": 112.2, "DefenseGrade": 71, "RunDefense": 75.3, "PassRush": 65.3, "Coverage": 64.2, "EPA": -0.0989890572390571},
+{"team": "Patriots DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ne.png", "FantasyPts": 111.6, "DefenseGrade": 64.5, "RunDefense": 58.2, "PassRush": 62.1, "Coverage": 68.8, "EPA": 0.0577426273458445},
+{"team": "Saints DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/no.png", "FantasyPts": 108.4, "DefenseGrade": 57.8, "RunDefense": 48, "PassRush": 65.6, "Coverage": 56.5, "EPA": 0.0388700084961767},
+{"team": "Giants DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/nyg.png", "FantasyPts": 110.1, "DefenseGrade": 67, "RunDefense": 64.1, "PassRush": 76.3, "Coverage": 52.5, "EPA": 0.0303525114155251},
+{"team": "Jets DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/nyj.png", "FantasyPts": 108.9, "DefenseGrade": 64.4, "RunDefense": 58.6, "PassRush": 66.5, "Coverage": 69.8, "EPA": 0.020260907504363},
+{"team": "Raiders DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lv.png", "FantasyPts": 105.5, "DefenseGrade": 57.6, "RunDefense": 69.9, "PassRush": 64.1, "Coverage": 32, "EPA": -0.00333333333333334},
+{"team": "Eagles DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/phi.png", "FantasyPts": 114.1, "DefenseGrade": 91.3, "RunDefense": 76.9, "PassRush": 90, "Coverage": 93.8, "EPA": -0.128798484848484},
+{"team": "Steelers DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/pit.png", "FantasyPts": 120.2, "DefenseGrade": 78.2, "RunDefense": 71.1, "PassRush": 90.5, "Coverage": 57.6, "EPA": -0.0271833761782348},
+{"team": "Rams DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lar.png", "FantasyPts": 111.6, "DefenseGrade": 70.2, "RunDefense": 67.8, "PassRush": 76.6, "Coverage": 60.5, "EPA": 0.0240239616613418},
+{"team": "Chargers DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lac.png", "FantasyPts": 104.5, "DefenseGrade": 78.8, "RunDefense": 73.3, "PassRush": 71.1, "Coverage": 87.8, "EPA": -0.0693518835616437},
+{"team": "49ers DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sf.png", "FantasyPts": 118.6, "DefenseGrade": 68.9, "RunDefense": 54.6, "PassRush": 68.1, "Coverage": 83.5, "EPA": 0.0106245318352059},
+{"team": "Seahawks DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sea.png", "FantasyPts": 110.1, "DefenseGrade": 70, "RunDefense": 65.5, "PassRush": 70.3, "Coverage": 70.3, "EPA": -0.0423707964601769},
+{"team": "Buccaneers DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/tb.png", "FantasyPts": 110.2, "DefenseGrade": 67.2, "RunDefense": 67.8, "PassRush": 67.5, "Coverage": 62.4, "EPA": -0.00221932773109245},
+{"team": "Titans DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ten.png", "FantasyPts": 105.4, "DefenseGrade": 67.2, "RunDefense": 72.2, "PassRush": 62.1, "Coverage": 60, "EPA": 0.0255317535545025},
+{"team": "Commanders DST", "headshot": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/was.png", "FantasyPts": 105.4, "DefenseGrade": 55.3, "RunDefense": 49.6, "PassRush": 69.2, "Coverage": 44.9, "EPA": 0.054477576711251}];
 
 document.addEventListener('DOMContentLoaded', function () {
   const playersTbody = document.getElementById('player-rows');
