@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NFL Quarterbacks: EPA per pass and run (2024)</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Archivo', sans-serif;
+            text-align: center;
+            background-color: #ffffff;
+        }
+        #plot {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            cursor: pointer;  /* Pointer finger default */
+        }
+        #plot .hoverlayer *, 
+        #plot .scatterlayer *, 
+        #plot .cartesianlayer * {
+            cursor: pointer !important;  /* Force pointer finger everywhere */
+        }
+        #plot .hoverlayer .hovertext {
+            background-color: #FFFFFF !important;
+            color: #333333 !important;
+            font-family: 'Archivo', sans-serif !important;
+            border: 1px solid #5A1414 !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+            border-radius: 4px !important;
+        }
+        .subscribe-btn {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            background-color: #5A1414;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Archivo', sans-serif;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .subscribe-btn:hover {
+            background-color: #751C1C;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>NFL Quarterbacks: EPA per pass and run (2024)</h2>
+    <div id="plot"></div>
+    <button class="subscribe-btn" onclick="window.open('https://subscribe.pff.com/', '_blank')">Subscribe to PFF+</button>
+
+    <script>
+        const qbData = [{"name": "Patrick Mahomes", "x": 0.174, "y": 0.102, "logo": "https://media.pff.com/player-photos/nfl/11765.webp", "color": "gray"}, {"name": "Jayden Daniels", "x": 0.293, "y": 0.188, "logo": "https://media.pff.com/player-photos/nfl/97993.webp", "color": "#5A1414"}, {"name": "Joe Burrow", "x": 0.366, "y": 0.139, "logo": "https://media.pff.com/player-photos/nfl/28022.webp", "color": "gray"}, {"name": "C.J. Stroud", "x": 0.043, "y": -0.025, "logo": "https://media.pff.com/player-photos/nfl/129759.webp", "color": "gray"}, {"name": "Caleb Williams", "x": 0.039, "y": -0.067, "logo": "https://media.pff.com/player-photos/nfl/144622.webp", "color": "gray"}, {"name": "Sam Darnold", "x": -0.043, "y": 0.088, "logo": "https://media.pff.com/player-photos/nfl/29048.webp", "color": "gray"}, {"name": "Baker Mayfield", "x": 0.001, "y": 0.204, "logo": "https://media.pff.com/player-photos/nfl/46518.webp", "color": "gray"}, {"name": "Bo Nix", "x": 0.184, "y": -0.005, "logo": "https://media.pff.com/player-photos/nfl/97790.webp", "color": "gray"}, {"name": "Geno Smith", "x": -0.018, "y": 0.017, "logo": "https://media.pff.com/player-photos/nfl/7820.webp", "color": "gray"}, {"name": "Josh Allen", "x": 0.294, "y": 0.251, "logo": "https://media.pff.com/player-photos/nfl/46601.webp", "color": "gray"}, {"name": "Aaron Rodgers", "x": 0.349, "y": 0.016, "logo": "https://media.pff.com/player-photos/nfl/2241.webp", "color": "gray"}, {"name": "Matthew Stafford", "x": -0.099, "y": 0.086, "logo": "https://media.pff.com/player-photos/nfl/4924.webp", "color": "gray"}, {"name": "Justin Herbert", "x": 0.019, "y": 0.09, "logo": "https://media.pff.com/player-photos/nfl/28237.webp", "color": "gray"}, {"name": "Kyler Murray", "x": 0.078, "y": 0.108, "logo": "https://media.pff.com/player-photos/nfl/38334.webp", "color": "gray"}, {"name": "Jared Goff", "x": 0.148, "y": 0.22, "logo": "https://media.pff.com/player-photos/nfl/10635.webp", "color": "gray"}, {"name": "Lamar Jackson", "x": 0.144, "y": 0.291, "logo": "https://media.pff.com/player-photos/nfl/46416.webp", "color": "gray"}, {"name": "Jalen Hurts", "x": 0.185, "y": 0.133, "logo": "https://media.pff.com/player-photos/nfl/40291.webp", "color": "gray"}, {"name": "Brock Purdy", "x": 0.235, "y": 0.099, "logo": "https://media.pff.com/player-photos/nfl/77672.webp", "color": "gray"}, {"name": "Jordan Love", "x": 0.306, "y": 0.132, "logo": "https://media.pff.com/player-photos/nfl/40306.webp", "color": "gray"}, {"name": "Kirk Cousins", "x": -0.571, "y": 0.053, "logo": "https://media.pff.com/player-photos/nfl/7102.webp", "color": "gray"}, {"name": "Bryce Young", "x": 0.229, "y": -0.105, "logo": "https://media.pff.com/player-photos/nfl/123943.webp", "color": "gray"}, {"name": "Drake Maye", "x": 0.241, "y": -0.056, "logo": "https://media.pff.com/player-photos/nfl/143969.webp", "color": "gray"}, {"name": "Tua Tagovailoa", "x": 0.216, "y": 0.095, "logo": "https://media.pff.com/player-photos/nfl/60326.webp", "color": "gray"}, {"name": "Russell Wilson", "x": 0.022, "y": 0.027, "logo": "https://media.pff.com/player-photos/nfl/7077.webp", "color": "gray"}, {"name": "Daniel Jones", "x": 0.173, "y": -0.125, "logo": "https://media.pff.com/player-photos/nfl/39395.webp", "color": "gray"}, {"name": "Will Levis", "x": -0.23, "y": -0.088, "logo": "https://media.pff.com/player-photos/nfl/83542.webp", "color": "gray"}, {"name": "Gardner Minshew", "x": -0.372, "y": -0.119, "logo": "https://media.pff.com/player-photos/nfl/41401.webp", "color": "gray"}, {"name": "Cooper Rush", "x": -0.312, "y": -0.099, "logo": "https://media.pff.com/player-photos/nfl/12324.webp", "color": "gray"}, {"name": "Jameis Winston", "x": 0.114, "y": -0.229, "logo": "https://media.pff.com/player-photos/nfl/9434.webp", "color": "gray"}, {"name": "Dak Prescott", "x": 0.144, "y": -0.078, "logo": "https://media.pff.com/player-photos/nfl/10769.webp", "color": "gray"}, {"name": "Trevor Lawrence", "x": 0.193, "y": -0.068, "logo": "https://media.pff.com/player-photos/nfl/77632.webp", "color": "gray"}, {"name": "Derek Carr", "x": 0.14, "y": -0.09, "logo": "https://media.pff.com/player-photos/nfl/8671.webp", "color": "gray"}, {"name": "Anthony Richardson", "x": 0.186, "y": -0.032, "logo": "https://media.pff.com/player-photos/nfl/124393.webp", "color": "gray"}, {"name": "Mac Jones", "x": 0.216, "y": -0.031, "logo": "https://media.pff.com/player-photos/nfl/60323.webp", "color": "gray"}, {"name": "Deshaun Watson", "x": -0.02, "y": -0.25, "logo": "https://media.pff.com/player-photos/nfl/11767.webp", "color": "gray"}, {"name": "Joe Flacco", "x": 0.186, "y": -0.032, "logo": "https://media.pff.com/player-photos/nfl/4332.webp", "color": "gray"}, {"name": "Spencer Rattler", "x": 0.14, "y": -0.09, "logo": "https://media.pff.com/player-photos/nfl/97408.webp", "color": "gray"}, {"name": "Aidan O'Connell", "x": -0.26, "y": -0.066, "logo": "https://media.pff.com/player-photos/nfl/60516.webp", "color": "gray"}, {"name": "Mason Rudolph", "x": -0.23, "y": -0.088, "logo": "https://media.pff.com/player-photos/nfl/46569.webp", "color": "gray"}, {"name": "Drew Lock", "x": 0.223, "y": -0.124, "logo": "https://media.pff.com/player-photos/nfl/39517.webp", "color": "gray"}, {"name": "Justin Fields", "x": 0.022, "y": 0.027, "logo": "https://media.pff.com/player-photos/nfl/82118.webp", "color": "gray"}, {"name": "Jacoby Brissett", "x": 0.241, "y": -0.056, "logo": "https://media.pff.com/player-photos/nfl/10725.webp", "color": "gray"}, {"name": "Andy Dalton", "x": 0.229, "y": -0.105, "logo": "https://media.pff.com/player-photos/nfl/6187.webp", "color": "gray"}, {"name": "Tyler Huntley", "x": -0.057, "y": -0.1, "logo": "https://media.pff.com/player-photos/nfl/46448.webp", "color": "gray"}];
+
+        const trace = {
+            x: qbData.map(qb => qb.x),
+            y: qbData.map(qb => qb.y),
+            text: qbData.map(qb => qb.name),
+            hovertemplate: "<b>%{text}</b><br>EPA Per Pass: %{y}<br>EPA Per Rush: %{x}<extra></extra>",
+            mode: 'markers',
+            marker: {
+                size: 20,
+                color: qbData.map(qb => qb.color),
+                symbol: 'circle',
+                opacity: 0  // start invisible for fade-in
+            },
+            type: 'scatter'
+        };
+
+        const layout = {
+            xaxis: {
+                title: 'EPA Per Rush',
+                gridcolor: '#e5e5e5',
+                zeroline: false,
+                range: [-0.591, 0.386]
+            },
+            yaxis: {
+                title: 'EPA Per Pass',
+                gridcolor: '#e5e5e5',
+                zeroline: false,
+                range: [-0.27, 0.311]
+            },
+            hovermode: 'closest',
+            images: [{"source": "https://media.pff.com/player-photos/nfl/11765.webp", "x": 0.174, "y": 0.102, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/97993.webp", "x": 0.293, "y": 0.188, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/28022.webp", "x": 0.366, "y": 0.139, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/129759.webp", "x": 0.043, "y": -0.025, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/144622.webp", "x": 0.039, "y": -0.067, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/29048.webp", "x": -0.043, "y": 0.088, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/46518.webp", "x": 0.001, "y": 0.204, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/97790.webp", "x": 0.184, "y": -0.005, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/7820.webp", "x": -0.018, "y": 0.017, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/46601.webp", "x": 0.294, "y": 0.251, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/2241.webp", "x": 0.349, "y": 0.016, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/4924.webp", "x": -0.099, "y": 0.086, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/28237.webp", "x": 0.019, "y": 0.09, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/38334.webp", "x": 0.078, "y": 0.108, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/10635.webp", "x": 0.148, "y": 0.22, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/46416.webp", "x": 0.144, "y": 0.291, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/40291.webp", "x": 0.185, "y": 0.133, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/77672.webp", "x": 0.235, "y": 0.099, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/40306.webp", "x": 0.306, "y": 0.132, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/7102.webp", "x": -0.571, "y": 0.053, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/123943.webp", "x": 0.229, "y": -0.105, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/143969.webp", "x": 0.241, "y": -0.056, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/60326.webp", "x": 0.216, "y": 0.095, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/7077.webp", "x": 0.022, "y": 0.027, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/39395.webp", "x": 0.173, "y": -0.125, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/83542.webp", "x": -0.23, "y": -0.088, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/41401.webp", "x": -0.372, "y": -0.119, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/12324.webp", "x": -0.312, "y": -0.099, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/9434.webp", "x": 0.114, "y": -0.229, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/10769.webp", "x": 0.144, "y": -0.078, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/77632.webp", "x": 0.193, "y": -0.068, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/8671.webp", "x": 0.14, "y": -0.09, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/124393.webp", "x": 0.186, "y": -0.032, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/60323.webp", "x": 0.216, "y": -0.031, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/11767.webp", "x": -0.02, "y": -0.25, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/4332.webp", "x": 0.186, "y": -0.032, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/97408.webp", "x": 0.14, "y": -0.09, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/60516.webp", "x": -0.26, "y": -0.066, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/46569.webp", "x": -0.23, "y": -0.088, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/39517.webp", "x": 0.223, "y": -0.124, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/82118.webp", "x": 0.022, "y": 0.027, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/10725.webp", "x": 0.241, "y": -0.056, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/6187.webp", "x": 0.229, "y": -0.105, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}, {"source": "https://media.pff.com/player-photos/nfl/46448.webp", "x": -0.057, "y": -0.1, "xref": "x", "yref": "y", "sizex": 0.05, "sizey": 0.05, "xanchor": "center", "yanchor": "middle", "opacity": 0, "layer": "above"}],
+            shapes: [
+                {
+                    type: 'line',
+                    x0: 0.081, x1: 0.081,
+                    y0: -0.27, y1: 0.311,
+                    xref: 'x',
+                    yref: 'y',
+                    line: {
+                        color: '#5A1414',
+                        width: 2,
+                        dash: 'dash',
+                        opacity: 0  // start invisible for fade-in
+                    }
+                },
+                {
+                    type: 'line',
+                    y0: 0.005, y1: 0.005,
+                    x0: -0.591, x1: 0.386,
+                    xref: 'x',
+                    yref: 'y',
+                    line: {
+                        color: '#5A1414',
+                        width: 2,
+                        dash: 'dash',
+                        opacity: 0  // start invisible for fade-in
+                    }
+                }
+            ]
+        };
+
+        const config = {
+            displayModeBar: false,
+            responsive: true
+        };
+
+        Plotly.newPlot('plot', [trace], layout, config).then(() => {
+            // Smooth fade-in for dots and lines (1.2s)
+            Plotly.animate('plot', {
+                data: [{ marker: { opacity: 1 } }],
+                traces: [0],
+                layout: {
+                    'shapes[0].line.opacity': 1,
+                    'shapes[1].line.opacity': 1
+                }
+            }, {
+                transition: {
+                    duration: 1200,
+                    easing: 'cubic-in-out'
+                },
+                frame: {
+                    duration: 1200
+                }
+            });
+        });
+
+        const plotDiv = document.getElementById('plot');
+        let activePoint = null;
+
+        function showHeadshot(index) {
+            const imgUpdate = {}
+            qbData.forEach((qb, i) => imgUpdate[`images[${i}].opacity`] = 0);
+            imgUpdate[`images[${index}].opacity`] = 1;
+            imgUpdate[`images[${index}].sizex`] = 0.1;  // zoom in (2.0x)
+            imgUpdate[`images[${index}].sizey`] = 0.1;
+            Plotly.relayout(plotDiv, imgUpdate);
+            activePoint = index;
+        }
+
+        function resetHeadshots() {
+            const imgReset = {}
+            qbData.forEach((qb, i) => {
+                imgReset[`images[${i}].opacity`] = 0;
+                imgReset[`images[${i}].sizex`] = 0.05;
+                imgReset[`images[${i}].sizey`] = 0.05;
+            });
+            Plotly.relayout(plotDiv, imgReset);
+            activePoint = null;
+        }
+
+        plotDiv.on('plotly_hover', function(data) {
+            if (window.innerWidth > 768) {  // desktop only
+                const pointIndex = data.points[0].pointIndex;
+                showHeadshot(pointIndex);
+            }
+        });
+
+        plotDiv.on('plotly_unhover', function() {
+            if (window.innerWidth > 768) {  // desktop only
+                resetHeadshots();
+            }
+        });
+
+        plotDiv.on('plotly_click', function(data) {
+            if (window.innerWidth <= 768) {  // mobile only
+                const pointIndex = data.points[0].pointIndex;
+                if (activePoint === pointIndex) {
+                    resetHeadshots();
+                } else {
+                    showHeadshot(pointIndex);
+                }
+            }
+        });
+
+        window.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && !plotDiv.contains(e.target)) {
+                resetHeadshots();
+            }
+        });
+    </script>
+
+</body>
+</html>
