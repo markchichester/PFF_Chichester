@@ -19,15 +19,11 @@
     }
 
     .swiper {
-      width: 95%;
-      max-width: 700px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      background: #f9f9f9;
-      padding-bottom: 40px; /* Extra space for dots */
-      overflow: hidden; /* Prevent content overflow causing scroll */
-    }
-
+  width: 100%;
+  max-width: 700px;
+  box-sizing: border-box; /* Important to include paddings in width */
+  overflow: hidden;       /* Hide any content poking out */
+}
     .swiper-slide {
       display: flex;
       justify-content: center;
