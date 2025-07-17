@@ -334,6 +334,19 @@ data.forEach((d, i) => {
         });
     }
 });
+
+// 👇 Add global tap-out listener for mobile
+if (isTouchDevice) {
+    document.addEventListener('click', function(event) {
+        const clickedInside = container.contains(event.target);
+        if (!clickedInside) {
+            container.querySelectorAll('.logo').forEach(el => el.classList.remove('active'));
+            container.querySelectorAll('.dot').forEach(el => el.style.opacity = 1);
+            tooltip.style.opacity = 0;
+        }
+    });
+}
+
 </script>
 </body>
 </html>
