@@ -15,15 +15,20 @@
       justify-content: center;
       align-items: center;
       height: 100%;
-      overflow-x: hidden; /* Prevent horizontal scroll */
+      overflow-x: hidden; /* 🔒 No horizontal scroll */
     }
 
     .swiper {
-  width: 100%;
-  max-width: 700px;
-  box-sizing: border-box; /* Important to include paddings in width */
-  overflow: hidden;       /* Hide any content poking out */
-}
+      width: 100%;
+      max-width: 700px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      background: #f9f9f9;
+      padding-bottom: 40px; /* Space for dots */
+      box-sizing: border-box; /* Include paddings in width */
+      overflow: hidden; /* 🔒 Contain arrows/slides */
+    }
+
     .swiper-slide {
       display: flex;
       justify-content: center;
@@ -32,26 +37,28 @@
 
     iframe {
       width: 100%;
-      height: 70vh;         /* Responsive height */
-      max-height: 550px;    /* Cap height to avoid scroll */
-      min-height: 400px;    /* Minimum height for mobile */
+      max-width: 100%; /* 🔒 Prevent wider than container */
+      height: 70vh;
+      max-height: 550px;
+      min-height: 400px;
       border: none;
       border-radius: 8px;
+      display: block;
     }
 
     /* Pagination (Dots) Styling - Alabama Red Example */
     .swiper-pagination-bullet {
-      background: #9E1B32;  /* Default dot color */
+      background: #9E1B32;
       opacity: 0.6;
     }
     .swiper-pagination-bullet-active {
-      background: #9E1B32;  /* Active dot color */
+      background: #9E1B32;
       opacity: 1;
     }
 
     /* Navigation Arrows */
     .swiper-button-next, .swiper-button-prev {
-      color: #9E1B32;       /* Arrow color */
+      color: #9E1B32;
     }
 
     /* Mobile Adjustments */
