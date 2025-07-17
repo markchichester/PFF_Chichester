@@ -10,75 +10,41 @@
       margin: 0;
       padding: 0;
       font-family: 'Archivo', sans-serif;
-      background: #ffffff;
-      overflow: hidden; /* 🔒 Stop all scrolling */
-      height: 100%;
+      overflow: hidden;  /* 🔥 Stop all scrolling */
     }
 
     .swiper {
-      position: relative;       /* 👈 Contain arrows & dots */
       width: 100%;
       max-width: 700px;
-      height: 550px;            /* Fixed height for charts */
-      margin: 40px auto;        /* Center with some breathing room */
+      height: 500px;      /* 🎯 Fixed height stops overflow */
+      margin: 20px auto;
+      overflow: hidden;   /* 🎯 Contain arrows & dots */
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       background: #f9f9f9;
-      overflow: hidden;         /* Contain inner elements */
-      box-sizing: border-box;   /* Include paddings in dimensions */
-    }
-
-    .swiper-wrapper {
-      height: 100%;
     }
 
     .swiper-slide {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100%;
     }
 
     iframe {
       width: 100%;
-      height: 100%;    /* Fill swiper container */
+      height: 100%; /* Fills .swiper perfectly */
       border: none;
-      border-radius: 8px;
       display: block;
     }
 
-    /* Pagination (Dots) Styling - Alabama Crimson Red */
-    .swiper-pagination {
-      bottom: 10px; /* Pull dots closer inside container */
-    }
     .swiper-pagination-bullet {
       background: #9E1B32;
-      opacity: 0.6;
     }
     .swiper-pagination-bullet-active {
       background: #9E1B32;
-      opacity: 1;
     }
-
-    /* Navigation Arrows */
     .swiper-button-next, .swiper-button-prev {
       color: #9E1B32;
-      top: calc(50% - 20px); /* Pull arrows fully inside swiper */
-      width: 30px;          /* Smaller arrows */
-      height: 30px;
-      z-index: 10;
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-      .swiper {
-        height: 400px; /* Shorter container for tablets */
-      }
-    }
-    @media (max-width: 480px) {
-      .swiper {
-        height: 300px; /* Even shorter on phones */
-      }
     }
   </style>
 </head>
