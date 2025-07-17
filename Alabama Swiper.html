@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEC Charts Swiper</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Archivo', sans-serif;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      overflow-x: hidden; /* Prevent horizontal scroll */
+    }
+
+    .swiper {
+      width: 95%;
+      max-width: 700px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      background: #f9f9f9;
+      padding-bottom: 40px; /* Extra space for dots */
+      overflow: hidden; /* Prevent content overflow causing scroll */
+    }
+
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    iframe {
+      width: 100%;
+      height: 70vh;         /* Responsive height */
+      max-height: 550px;    /* Cap height to avoid scroll */
+      min-height: 400px;    /* Minimum height for mobile */
+      border: none;
+      border-radius: 8px;
+    }
+
+    /* Pagination (Dots) Styling - Alabama Red Example */
+    .swiper-pagination-bullet {
+      background: #9E1B32;  /* Default dot color */
+      opacity: 0.6;
+    }
+    .swiper-pagination-bullet-active {
+      background: #9E1B32;  /* Active dot color */
+      opacity: 1;
+    }
+
+    /* Navigation Arrows */
+    .swiper-button-next, .swiper-button-prev {
+      color: #9E1B32;       /* Arrow color */
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 768px) {
+      iframe {
+        height: 60vh;
+      }
+    }
+    @media (max-width: 480px) {
+      iframe {
+        height: 50vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <iframe src="SEC Defense.html"></iframe>
+      </div>
+      <div class="swiper-slide">
+        <iframe src="SEC Offense.html"></iframe>
+      </div>
+    </div>
+    <!-- Navigation buttons -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <!-- Pagination dots -->
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.swiper', {
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      keyboard: true,
+    });
+  </script>
+</body>
+</html>
