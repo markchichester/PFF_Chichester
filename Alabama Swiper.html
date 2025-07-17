@@ -10,18 +10,22 @@
       margin: 0;
       padding: 0;
       font-family: 'Archivo', sans-serif;
-      overflow: hidden;  /* 🔥 Stop all scrolling */
+      background: #ffffff;
+      height: 100%;
+      overflow-x: hidden; /* Stop horizontal scroll */
     }
 
     .swiper {
+      position: relative;
       width: 100%;
       max-width: 700px;
-      height: 500px;      /* 🎯 Fixed height stops overflow */
+      height: 70vh; /* 🎯 Responsive height */
+      max-height: 550px; /* Desktop cap */
       margin: 20px auto;
-      overflow: hidden;   /* 🎯 Contain arrows & dots */
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       background: #f9f9f9;
+      overflow: hidden; /* Contain arrows/dots */
     }
 
     .swiper-slide {
@@ -32,9 +36,12 @@
 
     iframe {
       width: 100%;
-      height: 100%; /* Fills .swiper perfectly */
+      height: 100%;
       border: none;
+      border-radius: 8px;
       display: block;
+      pointer-events: auto; /* 🎯 Keep interactivity */
+      touch-action: manipulation; /* Support swipe + tap */
     }
 
     .swiper-pagination-bullet {
@@ -45,6 +52,18 @@
     }
     .swiper-button-next, .swiper-button-prev {
       color: #9E1B32;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 768px) {
+      .swiper {
+        height: 60vh; /* Shorter on tablets */
+      }
+    }
+    @media (max-width: 480px) {
+      .swiper {
+        height: 50vh; /* Even shorter on phones */
+      }
     }
   </style>
 </head>
@@ -76,6 +95,8 @@
         prevEl: '.swiper-button-prev',
       },
       keyboard: true,
+      simulateTouch: true, /* 🎯 Enable swipe gestures */
+      allowTouchMove: true /* 🎯 Enable dragging/swiping */
     });
   </script>
 </body>
