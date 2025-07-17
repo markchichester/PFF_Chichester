@@ -11,22 +11,24 @@
       padding: 0;
       font-family: 'Archivo', sans-serif;
       background: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      overflow-x: hidden; /* 🔒 No horizontal scroll */
+      overflow-x: hidden; /* 🔒 Stop horizontal scroll */
     }
 
     .swiper {
+      position: relative; /* 👈 Contain arrows */
       width: 100%;
       max-width: 700px;
+      margin: 40px auto; /* Center it with breathing room */
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       background: #f9f9f9;
       padding-bottom: 40px; /* Space for dots */
-      box-sizing: border-box; /* Include paddings in width */
-      overflow: hidden; /* 🔒 Contain arrows/slides */
+      box-sizing: border-box;
+      overflow: hidden; /* Contain inner elements */
+    }
+
+    .swiper-wrapper {
+      overflow: hidden; /* 🔒 Stop slide overflow */
     }
 
     .swiper-slide {
@@ -37,7 +39,7 @@
 
     iframe {
       width: 100%;
-      max-width: 100%; /* 🔒 Prevent wider than container */
+      max-width: 100%; /* 👌 Never wider than container */
       height: 70vh;
       max-height: 550px;
       min-height: 400px;
@@ -46,7 +48,6 @@
       display: block;
     }
 
-    /* Pagination (Dots) Styling - Alabama Red Example */
     .swiper-pagination-bullet {
       background: #9E1B32;
       opacity: 0.6;
@@ -56,12 +57,16 @@
       opacity: 1;
     }
 
-    /* Navigation Arrows */
     .swiper-button-next, .swiper-button-prev {
       color: #9E1B32;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      margin-top: 0;
+      z-index: 10;
     }
 
-    /* Mobile Adjustments */
     @media (max-width: 768px) {
       iframe {
         height: 60vh;
@@ -84,10 +89,8 @@
         <iframe src="SEC Offense.html"></iframe>
       </div>
     </div>
-    <!-- Navigation buttons -->
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
-    <!-- Pagination dots -->
     <div class="swiper-pagination"></div>
   </div>
 
