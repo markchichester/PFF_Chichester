@@ -269,32 +269,61 @@
     svg.appendChild(yAxisTitle);
 
     // Dots & Logos
-    data.forEach((d, i) => {
-        const circle = document.createElementNS(ns, "circle");
-        circle.setAttribute("cx", scaleX(d.x));
-        circle.setAttribute("cy", scaleY(d.y));
-        circle.setAttribute("r", 5);
-        circle.setAttribute("class", `dot ${d.name.includes("Alabama") ? "alabama" : ""}`);
-        svg.appendChild(circle);
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-        const img = document.createElement("img");
-        img.src = d.logo;
-        img.className = "logo";
-        img.style.left = `${scaleX(d.x)}px`;
-        img.style.top = `${scaleY(d.y)}px`;
-        container.appendChild(img);
+data.forEach((d, i) => {
+    const circle = document.createElementNS(ns, "circle");
+    circle.setAttribute("cx", scaleX(d.x));
+    circle.setAttribute("cy", scaleY(d.y));
+    circle.setAttribute("r", 5);
+    circle.setAttribute("class", `dot ${d.name.includes("Alabama") ? "alabama" : ""}`);
+    svg.appendChild(circle);
 
-        // Hover Handlers
+    const img = document.createElement("img");
+    img.src = d.logo;
+    img.className = "logo";
+    img.style.left = `${scaleX(d.x)}px`;
+    img.style.top = `${scaleY(d.y)}px`;
+    container.appendChild(img);
+
+    if (isTouchDevice) {
+        // Tap Support for Mobile
+        circle.addEventListener('click', () => {
+            // Hide any active elements
+            container.querySelectorAll('.logo').forEach(el => el.classList.remove('active'));
+            container.querySelectorAll('.dot').forEach(el => el.style.opacity = 1);
+            tooltip.style.opacity = 0;
+
+            // Toggle current element
+            const isActive = img.classList.contains('active');
+            if (!isActive) {
+                circle.style.opacity = 0;
+                img.classList.add('active');
+                tooltip.innerHTML = `<strong>${d.name}</strong><br>EPA Per Pass: ${d.y.toFixed(3)}<br>EPA Per Run: ${d.x.toFixed(3)}`;
+                tooltip.style.opacity = 1;
+
+                const rect = container.getBoundingClientRect();
+                const tooltipX = scaleX(d.x) - tooltip.offsetWidth / 2;
+                const tooltipY = scaleY(d.y) + 35;
+                tooltip.style.left = `${Math.max(0, Math.min(tooltipX, rect.width - tooltip.offsetWidth))}px`;
+                tooltip.style.top = `${tooltipY}px`;
+            } else {
+                img.classList.remove('active');
+                circle.style.opacity = 1;
+                tooltip.style.opacity = 0;
+            }
+        });
+    } else {
+        // Hover Support for Desktop
         circle.addEventListener('mouseenter', () => {
             circle.style.opacity = 0;
             img.classList.add('active');
             tooltip.innerHTML = `<strong>${d.name}</strong><br>EPA Per Pass: ${d.y.toFixed(3)}<br>EPA Per Run: ${d.x.toFixed(3)}`;
             tooltip.style.opacity = 1;
 
-            // Position tooltip under logo
             const rect = container.getBoundingClientRect();
             const tooltipX = scaleX(d.x) - tooltip.offsetWidth / 2;
-            const tooltipY = scaleY(d.y) + 35; // slightly below logo
+            const tooltipY = scaleY(d.y) + 35;
             tooltip.style.left = `${Math.max(0, Math.min(tooltipX, rect.width - tooltip.offsetWidth))}px`;
             tooltip.style.top = `${tooltipY}px`;
         });
@@ -303,7 +332,8 @@
             img.classList.remove('active');
             tooltip.style.opacity = 0;
         });
-    });
+    }
+});
 </script>
 </body>
 </html>
