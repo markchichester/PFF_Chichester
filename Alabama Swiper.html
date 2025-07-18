@@ -4,99 +4,124 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SEC Charts Swiper</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+  <!-- Swiper CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+  />
+
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Archivo', sans-serif;
-      background: #ffffff;
-      height: 100%;
-      overflow-x: hidden; /* Stop horizontal scroll */
+        margin: 0;
+        padding: 0;
+        height: 100vh;             /* Full viewport height */
+        overflow: hidden;          /* 🔥 Lock scroll globally */
+        position: fixed;           /* Prevent iOS rubber-band */
+        width: 100%;
+        background: #ffffff;
     }
 
-    .swiper {
-      position: relative;
-      width: 100%;
-      max-width: 700px;
-      height: 70vh; /* 🎯 Responsive height */
-      max-height: 550px; /* Desktop cap */
-      margin: 20px auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      background: #f9f9f9;
-      overflow: hidden; /* Contain arrows/dots */
+    .sec-swiper {
+        width: 100%;
+        max-width: 700px;
+        height: 100%;
+        aspect-ratio: 4 / 3;       /* Enforce chart proportions */
+        margin: 0 auto;
+        overflow: hidden;          /* 🔥 Lock scroll inside swiper */
+        position: relative;
     }
 
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .sec-swiper .swiper-slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
     }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      border-radius: 8px;
-      display: block;
-      pointer-events: auto; /* 🎯 Keep interactivity */
-      touch-action: manipulation; /* Support swipe + tap */
+    .iframe-container {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .iframe-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;            /* Fix inline gap issue */
+    }
+
+    /* Alabama Crimson Chevrons */
+    .swiper-button-next, .swiper-button-prev {
+        color: #9E1B32;
+    }
+
+    .swiper-button-next::after, .swiper-button-prev::after {
+        font-size: 24px;
+    }
+
+    /* Alabama Crimson Pagination */
+    .swiper-pagination {
+        bottom: 10px;
     }
 
     .swiper-pagination-bullet {
-      background: #9E1B32;
-    }
-    .swiper-pagination-bullet-active {
-      background: #9E1B32;
-    }
-    .swiper-button-next, .swiper-button-prev {
-      color: #9E1B32;
+        background: #9E1B32;
+        opacity: 0.5;
     }
 
-    /* Mobile tweaks */
-    @media (max-width: 768px) {
-      .swiper {
-        height: 60vh; /* Shorter on tablets */
-      }
-    }
-    @media (max-width: 480px) {
-      .swiper {
-        height: 50vh; /* Even shorter on phones */
-      }
+    .swiper-pagination-bullet-active {
+        background: #9E1B32;
+        opacity: 1;
     }
   </style>
 </head>
 <body>
-  <div class="swiper">
+  <div class="swiper sec-swiper">
     <div class="swiper-wrapper">
+      <!-- Slide 1: SEC Offense -->
       <div class="swiper-slide">
-        <iframe src="SEC Defense.html"></iframe>
+        <div class="iframe-container">
+          <iframe
+            src="https://markchichester.github.io/PFF_Chichester/SEC%20Offense.html"
+            title="SEC Offense Chart"
+          ></iframe>
+        </div>
       </div>
+      <!-- Slide 2: SEC Defense -->
       <div class="swiper-slide">
-        <iframe src="SEC Offense.html"></iframe>
+        <div class="iframe-container">
+          <iframe
+            src="https://markchichester.github.io/PFF_Chichester/SEC%20Defense.html"
+            title="SEC Defense Chart"
+          ></iframe>
+        </div>
       </div>
     </div>
+    <!-- Chevrons -->
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
+    <!-- Pagination dots -->
     <div class="swiper-pagination"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    const swiper = new Swiper('.swiper', {
-      loop: true,
+    const secSwiper = new Swiper('.sec-swiper', {
+      direction: 'horizontal',
+      loop: false,
+      slidesPerView: 1,
+      spaceBetween: 0,
       pagination: {
         el: '.swiper-pagination',
-        clickable: true,
+        clickable: true
       },
       navigation: {
         nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      keyboard: true,
-      simulateTouch: true, /* 🎯 Enable swipe gestures */
-      allowTouchMove: true /* 🎯 Enable dragging/swiping */
+        prevEl: '.swiper-button-prev'
+      }
     });
   </script>
 </body>
