@@ -145,25 +145,216 @@
         background:linear-gradient(135deg, #eaf3fa, #dbeaf7);
       }
     
+.player-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.days-return {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 600;
+  color: white;
+}
+.pff-pill {
+  flex: 1;
+  background: linear-gradient(135deg, #f0f4f8, #eaf3fa);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+  border-radius: 9999px;
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.pff-pill:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, #eaf3fa, #dbeaf7);
+}
+
+
 @media (max-width: 600px) {
   .player-name {
-    font-size: 1.05rem;
+    font-size: 1rem;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
   }
   .player-name img {
-    height: 16px;
     margin-bottom: 4px;
+    height: 16px;
   }
-  .card div[style*="background:linear-gradient"] {
+  .days-return {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    display: inline-block;
+  }
+  .pff-pill {
+    flex: none;
+    display: inline-block;
+    margin: 2px;
     font-size: 0.75rem;
     padding: 4px 8px;
   }
+  .pff-stats {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    gap: 6px;
+  }
   .profile-button {
+    display: block;
     width: 100%;
+    margin: 8px 0;
     text-align: center;
+    padding: 10px 0;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .card-grid {
+    max-width: 100%;
+    padding: 0;
+  }
+  .card {
+    border-radius: 0;
+    margin: 0 0 10px 0;
+  }
+  .card-content {
+    width: 100%;
+  }
+  .pff-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .player-name {
+    font-size: 1rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .player-name img {
+    margin-bottom: 4px;
+    height: 16px;
+  }
+  .days-return {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    display: inline-block;
+  }
+  .pff-pill {
+    flex: 1;
+    display: inline-block;
+    margin: 2px;
+    font-size: 0.75rem;
+    padding: 6px 10px;
+  }
+  .profile-button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    text-align: center;
+    padding: 10px 0;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .card {
+    display: block;
+  }
+  .player-name {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .player-name img {
+    display: block;
+    margin: 0 auto 4px auto;
+    height: 20px;
+  }
+  .player-meta {
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  .days-profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+  }
+  .days-return {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 9999px;
+  }
+  .profile-button {
+    display: inline-block;
+    flex: none;
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 0.85rem;
+    border-radius: 9999px;
+  }
+  .pff-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
     margin-top: 8px;
+  }
+  .pff-pill {
+    flex: 1;
+    text-align: center;
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .days-profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .profile-button {
+    flex: 1 1 45%;
+    text-align: center;
     padding: 8px 0;
+  }
+  .player-name img {
+    margin: 0 auto 8px auto;
+    display: block;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+}
+
+
+@media (max-width: 600px) {
+  .card img {
+    display: none;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .player-position {
+    text-align: center;
   }
 }
 
@@ -201,7 +392,7 @@
           <img src="${row['Headshot ID'] || 'https://media.pff.com/2025/07/Placeholder-image-scaled.png'}"
                onerror="this.src='https://media.pff.com/2025/07/Placeholder-image-scaled.png'" alt="${row['Player']}">
           <div class="card-content">
-            <p class="player-name" style="font-weight:700;font-size:1.2rem;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+            <p class="player-name" >
         <img src="${teamLogos[row['Team']] || ''}" alt="${row['Team']} logo" style="height:20px;width:auto;display:inline-block;">
         <span>${row['Player']}, ${row['Team']}</span>
        </p>
@@ -209,29 +400,20 @@
             <p class="player-position">${row['Position']}</p>
             <p class="player-meta"><span style="color:#6c757d;">Injury:</span> ${row['Injury']}</p>
             <p class="player-meta"><span style="color:#6c757d;">Designation:</span> ${row['Designation']}</p>
-            <p class="player-meta"><span style="color:#6c757d;">Status:</span> ${row['Status']} <span class="days-return ${badgeClass}" style="position:static;display:inline-block;margin-left:6px;">${daysText}</span></p>
+            <p class="player-meta"><span style="color:#6c757d;">Status:</span> ${row['Status']} <span class="days-return ${badgeClass}" >${daysText}</span></p>
             <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
-          <div style="flex:1;background:linear-gradient(135deg, #f0f4f8, #eaf3fa);
-       box-shadow:0 1px 3px rgba(0,0,0,0.1);
-       transition:transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-       cursor: pointer;border-radius:9999px;padding:6px 10px;text-align:center;font-size:0.85rem;font-weight:600;">
+          <div class="pff-pill">
             Snaps: ${row['2024 Snaps']}
           </div>
-          <div style="flex:1;background:linear-gradient(135deg, #f0f4f8, #eaf3fa);
-       box-shadow:0 1px 3px rgba(0,0,0,0.1);
-       transition:transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-       cursor: pointer;border-radius:9999px;padding:6px 10px;text-align:center;font-size:0.85rem;font-weight:600;">
+          <div class="pff-pill">
             PFF Grade: ${row['2024 PFF Grade']}
           </div>
-          <div style="flex:1;background:linear-gradient(135deg, #f0f4f8, #eaf3fa);
-       box-shadow:0 1px 3px rgba(0,0,0,0.1);
-       transition:transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-       cursor: pointer;border-radius:9999px;padding:6px 10px;text-align:center;font-size:0.85rem;font-weight:600;">
+          <div class="pff-pill">
             WAR: ${row['2024 WAR/WAA']}
           </div>
         </div>
           </div>
-          <a href="${row['Player profile']}" target="_blank" class="profile-button">Player Profile</a>
+          <a href="${row['Player profile']}" target="_blank" class="profile-button">Player Profile</a></div>
         </div>`;
     }
 
