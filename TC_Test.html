@@ -153,6 +153,15 @@
   align-items: center;
   gap: 6px;
 }
+.days-return {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 600;
+  color: white;
+}
 .pff-pill {
   flex: 1;
   background: linear-gradient(135deg, #f0f4f8, #eaf3fa);
@@ -174,29 +183,6 @@
 
 @media (max-width: 600px) {
   .player-name {
-    font-size: 1.05rem;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .player-name img {
-    height: 16px;
-    margin-bottom: 4px;
-  }
-  .pff-pill {
-    font-size: 0.75rem;
-    padding: 4px 6px;
-  }
-  .profile-button {
-    width: 100%;
-    text-align: center;
-    margin-top: 8px;
-    padding: 8px 0;
-  }
-}
-
-
-@media (max-width: 600px) {
-  .player-name {
     font-size: 1rem;
     flex-direction: column;
     align-items: center;
@@ -204,16 +190,12 @@
   }
   .player-name img {
     margin-bottom: 4px;
-  }
-  .profile-button {
-    display: block;
-    width: 100%;
-    margin: 8px 0;
-    text-align: center;
+    height: 16px;
   }
   .days-return {
     font-size: 0.7rem;
     padding: 2px 6px;
+    display: inline-block;
   }
   .pff-pill {
     flex: none;
@@ -227,6 +209,13 @@
     white-space: nowrap;
     display: flex;
     gap: 6px;
+  }
+  .profile-button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    text-align: center;
+    padding: 10px 0;
   }
 }
 
@@ -272,7 +261,7 @@
             <p class="player-position">${row['Position']}</p>
             <p class="player-meta"><span style="color:#6c757d;">Injury:</span> ${row['Injury']}</p>
             <p class="player-meta"><span style="color:#6c757d;">Designation:</span> ${row['Designation']}</p>
-            <p class="player-meta"><span style="color:#6c757d;">Status:</span> ${row['Status']} <span class="days-return ${badgeClass}" style="position:static;display:inline-block;margin-left:6px;">${daysText}</span></p>
+            <p class="player-meta"><span style="color:#6c757d;">Status:</span> ${row['Status']} <span class="days-return ${badgeClass}" >${daysText}</span></p>
             <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
           <div class="pff-pill">
             Snaps: ${row['2024 Snaps']}
