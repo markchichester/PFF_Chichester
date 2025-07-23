@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -190,6 +191,42 @@
     text-align: center;
     margin-top: 8px;
     padding: 8px 0;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .player-name {
+    font-size: 1rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .player-name img {
+    margin-bottom: 4px;
+  }
+  .profile-button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    text-align: center;
+  }
+  .days-return {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+  .pff-pill {
+    flex: none;
+    display: inline-block;
+    margin: 2px;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  .pff-stats {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    gap: 6px;
   }
 }
 
