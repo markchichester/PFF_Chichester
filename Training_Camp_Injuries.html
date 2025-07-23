@@ -144,7 +144,30 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         background:linear-gradient(135deg, #eaf3fa, #dbeaf7);
       }
-    </style>
+    
+@media (max-width: 600px) {
+  .player-name {
+    font-size: 1.05rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .player-name img {
+    height: 16px;
+    margin-bottom: 4px;
+  }
+  .card div[style*="background:linear-gradient"] {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  .profile-button {
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+    padding: 8px 0;
+  }
+}
+
+</style>
 </head>
 <body>
   <header>Injury Tracker</header>
