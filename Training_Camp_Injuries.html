@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2025 Training Camp Injury Tracker (Exact Headers)</title>
+  <title>2025 Training Camp Injury Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -180,7 +180,7 @@
                onerror="this.src='https://media.pff.com/2025/07/Placeholder-image-scaled.png'" alt="${row['Player']}">
           <div class="card-content">
             <p class="player-name" style="font-weight:700;font-size:1.2rem;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
-        <img src="${teamLogos[row['Team']] || ''}" alt="${row['Team']} logo" style="height:20px;width:auto;display:inline-block;">
+        <img src="${teamLogos[row['Team']]}" alt="${row['Team']} logo" style="height:20px;width:auto;display:inline-block;">
         <span>${row['Player']}, ${row['Team']}</span>
        </p>
     <hr style="border:none;border-top:1px solid #e0e6f0;margin:6px 0;">
@@ -314,10 +314,7 @@
       "Seattle Seahawks": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/Seattle_Seahawks_logo.svg/100px-Seattle_Seahawks_logo.svg.png",
       "Tampa Bay Buccaneers": "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Tampa_Bay_Buccaneers_logo.svg/100px-Tampa_Bay_Buccaneers_logo.svg.png",
       "Tennessee Titans": "https://upload.wikimedia.org/wikipedia/en/thumb/c/c1/Tennessee_Titans_logo.svg/100px-Tennessee_Titans_logo.svg.png",
-      "Washington Commanders": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/wsh.png",
-      "Oakland Raiders": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f4/Oakland_Raiders_60_seasons_logo.svg/1200px-Oakland_Raiders_60_seasons_logo.svg.png",
-      "St. Louis Rams": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b7/NFL_Rams_Classical_Helmet.svg/1280px-NFL_Rams_Classical_Helmet.svg.png",
-      "San Diego Chargers": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/San_Diego_Chargers_wordmark.svg/1920px-San_Diego_Chargers_wordmark.svg.png"
+      "Washington Commanders": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/wsh.png"
     };
     </script>
 </body>
