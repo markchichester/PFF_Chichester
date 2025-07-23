@@ -139,12 +139,46 @@
       color: #0B1533;
       border: 1px solid #0B1533;
       transform: scale(1.05);
+        display: block;
+        text-align: center;
+        width: 100%;
+
     }
   .card div[style*="background:linear-gradient"]::hover {
         transform: scale(1.05);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         background:linear-gradient(135deg, #eaf3fa, #dbeaf7);
       }
+@media (max-width: 600px) {
+  .player-name {
+    font-size: 1.05rem;
+  }
+  .player-name img {
+    height: 16px;
+  }
+  .player-position {
+    font-size: 0.75rem;
+  }
+  .card div[style*="background:linear-gradient"] {
+    font-size: 0.75rem;
+  }
+  .profile-button {
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+    padding: 10px 0;
+  }
+  .player-name {
+    font-size: 1.0rem;
+  }
+  .player-position {
+    font-size: 0.8rem;
+  }
+  .card div[style*="background:linear-gradient"] {
+    font-size: 0.8rem;
+  }
+}
+
     </style>
 </head>
 <body>
