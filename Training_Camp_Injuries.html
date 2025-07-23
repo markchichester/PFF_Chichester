@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 Training Camp Injury Tracker (Exact Headers)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      background-color: #FFFFFF;
+      color: #0B1533;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #0B1533;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    #filters {
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+      background: #f8fafd;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #e0e6f0;
+    }
+    #filters input, #filters select, #filters button {
+      margin: 5px;
+    
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    #filters button {
+      background: #0B1533;
+      color: white;
+      cursor: pointer;
+    }
+    #filters button:hover {
+      background: #00103D;
+    }
+    .card-grid {
+      max-width: 900px;
+      margin: auto;
+      padding: 10px;
+    }
+    .card {
+      flex-direction: row;
+    
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-4px);
+    
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    .card img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .card-content {
+      flex: 1;
+    }
+    .card-content p {
+      margin: 2px 0;
+    }
+    .player-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .player-position {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+    .player-team {
+      font-size: 0.9rem;
+      color: #0B1533;
+    }
+    .player-meta {
+      font-size: 0.9rem;
+    }
+    .days-return {
+      box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    
+      display: inline-block;
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 2px;
+      color: white;
+    }
+    .badge-green { background: #28a745; }
+    .badge-amber { background: #ffc107; color: #0B1533; }
+    .badge-red { background: #dc3545; }
+    .badge-gray { background: #6c757d; }
+    .profile-button {
+      background: #0B1533;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: Archivo;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      margin-left: auto;
+    }
+    .profile-button:hover {
+      background: white;
+      color: #0B1533;
+      border: 1px solid #0B1533;
+      transform: scale(1.05);
+    }
+  .card div[style*="background:linear-gradient"]::hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        background:linear-gradient(135deg, #eaf3fa, #dbeaf7);
+      }
+    </style>
+</head>
+<body>
+  <header>Injury Tracker</header>
+  <div id="filters">
+    <input type="text" id="search" placeholder="Search players or teams...">
+    <select id="filterTeam"><option value="">All Teams</option></select>
+    <select id="filterPosition"><option value="">All Positions</option></select>
+    <button id="resetFilters">Clear Filters</button>
+  </div>
+  <div class="card-grid" id="cardGrid">Loading...</div>
+
+  <script>
+    const apiKey = 'AIzaSyDiYEicnrlxYDaquKavs-nH8OEBsrNz9-0';
+    const sheetID = '1quPnKkS_-XClX_V3zeWyo95xqEHXVqdT2_o9f-OWsCw';
+    const range = 'Sheet1';
+    const sheetsURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${range}?key=${apiKey}`;
+    let allRows = [];
+
+    function getBadgeClass(days) {
+      if (!days || isNaN(days)) return 'badge-gray';
+      if (days <= 7) return 'badge-green';
+      if (days <= 14) return 'badge-amber';
+      return 'badge-red';
+    }
+
+    function createCard(row) {
+      const badgeClass = getBadgeClass(parseInt(row['Days until return']));
+      const daysText = row['Days until return'] ? `${row['Days until return']} days until return` : 'TBD';
+      return `
+        <div class="card" data-team="${row['Team']}" data-position="${row['Position']}" style="position:relative;">
+          <img src="${row['Headshot ID'] || 'https://media.pff.com/2025/07/Placeholder-image-scaled.png'}"
+               onerror="this.src='https://media.pff.com/2025/07/Placeholder-image-scaled.png'" alt="${row['Player']}">
+          <div class="card-content">
+            <p class="player-name" style="font-weight:700;font-size:1.2rem;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+        <img src="${teamLogos[row['Team']] || ''}" alt="${row['Team']} logo" style="height:20px;width:auto;display:inline-block;">
+        <span>${row['Player']}, ${row['Team']}</span>
+       </p>
+    <hr style="border:none;border-top:1px solid #e0e6f0;margin:6px 0;">
+            <p class="player-position">${row['Position']}</p>
+            <p class="player-meta"><span style="color:#6c757d;">Injury:</span> ${row['Injury']}</p>
+            <p class="player-meta"><span style="color:#6c757d;">Designation:</span> ${row['Designation']}</p>
+            <p class="player-meta"><span style="color:#6c757d;">Status:</span> ${row['Status']} <span class="days-return ${badgeClass}" style="position:static;display:inline-block;margin-left:6px;">${daysText}</span></p>
+            <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+          <div style="flex:1;background:linear-gradient(135deg, #f0f4f8, #eaf3fa);
+       box-shadow:0 1px 3px rgba(0,0,0,0.1);
+       transition:transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+       cursor: pointer;border-radius:9999px;padding:6px 10px;text-align:center;font-size:0.85rem;font-weight:600;">
+            Snaps: ${row['2024 Snaps']}
+          </div>
+          <div style="flex:1;background:linear-gradient(135deg, #f0f4f8, #eaf3fa);
+       box-shadow:0 1px 3px rgba(0,0,0,0.1);
+       transition:transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+       cursor: pointer;border-radius:9999px;padding:6px 10px;text-align:center;font-size:0.85rem;font-weight:600;">
+            PFF Grade: ${row['2024 PFF Grade']}
+          </div>
+          <div style="flex:1;background:linear-gradient(135deg, #f0f4f8, #eaf3fa);
+       box-shadow:0 1px 3px rgba(0,0,0,0.1);
+       transition:transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+       cursor: pointer;border-radius:9999px;padding:6px 10px;text-align:center;font-size:0.85rem;font-weight:600;">
+            WAR/WAA: ${row['2024 WAR/WAA']}
+          </div>
+        </div>
+          </div>
+          <a href="${row['Player profile']}" target="_blank" class="profile-button">Player Profile</a>
+        </div>`;
+    }
+
+    function populateFilters(rows) {
+      const teamSet = new Set();
+      const positionSet = new Set();
+      rows.forEach(row => {
+        if (row['Team']) teamSet.add(row['Team']);
+        if (row['Position']) positionSet.add(row['Position']);
+      });
+      const teamSelect = document.getElementById('filterTeam');
+      teamSet.forEach(team => {
+        const option = document.createElement('option');
+        option.value = team;
+        option.textContent = team;
+        teamSelect.appendChild(option);
+      });
+      const positionSelect = document.getElementById('filterPosition');
+      positionSet.forEach(pos => {
+        const option = document.createElement('option');
+        option.value = pos;
+        option.textContent = pos;
+        positionSelect.appendChild(option);
+      });
+    }
+
+    function renderCards(filteredRows) {
+      const grid = document.getElementById('cardGrid');
+      grid.innerHTML = filteredRows.map(createCard).join('');
+    }
+
+    function applyFilters() {
+      const searchTerm = document.getElementById('search').value.toLowerCase();
+      const selectedTeam = document.getElementById('filterTeam').value;
+      const selectedPosition = document.getElementById('filterPosition').value;
+      const filteredRows = allRows.filter(row => {
+        const matchesSearch = row['Player'].toLowerCase().includes(searchTerm) || row['Team'].toLowerCase().includes(searchTerm);
+        const matchesTeam = !selectedTeam || row['Team'] === selectedTeam;
+        const matchesPosition = !selectedPosition || row['Position'] === selectedPosition;
+        return matchesSearch && matchesTeam && matchesPosition;
+      });
+      renderCards(filteredRows);
+    }
+
+    document.getElementById('search').addEventListener('input', applyFilters);
+    document.getElementById('filterTeam').addEventListener('change', applyFilters);
+    document.getElementById('filterPosition').addEventListener('change', applyFilters);
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      document.getElementById('search').value = '';
+      document.getElementById('filterTeam').value = '';
+      document.getElementById('filterPosition').value = '';
+      renderCards(allRows);
+    });
+
+    fetch(sheetsURL)
+      .then(res => res.json())
+      .then(data => {
+        const headers = data.values[0];
+        allRows = data.values.slice(1).map(row => {
+          const obj = {};
+          headers.forEach((header, i) => obj[header] = row[i] || '');
+          return obj;
+        });
+        allRows.sort((a, b) => new Date(b['Injury date']) - new Date(a['Injury date']));
+        populateFilters(allRows);
+        renderCards(allRows);
+      })
+      .catch(err => {
+        document.getElementById('cardGrid').innerHTML = '<p style="color:red;">Failed to load data.</p>';
+        console.error(err);
+      });
+  
+    const teamLogos = {
+      "Arizona Cardinals": "https://upload.wikimedia.org/wikipedia/en/thumb/7/72/Arizona_Cardinals_logo.svg/179px-Arizona_Cardinals_logo.svg.png",
+      "Atlanta Falcons": "https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Atlanta_Falcons_logo.svg/192px-Atlanta_Falcons_logo.svg.png",
+      "Baltimore Ravens": "https://upload.wikimedia.org/wikipedia/en/thumb/1/16/Baltimore_Ravens_logo.svg/193px-Baltimore_Ravens_logo.svg.png",
+      "Buffalo Bills": "https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Buffalo_Bills_logo.svg/189px-Buffalo_Bills_logo.svg.png",
+      "Carolina Panthers": "https://upload.wikimedia.org/wikipedia/en/thumb/1/1c/Carolina_Panthers_logo.svg/100px-Carolina_Panthers_logo.svg.png",
+      "Chicago Bears": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Chicago_Bears_logo.svg/100px-Chicago_Bears_logo.svg.png",
+      "Cincinnati Bengals": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Cincinnati_Bengals_logo.svg/100px-Cincinnati_Bengals_logo.svg.png",
+      "Cleveland Browns": "https://upload.wikimedia.org/wikipedia/en/thumb/d/d9/Cleveland_Browns_logo.svg/100px-Cleveland_Browns_logo.svg.png",
+      "Dallas Cowboys": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Dallas_Cowboys.svg/100px-Dallas_Cowboys.svg.png",
+      "Denver Broncos": "https://upload.wikimedia.org/wikipedia/en/thumb/4/44/Denver_Broncos_logo.svg/100px-Denver_Broncos_logo.svg.png",
+      "Detroit Lions": "https://upload.wikimedia.org/wikipedia/en/thumb/7/71/Detroit_Lions_logo.svg/100px-Detroit_Lions_logo.svg.png",
+      "Green Bay Packers": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png",
+      "Houston Texans": "https://upload.wikimedia.org/wikipedia/en/thumb/2/28/Houston_Texans_logo.svg/100px-Houston_Texans_logo.svg.png",
+      "Indianapolis Colts": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Indianapolis_Colts_logo.svg/100px-Indianapolis_Colts_logo.svg.png",
+      "Jacksonville Jaguars": "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Jacksonville_Jaguars_logo.svg/100px-Jacksonville_Jaguars_logo.svg.png",
+      "Kansas City Chiefs": "https://upload.wikimedia.org/wikipedia/en/thumb/e/e1/Kansas_City_Chiefs_logo.svg/100px-Kansas_City_Chiefs_logo.svg.png",
+      "Los Angeles Chargers": "https://upload.wikimedia.org/wikipedia/en/thumb/7/72/NFL_Chargers_logo.svg/100px-NFL_Chargers_logo.svg.png",
+      "Los Angeles Rams": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8a/Los_Angeles_Rams_logo.svg/100px-Los_Angeles_Rams_logo.svg.png",
+      "Miami Dolphins": "https://upload.wikimedia.org/wikipedia/en/thumb/3/37/Miami_Dolphins_logo.svg/100px-Miami_Dolphins_logo.svg.png",
+      "Minnesota Vikings": "https://upload.wikimedia.org/wikipedia/en/thumb/4/48/Minnesota_Vikings_logo.svg/98px-Minnesota_Vikings_logo.svg.png",
+      "New England Patriots": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/New_England_Patriots_logo.svg/100px-New_England_Patriots_logo.svg.png",
+      "New Orleans Saints": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/New_Orleans_Saints_logo.svg/98px-New_Orleans_Saints_logo.svg.png",
+      "New York Giants": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/New_York_Giants_logo.svg/100px-New_York_Giants_logo.svg.png",
+      "New York Jets": "https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/New_York_Jets_logo.svg/100px-New_York_Jets_logo.svg.png",
+      "Las Vegas Raiders": "https://upload.wikimedia.org/wikipedia/en/thumb/4/48/Las_Vegas_Raiders_logo.svg/150px-Las_Vegas_Raiders_logo.svg.png",
+      "Philadelphia Eagles": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/Philadelphia_Eagles_logo.svg/100px-Philadelphia_Eagles_logo.svg.png",
+      "Pittsburgh Steelers": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Pittsburgh_Steelers_logo.svg/100px-Pittsburgh_Steelers_logo.svg.png",
+      "San Francisco 49ers": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/San_Francisco_49ers_logo.svg/100px-San_Francisco_49ers_logo.svg.png",
+      "Seattle Seahawks": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/Seattle_Seahawks_logo.svg/100px-Seattle_Seahawks_logo.svg.png",
+      "Tampa Bay Buccaneers": "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Tampa_Bay_Buccaneers_logo.svg/100px-Tampa_Bay_Buccaneers_logo.svg.png",
+      "Tennessee Titans": "https://upload.wikimedia.org/wikipedia/en/thumb/c/c1/Tennessee_Titans_logo.svg/100px-Tennessee_Titans_logo.svg.png",
+      "Washington Commanders": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/wsh.png",
+      "Oakland Raiders": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f4/Oakland_Raiders_60_seasons_logo.svg/1200px-Oakland_Raiders_60_seasons_logo.svg.png",
+      "St. Louis Rams": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b7/NFL_Rams_Classical_Helmet.svg/1280px-NFL_Rams_Classical_Helmet.svg.png",
+      "San Diego Chargers": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/San_Diego_Chargers_wordmark.svg/1920px-San_Diego_Chargers_wordmark.svg.png"
+    };
+    </script>
+</body>
+</html>
