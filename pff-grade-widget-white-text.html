@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PFF Play-Level Grade Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      max-width: 700px;
+      margin: 2em auto;
+      padding: 0 1em;
+    }
+    input[type=range] {
+      width: 100%;
+      appearance: none;
+      height: 18px;
+      border-radius: 9px;
+      background: linear-gradient(to right,
+        #C61A2A 0%,
+        #C61A2A 12.5%,
+        #E04215 25%,
+        #FE9D00 37.5%,
+        #FFD002 50%,
+        #76C101 62.5%,
+        #009B47 75%,
+        #0087A4 87.5%,
+        #0087A4 100%);
+      outline: none;
+      margin-bottom: 42px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      height: 28px;
+      width: 28px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #333;
+      cursor: pointer;
+      margin-top: -7px;
+    }
+    input[type=range]::-moz-range-thumb {
+      height: 28px;
+      width: 28px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #333;
+      cursor: pointer;
+    }
+    .ticks {
+      position: relative;
+      height: 20px;
+      margin-top: -12px;
+    }
+    .ticks span {
+      position: absolute;
+      transform: translateX(-50%);
+      font-size: 0.9em;
+    }
+    #pff-explanation {
+      margin-top: 1em;
+      padding: 0.75em 1em;
+      background: #FFD002;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 0.95em;
+      white-space: pre-wrap;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>PFF play-level grade</h2>
+  <input type="range" id="pff-slider" min="0" max="8" step="1" value="4" />
+  <div class="ticks">
+    <span style="left: 0%;">-2</span>
+    <span style="left: 12.5%;">-1.5</span>
+    <span style="left: 25%;">-1</span>
+    <span style="left: 37.5%;">-0.5</span>
+    <span style="left: 50%; font-weight: bold;">0</span>
+    <span style="left: 62.5%;">+0.5</span>
+    <span style="left: 75%;">+1</span>
+    <span style="left: 87.5%;">+1.5</span>
+    <span style="left: 100%;">+2</span>
+  </div>
+
+  <div id="pff-explanation"></div>
+
+  <script>
+    const slider = document.getElementById("pff-slider");
+    const output = document.getElementById("pff-explanation");
+
+    const explanations = {
+      0: `A -2.0 grade is reserved for the most egregious plays a quarterback can make—those that directly lead to disastrous outcomes or have the potential to.
+
+For example, a forced throw on an out route that allows a defender to jump the route and return the interception for a touchdown — a pick-six — would earn a -2.0. The same downgrade could apply to a reckless interception thrown while the offense is driving inside the red zone, effectively taking points off the board.
+
+We also use a -2.0 for the most inexplicable decisions, such as a quarterback attempting a desperate, directionless throw while being spun down for a sack, an unnecessary risk with little to no control over the outcome. These are plays that show a complete breakdown in decision-making and directly harm the team’s chances of success.`,
+      1: `A -1.5 grade is reserved for throws that go beyond simply “bad” and into the territory of “inexcusable.” These are passes with no reasonable justification — throws directly to a defender or clear misreads of coverage, where the quarterback simply doesn't see a lurking defender.`,
+      2: `The -1.0 grade is the most common downgrade for interceptions. It typically reflects a poor throw or decision, such as significant inaccuracy, forcing the ball into tight coverage or making an ill-advised read. This grade also applies when a quarterback stares down a receiver long enough to draw a defender into the passing lane.`,
+      3: `A -0.5 grade is most commonly tied to inaccuracy, passes that miss the target by being high, low, behind or in front, but without creating a real risk of interception.
+
+It can also apply to forced throws that result in pass breakups. While not every pass breakup warrants a downgrade, if the quarterback unnecessarily forces the ball into coverage and gives the defender a clean chance to break up the pass — even if it doesn’t lead to a turnover — it typically earns a -0.5.`,
+      4: `A 0.0 grade represents a pass executed at the expected level, neither notably good nor bad. Whether the pass is completed or not, there’s no significant inaccuracy or risk, but also no exceptional timing, difficulty or added value from the quarterback.
+
+Most zero-graded throws are routine, such as passes made underneath the coverage and short of the sticks, where the quarterback doesn’t face pressure, doesn’t have to manipulate the defense and isn’t required to make a high-level read or throw. The outcome of these plays often hinges more on the receiver than the passer.`,
+      5: `The +0.5 grade is by far the most common positive mark for a quarterback. At its core, it reflects an accurate, well-executed throw that puts the offense in a favorable position, whether by moving the chains or improving down-and-distance.
+
+The key here is that the grade rewards the throw itself, not necessarily the end result. A +0.5 is earned when the quarterback’s execution elevates the play, regardless of what happens after the ball leaves his hand.`,
+      6: `A +1.0 grade is awarded for throws that go beyond routine execution, typically requiring exceptional touch, timing, and accuracy. These are often passes that beat tight man or zone coverage, get behind the defense on a vertical shot or thread the needle between defenders, such as a dig route placed between the linebackers and safeties.
+
+What separates a +1.0 from a +0.5 is the added level of difficulty. It’s not just about finding the open man, but making a throw that demands advanced skill to complete.`,
+      7: `A +1.5 grade is reserved for truly exceptional throws, those that beat what amounts to nearly airtight coverage. These passes typically involve significant air yards, pinpoint accuracy into a tight window and perfect ball placement that either allows only the receiver to make a play or leads him in stride to maximize yards after the catch.
+
+These are the kinds of throws that stand out even among high-level plays, requiring elite precision and timing to pull off.`,
+      8: `The +2.0 grade is the pinnacle of quarterback play — the rarest, most jaw-dropping throws in football. To put it in perspective: in 2024, only three passes earned a +2.0 grade. Since PFF began grading in 2006, just 29 out of more than 370,000 throws have reached that level.`
+    };
+
+    const colors = {
+      0: "#C61A2A", 1: "#C61A2A", 2: "#E04215", 3: "#FE9D00", 4: "#FFD002",
+      5: "#76C101", 6: "#009B47", 7: "#0087A4", 8: "#0087A4"
+    };
+
+    function updateExplanation(index) {
+      output.innerText = explanations[index];
+      output.style.backgroundColor = colors[index];
+      output.style.color = (index === 4) ? "#000000" : "#ffffff";
+    }
+
+    slider.addEventListener("input", () => {
+      updateExplanation(parseInt(slider.value));
+    });
+
+    updateExplanation(parseInt(slider.value));
+  </script>
+</body>
+</html>
