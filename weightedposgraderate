@@ -1,0 +1,171 @@
+<style>
+  .modern-table-wrapper {
+    max-width: 900px;
+    margin: 2rem auto;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(237, 237, 237, 0.7);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    font-family: 'Archivo', sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .modern-table thead {
+    background: #ccc;
+    color: black;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .modern-table th,
+  .modern-table td {
+    padding: 14px 16px;
+    vertical-align: middle;
+  }
+
+  .modern-table td img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .modern-table .player-link {
+    text-decoration: none;
+    color: #111;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .modern-table .player-link:hover {
+    color: #0055ff;
+  }
+
+  .modern-table .stat {
+    font-weight: 600;
+    color: #111;
+  }
+
+  .modern-table tbody tr {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: linear-gradient(to right, #ededed, #fdfdfd);
+    position: relative;
+  }
+
+  .modern-table tbody tr:hover {
+    background: linear-gradient(to right, #e0e0e0, #fafafa);
+    transform: scale(1.01);
+    box-shadow: 0 0 0 2px var(--team-color, #aaa), 0 0 12px var(--team-color, #aaa);
+    z-index: 1;
+  }
+
+  @media (max-width: 600px) {
+    .modern-table th,
+    .modern-table td {
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    .modern-table td img {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".clickable-row").forEach(row => {
+      row.addEventListener("click", function () {
+        const url = this.getAttribute("data-href");
+        if (url) window.open(url, "_blank");
+      });
+    });
+  });
+</script>
+
+<div class="modern-table-wrapper">
+  <table class="modern-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Player</th>
+        <th>Team</th>
+        <th>Pos. Graded Play %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/lamar-jackson/46416" style="--team-color: #241773;">
+        <td><img src="https://media.pff.com/player-photos/nfl/46416.webp" alt="Lamar Jackson"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/lamar-jackson/46416" target="_blank">Lamar Jackson</a></td>
+        <td>BAL</td>
+        <td class="stat">37.0%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/josh-allen/46601" style="--team-color: #00338D;">
+        <td><img src="https://media.pff.com/player-photos/nfl/46601.webp" alt="Josh Allen"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/josh-allen/46601" target="_blank">Josh Allen</a></td>
+        <td>BUF</td>
+        <td class="stat">33.4%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/joe-burrow/28022" style="--team-color: #FB4F14;">
+        <td><img src="https://media.pff.com/player-photos/nfl/28022.webp" alt="Joe Burrow"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/joe-burrow/28022" target="_blank">Joe Burrow</a></td>
+        <td>CIN</td>
+        <td class="stat">32.9%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/justin-herbert/28237" style="--team-color: #0080C6;">
+        <td><img src="https://media.pff.com/player-photos/nfl/28237.webp" alt="Justin Herbert"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/justin-herbert/28237" target="_blank">Justin Herbert</a></td>
+        <td>LAC</td>
+        <td class="stat">31.9%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/jayden-daniels/97993" style="--team-color: #5A1414;">
+        <td><img src="https://media.pff.com/player-photos/nfl/97993.webp" alt="Jayden Daniels"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/jayden-daniels/97993" target="_blank">Jayden Daniels</a></td>
+        <td>WAS</td>
+        <td class="stat">31.9%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/baker-mayfield/46518" style="--team-color: #D50A0A;">
+        <td><img src="https://media.pff.com/player-photos/nfl/46518.webp" alt="Baker Mayfield"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/baker-mayfield/46518" target="_blank">Baker Mayfield</a></td>
+        <td>TB</td>
+        <td class="stat">31.8%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/sam-darnold/29048" style="--team-color: #002244;">
+        <td><img src="https://media.pff.com/player-photos/nfl/29048.webp" alt="Sam Darnold"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/sam-darnold/29048" target="_blank">Sam Darnold</a></td>
+        <td>SEA</td>
+        <td class="stat">31.7%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/anthony-richardson/124393" style="--team-color: #002C5F;">
+        <td><img src="https://media.pff.com/player-photos/nfl/124393.webp" alt="Anthony Richardson"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/anthony-richardson/124393" target="_blank">Anthony Richardson</a></td>
+        <td>IND</td>
+        <td class="stat">31.1%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/brock-purdy/77672" style="--team-color: #AA0000;">
+        <td><img src="https://media.pff.com/player-photos/nfl/77672.webp" alt="Brock Purdy"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/brock-purdy/77672" target="_blank">Brock Purdy</a></td>
+        <td>SF</td>
+        <td class="stat">31.0%</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/jameis-winston/9434" style="--team-color: #0B2265;">
+        <td><img src="https://media.pff.com/player-photos/nfl/9434.webp" alt="Jameis Winston"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/jameis-winston/9434" target="_blank">Jameis Winston</a></td>
+        <td>NYG</td>
+        <td class="stat">30.8%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
