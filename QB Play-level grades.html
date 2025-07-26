@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PFF QB Grade Distribution</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --card-bg: #ffffff;
+      --pill-bg: #f5f5f5;
+      --pill-text: #333;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+    body {
+      font-family: 'Archivo', sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 1rem;
+    }
+    .player-summary {
+      border-left: 6px solid var(--team-color, #0044a4);
+      transition: border-color 0.3s ease;
+    }
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 1rem;
+      border-left: 6px solid #0044a4;
+      margin-bottom: 1.5rem;
+    }
+    .player-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .player-headshot {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ccc;
+    }
+    .player-info {
+      flex-grow: 1;
+    }
+    .player-name {
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    .team-name {
+      font-size: 1rem;
+      color: #555;
+    }
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+    .pill {
+      background: linear-gradient(to right, #0044a4, #0087A4);
+      color: #fff;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 999px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pill:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+      background: var(--pill-bg);
+      color: var(--pill-text);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      transition: background 0.3s ease;
+    }
+      background: #eee;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    canvas {
+      max-width: 100%;
+    }
+    .dropdown-container {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      max-width: 100%;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+      background: #f8f9fc;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    .legend-item {
+      border: none !important;
+      box-shadow: none !important;
+      background: none !important;
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .legend-item:hover {
+      transform: scale(1.05);
+      background: #eef3ff;
+    }
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .legend-item {
+      border: none !important;
+      box-shadow: none !important;
+      background: none !important;
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      margin-right: 6px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="dropdown-container">
+  <label for="playerSelect">Select Quarterback:</label><br>
+  <select id="playerSelect"></select>
+</div>
+
+<div class="player-summary" id="playerSummary"></div>
+<canvas id="gradePie" width="400" height="400"></canvas>
+<div class="legend" id="chartLegend"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+  function highlightSlice(label) {
+    const index = chart.data.labels.indexOf(label);
+    if (index !== -1) {
+      chart.data.datasets[0].backgroundColor = chart.data.labels.map((lbl, i) =>
+        i === index ? gradeColors[lbl] : 'rgba(220,220,220,0.3)'
+      );
+      chart.update();
+    }
+  }
+
+  function resetHighlight() {
+    chart.data.datasets[0].backgroundColor = chart.data.labels.map(lbl => gradeColors[lbl]);
+    chart.update();
+  }
+
+</script>
+<script>
+  const players = [
+  {
+    "name": "Lamar Jackson",
+    "team": "Ravens",
+    "headshot": "https://media.pff.com/player-photos/nfl/46416.webp",
+    "snaps": 575,
+    "grade": 94.0,
+    "war": 3.918,
+    "teamColor": "#241773",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 7,
+      "-0.5": 54,
+      "0": 335,
+      "0.5": 143,
+      "1": 32,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Brock Purdy",
+    "team": "49ers",
+    "headshot": "https://media.pff.com/player-photos/nfl/77672.webp",
+    "snaps": 570,
+    "grade": 82.4,
+    "war": 1.93,
+    "teamColor": "#AA0000",
+    "grades": {
+      "-2": 2,
+      "-1.5": 8,
+      "-1": 7,
+      "-0.5": 60,
+      "0": 331,
+      "0.5": 147,
+      "1": 15,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Baker Mayfield",
+    "team": "Buccaneers",
+    "headshot": "https://media.pff.com/player-photos/nfl/46518.webp",
+    "snaps": 695,
+    "grade": 86.0,
+    "war": 2.899,
+    "teamColor": "#A71930",
+    "grades": {
+      "-2": 0,
+      "-1.5": 15,
+      "-1": 10,
+      "-0.5": 60,
+      "0": 413,
+      "0.5": 174,
+      "1": 22,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jameis Winston",
+    "team": "Browns",
+    "headshot": "https://media.pff.com/player-photos/nfl/9434.webp",
+    "snaps": 347,
+    "grade": 73.4,
+    "war": 1.04,
+    "teamColor": "#FF3C00",
+    "grades": {
+      "-2": 2,
+      "-1.5": 6,
+      "-1": 10,
+      "-0.5": 32,
+      "0": 201,
+      "0.5": 85,
+      "1": 11,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jayden Daniels",
+    "team": "Commanders",
+    "headshot": "https://media.pff.com/player-photos/nfl/97993.webp",
+    "snaps": 643,
+    "grade": 89.6,
+    "war": 3.112,
+    "teamColor": "#5A1414",
+    "grades": {
+      "-2": 0,
+      "-1.5": 5,
+      "-1": 7,
+      "-0.5": 57,
+      "0": 397,
+      "0.5": 153,
+      "1": 21,
+      "1.5": 2,
+      "2": 1
+    }
+  },
+  {
+    "name": "Joe Burrow",
+    "team": "Bengals",
+    "headshot": "https://media.pff.com/player-photos/nfl/28022.webp",
+    "snaps": 775,
+    "grade": 93.9,
+    "war": 4.838,
+    "teamColor": "#FB4F14",
+    "grades": {
+      "-2": 0,
+      "-1.5": 8,
+      "-1": 7,
+      "-0.5": 52,
+      "0": 495,
+      "0.5": 174,
+      "1": 36,
+      "1.5": 3,
+      "2": 0
+    }
+  },
+  {
+    "name": "Tyler Huntley",
+    "team": "Dolphins",
+    "headshot": "https://media.pff.com/player-photos/nfl/46448.webp",
+    "snaps": 182,
+    "grade": 67.3,
+    "war": 0.223,
+    "teamColor": "#008E97",
+    "grades": {
+      "-2": 1,
+      "-1.5": 2,
+      "-1": 6,
+      "-0.5": 20,
+      "0": 103,
+      "0.5": 48,
+      "1": 2,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Sam Darnold",
+    "team": "Vikings",
+    "headshot": "https://media.pff.com/player-photos/nfl/29048.webp",
+    "snaps": 675,
+    "grade": 82.7,
+    "war": 2.69,
+    "teamColor": "#4F2683",
+    "grades": {
+      "-2": 0,
+      "-1.5": 8,
+      "-1": 16,
+      "-0.5": 63,
+      "0": 409,
+      "0.5": 146,
+      "1": 31,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Justin Herbert",
+    "team": "Chargers",
+    "headshot": "https://media.pff.com/player-photos/nfl/28237.webp",
+    "snaps": 623,
+    "grade": 91.7,
+    "war": 3.464,
+    "teamColor": "#007BC7",
+    "grades": {
+      "-2": 0,
+      "-1.5": 7,
+      "-1": 6,
+      "-0.5": 47,
+      "0": 399,
+      "0.5": 129,
+      "1": 35,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Trevor Lawrence",
+    "team": "Jaguars",
+    "headshot": "https://media.pff.com/player-photos/nfl/77632.webp",
+    "snaps": 332,
+    "grade": 76.8,
+    "war": 0.991,
+    "teamColor": "#006778",
+    "grades": {
+      "-2": 0,
+      "-1.5": 4,
+      "-1": 9,
+      "-0.5": 41,
+      "0": 191,
+      "0.5": 74,
+      "1": 13,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Josh Allen",
+    "team": "Bills",
+    "headshot": "https://media.pff.com/player-photos/nfl/46601.webp",
+    "snaps": 587,
+    "grade": 91.8,
+    "war": 2.665,
+    "teamColor": "#00338D",
+    "grades": {
+      "-2": 2,
+      "-1.5": 3,
+      "-1": 10,
+      "-0.5": 61,
+      "0": 361,
+      "0.5": 107,
+      "1": 40,
+      "1.5": 3,
+      "2": 0
+    }
+  },
+  {
+    "name": "C.J. Stroud",
+    "team": "Texans",
+    "headshot": "https://media.pff.com/player-photos/nfl/129759.webp",
+    "snaps": 659,
+    "grade": 78.9,
+    "war": 2.492,
+    "teamColor": "#03202F",
+    "grades": {
+      "-2": 2,
+      "-1.5": 8,
+      "-1": 6,
+      "-0.5": 74,
+      "0": 403,
+      "0.5": 143,
+      "1": 20,
+      "1.5": 3,
+      "2": 0
+    }
+  },
+  {
+    "name": "Kirk Cousins",
+    "team": "Falcons",
+    "headshot": "https://media.pff.com/player-photos/nfl/7102.webp",
+    "snaps": 522,
+    "grade": 74.3,
+    "war": 1.857,
+    "teamColor": "#A71930",
+    "grades": {
+      "-2": 2,
+      "-1.5": 8,
+      "-1": 14,
+      "-0.5": 32,
+      "0": 337,
+      "0.5": 116,
+      "1": 13,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Anthony Richardson",
+    "team": "Colts",
+    "headshot": "https://media.pff.com/player-photos/nfl/124393.webp",
+    "snaps": 318,
+    "grade": 62.2,
+    "war": 0.435,
+    "teamColor": "#002C5F",
+    "grades": {
+      "-2": 1,
+      "-1.5": 8,
+      "-1": 6,
+      "-0.5": 47,
+      "0": 178,
+      "0.5": 59,
+      "1": 18,
+      "1.5": 0,
+      "2": 1
+    }
+  },
+  {
+    "name": "Bryce Young",
+    "team": "Panthers",
+    "headshot": "https://media.pff.com/player-photos/nfl/123943.webp",
+    "snaps": 479,
+    "grade": 74.4,
+    "war": 1.595,
+    "teamColor": "#0085CA",
+    "grades": {
+      "-2": 0,
+      "-1.5": 6,
+      "-1": 6,
+      "-0.5": 62,
+      "0": 289,
+      "0.5": 89,
+      "1": 26,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jalen Hurts",
+    "team": "Eagles",
+    "headshot": "https://media.pff.com/player-photos/nfl/40291.webp",
+    "snaps": 467,
+    "grade": 76.3,
+    "war": 1.62,
+    "teamColor": "#004C54",
+    "grades": {
+      "-2": 1,
+      "-1.5": 9,
+      "-1": 6,
+      "-0.5": 38,
+      "0": 302,
+      "0.5": 93,
+      "1": 18,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jared Goff",
+    "team": "Lions",
+    "headshot": "https://media.pff.com/player-photos/nfl/10635.webp",
+    "snaps": 607,
+    "grade": 81.8,
+    "war": 2.042,
+    "teamColor": "#0076B6",
+    "grades": {
+      "-2": 0,
+      "-1.5": 10,
+      "-1": 7,
+      "-0.5": 54,
+      "0": 392,
+      "0.5": 127,
+      "1": 15,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Patrick Mahomes",
+    "team": "Chiefs",
+    "headshot": "https://media.pff.com/player-photos/nfl/11765.webp",
+    "snaps": 704,
+    "grade": 85.8,
+    "war": 2.483,
+    "teamColor": "#E31837",
+    "grades": {
+      "-2": 1,
+      "-1.5": 6,
+      "-1": 8,
+      "-0.5": 62,
+      "0": 461,
+      "0.5": 144,
+      "1": 21,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Andy Dalton",
+    "team": "Panthers",
+    "headshot": "https://media.pff.com/player-photos/nfl/6187.webp",
+    "snaps": 185,
+    "grade": 68.1,
+    "war": 0.453,
+    "teamColor": "#0085CA",
+    "grades": {
+      "-2": 1,
+      "-1.5": 3,
+      "-1": 4,
+      "-0.5": 17,
+      "0": 117,
+      "0.5": 37,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jordan Love",
+    "team": "Packers",
+    "headshot": "https://media.pff.com/player-photos/nfl/40306.webp",
+    "snaps": 487,
+    "grade": 77.7,
+    "war": 1.514,
+    "teamColor": "#203731",
+    "grades": {
+      "-2": 2,
+      "-1.5": 3,
+      "-1": 8,
+      "-0.5": 53,
+      "0": 308,
+      "0.5": 97,
+      "1": 15,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Derek Carr",
+    "team": "Saints",
+    "headshot": "https://media.pff.com/player-photos/nfl/8671.webp",
+    "snaps": 322,
+    "grade": 85.6,
+    "war": 1.432,
+    "teamColor": "#D3BC8D",
+    "grades": {
+      "-2": 0,
+      "-1.5": 3,
+      "-1": 5,
+      "-0.5": 34,
+      "0": 206,
+      "0.5": 58,
+      "1": 12,
+      "1.5": 4,
+      "2": 0
+    }
+  },
+  {
+    "name": "Kyler Murray",
+    "team": "Cardinals",
+    "headshot": "https://media.pff.com/player-photos/nfl/38334.webp",
+    "snaps": 656,
+    "grade": 82.1,
+    "war": 2.287,
+    "teamColor": "#97233F",
+    "grades": {
+      "-2": 1,
+      "-1.5": 6,
+      "-1": 9,
+      "-0.5": 61,
+      "0": 430,
+      "0.5": 119,
+      "1": 29,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Geno Smith",
+    "team": "Seahawks",
+    "headshot": "https://media.pff.com/player-photos/nfl/7820.webp",
+    "snaps": 705,
+    "grade": 83.1,
+    "war": 3.0,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 0,
+      "-1.5": 5,
+      "-1": 14,
+      "-0.5": 51,
+      "0": 475,
+      "0.5": 131,
+      "1": 28,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Joe Flacco",
+    "team": "Colts",
+    "headshot": "https://media.pff.com/player-photos/nfl/4332.webp",
+    "snaps": 291,
+    "grade": 71.6,
+    "war": 0.672,
+    "teamColor": "#002C5F",
+    "grades": {
+      "-2": 0,
+      "-1.5": 4,
+      "-1": 7,
+      "-0.5": 34,
+      "0": 180,
+      "0.5": 58,
+      "1": 8,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Mason Rudolph",
+    "team": "Titans",
+    "headshot": "https://media.pff.com/player-photos/nfl/46569.webp",
+    "snaps": 276,
+    "grade": 62.5,
+    "war": 0.352,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 1,
+      "-1.5": 5,
+      "-1": 2,
+      "-0.5": 34,
+      "0": 172,
+      "0.5": 56,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Drake Maye",
+    "team": "Patriots",
+    "headshot": "https://media.pff.com/player-photos/nfl/143969.webp",
+    "snaps": 462,
+    "grade": 70.1,
+    "war": 0.809,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 0,
+      "-1.5": 8,
+      "-1": 8,
+      "-0.5": 41,
+      "0": 302,
+      "0.5": 86,
+      "1": 17,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Bo Nix",
+    "team": "Broncos",
+    "headshot": "https://media.pff.com/player-photos/nfl/97790.webp",
+    "snaps": 685,
+    "grade": 76.4,
+    "war": 1.788,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 0,
+      "-1.5": 6,
+      "-1": 7,
+      "-0.5": 86,
+      "0": 434,
+      "0.5": 129,
+      "1": 21,
+      "1.5": 1,
+      "2": 1
+    }
+  },
+  {
+    "name": "Caleb Williams",
+    "team": "Bears",
+    "headshot": "https://media.pff.com/player-photos/nfl/144622.webp",
+    "snaps": 744,
+    "grade": 67.6,
+    "war": 0.993,
+    "teamColor": "#0B162A",
+    "grades": {
+      "-2": 4,
+      "-1.5": 2,
+      "-1": 13,
+      "-0.5": 102,
+      "0": 460,
+      "0.5": 139,
+      "1": 23,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Matthew Stafford",
+    "team": "Rams",
+    "headshot": "https://media.pff.com/player-photos/nfl/4924.webp",
+    "snaps": 587,
+    "grade": 74.7,
+    "war": 1.814,
+    "teamColor": "#003594",
+    "grades": {
+      "-2": 1,
+      "-1.5": 8,
+      "-1": 12,
+      "-0.5": 63,
+      "0": 375,
+      "0.5": 105,
+      "1": 22,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Tua Tagovailoa",
+    "team": "Dolphins",
+    "headshot": "https://media.pff.com/player-photos/nfl/60326.webp",
+    "snaps": 460,
+    "grade": 70.2,
+    "war": 1.355,
+    "teamColor": "#008E97",
+    "grades": {
+      "-2": 1,
+      "-1.5": 8,
+      "-1": 3,
+      "-0.5": 38,
+      "0": 311,
+      "0.5": 88,
+      "1": 11,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Will Levis",
+    "team": "Titans",
+    "headshot": "https://media.pff.com/player-photos/nfl/83542.webp",
+    "snaps": 385,
+    "grade": 54.9,
+    "war": -0.071,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 5,
+      "-1.5": 5,
+      "-1": 8,
+      "-0.5": 53,
+      "0": 234,
+      "0.5": 65,
+      "1": 14,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Dak Prescott",
+    "team": "Cowboys",
+    "headshot": "https://media.pff.com/player-photos/nfl/10769.webp",
+    "snaps": 344,
+    "grade": 67.9,
+    "war": 0.687,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 2,
+      "-1.5": 7,
+      "-1": 7,
+      "-0.5": 29,
+      "0": 228,
+      "0.5": 57,
+      "1": 13,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Justin Fields",
+    "team": "Steelers",
+    "headshot": "https://media.pff.com/player-photos/nfl/82118.webp",
+    "snaps": 214,
+    "grade": 71.5,
+    "war": 0.248,
+    "teamColor": "#000000",
+    "grades": {
+      "-2": 0,
+      "-1.5": 3,
+      "-1": 3,
+      "-0.5": 25,
+      "0": 139,
+      "0.5": 38,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Aaron Rodgers",
+    "team": "Jets",
+    "headshot": "https://media.pff.com/player-photos/nfl/2241.webp",
+    "snaps": 685,
+    "grade": 78.0,
+    "war": 2.06,
+    "teamColor": "#003F2D",
+    "grades": {
+      "-2": 1,
+      "-1.5": 6,
+      "-1": 6,
+      "-0.5": 76,
+      "0": 456,
+      "0.5": 114,
+      "1": 26,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Daniel Jones",
+    "team": "Giants",
+    "headshot": "https://media.pff.com/player-photos/nfl/39395.webp",
+    "snaps": 419,
+    "grade": 72.0,
+    "war": 0.874,
+    "teamColor": "#0B2265",
+    "grades": {
+      "-2": 1,
+      "-1.5": 4,
+      "-1": 4,
+      "-0.5": 46,
+      "0": 279,
+      "0.5": 78,
+      "1": 7,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Russell Wilson",
+    "team": "Steelers",
+    "headshot": "https://media.pff.com/player-photos/nfl/7077.webp",
+    "snaps": 408,
+    "grade": 77.5,
+    "war": 1.409,
+    "teamColor": "#000000",
+    "grades": {
+      "-2": 2,
+      "-1.5": 5,
+      "-1": 0,
+      "-0.5": 44,
+      "0": 276,
+      "0.5": 61,
+      "1": 18,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Spencer Rattler",
+    "team": "Saints",
+    "headshot": "https://media.pff.com/player-photos/nfl/97408.webp",
+    "snaps": 286,
+    "grade": 52.0,
+    "war": -0.145,
+    "teamColor": "#D3BC8D",
+    "grades": {
+      "-2": 1,
+      "-1.5": 9,
+      "-1": 4,
+      "-0.5": 31,
+      "0": 185,
+      "0.5": 50,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Mac Jones",
+    "team": "Jaguars",
+    "headshot": "https://media.pff.com/player-photos/nfl/60323.webp",
+    "snaps": 309,
+    "grade": 65.0,
+    "war": 0.263,
+    "teamColor": "#006778",
+    "grades": {
+      "-2": 1,
+      "-1.5": 3,
+      "-1": 6,
+      "-0.5": 42,
+      "0": 197,
+      "0.5": 51,
+      "1": 9,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Drew Lock",
+    "team": "Giants",
+    "headshot": "https://media.pff.com/player-photos/nfl/39517.webp",
+    "snaps": 216,
+    "grade": 53.6,
+    "war": -0.406,
+    "teamColor": "#0B2265",
+    "grades": {
+      "-2": 1,
+      "-1.5": 7,
+      "-1": 3,
+      "-0.5": 28,
+      "0": 137,
+      "0.5": 32,
+      "1": 8,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Deshaun Watson",
+    "team": "Browns",
+    "headshot": "https://media.pff.com/player-photos/nfl/11767.webp",
+    "snaps": 290,
+    "grade": 63.1,
+    "war": 0.231,
+    "teamColor": "#FF3C00",
+    "grades": {
+      "-2": 1,
+      "-1.5": 4,
+      "-1": 0,
+      "-0.5": 37,
+      "0": 196,
+      "0.5": 44,
+      "1": 8,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Cooper Rush",
+    "team": "Cowboys",
+    "headshot": "https://media.pff.com/player-photos/nfl/12324.webp",
+    "snaps": 352,
+    "grade": 52.9,
+    "war": 0.098,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 1,
+      "-1.5": 3,
+      "-1": 8,
+      "-0.5": 49,
+      "0": 229,
+      "0.5": 54,
+      "1": 8,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Gardner Minshew",
+    "team": "Raiders",
+    "headshot": "https://media.pff.com/player-photos/nfl/41401.webp",
+    "snaps": 370,
+    "grade": 60.7,
+    "war": 0.351,
+    "teamColor": "#000000",
+    "grades": {
+      "-2": 1,
+      "-1.5": 5,
+      "-1": 3,
+      "-0.5": 41,
+      "0": 256,
+      "0.5": 59,
+      "1": 5,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Aidan O'Connell",
+    "team": "Raiders",
+    "headshot": "https://media.pff.com/player-photos/nfl/60516.webp",
+    "snaps": 276,
+    "grade": 61.2,
+    "war": 0.121,
+    "teamColor": "#000000",
+    "grades": {
+      "-2": 1,
+      "-1.5": 2,
+      "-1": 7,
+      "-0.5": 37,
+      "0": 182,
+      "0.5": 35,
+      "1": 12,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jacoby Brissett",
+    "team": "Patriots",
+    "headshot": "https://media.pff.com/player-photos/nfl/10725.webp",
+    "snaps": 200,
+    "grade": 59.1,
+    "war": 0.125,
+    "teamColor": "#002244",
+    "grades": {
+      "-2": 0,
+      "-1.5": 3,
+      "-1": 3,
+      "-0.5": 21,
+      "0": 140,
+      "0.5": 28,
+      "1": 5,
+      "1.5": 0,
+      "2": 0
+    }
+  }
+];
+
+  const gradeColors = {
+    "-2": "#C61A2A",
+    "-1.5": "#C61A2A",
+    "-1": "#E04215",
+    "-0.5": "#FE9D00",
+    "0": "#FFD002",
+    "0.5": "#76C101",
+    "1": "#009B47",
+    "1.5": "#0087A4",
+    "2": "#0044a4"
+  };
+
+  const playerSelect = document.getElementById('playerSelect');
+  const playerSummary = document.getElementById('playerSummary');
+  const ctx = document.getElementById('gradePie').getContext('2d');
+  let chart;
+
+  players.forEach((p, i) => {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = p.name;
+    playerSelect.appendChild(option);
+    playerSelect.style.boxShadow = 'var(--shadow)';
+  });
+
+  playerSelect.addEventListener('change', () => {
+    
+    const selectedPlayer = players[playerSelect.value];
+    const color = teamColors[selectedPlayer.team] || "#0044a4";
+    setTeamColor(color);
+    updateChart(selectedPlayer);
+
+  });
+
+  function updateChart(player) {
+    playerSummary.innerHTML = `
+      <div class="player-header">
+        <img src="${player.headshot}" alt="${player.name}" class="player-headshot">
+        <div class="player-info">
+          <div class="player-name">${player.name}</div>
+          <div class="team-name">${player.team}</div>
+        </div>
+      </div>
+      <div class="pills">
+        <div class="pill">Pass Plays: ${player.snaps}</div>
+        <div class="pill">PFF Grade: ${player.grade.toFixed(1)}</div>
+        <div class="pill">PFF WAR: ${player.war.toFixed(1)}</div>
+      </div>
+    `;
+
+    
+    const gradeOrder = ["-2", "-1.5", "-1", "-0.5", "0", "0.5", "1", "1.5", "2"];
+    const labels = gradeOrder.filter(label => player.grades.hasOwnProperty(label));
+    const labelMap = {
+      "-2": "-2.0", "-1.5": "-1.5", "-1": "-1.0", "-0.5": "-0.5",
+      "0": "0.0", "0.5": "+0.5", "1": "+1.0", "1.5": "+1.5", "2": "+2.0"
+    };
+
+    const data = labels.map(label => player.grades[label]);
+    const backgroundColors = labels.map(label => gradeColors[label]);
+
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+    options: {
+      hoverOffset: 10,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          usePointStyle: false,
+          boxPadding: 0,
+          displayColors: false,
+          callbacks: {
+            label: function(context) {
+      const labelMap = {
+        "-2": "-2.0", "-1.5": "-1.5", "-1": "-1.0", "-0.5": "-0.5",
+        "0": "0.0", "0.5": "+0.5", "1": "+1.0", "1.5": "+1.5", "2": "+2.0"
+      };
+      const total = context.chart._metasets[0].total || context.dataset.data.reduce((a, b) => a + b, 0);
+      const value = context.parsed;
+      const percentage = ((value / total) * 100).toFixed(1);
+      return `${labelMap[context.label]}: ${value} Plays (${percentage}%)`;
+    }
+          }
+        }
+      }
+    },
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: backgroundColors
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+          usePointStyle: false,
+          boxPadding: 0,
+          displayColors: false,
+            callbacks: {
+              label: function(context) {
+      const labelMap = {
+        "-2": "-2.0", "-1.5": "-1.5", "-1": "-1.0", "-0.5": "-0.5",
+        "0": "0.0", "0.5": "+0.5", "1": "+1.0", "1.5": "+1.5", "2": "+2.0"
+      };
+      const total = context.chart._metasets[0].total || context.dataset.data.reduce((a, b) => a + b, 0);
+      const value = context.parsed;
+      const percentage = ((value / total) * 100).toFixed(1);
+      return `${labelMap[context.label]}: ${value} Plays (${percentage}%)`;
+    }
+            }
+          }
+        }
+      }
+    });
+
+    const legendContainer = document.getElementById('chartLegend');
+    legendContainer.innerHTML = '';
+    legendContainer.style.boxShadow = 'var(--shadow)';
+    labels.forEach(label => {
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.setAttribute('data-label', label);
+      item.innerHTML = `<div class='legend-color' style='background:${gradeColors[label]}'></div> ${label}`;
+      item.addEventListener('mouseenter', () => highlightSlice(label));
+      item.addEventListener('mouseleave', () => resetHighlight());
+      
+      item.innerHTML = `<div class='legend-color' style='background:${gradeColors[label]}'></div> ${labelMap[label]}`;
+      legendContainer.appendChild(item);
+    
+    });
+  }
+
+  
+    updateChart(players[0]);
+
+    // Inject team color CSS variable
+    function setTeamColor(color) {
+      document.documentElement.style.setProperty('--team-color', color);
+    }
+
+const teamColors = {
+      "Cardinals": "#97233F",
+      "Falcons": "#A71930",
+      "Ravens": "#241773",
+      "Bills": "#00338D",
+      "Panthers": "#0085CA",
+      "Bears": "#0B162A",
+      "Bengals": "#FB4F14",
+      "Browns": "#FF3C00",
+      "Cowboys": "#002244",
+      "Broncos": "#002244",
+      "Lions": "#0076B6",
+      "Packers": "#203731",
+      "Texans": "#03202F",
+      "Colts": "#002C5F",
+      "Jaguars": "#006778",
+      "Chiefs": "#E31837",
+      "Rams": "#003594",
+      "Chargers": "#007BC7",
+      "Raiders": "#000000",
+      "Dolphins": "#008E97",
+      "Vikings": "#4F2683",
+      "Patriots": "#002244",
+      "Saints": "#D3BC8D",
+      "Giants": "#0B2265",
+      "Jets": "#003F2D",
+      "Eagles": "#004C54",
+      "Steelers": "#000000",
+      "Seahawks": "#002244",
+      "49ers": "#AA0000",
+      "Buccaneers": "#A71930",
+      "Titans": "#002244",
+      "Commanders": "#5A1414"
+    };
+
+    // Sample team color map (extendable)
+    
+
+
+  function highlightSlice(label) {
+    const index = chart.data.labels.indexOf(label);
+    if (index !== -1) {
+      chart.data.datasets[0].backgroundColor = chart.data.labels.map((lbl, i) =>
+        i === index ? gradeColors[lbl] : 'rgba(220,220,220,0.3)'
+      );
+      chart.update();
+    }
+  }
+
+  function resetHighlight() {
+    chart.data.datasets[0].backgroundColor = chart.data.labels.map(lbl => gradeColors[lbl]);
+    chart.update();
+  }
+
+</script>
+
+</body>
+</html>
