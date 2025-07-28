@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: 'Archivo', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .banner {
+      width: 800px;
+      height: 250px;
+      background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://media.pff.com/2025/07/SubscriptionModule_V1.png');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .banner h2 {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 400;
+      margin-top: 4px;
+      color: #ccc;
+    }
+
+    .pff-logo {
+      width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .quarters {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      flex-grow: 1;
+      align-items: center;
+      position: relative;
+    }
+
+    .quarter {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      position: relative;
+      animation: slideUp 0.8s ease forwards;
+    }
+
+    .quarter h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 6px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    }
+
+    .quarter p {
+      font-size: 12px;
+      line-height: 1.3;
+      margin: 0 0 8px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #d2ff28, #c4f100);
+      color: black;
+      font-weight: 600;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .cta-button:hover {
+      background: linear-gradient(135deg, #e4ff50, #d1ff00);
+      transform: scale(1.07);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    .separator {
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: linear-gradient(to bottom right, #d2ff28, transparent);
+      transform: skewY(-20deg);
+      opacity: 0.6;
+      animation: glowLine 2s infinite ease-in-out;
+    }
+
+    .separator:nth-child(1) { left: 25%; }
+    .separator:nth-child(2) { left: 50%; }
+    .separator:nth-child(3) { left: 75%; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glowLine {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    <img class="pff-logo" src="https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png" alt="PFF Logo" />
+    <h4>Everything you need for your best fantasy season ever.</h4>
+    <div class="quarters">
+      <div class="separator" style="left: 25%;"></div>
+      <div class="separator" style="left: 50%;"></div>
+      <div class="separator" style="left: 75%;"></div>
+
+      <div class="quarter"><h3>Research</h3><p>Links to every PFF article and tool to best prepare you for your draft.</p><a class="cta-button" href="https://www.pff.com/news/fantasy-football-draft-kit-2025" target="_blank">Start Researching</a></div>
+      <div class="quarter"><h3>Prepare</h3><p>Build your personalized rankings from scratch.</p><a class="cta-button" href="https://www.pff.com/news/fantasy-football-rankings-builder-2025" target="_blank">Build Rankings</a></div>
+      <div class="quarter"><h3>Practice</h3><p>Run as many mock drafts as you want, with real ADP and strategy tools.</p><a class="cta-button" href="https://www.pff.com/fantasy/draft/mock-draft-simulator" target="_blank">Mock Now</a></div>
+      <div class="quarter"><h3>Draft</h3><p>Dominate your draft with pick-by-pick insights and projections.</p><a class="cta-button" href="https://www.pff.com/fantasy/draft/live-draft-assistant" target="_blank">Launch Assistant</a></div>
+    </div>
+  </div>
+</body>
+</html>
