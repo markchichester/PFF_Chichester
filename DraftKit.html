@@ -97,7 +97,6 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    touch-action: manipulation;
   }
 
   .card.visible {
@@ -119,7 +118,6 @@
     justify-content: center;
     opacity: 0;
     transition: opacity 0.4s ease;
-    pointer-events: none;
   }
 
   .card:hover .card-overlay {
@@ -134,27 +132,28 @@
     transition: transform 0.5s ease, opacity 0.5s ease;
   }
 
+  /* ✅ Share & Bookmark Buttons Fixed Size + Mobile Tap Fix */
   .icon-button {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     position: relative;
-    width: 28px;
+    width: 28px; /* Smaller desktop size */
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    touch-action: manipulation;
+    touch-action: manipulation; /* Fix mobile tap delay */
   }
 
   .icon-button img {
-    width: 18px;
+    width: 18px; /* Smaller desktop icon */
     height: 18px;
     display: block;
     transition: transform 0.2s ease;
-    pointer-events: none;
-    z-index: 2;
+    pointer-events: none; /* Allow button click through */
+    z-index: 2;           /* Keep above teal circle */
     position: relative;
   }
 
@@ -163,10 +162,11 @@
   }
 
   .card div[style*="position:absolute"] {
-    display: block;
+    display: block; /* Prevent flex stretching */
     width: auto;
   }
 
+  /* ✅ Teal Circle Perfectly Centered */
   .bookmark-button.active::before {
     content: '';
     position: absolute;
@@ -239,32 +239,14 @@
     font-weight: 600;
   }
 
-  .ripple {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    background: rgba(0, 237, 217, 0.3);
-    border-radius: 50%;
-    transform: scale(0);
-    animation: ripple-effect 0.6s ease-out;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  @keyframes ripple-effect {
-    to {
-      transform: scale(3);
-      opacity: 0;
-    }
-  }
-
+  /* 📱 Mobile Specific Tweaks */
   @media (max-width: 600px) {
     .icon-button {
-      width: 24px;
+      width: 24px; /* Smaller mobile size */
       height: 24px;
     }
     .icon-button img {
-      width: 16px;
+      width: 16px; /* Smaller mobile icon */
       height: 16px;
     }
   }
@@ -363,7 +345,9 @@ function renderDraftKit(articles) {
     return `
       <div class="card ${isPremium ? 'premium' : ''} ${isTool ? 'tool' : ''} ${isPodcast ? 'podcast' : ''}" onclick="handleCardClick(event, '${a.url}')">
         ${isNew ? '<div class="badge">NEW</div>' : ''}
-        <div class="card-overlay">${overlayIcon}</div>
+        <div class="card-overlay">
+          ${overlayIcon}
+        </div>
         <a href="${a.url}" class="card-title" target="_blank">${a.headline}</a>
         <div class="card-author">by ${a.author}</div>
         <div class="card-date">${a.publishDate.toLocaleDateString()}</div>
@@ -397,17 +381,32 @@ function renderDraftKit(articles) {
     const authors = [...new Set(regularArticles.map(a => a.author))].sort();
 
     const filtersHTML = `
-      <select id="filter-category"><option value="">All Categories</option>${categories.map(c => `<option value="${c}">${c}</option>`).join('')}</select>
-      <select id="filter-format"><option value="">All Formats</option>${formats.map(f => `<option value="${f}">${f}</option>`).join('')}</select>
-      <select id="filter-premium"><option value="">Access</option>${premium.map(p => `<option value="${p}">${p}</option>`).join('')}</select>
-      <select id="filter-author"><option value="">All Authors</option>${authors.map(a => `<option value="${a}">${a}</option>`).join('')}</select>
+      <select id="filter-category">
+        <option value="">All Categories</option>
+        ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+      </select>
+      <select id="filter-format">
+        <option value="">All Formats</option>
+        ${formats.map(f => `<option value="${f}">${f}</option>`).join('')}
+      </select>
+      <select id="filter-premium">
+        <option value="">Access</option>
+        ${premium.map(p => `<option value="${p}">${p}</option>`).join('')}
+      </select>
+      <select id="filter-author">
+        <option value="">All Authors</option>
+        ${authors.map(a => `<option value="${a}">${a}</option>`).join('')}
+      </select>
       <input type="text" id="search" placeholder="Search headlines..." />
       <button id="clear-filters">Clear All</button>
     `;
     widget.querySelector('.filters').innerHTML = filtersHTML;
 
     const filters = widget.querySelectorAll('.filters select, .filters input');
-    filters.forEach(el => el.addEventListener('input', () => renderArticlesGrid(filterRegularArticles())));
+    filters.forEach(el =>
+      el.addEventListener('input', () => renderArticlesGrid(filterRegularArticles()))
+    );
+
     document.getElementById('clear-filters').addEventListener('click', () => {
       filters.forEach(f => (f.value = ''));
       renderArticlesGrid(regularArticles);
@@ -432,23 +431,10 @@ function renderDraftKit(articles) {
 
   window.handleCardClick = function(event, url) {
     const card = event.currentTarget;
-    let x = event.offsetX, y = event.offsetY;
-
-    if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) {
-      const rect = card.getBoundingClientRect();
-      if (event.touches && event.touches.length > 0) {
-        x = event.touches[0].clientX - rect.left;
-        y = event.touches[0].clientY - rect.top;
-      } else {
-        x = event.clientX - rect.left;
-        y = event.clientY - rect.top;
-      }
-    }
-
     const ripple = document.createElement('span');
     ripple.classList.add('ripple');
-    ripple.style.left = `${x}px`;
-    ripple.style.top = `${y}px`;
+    ripple.style.left = `${event.offsetX}px`;
+    ripple.style.top = `${event.offsetY}px`;
     card.appendChild(ripple);
     setTimeout(() => ripple.remove(), 600);
 
@@ -462,8 +448,12 @@ function renderDraftKit(articles) {
 
 function shareContent(url, title) {
   if (navigator.share) {
-    navigator.share({ title, text: `Check this out: ${title}`, url })
-      .catch(err => console.log('Web Share failed', err));
+    navigator.share({
+      title: title,
+      text: `Check this out: ${title}`,
+      url: url
+    })
+    .catch(err => console.log('Web Share failed', err));
   } else {
     navigator.clipboard.writeText(url)
       .then(() => alert('Link copied to clipboard!'))
@@ -492,7 +482,11 @@ function loadBookmarks() {
 
   buttons.forEach(button => {
     const url = button.closest('.card').querySelector('.card-title').href;
-    button.classList.toggle('active', bookmarks.includes(url));
+    if (bookmarks.includes(url)) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
   });
 }
 </script>
