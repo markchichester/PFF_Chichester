@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wisconsin Football Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Archivo', sans-serif;
+      background: #f8f9fa;
+    }
+    .wisconsin-widget {
+      position: relative;
+      max-width: 800px;
+      margin: 50px auto;
+      border: 3px solid #F20017;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      background: #fff;
+    }
+    .wisconsin-widget .watermark {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      width: 80px;
+      height: 80px;
+      background: url('http://a.espncdn.com/i/teamlogos/ncaa/500/158.png') no-repeat center;
+      background-size: contain;
+      opacity: 0.08;
+      animation: pulse 4s infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.08; transform: scale(1); }
+      50% { opacity: 0.15; transform: scale(1.05); }
+    }
+    .swiper {
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .slide-content {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+    h3 {
+      color: #F20017;
+      margin-bottom: 20px;
+      font-size: 2.2em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: auto;
+      font-size: 1em;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f1f1f1;
+      color: #333;
+    }
+    .pill {
+      background-color: #F20017;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1em;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      display: inline-block;
+    }
+    .pill:hover {
+      background-color: #a00012;
+      transform: scale(1.05);
+    }
+    .swiper-button-next, .swiper-button-prev {
+      color: #F20017;
+    }
+    .swiper-pagination-bullet {
+      background-color: #F20017;
+      opacity: 0.7;
+    }
+    .swiper-pagination-bullet-active {
+      background-color: #a00012;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="wisconsin-widget">
+    <div class="watermark"></div>
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+
+        <!-- Slide 1: Performance -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>2024 Performance</h3>
+            <table>
+              <thead><tr><th>Metric</th><th></th><th>Rank (FBS)</th></tr></thead>
+              <tbody>
+                <tr><td>Overall Grade</td><td>82.0</td><td>#60</td></tr>
+                <tr><td>Offensive Grade</td><td>78.0</td><td>#49</td></tr>
+                <tr><td>Defensive Grade</td><td>79.6</td><td>#73</td></tr>
+                <tr><td>EPA Per Play (Offense)</td><td>-0.003</td><td>#76</td></tr>
+                <tr><td>EPA Allowed Per Play (Defense)</td><td>-0.096</td><td>#26</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Slide 2: Players -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>Top-10 Players in PFF Rankings</h3>
+            <p>No Wisconsin players ranked in PFF's Top 10 at any position.</p>
+          </div>
+        </div>
+
+        <!-- Slide 3: Units -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>Top-10 Units in PFF Rankings</h3>
+            <p>No Wisconsin units ranked in PFF's Top 10 at any position group.</p>
+          </div>
+        </div>
+
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      new Swiper('.mySwiper', {
+        loop: true,
+        effect: 'fade',
+        fadeEffect: { crossFade: true },
+        autoHeight: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        }
+      });
+    });
+  </script>
+</body>
+</html>
