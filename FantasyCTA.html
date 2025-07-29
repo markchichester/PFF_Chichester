@@ -14,11 +14,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
     .banner {
-      width: 800px;
-      height: 250px;
+      width: 100%;
+      max-width: 800px;
       background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://media.pff.com/2025/07/SubscriptionModule_V1.png');
       background-size: cover;
       background-position: center;
@@ -29,14 +29,6 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-    }
-
-    .banner h2 {
-      text-align: center;
-      font-size: 16px;
-      font-weight: 400;
-      margin-top: 4px;
-      color: #ccc;
     }
 
     .pff-logo {
@@ -54,6 +46,7 @@
       flex-grow: 1;
       align-items: center;
       position: relative;
+      flex-wrap: wrap;
     }
 
     .quarter {
@@ -62,6 +55,7 @@
       text-align: center;
       position: relative;
       animation: slideUp 0.8s ease forwards;
+      box-sizing: border-box;
     }
 
     .quarter h3 {
@@ -124,6 +118,39 @@
     @keyframes glowLine {
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
+    }
+
+    @media (max-width: 600px) {
+      .quarters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .quarter {
+        width: 100%;
+        padding: 12px 0;
+      }
+
+      .separator {
+        display: none;
+      }
+
+      .quarter h3 {
+        font-size: 18px;
+      }
+
+      .quarter p {
+        font-size: 14px;
+      }
+
+      .cta-button {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+
+      .pff-logo {
+        width: 90px;
+      }
     }
   </style>
 </head>
