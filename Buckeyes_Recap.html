@@ -1,175 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ohio State Football Widget</title>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <meta charset="UTF-8">
+  <title>Ohio State 2025 Widget</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
   <style>
     body {
-      margin: 0;
       font-family: 'Archivo', sans-serif;
-      background: #f8f9fa;
-    }
-    .team-widget {
-      position: relative;
-      max-width: 800px;
-      margin: 40px auto;
-      border: 3px solid #BB0000;
-      border-radius: 16px;
       background: #fff;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      margin: 0;
+    }
+    .widget-container {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      border: 5px solid #DE3121;
+      border-radius: 12px;
       overflow: hidden;
     }
-    .team-widget .watermark {
+    .team-banner {
+      background-color: #DE3121;
+      color: #fff;
+      text-align: center;
+      padding: 12px 16px;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .logo {
       position: absolute;
-      bottom: 15px;
-      right: 15px;
+      top: 10px;
+      right: 10px;
+      opacity: 0.5;
       width: 80px;
-      height: 80px;
-      background: url('http://a.espncdn.com/i/teamlogos/ncaa/500/194.png') no-repeat center;
-      background-size: contain;
-      opacity: 0.08;
-      pointer-events: none;
-      z-index: 1;
     }
     .swiper {
       width: 100%;
-      position: relative;
-      z-index: 2;
     }
     .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 20px;
-    }
-    .slide-content {
-      width: 100%;
-      text-align: center;
-    }
-    h3 {
-      color: #BB0000;
-      margin-bottom: 20px;
-      font-size: 2em;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 1em;
-      margin: auto;
-    }
-    th, td {
-      padding: 14px;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
-    }
-    th {
-      background-color: #f1f1f1;
-      color: #333;
+      overflow-y: auto;
+      max-height: 500px;
     }
     .pill {
-      background-color: #BB0000;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 999px;
+      display: inline-block;
+      background: #DE3121;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin: 5px 5px 5px 0;
       text-decoration: none;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      font-weight: bold;
     }
-    .pill:hover {
-      background-color: #8d0000;
-      transform: scale(1.05);
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #DE3121;
     }
-    .swiper-button-next, .swiper-button-prev {
-      color: #BB0000;
-    }
-    .swiper-pagination-bullet {
-      background-color: #BB0000;
-      opacity: 0.6;
-    }
-    .swiper-pagination-bullet-active {
-      background-color: #8d0000;
-      opacity: 1;
+    h3 {
+      margin-top: 0;
     }
   </style>
 </head>
 <body>
-  <div class="team-widget">
-    <div class="watermark"></div>
-    <div class="swiper mySwiper">
-      <div class="swiper-wrapper">
-        <!-- Slide 1: Performance -->
-        <div class="swiper-slide">
-          <div class="slide-content">
-            <h3>2024 Performance</h3>
-            <table>
-              <thead><tr><th>Metric</th><th></th><th>Rank (FBS)</th></tr></thead>
-              <tbody>
-                <tr><td>Overall Grade</td><td>93.8</td><td>#2</td></tr>
-                <tr><td>Offensive Grade</td><td>90.0</td><td>#4</td></tr>
-                <tr><td>Defensive Grade</td><td>93.3</td><td>#1</td></tr>
-                <tr><td>EPA Per Play (Offense)</td><td>0.207</td><td>#4</td></tr>
-                <tr><td>EPA Allowed Per Play (Defense)</td><td>-0.203</td><td>#4</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
 
-        <!-- Slide 2: Players -->
-        <div class="swiper-slide">
-          <div class="slide-content">
-            <h3>Top-10 Players in PFF Rankings</h3>
-            <table>
-              <thead><tr><th>Player</th><th>Rank</th><th></th></tr></thead>
-              <tbody>
-                <tr><td>Jeremiah Smith</td><td>#1 WR</td><td><a class="pill" href="https://www.pff.com/news/college-football-top-10-returning-wide-receivers-2025" target="_blank">View</a></td></tr>
-                <tr><td>Max Klare</td><td>#3 TE</td><td><a class="pill" href="https://www.pff.com/news/college-football-top-10-returning-tight-ends-2025" target="_blank">View</a></td></tr>
-                <tr><td>Sonny Styles</td><td>#6 LB</td><td><a class="pill" href="https://www.pff.com/news/college-football-top-10-returning-linebackers-2025" target="_blank">View</a></td></tr>
-                <tr><td>Caleb Downs</td><td>#1 S</td><td><a class="pill" href="https://www.pff.com/news/college-football-top-10-returning-safeties-2025-season" target="_blank">View</a></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Slide 3: Units -->
-        <div class="swiper-slide">
-          <div class="slide-content">
-            <h3>Top-10 Units in PFF Rankings</h3>
-            <table>
-              <thead><tr><th>Unit</th><th>Rank</th><th></th></tr></thead>
-              <tbody>
-                <tr><td>Quarterback Room</td><td>#10</td><td><a class="pill" href="https://www.pff.com/news/college-football-the-top-10-quarterback-rooms-entering-the-2025-season" target="_blank">View</a></td></tr>
-                <tr><td>Receiving Corps</td><td>#1</td><td><a class="pill" href="https://www.pff.com/news/college-football-top-10-receiving-corps-entering-2025-season" target="_blank">View</a></td></tr>
-                <tr><td>Linebacker Unit</td><td>#7</td><td><a class="pill" href="https://www.pff.com/news/college-football-the-top-10-linebacker-units-entering-the-2025-season" target="_blank">View</a></td></tr>
-                <tr><td>Secondary</td><td>#5</td><td><a class="pill" href="https://www.pff.com/news/college-football-the-top-10-secondaries-entering-the-2025-season" target="_blank">View</a></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
+<div class="widget-container">
+  <div class="team-banner">
+    Ohio State Buckeyes - 2025 Preview
+    <img src="http://a.espncdn.com/i/teamlogos/ncaa/500/194.png" class="logo" alt="Ohio State Logo">
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    new Swiper('.mySwiper', {
-      loop: true,
-      autoHeight: true,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev'
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true
-      }
-    });
-  </script>
+  <div class="swiper">
+    <div class="swiper-wrapper">
+
+      <!-- Slide 1: Grades & EPA -->
+      <div class="swiper-slide">
+        <h3>2024 PFF Grades</h3>
+        <p><strong>Overall:</strong> 93.8 (#2 FBS)</p>
+        <p><strong>Offense:</strong> 90.0 (#4 FBS)</p>
+        <p><strong>Defense:</strong> 93.3 (#1 FBS)</p>
+
+        <h3>2024 EPA Per Play</h3>
+        <p><strong>Offense:</strong> 0.207 (#4 FBS)</p>
+        <p><strong>Defense:</strong> -0.203 (#4 FBS)</p>
+      </div>
+
+      <!-- Slide 2: Top-10 Players -->
+      <div class="swiper-slide">
+        <h3>Players in PFF’s Top-10 Positional Rankings</h3>
+        <ul>
+          <li>Jeremiah Smith — #1 WR <a class="pill" href="https://www.pff.com/news/college-football-2025-the-top-returning-players-at-every-position#WR" target="_blank">WR</a></li>
+          <li>Max Klare — #3 TE <a class="pill" href="https://www.pff.com/news/college-football-2025-the-top-returning-players-at-every-position#TE" target="_blank">TE</a></li>
+          <li>Sonny Styles — #6 LB <a class="pill" href="https://www.pff.com/news/college-football-2025-the-top-returning-players-at-every-position#LB" target="_blank">LB</a></li>
+          <li>Caleb Downs — #1 S <a class="pill" href="https://www.pff.com/news/college-football-2025-the-top-returning-players-at-every-position#S" target="_blank">S</a></li>
+        </ul>
+      </div>
+
+      <!-- Slide 3: Top Units -->
+      <div class="swiper-slide">
+        <h3>Units in PFF’s Top-10 Rankings</h3>
+        <ul>
+          <li>#10 Quarterback Room <a class="pill" href="https://www.pff.com/news/college-football-best-units-2025-ranking-top-10-teams-every-position-group#QB" target="_blank">QB Room</a></li>
+          <li>#1 Receiving Corps <a class="pill" href="https://www.pff.com/news/college-football-best-units-2025-ranking-top-10-teams-every-position-group#WR" target="_blank">WR Unit</a></li>
+          <li>#7 Linebacker Unit <a class="pill" href="https://www.pff.com/news/college-football-best-units-2025-ranking-top-10-teams-every-position-group#LB" target="_blank">LB Unit</a></li>
+          <li>#5 Secondary <a class="pill" href="https://www.pff.com/news/college-football-best-units-2025-ranking-top-10-teams-every-position-group#S" target="_blank">Secondary</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+</div>
+
+<!-- Swiper Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.swiper', {
+    loop: false,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+</script>
+
 </body>
 </html>
