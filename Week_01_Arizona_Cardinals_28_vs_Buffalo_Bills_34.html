@@ -123,6 +123,45 @@
       height: auto !important;
       border-radius: 12px;
     }
+    @media (max-width: 680px) {
+  .chart-container {
+    width: 100%;
+    min-width: 600px;  /* Prevents chart from squishing too much */
+    overflow-x: auto;
+  }
+
+  .scroll-snap-carousel {
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .chart-slide {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .headline {
+    font-size: 1rem;
+  }
+
+  .subline {
+    font-size: 0.65rem;
+  }
+
+  .pill-button {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.8rem;
+  }
+
+  .pff-logo {
+    height: 32px;
+  }
+}
   </style>
 </head>
 <body>
