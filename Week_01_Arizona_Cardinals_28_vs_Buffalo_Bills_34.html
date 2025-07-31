@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Game Recap - Swiper Framework</title>
+  <meta charset="UTF-8" />
+  <title>Arizona Cardinals vs. Buffalo Bills Recap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       margin: 0;
       font-family: "Archivo", sans-serif;
-      background-color: #ffffff;
+      background-color: #fff;
       color: #111;
-    }
-    h2 {
-      font-size: 1.8rem;
-      margin: 2rem 1rem 1rem;
-      font-weight: 700;
-      text-align: center;
     }
     .banner-container {
       position: relative;
@@ -26,7 +21,6 @@
     }
     .banner-image {
       width: 100%;
-      display: block;
     }
     .overlay {
       position: absolute;
@@ -35,27 +29,9 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: white;
-      text-align: center;
       text-shadow: 0 0 8px #000;
+      color: white;
       padding: 1rem;
-    }
-    .top-content {
-      margin-top: -6%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-    .headline {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-    .subline {
-      font-size: 0.75rem;
-      font-weight: 500;
-      margin-bottom: 1rem;
     }
     .logos-line {
       display: flex;
@@ -66,118 +42,86 @@
     .logos-line img {
       height: 48px;
     }
-    .pill-button {
-      background-color: #006BFF;
-      color: white;
+    .headline {
+      font-size: 1.25rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      text-align: center;
+    }
+    .subline {
+      font-size: 0.75rem;
+      text-align: center;
+    }
+    .pill-button {
+      background: #006BFF;
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
       border-radius: 999px;
       padding: 0.4rem 1rem;
       text-decoration: none;
-      text-transform: uppercase;
-      font-size: 0.8rem;
     }
-    .pill-button:hover {
-      background-color: #0053cc;
+    .pff-logo {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 40px;
+      z-index: 10;
     }
-
-.pff-logo {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 40px;
-  z-index: 10;
-}
+    @media (max-width: 680px) {
+      .headline { font-size: 1rem; }
+      .subline { font-size: 0.65rem; }
+      .pill-button { font-size: 0.7rem; padding: 0.3rem 0.8rem; }
+      .pff-logo { display: none; }
+    }
 
     .section {
       max-width: 1000px;
-      margin: 0 auto 3rem;
-      padding: 0 1rem;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    h2 {
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
     }
     .scroll-snap-carousel {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-      border-radius: 12px;
     }
     .chart-slide {
       scroll-snap-align: start;
       flex: 0 0 100%;
-      max-width: 100%;
-      padding: 0.5rem;
       box-sizing: border-box;
+      padding: 0.5rem;
     }
     .chart-container {
       width: 100%;
-      max-width: 1000px;
       aspect-ratio: 2 / 1;
-      margin: 0 auto;
+      border-radius: 12px;
     }
     canvas {
       width: 100% !important;
       height: auto !important;
       border-radius: 12px;
     }
-    @media (max-width: 680px) {
-  .chart-container {
-    width: 100%;
-    min-width: 600px;  /* Prevents chart from squishing too much */
-    overflow-x: auto;
-  }
-
-  .scroll-snap-carousel {
-    overflow-x: scroll;
-    scroll-snap-type: x mandatory;
-  }
-
-  .chart-slide {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-  }
-
-  canvas {
-    width: 100% !important;
-    height: auto !important;
-  }
-
-  .headline {
-    font-size: 1rem;
-  }
-
-  .subline {
-    font-size: 0.65rem;
-  }
-
-  .pill-button {
-    font-size: 0.7rem;
-    padding: 0.3rem 0.8rem;
-  }
-
-  .pff-logo {
-    height: 32px;
-  }
-}
   </style>
 </head>
 <body>
   <div class="banner-container">
-    <img src="https://raw.githubusercontent.com/markchichester/PFF_Chichester/main/SubscriptionModule_V1.png" class="banner-image" alt="PFF Subscription Module">
+    <img src="https://raw.githubusercontent.com/markchichester/PFF_Chichester/main/SubscriptionModule_V1.png" class="banner-image" />
     <div class="overlay">
-      <div class="top-content">
-        <div class="logos-line">
-          <img src="https://a.espncdn.com/i/teamlogos/nfl/500/ari.png" alt="ARZ">
-          <div class="headline">Arizona Cardinals 28 - Buffalo Bills 34</div>
-          <img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" alt="BUF">
-        </div>
-        <div class="subline">Week 01 : September 08, 2024</div>
-        <a href="https://premium.pff.com/nfl/games/2025/01" class="pill-button" target="_blank">VIEW IN PREMIUM STATS</a>
+      <div class="logos-line">
+        <img src="https://a.espncdn.com/i/teamlogos/nfl/500/ari.png" alt="ARZ" />
+        <div class="headline">Arizona Cardinals 28 - Buffalo Bills 34</div>
+        <img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" alt="BUF" />
       </div>
-      <img src="https://media.pff.com/2025/07/PFF_PoweredBy_White.png" class="pff-logo" alt="Powered by PFF">
+      <div class="subline">Week 01 : September 08, 2024</div>
+      <a href="https://premium.pff.com/nfl/games/2025/01" class="pill-button" target="_blank">VIEW IN PREMIUM STATS</a>
+      <img src="https://media.pff.com/2025/07/PFF_PoweredBy_White.png" class="pff-logo" />
     </div>
   </div>
 
@@ -186,36 +130,32 @@
     <div class="scroll-snap-carousel">
       <div class="chart-slide">
         <div class="chart-container">
-          <canvas id="scoreTimelineChart"></canvas>
+          <canvas id="scoreChart"></canvas>
         </div>
         <script>
-          const scoreCtx = document.getElementById("scoreTimelineChart").getContext("2d");
-          const labels = ["Q1","Q2","Q3","Q4","Final"];
-          const homeScores = [0,0,10,24,34];
-          const awayScores = [0,7,17,17,28];
-
-          new Chart(scoreCtx, {
+          const ctx1 = document.getElementById("scoreChart").getContext("2d");
+          new Chart(ctx1, {
             type: "line",
             data: {
-              labels: labels,
+              labels: ["Q1","Q2","Q3","Q4","Final"],
               datasets: [
                 {
                   label: "BUF",
-                  data: homeScores,
+                  data: [0,0,10,24,34],
                   borderColor: "#00338D",
                   backgroundColor: "#00338D",
-                  tension: 0.4,
                   borderWidth: 4,
-                  pointRadius: 4
+                  pointRadius: 4,
+                  tension: 0.4
                 },
                 {
                   label: "ARZ",
-                  data: awayScores,
+                  data: [0,7,17,17,28],
                   borderColor: "#97233F",
                   backgroundColor: "#97233F",
-                  tension: 0.4,
                   borderWidth: 4,
-                  pointRadius: 4
+                  pointRadius: 4,
+                  tension: 0.4
                 }
               ]
             },
@@ -246,24 +186,14 @@
                 x: {
                   title: {
                     display: true,
-                    text: "Quarter",
-                    font: {
-                      family: "Archivo",
-                      weight: "600",
-                      size: 14
-                    }
+                    text: "Quarter"
                   }
                 },
                 y: {
                   beginAtZero: true,
                   title: {
                     display: true,
-                    text: "Score",
-                    font: {
-                      family: "Archivo",
-                      weight: "600",
-                      size: 14
-                    }
+                    text: "Score"
                   }
                 }
               }
@@ -271,13 +201,14 @@
           });
         </script>
       </div>
+
       <div class="chart-slide">
         <div class="chart-container">
-          <canvas id="driveBarChart"></canvas>
+          <canvas id="driveChart"></canvas>
         </div>
         <script>
-          const driveCtx = document.getElementById("driveBarChart").getContext("2d");
-          new Chart(driveCtx, {
+          const ctx2 = document.getElementById("driveChart").getContext("2d");
+          new Chart(ctx2, {
             type: "bar",
             data: {
               labels: ["Arizona Cardinals","Buffalo Bills"],
@@ -285,7 +216,7 @@
                 label: "Team Drives",
                 data: [10,11],
                 backgroundColor: ["#97233F","#00338D"],
-                borderRadius: 10,
+                borderRadius: 10
               }]
             },
             options: {
@@ -293,9 +224,7 @@
               responsive: true,
               maintainAspectRatio: true,
               plugins: {
-                legend: {
-                  display: false
-                },
+                legend: { display: false },
                 title: {
                   display: true,
                   text: "Team Drives",
@@ -315,20 +244,6 @@
           });
         </script>
       </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>TEAM VIEW</h2>
-    <div class="scroll-snap-carousel">
-      <div class="chart-slide"><div class="chart-placeholder">Coming Soon</div></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>PLAYER VIEW</h2>
-    <div class="scroll-snap-carousel">
-      <div class="chart-slide"><div class="chart-placeholder">Coming Soon</div></div>
     </div>
   </div>
 </body>
