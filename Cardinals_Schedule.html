@@ -27,6 +27,26 @@
       z-index: 100;
       padding: 1rem;
       box-shadow: 0 2px 10px rgba(151, 35, 63, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reset-btn {
+      font-size: 0.9rem;
+      background: #97233F;
+      color: white;
+      padding: 6px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 6px;
+    }
+
+    .reset-btn:hover {
+      background: #6d1b2d;
     }
 
     .swiper-container {
@@ -34,7 +54,7 @@
       max-width: 650px;
       height: 500px;
       margin: 0 auto;
-      padding-top: 80px;
+      padding-top: 90px;
       padding-bottom: 0;
       display: flex;
       flex-direction: column;
@@ -148,23 +168,18 @@
     }
 
     @media (max-width: 480px) {
-      .week {
-        font-size: 1.2rem;
-      }
-      .btn {
-        padding: 10px 20px;
-        font-size: 0.95rem;
-        margin: 0 6px;
-      }
-      .logo {
-        height: 110px;
-      }
+      .week { font-size: 1.2rem; }
+      .btn { padding: 10px 20px; font-size: 0.95rem; margin: 0 6px; }
+      .logo { height: 110px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="record-bar" id="record">Record: 0-0</div>
+  <div class="record-bar">
+    <div id="record">Record: 0-0</div>
+    <button class="reset-btn" onclick="resetAll()">Reset</button>
+  </div>
 
   <div class="swiper-container">
     <div class="swiper-wrapper" id="scheduleSlides"></div>
@@ -172,6 +187,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
   <script>
+    let swiper;
     const fullNames = {
       "New Orleans": "New Orleans Saints",
       "Carolina": "Carolina Panthers",
@@ -258,7 +274,14 @@
       btn.classList.add('selected');
     }
 
-    new Swiper('.swiper-container', {
+    function resetAll() {
+      record = Array(schedule.length).fill(null);
+      document.getElementById('record').textContent = "Record: 0-0";
+      document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
+      swiper.slideTo(0);
+    }
+
+    swiper = new Swiper('.swiper-container', {
       slidesPerView: 1,
       spaceBetween: 30,
       keyboard: { enabled: true },
