@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>USC 2025 Recap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Archivo', sans-serif;
+      background: #f8f9fa;
+    }
+    .usc-widget {
+      position: relative;
+      max-width: 800px;
+      margin: 50px auto;
+      border: 3px solid #AE2531;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      background: #fff;
+    }
+    .usc-widget .watermark {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      width: 80px;
+      height: 80px;
+      background: url('http://a.espncdn.com/i/teamlogos/ncaa/500/30.png') no-repeat center;
+      background-size: contain;
+      opacity: 0.08;
+      animation: pulse 4s infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.08; transform: scale(1); }
+      50% { opacity: 0.15; transform: scale(1.05); }
+    }
+    .swiper {
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0;
+    }
+    .slide-content {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+    h3 {
+      color: #AE2531;
+      margin-bottom: 20px;
+      font-size: 2.2em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: auto;
+      font-size: 1.0em;
+    }
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f1f1f1;
+      color: #333;
+    }
+    .pill {
+      background-color: #AE2531;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 1em;
+    }
+    .pill:hover {
+      background-color: #891c26;
+      transform: scale(1.05);
+    }
+    .swiper-button-next, .swiper-button-prev {
+      color: #AE2531;
+    }
+    .swiper-pagination-bullet {
+      background-color: #AE2531;
+      opacity: 0.7;
+    }
+    .swiper-pagination-bullet-active {
+      background-color: #891c26;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="usc-widget">
+    <div class="watermark"></div>
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+
+        <!-- Slide 1: Performance -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>2024 Performance</h3>
+            <table>
+              <thead><tr><th>Metric</th><th></th><th>Rank (FBS)</th></tr></thead>
+              <tbody>
+                <tr><td>Overall Grade</td><td>84.5</td><td>#45</td></tr>
+                <tr><td>Offensive Grade</td><td>79.9</td><td>#37</td></tr>
+                <tr><td>Defensive Grade</td><td>79.5</td><td>#74</td></tr>
+                <tr><td>EPA Per Play (Offense)</td><td>0.086</td><td>#31</td></tr>
+                <tr><td>EPA Allowed Per Play (Defense)</td><td>0.012</td><td>#78</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Slide 2: Top-10 Players -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>Top-10 Players in PFF Rankings</h3>
+            <table>
+              <thead><tr><th>Player</th><th>Rank</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>Makai Lemon</td><td>WR9</td><td><a class="pill" href="https://www.pff.com/news/college-football-top-10-returning-wide-receivers-2025" target="_blank">View</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Slide 3: Units -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>Top-10 Units in PFF Rankings</h3>
+            <p>No USC units featured in PFF’s Top-10 unit rankings.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      new Swiper('.mySwiper', {
+        loop: true,
+        effect: 'fade',
+        fadeEffect: { crossFade: true },
+        autoHeight: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        }
+      });
+    });
+  </script>
+</body>
+</html>
