@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Big 12 Offenses: EPA per pass, EPA per run</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Archivo', sans-serif;
+            background: #ffffff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+        h3 {
+            margin: 10px 0;
+            color: #333;
+            font-weight: 700;
+            text-align: center;
+            font-size: clamp(16px, 2.5vw, 24px);
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 4 / 3;
+            position: relative;
+            background: #ffffff;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        .dot {
+            fill: gray;
+            stroke: #333;
+            stroke-width: 1;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .dot.alabama {
+            fill: #9c1831;
+        }
+        .logo {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .logo.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        .tooltip {
+            position: absolute;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            pointer-events: none;
+            opacity: 0;
+            width: 180px; /* Wider box for clean layout */
+            text-align: center;
+            z-index: 10;
+            transition: opacity 0.2s ease;
+        }
+        .avg-line {
+            stroke: rgba(255,0,0,0.3);
+            stroke-width: 1.5;
+            stroke-dasharray: 5,5;
+        }
+        .grid-line {
+            stroke: #e0e0e0;
+            stroke-width: 1;
+        }
+        .tick-label {
+            fill: #666;
+            font-size: clamp(10px, 1.5vw, 12px);
+        }
+        .axis-title {
+            fill: #666;
+            font-size: clamp(10px, 1.5vw, 14px);
+            text-anchor: middle;
+        }
+    .dot.highlight {
+    fill: #DE3121;
+}
+.dot.highlight {
+    fill: #001E4C;
+}
+</style>
+</head>
+<body>
+    <h3>Big 12 Offenses: EPA per pass, EPA per run</h3>
+    <div class="chart-container" id="chartContainer">
+        <svg id="offenseChart"></svg>
+        <div class="tooltip" id="tooltip"></div>
+    </div>
+<script>
+    const data = [
+    {
+        "name": "Arizona Wildcats",
+        "x": -0.1785,
+        "y": -0.0207,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/12.png",
+        "highlight": false
+    },
+    {
+        "name": "Arizona State Sun Devils",
+        "x": 0.0639,
+        "y": 0.2638,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/9.png",
+        "highlight": false
+    },
+    {
+        "name": "Baylor Bears",
+        "x": 0.0123,
+        "y": 0.1604,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/239.png",
+        "highlight": false
+    },
+    {
+        "name": "Byu Cougars",
+        "x": 0.016,
+        "y": 0.1146,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/252.png",
+        "highlight": true
+    },
+    {
+        "name": "Cincinnati Bearcats",
+        "x": 0.0633,
+        "y": 0.0568,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2132.png",
+        "highlight": false
+    },
+    {
+        "name": "Colorado Buffaloes",
+        "x": -0.2077,
+        "y": 0.1816,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/38.png",
+        "highlight": false
+    },
+    {
+        "name": "Houston Cougars",
+        "x": -0.1726,
+        "y": -0.29,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/248.png",
+        "highlight": false
+    },
+    {
+        "name": "Iowa State Cyclones",
+        "x": 0.0119,
+        "y": 0.1686,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/66.png",
+        "highlight": false
+    },
+    {
+        "name": "Kansas Jayhawks",
+        "x": 0.1941,
+        "y": 0.1005,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2305.png",
+        "highlight": false
+    },
+    {
+        "name": "Kansas State Wildcats",
+        "x": 0.067,
+        "y": 0.0804,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2306.png",
+        "highlight": false
+    },
+    {
+        "name": "Oklahoma State Cowboys",
+        "x": -0.0546,
+        "y": 0.0261,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/197.png",
+        "highlight": false
+    },
+    {
+        "name": "Tcu Horned Frogs",
+        "x": -0.1173,
+        "y": 0.2194,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2628.png",
+        "highlight": false
+    },
+    {
+        "name": "Texas Tech Red Raiders",
+        "x": 0.1092,
+        "y": 0.0492,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2641.png",
+        "highlight": false
+    },
+    {
+        "name": "Ucf Knights",
+        "x": 0.2054,
+        "y": -0.0867,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2116.png",
+        "highlight": false
+    },
+    {
+        "name": "Utah Utes",
+        "x": -0.1489,
+        "y": -0.109,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/254.png",
+        "highlight": false
+    },
+    {
+        "name": "West Virginia Mountaineers",
+        "x": 0.0159,
+        "y": 0.1345,
+        "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/277.png",
+        "highlight": false
+    }
+];
+
+    const container = document.getElementById("chartContainer");
+    const svg = document.getElementById("offenseChart");
+    const tooltip = document.getElementById("tooltip");
+    const width = svg.clientWidth;
+    const height = svg.clientHeight;
+    const padding = {top: 20, right: 20, bottom: 40, left: 50};
+
+    const xMin = Math.min(...data.map(d => d.x)) - 0.01;
+    const xMax = Math.max(...data.map(d => d.x)) + 0.01;
+    const yMin = Math.min(...data.map(d => d.y)) - 0.01;
+    const yMax = Math.max(...data.map(d => d.y)) + 0.01;
+
+    const avgX = data.reduce((sum, d) => sum + d.x, 0) / data.length;
+    const avgY = data.reduce((sum, d) => sum + d.y, 0) / data.length;
+
+    function scaleX(x) {
+        return padding.left + ((x - xMin) / (xMax - xMin)) * (width - padding.left - padding.right);
+    }
+    function scaleY(y) {
+        return height - padding.bottom - ((y - yMin) / (yMax - yMin)) * (height - padding.top - padding.bottom);
+    }
+
+    const ns = "http://www.w3.org/2000/svg";
+    function addLine(x1, y1, x2, y2, cls) {
+        const line = document.createElementNS(ns, "line");
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("class", cls);
+        svg.appendChild(line);
+    }
+
+    function addText(x, y, textContent, cls) {
+        const text = document.createElementNS(ns, "text");
+        text.setAttribute("x", x);
+        text.setAttribute("y", y);
+        text.setAttribute("class", cls);
+        text.textContent = textContent;
+        svg.appendChild(text);
+    }
+
+    // Gridlines & Ticks
+    const numTicks = 5;
+    for (let i = 0; i <= numTicks; i++) {
+        const xValue = xMin + (i / numTicks) * (xMax - xMin);
+        const xPos = scaleX(xValue);
+        addLine(xPos, padding.top, xPos, height - padding.bottom, "grid-line");
+        addText(xPos, height - padding.bottom + 15, xValue.toFixed(2), "tick-label");
+
+        const yValue = yMin + (i / numTicks) * (yMax - yMin);
+        const yPos = scaleY(yValue);
+        addLine(padding.left, yPos, width - padding.right, yPos, "grid-line");
+        addText(padding.left - 10, yPos + 4, yValue.toFixed(2), "tick-label");
+    }
+
+    // Average Lines
+    addLine(scaleX(avgX), padding.top, scaleX(avgX), height - padding.bottom, "avg-line");
+    addLine(padding.left, scaleY(avgY), width - padding.right, scaleY(avgY), "avg-line");
+
+    // Axis Titles
+    addText(width / 2, height - 10, "EPA per run", "axis-title");
+    const yAxisTitle = document.createElementNS(ns, "text");
+    yAxisTitle.setAttribute("x", -height / 2);
+    yAxisTitle.setAttribute("y", 15);
+    yAxisTitle.setAttribute("transform", "rotate(-90)");
+    yAxisTitle.setAttribute("class", "axis-title");
+    yAxisTitle.textContent = "EPA per pass";
+    svg.appendChild(yAxisTitle);
+
+    // Dots & Logos
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+data.forEach((d, i) => {
+    const circle = document.createElementNS(ns, "circle");
+    circle.setAttribute("cx", scaleX(d.x));
+    circle.setAttribute("cy", scaleY(d.y));
+    circle.setAttribute("r", 5);
+    circle.setAttribute("class", `dot ${d.highlight ? "highlight" : ""}`);
+    svg.appendChild(circle);
+
+    const img = document.createElement("img");
+    img.src = d.logo;
+    img.className = "logo";
+    img.style.left = `${scaleX(d.x)}px`;
+    img.style.top = `${scaleY(d.y)}px`;
+    container.appendChild(img);
+
+    if (isTouchDevice) {
+        // Tap Support for Mobile
+        circle.addEventListener('click', () => {
+            // Hide any active elements
+            container.querySelectorAll('.logo').forEach(el => el.classList.remove('active'));
+            container.querySelectorAll('.dot').forEach(el => el.style.opacity = 1);
+            tooltip.style.opacity = 0;
+
+            // Toggle current element
+            const isActive = img.classList.contains('active');
+            if (!isActive) {
+                circle.style.opacity = 0;
+                img.classList.add('active');
+                tooltip.innerHTML = `<strong>${d.name}</strong><br>EPA per pass: ${d.y.toFixed(3)}<br>EPA Per Run: ${d.x.toFixed(3)}`;
+                tooltip.style.opacity = 1;
+
+                const rect = container.getBoundingClientRect();
+                const tooltipX = scaleX(d.x) - tooltip.offsetWidth / 2;
+                const tooltipY = scaleY(d.y) + 35;
+                tooltip.style.left = `${Math.max(0, Math.min(tooltipX, rect.width - tooltip.offsetWidth))}px`;
+                tooltip.style.top = `${tooltipY}px`;
+            } else {
+                img.classList.remove('active');
+                circle.style.opacity = 1;
+                tooltip.style.opacity = 0;
+            }
+        });
+    } else {
+        // Hover Support for Desktop
+        circle.addEventListener('mouseenter', () => {
+            circle.style.opacity = 0;
+            img.classList.add('active');
+            tooltip.innerHTML = `<strong>${d.name}</strong><br>EPA per pass: ${d.y.toFixed(3)}<br>EPA Per Run: ${d.x.toFixed(3)}`;
+            tooltip.style.opacity = 1;
+
+            const rect = container.getBoundingClientRect();
+            const tooltipX = scaleX(d.x) - tooltip.offsetWidth / 2;
+            const tooltipY = scaleY(d.y) + 35;
+            tooltip.style.left = `${Math.max(0, Math.min(tooltipX, rect.width - tooltip.offsetWidth))}px`;
+            tooltip.style.top = `${tooltipY}px`;
+        });
+        circle.addEventListener('mouseleave', () => {
+            circle.style.opacity = 1;
+            img.classList.remove('active');
+            tooltip.style.opacity = 0;
+        });
+    }
+});
+
+// 👇 Add global tap-out listener for mobile
+if (isTouchDevice) {
+    document.addEventListener('click', function(event) {
+        const clickedInside = container.contains(event.target);
+        if (!clickedInside) {
+            container.querySelectorAll('.logo').forEach(el => el.classList.remove('active'));
+            container.querySelectorAll('.dot').forEach(el => el.style.opacity = 1);
+            tooltip.style.opacity = 0;
+        }
+    });
+}
+
+</script>
+</body>
+</html>
