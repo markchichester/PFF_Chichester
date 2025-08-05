@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PFF Play-Level Grade — Running Backs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      max-width: 700px;
+      margin: 2em auto;
+      padding: 0 1em;
+    }
+    input[type=range] {
+      width: 100%;
+      appearance: none;
+      height: 18px;
+      border-radius: 9px;
+      background: linear-gradient(to right,
+        #FFD002 0%,
+        #76C101 33%,
+        #009B47 66%,
+        #0087A4 100%);
+      outline: none;
+      margin-bottom: 42px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      height: 28px;
+      width: 28px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #333;
+      cursor: pointer;
+      margin-top: -7px;
+    }
+    input[type=range]::-moz-range-thumb {
+      height: 28px;
+      width: 28px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #333;
+      cursor: pointer;
+    }
+    .ticks {
+      position: relative;
+      height: 20px;
+      margin-top: -12px;
+    }
+    .ticks span {
+      position: absolute;
+      transform: translateX(-50%);
+      font-size: 0.9em;
+    }
+    #pff-explanation {
+      margin-top: 1em;
+      padding: 0.75em 1em;
+      background: #FFD002;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 0.95em;
+      white-space: pre-wrap;
+      overflow: auto;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>PFF play-level grade — Running Backs</h2>
+  <input type="range" id="pff-slider" min="0" max="4" step="1" value="0" />
+  <div class="ticks">
+    <span style="left: 0%;">0</span>
+    <span style="left: 25%;">+0.5</span>
+    <span style="left: 50%;">+1</span>
+    <span style="left: 75%;">+1.5</span>
+    <span style="left: 100%;">+2</span>
+  </div>
+
+  <div id="pff-explanation"></div>
+
+  <script>
+    const slider = document.getElementById("pff-slider");
+    const output = document.getElementById("pff-explanation");
+
+    const explanations = {0: 'The RB gets the ball and gets back to the line of scrimmage, can’t find a hole, doesn’t make anybody miss and gets tackled for a small gain by the first defender who gets to him.', 1: 'The RB shows good patience, and when the hole opens up at the line of scrimmage, he bursts through it with great speed for an impactful gain and first down pickup before the safety is able to get to him.', 2: 'The RB finds the hole on the back edge and hits it with good speed, making a cut off the right tackle to get past the unblocked linebacker at the line of scrimmage. Then, as he gets through the second level, the free safety comes down to tackle him at the 28-yard line, but the back forces a missed tackle and capitalizes on it with another 10 yards.', 3: "The RB escapes the unblocked linebacker on the edge to turn what could have been a 0-yard gain into a positive gain. He then cuts back to the middle of the field and uses his speed to beat the angle of the safety coming over, turning it into a sizeable gain. As he continues downfield, he's conscious of a defender in pursuit and uses a stiff arm to set up a teammate for a block. After that, he's able to maintain his balance and add another 15 yards.", 4: 'The RB runs through an arm-tackle attempt in the backfield before hitting the hole into the second level. Once there, he simultaneously evades a tackle attempt down by his ankles while powering through a linebacker who has a fistful of his jersey. After escaping that, he stiff-arms a cornerback and plants him into the ground around the 10-yard line. He does all of that while maintaining his balance and grinding out another 7-8 yards through contact from two additional defenders to finish the run right at the one-inch line.'};
+
+    const colors = {
+      0: "#FFD002",
+      1: "#76C101",
+      2: "#009B47",
+      3: "#0087A4",
+      4: "#0087A4"
+    };
+
+    function updateExplanation(index) {
+      output.innerText = explanations[index];
+      output.style.backgroundColor = colors[index];
+      output.style.color = (index === 0) ? "#000000" : "#ffffff";
+    }
+
+    slider.addEventListener("input", () => {
+      updateExplanation(parseInt(slider.value));
+    });
+
+    updateExplanation(parseInt(slider.value));
+  </script>
+</body>
+</html>
