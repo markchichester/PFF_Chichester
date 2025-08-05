@@ -1,0 +1,1082 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RB Grade Distribution</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      background: #f7f7f7;
+      color: #111;
+      padding: 1rem;
+    }
+    .widget {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .headshot {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ddd;
+    }
+    .player-meta {
+      flex: 1;
+    }
+    .player-meta h2 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+    .pills {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0.5rem 0;
+      flex-wrap: wrap;
+    }
+    .pill {
+      background: #eee;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+    }
+    .dropdown {
+      margin-bottom: 1rem;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget">
+    <div class="dropdown">
+      <label for="playerSelect"><strong>Select RB:</strong></label>
+      <select id="playerSelect" style="width:100%;padding:0.5rem;font-size:1rem;"></select>
+    </div>
+    <div id="playerCard">
+      <div class="header" id="playerHeader"></div>
+      <div class="pills" id="playerPills"></div>
+      <canvas id="gradeChart" width="600" height="300"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const players = [
+  {
+    "name": "Bijan Robinson",
+    "team": "Falcons",
+    "headshot": "https://media.pff.com/player-photos/nfl/123126.webp",
+    "snaps": 861,
+    "grade": 92.8,
+    "war": 0.3002,
+    "teamColor": "#A71930",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 132,
+      "0.5": 166,
+      "1": 14,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Derrick Henry",
+    "team": "Ravens",
+    "headshot": "https://media.pff.com/player-photos/nfl/10679.webp",
+    "snaps": 715,
+    "grade": 94.3,
+    "war": 0.232,
+    "teamColor": "#241773",
+    "grades": {
+      "-2": 0,
+      "-1.5": 3,
+      "-1": 0,
+      "-0.5": 1,
+      "0": 161,
+      "0.5": 147,
+      "1": 18,
+      "1.5": 5,
+      "2": 0
+    }
+  },
+  {
+    "name": "Saquon Barkley",
+    "team": "Eagles",
+    "headshot": "https://media.pff.com/player-photos/nfl/45791.webp",
+    "snaps": 1020,
+    "grade": 85.7,
+    "war": 0.2715,
+    "teamColor": "#004C54",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 183,
+      "0.5": 147,
+      "1": 16,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Josh Jacobs",
+    "team": "Packers",
+    "headshot": "https://media.pff.com/player-photos/nfl/45953.webp",
+    "snaps": 717,
+    "grade": 92.4,
+    "war": 0.2101,
+    "teamColor": "#203731",
+    "grades": {
+      "-2": 0,
+      "-1.5": 4,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 158,
+      "0.5": 140,
+      "1": 15,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jahmyr Gibbs",
+    "team": "Lions",
+    "headshot": "https://media.pff.com/player-photos/nfl/122474.webp",
+    "snaps": 690,
+    "grade": 90.3,
+    "war": 0.2038,
+    "teamColor": "#0076B6",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 132,
+      "0.5": 104,
+      "1": 16,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Kyren Williams",
+    "team": "Rams",
+    "headshot": "https://media.pff.com/player-photos/nfl/97118.webp",
+    "snaps": 1005,
+    "grade": 69.1,
+    "war": 0.2127,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 5,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 169,
+      "0.5": 147,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Chuba Hubbard",
+    "team": "Panthers",
+    "headshot": "https://media.pff.com/player-photos/nfl/57373.webp",
+    "snaps": 711,
+    "grade": 75.4,
+    "war": 0.1724,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 125,
+      "0.5": 112,
+      "1": 13,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "James Conner",
+    "team": "Cardinals",
+    "headshot": "https://media.pff.com/player-photos/nfl/11860.webp",
+    "snaps": 619,
+    "grade": 90.4,
+    "war": 0.2009,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 128,
+      "0.5": 105,
+      "1": 15,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Bucky Irving",
+    "team": "Buccaneers",
+    "headshot": "https://media.pff.com/player-photos/nfl/144970.webp",
+    "snaps": 548,
+    "grade": 90.8,
+    "war": 0.1689,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 1,
+      "0": 103,
+      "0.5": 99,
+      "1": 7,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "James Cook",
+    "team": "Bills",
+    "headshot": "https://media.pff.com/player-photos/nfl/83666.webp",
+    "snaps": 583,
+    "grade": 86.7,
+    "war": 0.1469,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 110,
+      "0.5": 94,
+      "1": 6,
+      "1.5": 3,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jonathan Taylor",
+    "team": "Colts",
+    "headshot": "https://media.pff.com/player-photos/nfl/57488.webp",
+    "snaps": 707,
+    "grade": 57.5,
+    "war": 0.1148,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 1,
+      "-1.5": 0,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 191,
+      "0.5": 104,
+      "1": 13,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Aaron Jones",
+    "team": "Vikings",
+    "headshot": "https://media.pff.com/player-photos/nfl/11937.webp",
+    "snaps": 753,
+    "grade": 75.4,
+    "war": 0.131,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 1,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 145,
+      "0.5": 110,
+      "1": 7,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Najee Harris",
+    "team": "Steelers",
+    "headshot": "https://media.pff.com/player-photos/nfl/57121.webp",
+    "snaps": 587,
+    "grade": 77.8,
+    "war": 0.1293,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 161,
+      "0.5": 98,
+      "1": 10,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Kenneth Walker III",
+    "team": "Seahawks",
+    "headshot": "https://media.pff.com/player-photos/nfl/97199.webp",
+    "snaps": 468,
+    "grade": 88.6,
+    "war": 0.1358,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 78,
+      "0.5": 75,
+      "1": 6,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "David Montgomery",
+    "team": "Lions",
+    "headshot": "https://media.pff.com/player-photos/nfl/45719.webp",
+    "snaps": 407,
+    "grade": 86.6,
+    "war": 0.1527,
+    "teamColor": "#0076B6",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 96,
+      "0.5": 87,
+      "1": 5,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Rico Dowdle",
+    "team": "Cowboys",
+    "headshot": "https://media.pff.com/player-photos/nfl/40693.webp",
+    "snaps": 634,
+    "grade": 73.9,
+    "war": 0.1317,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 3,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 134,
+      "0.5": 100,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Tony Pollard",
+    "team": "Titans",
+    "headshot": "https://media.pff.com/player-photos/nfl/27126.webp",
+    "snaps": 701,
+    "grade": 69.2,
+    "war": 0.121,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 171,
+      "0.5": 93,
+      "1": 12,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Alvin Kamara",
+    "team": "Saints",
+    "headshot": "https://media.pff.com/player-photos/nfl/11822.webp",
+    "snaps": 641,
+    "grade": 73.7,
+    "war": 0.1298,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 135,
+      "0.5": 91,
+      "1": 8,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "De'Von Achane",
+    "team": "Dolphins",
+    "headshot": "https://media.pff.com/player-photos/nfl/124305.webp",
+    "snaps": 705,
+    "grade": 81.6,
+    "war": 0.1597,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 117,
+      "0.5": 81,
+      "1": 7,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Joe Mixon",
+    "team": "Texans",
+    "headshot": "https://media.pff.com/player-photos/nfl/11803.webp",
+    "snaps": 644,
+    "grade": 76.4,
+    "war": 0.1404,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 1,
+      "0": 157,
+      "0.5": 85,
+      "1": 10,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Tyler Allgeier",
+    "team": "Falcons",
+    "headshot": "https://media.pff.com/player-photos/nfl/83639.webp",
+    "snaps": 287,
+    "grade": 86.4,
+    "war": 0.0867,
+    "teamColor": "#A71930",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 70,
+      "0.5": 64,
+      "1": 8,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Breece Hall",
+    "team": "Jets",
+    "headshot": "https://media.pff.com/player-photos/nfl/97636.webp",
+    "snaps": 721,
+    "grade": 62.9,
+    "war": 0.1203,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 4,
+      "-1": 0,
+      "-0.5": 1,
+      "0": 128,
+      "0.5": 79,
+      "1": 10,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jordan Mason",
+    "team": "49ers",
+    "headshot": "https://media.pff.com/player-photos/nfl/62946.webp",
+    "snaps": 378,
+    "grade": 72.7,
+    "war": 0.0841,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 3,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 83,
+      "0.5": 67,
+      "1": 7,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Chase Brown",
+    "team": "Bengals",
+    "headshot": "https://media.pff.com/player-photos/nfl/77787.webp",
+    "snaps": 685,
+    "grade": 75.7,
+    "war": 0.1362,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 136,
+      "0.5": 91,
+      "1": 5,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Kareem Hunt",
+    "team": "Chiefs",
+    "headshot": "https://media.pff.com/player-photos/nfl/11841.webp",
+    "snaps": 548,
+    "grade": 74.4,
+    "war": 0.1267,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 116,
+      "0.5": 87,
+      "1": 4,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "D'Andre Swift",
+    "team": "Bears",
+    "headshot": "https://media.pff.com/player-photos/nfl/57212.webp",
+    "snaps": 751,
+    "grade": 61.3,
+    "war": 0.1114,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 167,
+      "0.5": 86,
+      "1": 6,
+      "1.5": 2,
+      "2": 0
+    }
+  },
+  {
+    "name": "Rhamondre Stevenson",
+    "team": "Patriots",
+    "headshot": "https://media.pff.com/player-photos/nfl/98689.webp",
+    "snaps": 599,
+    "grade": 69.6,
+    "war": 0.097,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 5,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 127,
+      "0.5": 76,
+      "1": 7,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Brian Robinson",
+    "team": "Commanders",
+    "headshot": "https://media.pff.com/player-photos/nfl/57120.webp",
+    "snaps": 618,
+    "grade": 72.0,
+    "war": 0.1177,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 109,
+      "0.5": 74,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Tank Bigsby",
+    "team": "Jaguars",
+    "headshot": "https://media.pff.com/player-photos/nfl/123974.webp",
+    "snaps": 351,
+    "grade": 68.1,
+    "war": 0.0546,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 1,
+      "-0.5": 0,
+      "0": 102,
+      "0.5": 60,
+      "1": 8,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Rachaad White",
+    "team": "Buccaneers",
+    "headshot": "https://media.pff.com/player-photos/nfl/131633.webp",
+    "snaps": 608,
+    "grade": 73.8,
+    "war": 0.1388,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 78,
+      "0.5": 64,
+      "1": 3,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Zach Charbonnet",
+    "team": "Seahawks",
+    "headshot": "https://media.pff.com/player-photos/nfl/97630.webp",
+    "snaps": 567,
+    "grade": 77.5,
+    "war": 0.1436,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 77,
+      "0.5": 58,
+      "1": 5,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "J.K. Dobbins",
+    "team": "Chargers",
+    "headshot": "https://media.pff.com/player-photos/nfl/57366.webp",
+    "snaps": 568,
+    "grade": 66.6,
+    "war": 0.1195,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 126,
+      "0.5": 63,
+      "1": 8,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Tyrone Tracy",
+    "team": "Giants",
+    "headshot": "https://media.pff.com/player-photos/nfl/84226.webp",
+    "snaps": 647,
+    "grade": 58.4,
+    "war": 0.0776,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 120,
+      "0.5": 64,
+      "1": 7,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Emanuel Wilson",
+    "team": "Packers",
+    "headshot": "https://media.pff.com/player-photos/nfl/154173.webp",
+    "snaps": 274,
+    "grade": 83.7,
+    "war": 0.0749,
+    "teamColor": "#203731",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 48,
+      "0.5": 51,
+      "1": 3,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jerome Ford",
+    "team": "Browns",
+    "headshot": "https://media.pff.com/player-photos/nfl/83601.webp",
+    "snaps": 527,
+    "grade": 71.2,
+    "war": 0.1104,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 60,
+      "0.5": 44,
+      "1": 4,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Antonio Gibson",
+    "team": "Patriots",
+    "headshot": "https://media.pff.com/player-photos/nfl/78050.webp",
+    "snaps": 358,
+    "grade": 72.5,
+    "war": 0.0714,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 72,
+      "0.5": 43,
+      "1": 7,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jaleel McLaughlin",
+    "team": "Broncos",
+    "headshot": "https://media.pff.com/player-photos/nfl/138346.webp",
+    "snaps": 304,
+    "grade": 65.2,
+    "war": 0.0585,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 61,
+      "0.5": 47,
+      "1": 3,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Ray Davis",
+    "team": "Bills",
+    "headshot": "https://media.pff.com/player-photos/nfl/101072.webp",
+    "snaps": 286,
+    "grade": 70.4,
+    "war": 0.059,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 65,
+      "0.5": 48,
+      "1": 3,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Jaylen Warren",
+    "team": "Steelers",
+    "headshot": "https://media.pff.com/player-photos/nfl/98692.webp",
+    "snaps": 473,
+    "grade": 64.3,
+    "war": 0.0834,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 71,
+      "0.5": 49,
+      "1": 3,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Javonte Williams",
+    "team": "Broncos",
+    "headshot": "https://media.pff.com/player-photos/nfl/77803.webp",
+    "snaps": 604,
+    "grade": 61.7,
+    "war": 0.1077,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 88,
+      "0.5": 52,
+      "1": 3,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Travis Etienne Jr.",
+    "team": "Jaguars",
+    "headshot": "https://media.pff.com/player-photos/nfl/57185.webp",
+    "snaps": 494,
+    "grade": 60.7,
+    "war": 0.0717,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 99,
+      "0.5": 52,
+      "1": 2,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Cam Akers",
+    "team": "Vikings",
+    "headshot": "https://media.pff.com/player-photos/nfl/57206.webp",
+    "snaps": 294,
+    "grade": 72.6,
+    "war": 0.0172,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 66,
+      "0.5": 35,
+      "1": 6,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Gus Edwards",
+    "team": "Chargers",
+    "headshot": "https://media.pff.com/player-photos/nfl/46027.webp",
+    "snaps": 230,
+    "grade": 64.5,
+    "war": 0.0485,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 0,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 62,
+      "0.5": 40,
+      "1": 1,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Alexander Mattison",
+    "team": "Raiders",
+    "headshot": "https://media.pff.com/player-photos/nfl/45817.webp",
+    "snaps": 444,
+    "grade": 61.4,
+    "war": 0.069,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 88,
+      "0.5": 47,
+      "1": 2,
+      "1.5": 0,
+      "2": 0
+    }
+  },
+  {
+    "name": "Devin Singletary",
+    "team": "Giants",
+    "headshot": "https://media.pff.com/player-photos/nfl/40485.webp",
+    "snaps": 380,
+    "grade": 62.1,
+    "war": 0.0537,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 2,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 75,
+      "0.5": 35,
+      "1": 3,
+      "1.5": 1,
+      "2": 0
+    }
+  },
+  {
+    "name": "Nick Chubb",
+    "team": "Browns",
+    "headshot": "https://media.pff.com/player-photos/nfl/45783.webp",
+    "snaps": 235,
+    "grade": 57.5,
+    "war": 0.029,
+    "teamColor": "#444",
+    "grades": {
+      "-2": 0,
+      "-1.5": 1,
+      "-1": 0,
+      "-0.5": 0,
+      "0": 64,
+      "0.5": 40,
+      "1": 0,
+      "1.5": 0,
+      "2": 0
+    }
+  }
+];
+
+    const chartColors = {
+      "-2": "#C61A2A", "-1.5": "#C61A2A", "-1": "#E04215", "-0.5": "#FE9D00",
+      "0": "#FFD002", "0.5": "#76C101", "1": "#009B47", "1.5": "#0087A4", "2": "#0044a4"
+    };
+
+    const gradeLabels = ["-2", "-1.5", "-1", "-0.5", "0", "0.5", "1", "1.5", "2"];
+    let chart;
+
+    function renderPlayer(index) {
+      const player = players[index];
+      const card = document.getElementById('playerHeader');
+      const pills = document.getElementById('playerPills');
+      const ctx = document.getElementById('gradeChart').getContext('2d');
+
+      card.innerHTML = `
+        <img class="headshot" src="${player.headshot}" alt="${player.name}" />
+        <div class="player-meta" style="border-left: 6px solid ${player.teamColor}; padding-left: 1rem;">
+          <h2>${player.name}</h2>
+          <p><strong>${player.team}</strong></p>
+        </div>
+      `;
+      pills.innerHTML = `
+        <div class="pill">Snaps: ${player.snaps}</div>
+        <div class="pill">PFF Grade: ${player.grade}</div>
+        <div class="pill">PFF WAR: ${player.war}</div>
+      `;
+
+      const data = gradeLabels.map(label => player.grades[label] || 0);
+      const colors = gradeLabels.map(label => chartColors[label]);
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: gradeLabels.map(l => (parseFloat(l) > 0 ? '+' + parseFloat(l).toFixed(1) : parseFloat(l).toFixed(1))),
+          datasets: [{
+            label: 'Plays',
+            data: data,
+            backgroundColor: colors,
+            borderRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'x',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: function() { return ''; },
+                label: function(ctx) {
+                  const label = gradeLabels[ctx.dataIndex];
+                  const displayLabel = parseFloat(label) > 0 ? '+' + parseFloat(label).toFixed(1) : parseFloat(label).toFixed(1);
+                  return `${displayLabel}: ${ctx.raw} Plays`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      });
+    }
+
+    const select = document.getElementById('playerSelect');
+    players.forEach((p, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = p.name;
+      select.appendChild(opt);
+    });
+
+    select.addEventListener('change', (e) => renderPlayer(e.target.value));
+    renderPlayer(0);
+  </script>
+</body>
+</html>
