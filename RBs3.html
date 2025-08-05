@@ -1,0 +1,160 @@
+<style>
+  .modern-table-wrapper {
+    max-width: 900px;
+    margin: 2rem auto;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(237, 237, 237, 0.7);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    font-family: 'Archivo', sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .modern-table thead {
+    background: #ccc;
+    color: white;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .modern-table th,
+  .modern-table td {
+    padding: 14px 16px;
+    vertical-align: middle;
+  }
+
+  .modern-table td img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .modern-table .player-link {
+    text-decoration: none;
+    color: #111;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .modern-table .player-link:hover {
+    color: #0055ff;
+  }
+
+  .modern-table .stat {
+    font-weight: 600;
+    color: #111;
+  }
+
+  .modern-table tbody tr {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: linear-gradient(to right, #ededed, #fdfdfd);
+    position: relative;
+  }
+
+  .modern-table tbody tr:hover {
+    background: linear-gradient(to right, #e0e0e0, #fafafa);
+    transform: scale(1.01);
+    box-shadow: 0 0 0 2px var(--team-color, #aaa), 0 0 12px var(--team-color, #aaa);
+    z-index: 1;
+  }
+
+  @media (max-width: 600px) {
+    .modern-table th,
+    .modern-table td {
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    .modern-table td img {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".clickable-row").forEach(row => {
+      row.addEventListener("click", function () {
+        const url = this.getAttribute("data-href");
+        if (url) window.open(url, "_blank");
+      });
+    });
+  });
+</script>
+
+<div class="modern-table-wrapper">
+  <table class="modern-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Player</th>
+        <th>Z-Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/bijan-robinson/123126" style="--team-color: #A71930;">
+        <td><img src="https://media.pff.com/player-photos/nfl/123126.webp" alt="Bijan Robinson"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/bijan-robinson/123126" target="_blank">Bijan Robinson</a></td>
+        <td class="stat">2.58</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/derrick-henry/10679" style="--team-color: #241773;">
+        <td><img src="https://media.pff.com/player-photos/nfl/10679.webp" alt="Derrick Henry"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/derrick-henry/10679" target="_blank">Derrick Henry</a></td>
+        <td class="stat">2.41</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/saquon-barkley/42435" style="--team-color: #0B2265;">
+        <td><img src="https://media.pff.com/player-photos/nfl/45791.webp" alt="Saquon Barkley"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/saquon-barkley/42435" target="_blank">Saquon Barkley</a></td>
+        <td class="stat">1.87</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/josh-jacobs/45953" style="--team-color: #203731;">
+        <td><img src="https://media.pff.com/player-photos/nfl/45953.webp" alt="Josh Jacobs"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/josh-jacobs/45953" target="_blank">Josh Jacobs</a></td>
+        <td class="stat">1.68</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/jahmyr-gibbs/110595" style="--team-color: #0076B6;">
+        <td><img src="https://media.pff.com/player-photos/nfl/83666.png" alt="Jahmyr Gibbs"></td>
+        <td><a class="player-link" href="https://premium.pff.com/nfl/players/2024/REGPO/player/83666/snaps" target="_blank">Jahmyr Gibbs</a></td>
+        <td class="stat">1.28</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/kyren-williams/97811" style="--team-color: #003594;">
+        <td><img src="https://media.pff.com/player-photos/nfl/97118.webp" alt="Kyren Williams"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/kyren-williams/97811" target="_blank">Kyren Williams</a></td>
+        <td class="stat">1.24</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/chuba-hubbard/57373" style="--team-color: #0085CA;">
+        <td><img src="https://media.pff.com/player-photos/nfl/57373.webp" alt="Chuba Hubbard"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/chuba-hubbard/57373" target="_blank">Chuba Hubbard</a></td>
+        <td class="stat">1.16</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/james-conner/11860" style="--team-color: #97233F;">
+        <td><img src="https://media.pff.com/player-photos/nfl/83666.webp" alt="James Conner"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/james-conner/11860" target="_blank">James Conner</a></td>
+        <td class="stat">1.08</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/bucky-irving/144970" style="--team-color: #D50A0A;">
+        <td><img src="https://media.pff.com/player-photos/nfl/144970.webp" alt="Bucky Irving"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/bucky-irving/144970" target="_blank">Bucky Irving</a></td>
+        <td class="stat">0.87</td>
+      </tr>
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/james-cook/102607" style="--team-color: #00338D;">
+        <td><img src="https://media.pff.com/player-photos/nfl/83666.webp" alt="James Cook"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/james-cook/102607" target="_blank">James Cook</a></td>
+        <td class="stat">0.67</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
