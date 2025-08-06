@@ -41,11 +41,11 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 16px;
+      gap: 24px; /* increased gap from 16px to 24px */
       margin-bottom: 16px;
     }
     .input-box {
-      width: 160px;
+      width: 140px; /* reduced width from 160px to 140px */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -171,6 +171,65 @@
       line-height: 1.6;
       text-align: left;
       margin-bottom: 16px;
+    }
+
+    /* MOBILE STYLES */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+        height: auto;
+      }
+      .widget {
+        max-width: 100%;
+        padding: 16px;
+      }
+      .inputs {
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .input-box {
+        width: 90%; /* nearly full width */
+        align-items: stretch;
+      }
+      .input-box label {
+        text-align: left;
+      }
+      input[type="number"] {
+        text-align: left;
+        font-size: 1.1rem;
+      }
+      /* Hedge input stacked vertically */
+      .input-box.hedge {
+        flex-direction: column;
+        width: 90%;
+        align-items: flex-start;
+      }
+      .input-box.hedge label {
+        flex: none;
+        margin-bottom: 6px;
+        color: #FFFFFF;
+        text-align: left;
+      }
+      #hedgePercent {
+        width: 100%;
+        flex: none;
+        margin-bottom: 10px;
+      }
+      #hedgeSlider {
+        width: 100%;
+        margin: 0;
+      }
+      .button-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      button {
+        width: 100%;
+      }
+      .info-box {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>

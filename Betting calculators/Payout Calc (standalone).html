@@ -43,12 +43,12 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
+      gap: 24px; /* wider gap */
       margin-bottom: 16px;
     }
     .input-box {
       flex: none;
-      max-width: 160px;
+      max-width: 120px; /* smaller width */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -77,10 +77,8 @@
     input[type=number] {
       -moz-appearance: textfield;
     }
-
-    /* Distinct style for output fields with darker transparency */
     .output-box {
-      background-color: rgba(0, 0, 0, 0.25); /* darker shade */
+      background-color: rgba(0, 0, 0, 0.25);
       font-weight: bold;
       color: #FFFFFF;
       border: none;
@@ -89,8 +87,6 @@
     .output-box:focus {
       outline: none;
     }
-
-    /* Info caption at bottom with matching background */
     .info-caption {
       margin-top: 12px;
       font-size: 0.95rem;
@@ -99,6 +95,39 @@
       border-radius: 8px;
       line-height: 1.4;
       color: #FFFFFF;
+    }
+
+    /* Mobile-friendly adjustments */
+    @media (max-width: 480px) {
+      .widget-container {
+        padding: 16px 12px;
+        max-width: 100%;
+        box-shadow: none;
+      }
+      .input-row {
+        flex-direction: column;
+        gap: 16px; /* smaller vertical gap */
+        margin-bottom: 12px;
+      }
+      .input-box {
+        max-width: 100%;
+        width: 100%;
+      }
+      input {
+        font-size: 1.2rem;
+        padding: 12px;
+      }
+      .title-line {
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+      }
+      .logo img {
+        height: 32px;
+      }
+      .info-caption {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
     }
   </style>
 </head>
@@ -254,7 +283,6 @@
       }
     }
 
-    // Helper: allow navigation keys and shortcuts
     function isAllowedKey(e) {
       const allowedKeys = [
         "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"
@@ -264,17 +292,14 @@
       return false;
     }
 
-    // American odds input: allow digits, + or - at start only
     americanInput.addEventListener('keydown', (e) => {
       if (isAllowedKey(e)) return;
 
       const val = e.target.value;
       const key = e.key;
 
-      // Allow digit anywhere
       if (/\d/.test(key)) return;
 
-      // Allow '-' or '+' only if at start and not already present
       if ((key === '-' || key === '+') && e.target.selectionStart === 0 && !val.startsWith('-') && !val.startsWith('+')) {
         return;
       }
@@ -284,11 +309,8 @@
 
     americanInput.addEventListener('input', (e) => {
       let val = e.target.value;
-
-      // Remove any invalid chars (anything but digits, +, -)
       val = val.replace(/[^0-9+-]/g, '');
 
-      // Make sure only 1 leading + or -
       if (val.length > 1) {
         let firstChar = val.charAt(0);
         if (firstChar !== '+' && firstChar !== '-') {
@@ -301,7 +323,6 @@
         e.target.value = val;
       }
 
-      // If input emptied, clear other boxes
       if (val === '') {
         isUpdating = true;
         decimalInput.value = '';
@@ -315,7 +336,6 @@
       updateFromAmerican(parseFloat(val));
     });
 
-    // Decimal input: keep as number input with previous logic and clearing on empty
     decimalInput.addEventListener('input', e => {
       const val = e.target.value;
       if (val === '') {
@@ -330,17 +350,14 @@
       updateFromDecimal(parseFloat(val));
     });
 
-    // Fractional input: allow digits and one slash only, filter invalid keys
     fractionalInput.addEventListener('keydown', (e) => {
       if (isAllowedKey(e)) return;
 
       const key = e.key;
       const val = e.target.value;
 
-      // Allow digits
       if (/\d/.test(key)) return;
 
-      // Allow single slash if not already present
       if (key === '/' && !val.includes('/')) return;
 
       e.preventDefault();
@@ -348,11 +365,8 @@
 
     fractionalInput.addEventListener('input', (e) => {
       let val = e.target.value;
-
-      // Remove invalid chars except digits and '/'
       val = val.replace(/[^0-9/]/g, '');
 
-      // Only allow one '/'
       const parts = val.split('/');
       if (parts.length > 2) {
         val = parts[0] + '/' + parts[1];
@@ -362,7 +376,6 @@
         e.target.value = val;
       }
 
-      // If input emptied, clear other boxes
       if (val === '') {
         isUpdating = true;
         decimalInput.value = '';

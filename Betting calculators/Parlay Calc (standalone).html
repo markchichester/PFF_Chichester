@@ -149,6 +149,87 @@
       font-weight: bold;
       margin-right: 8px;
     }
+
+    /* Mobile responsiveness for screens up to 480px wide */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+        height: auto;
+      }
+
+      .widget-container {
+        max-width: 100%;
+        padding: 20px 16px;
+        border-radius: 8px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      .leg-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .leg-row input.leg-odds {
+        width: 100%;
+        font-size: 1.2rem;
+        padding: 10px;
+      }
+
+      .leg-row button {
+        width: 100%;
+        padding: 10px 0;
+        font-size: 1rem;
+      }
+
+      .input-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .input-row label.wager-label {
+        margin-right: 0;
+        font-size: 1rem;
+      }
+
+      .input-row input#wager {
+        width: 100%;
+        font-size: 1.2rem;
+        padding: 10px;
+      }
+
+      .actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .actions button {
+        width: 100%;
+        padding: 12px 0;
+        font-size: 1.1rem;
+      }
+
+      .results-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .transparent-input {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 12px;
+      }
+
+      .output {
+        font-size: 1rem;
+        padding: 12px 8px;
+      }
+    }
   </style>
 </head>
 <body>

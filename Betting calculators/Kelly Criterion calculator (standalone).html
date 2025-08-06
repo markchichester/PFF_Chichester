@@ -23,7 +23,7 @@
       padding: 20px;
       border-radius: 12px;
       width: 100%;
-      max-width: 700px;
+      max-width: 480px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       text-align: center;
     }
@@ -47,13 +47,14 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
+      gap: 40px; /* doubled gap here */
       margin-bottom: 16px;
+      align-items: flex-start; /* keep top alignment */
     }
 
     .input-box {
       flex: none;
-      max-width: 220px;
+      max-width: 165px; /* 25% smaller */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -62,6 +63,7 @@
     label {
       margin-bottom: 6px;
       font-weight: bold;
+      line-height: 1.1; /* reduce line height to align label height */
     }
 
     input {
@@ -212,6 +214,84 @@
       box-shadow: none !important;
       border: none !important;
     }
+
+    /* MOBILE RESPONSIVE STYLES */
+    @media (max-width: 480px) {
+      .widget-container {
+        padding: 15px;
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .input-row {
+        flex-direction: column;
+        gap: 16px; /* smaller vertical gap */
+        margin-bottom: 20px;
+      }
+
+      .input-box {
+        max-width: 100%;
+        width: 100%;
+        align-items: stretch;
+      }
+
+      label {
+        text-align: left;
+        font-size: 1rem;
+      }
+
+      input[type="number"] {
+        font-size: 1rem;
+      }
+
+      .preset-buttons {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+
+      .preset-buttons button {
+        flex: 1 0 auto;
+        min-width: 80px;
+        padding: 10px 8px;
+        font-size: 0.9rem;
+      }
+
+      .slider-container {
+        width: 100%;
+        max-width: none;
+      }
+
+      input[type=range] {
+        max-width: 100%;
+      }
+
+      .output-box {
+        flex-direction: column;
+        gap: 12px;
+        padding: 10px;
+      }
+
+      .output-field {
+        min-width: auto;
+        width: 100%;
+      }
+
+      .output-field input {
+        font-size: 1.1rem;
+        padding: 8px;
+      }
+
+      .info-box {
+        font-size: 0.9rem;
+        min-height: auto;
+      }
+
+      .main-title {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -224,7 +304,7 @@
 
     <div class="input-row">
       <div class="input-box">
-        <label for="probability">Probability of Winning (%)</label>
+        <label for="probability">Win Probability (%)</label>
         <input type="number" id="probability" placeholder="e.g. 55" min="0" max="100" step="0.1" />
       </div>
       <div class="input-box">
@@ -362,4 +442,3 @@
   </script>
 </body>
 </html>
-

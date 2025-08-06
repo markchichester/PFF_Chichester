@@ -41,12 +41,12 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
+      gap: 24px; /* Increased gap */
       margin-bottom: 16px;
     }
     .input-box {
       flex: none;
-      max-width: 180px;
+      max-width: 120px; /* Smaller inputs */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -80,6 +80,23 @@
       line-height: 1.5;
       margin-top: 12px;
       text-align: left;
+    }
+
+    /* --- Mobile Responsive --- */
+    @media (max-width: 600px) {
+      .input-row {
+        flex-direction: column;
+        gap: 16px; /* vertical spacing */
+        align-items: center;
+      }
+      .input-box {
+        max-width: 90%; /* nearly full width */
+        width: 300px;   /* fixed width for consistency */
+        align-items: stretch; /* inputs fill container width */
+      }
+      input {
+        font-size: 1.3rem; /* bigger input font on mobile */
+      }
     }
   </style>
 </head>
@@ -128,16 +145,11 @@
     // Filter Fractional input: digits, dots, one slash allowed
     fractional.addEventListener('input', e => {
       let val = e.target.value;
-
-      // Remove all invalid characters (anything except digits, dot, slash)
       val = val.replace(/[^0-9./]/g, '');
-
-      // Allow only one slash
       const parts = val.split('/');
       if (parts.length > 2) {
         val = parts[0] + '/' + parts.slice(1).join('');
       }
-
       if (e.target.value !== val) {
         e.target.value = val;
       }
@@ -233,7 +245,6 @@
       const num = parseFloat(parts[0]);
       const den = parseFloat(parts[1]);
 
-      // Wait for complete input (both numerator and denominator valid)
       if (isNaN(num) || isNaN(den) || den === 0) {
         infoBox.innerHTML = 'Enter odds in any format to learn what they mean.';
         return;

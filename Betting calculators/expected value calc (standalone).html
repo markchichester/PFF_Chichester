@@ -15,6 +15,8 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      padding: 16px; /* prevents overflow on small screens */
+      box-sizing: border-box;
     }
     .widget-container {
       background: linear-gradient(135deg, #0B1533 60%, #00EDD9);
@@ -40,14 +42,20 @@
     }
     .input-row {
       display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .input-group {
+      display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 24px;
     }
     .input-box {
       flex: none;
-      max-width: 180px;
+      width: 140px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -71,13 +79,11 @@
       font-weight: bold;
       cursor: default;
     }
-    /* Updated style for Expected Value box with no border and no forced text color */
     #evResult {
       background-color: rgba(0, 0, 0, 0.4);
-      border: none;  /* border removed */
+      border: none;
       font-weight: bold;
       cursor: default;
-      /* Removed color so ev-positive/negative classes apply */
     }
     .ev-positive {
       color: #00FF99;
@@ -102,6 +108,27 @@
       margin-top: 12px;
       text-align: left;
     }
+
+    /* === Mobile Styles === */
+    @media (max-width: 500px) {
+      .input-group {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .input-box {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .widget-container {
+        padding: 16px;
+      }
+
+      .title {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -112,18 +139,23 @@
     <h1 class="title">Expected Value Calculator</h1>
 
     <div class="input-row">
-      <div class="input-box">
-        <label for="american">American Odds</label>
-        <input type="number" id="american" placeholder="e.g. +250">
+      <!-- Input Group: Odds, Win %, Stake -->
+      <div class="input-group">
+        <div class="input-box">
+          <label for="american">American Odds</label>
+          <input type="number" id="american" placeholder="e.g. +250">
+        </div>
+        <div class="input-box">
+          <label for="probability">Win %</label>
+          <input type="number" id="probability" placeholder="e.g. 55">
+        </div>
+        <div class="input-box">
+          <label for="stake">Stake ($)</label>
+          <input type="number" id="stake" placeholder="e.g. 100">
+        </div>
       </div>
-      <div class="input-box">
-        <label for="probability">Win %</label>
-        <input type="number" id="probability" placeholder="e.g. 55">
-      </div>
-      <div class="input-box">
-        <label for="stake">Stake ($)</label>
-        <input type="number" id="stake" placeholder="e.g. 100">
-      </div>
+
+      <!-- Output: Expected Value -->
       <div class="input-box">
         <label for="evResult">Expected Value</label>
         <input type="text" id="evResult" readonly placeholder="$0.00">
