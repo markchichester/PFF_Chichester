@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" style=";width:100%;max-width:100%;">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -24,7 +24,7 @@
       padding: 20px;
       border-radius: 12px;
       width: 100%;
-      max-width: 480px;
+      max-width: 100%;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       text-align: center;
     }
@@ -55,7 +55,7 @@
 
     .input-box {
       flex: none;
-      max-width: 165px; /* 25% smaller */
+      max-width: 100%; /* 25% smaller */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -116,7 +116,7 @@
 
     input[type=range] {
       width: 100%;
-      max-width: 300px;
+      max-width: 100%;
       -webkit-appearance: none;
       height: 6px;
       border-radius: 5px;
@@ -128,7 +128,7 @@
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
+      width: auto;
       height: 18px;
       background: #FFFFFF;
       border: 2px solid #00EDD9;
@@ -142,7 +142,7 @@
     }
 
     input[type=range]::-moz-range-thumb {
-      width: 18px;
+      width: auto;
       height: 18px;
       background: #FFFFFF;
       border: 2px solid #00EDD9;
@@ -189,7 +189,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 140px;
+      min-width: 0;
     }
 
     .output-field label {
@@ -253,7 +253,7 @@
 
       .preset-buttons button {
         flex: 1 0 auto;
-        min-width: 80px;
+        min-width: 0;
         padding: 10px 8px;
         font-size: 0.9rem;
       }
@@ -297,7 +297,7 @@
 .info-note { font-size: 0.95rem; }
 </style>
 </head>
-<body style="overflow-x: hidden">
+<body style="overflow-x: hidden;width:100%;max-width:100%;margin:0;padding:0;overflow-x:hidden;">
 <div class="widget-container">
 <div class="logo">
 <img alt="Powered by PFF" src="https://media.pff.com/2025/07/Powered-by-PFF.png"/>
