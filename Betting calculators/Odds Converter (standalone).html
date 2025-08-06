@@ -38,19 +38,23 @@
       margin-bottom: 20px;
     }
     .input-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 24px; /* Increased gap */
-      margin-bottom: 16px;
-    }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
     .input-box {
-      flex: none;
-      max-width: 120px; /* Smaller inputs */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  flex: 1 1 150px;
+  min-width: 100px;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
     label {
       margin-bottom: 6px;
       font-weight: bold;
@@ -85,15 +89,23 @@
     /* --- Mobile Responsive --- */
     @media (max-width: 600px) {
       .input-row {
-        flex-direction: column;
-        gap: 16px; /* vertical spacing */
-        align-items: center;
-      }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
       .input-box {
-        max-width: 90%; /* nearly full width */
-        width: 300px;   /* fixed width for consistency */
-        align-items: stretch; /* inputs fill container width */
-      }
+  flex: 1 1 150px;
+  min-width: 100px;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
       input {
         font-size: 1.3rem; /* bigger input font on mobile */
       }
