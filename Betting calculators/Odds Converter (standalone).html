@@ -9,13 +9,10 @@
 <style>
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Archivo', sans-serif;
       background: #FFFFFF;
       color: #0B1533;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
     }
     .widget-container {
       background: linear-gradient(135deg, #0B1533 60%, #00EDD9);
@@ -106,8 +103,8 @@
 .info-note { font-size: 0.95rem; }
 </style>
 </head>
-<body style="overflow-x: hidden">
-<div class="widget-container">
+<body>
+<div style="display: flex; justify-content: center; padding: 2rem 1rem;"><div class="widget-container">
 <div class="logo">
 <img alt="Powered by PFF" src="https://media.pff.com/2025/07/Powered-by-PFF.png"/>
 </div>
@@ -129,7 +126,7 @@
 <div class="info-box" id="infoBox">
       Enter odds in any format to learn what they mean.
     </div>
-</div>
+</div></div>
 <script>
     const american = document.getElementById('american');
     const fractional = document.getElementById('fractional');
