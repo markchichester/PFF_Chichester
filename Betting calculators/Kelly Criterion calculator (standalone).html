@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Kelly Criterion Calculator (American Odds)</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<style>
+  
+  
+  <title>Kelly Criterion Calculator (American Odds)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
     body {
       margin: 0;
       font-family: 'Archivo', sans-serif;
@@ -15,7 +14,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
     }
 
     .widget-container {
@@ -24,9 +24,10 @@
       padding: 20px;
       border-radius: 12px;
       width: 100%;
-      max-width: 480px;
+      max-width: 700px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       text-align: center;
+      box-sizing: border-box;
     }
 
     .logo {
@@ -35,12 +36,14 @@
 
     .logo img {
       height: 40px;
+      width: auto;
+      object-fit: contain;
     }
 
     .main-title {
       font-size: 1.8rem;
       font-weight: 700;
-      margin: 0 0 20px 0;
+      margin: 0 0 20px;
       color: #FFFFFF;
     }
 
@@ -48,14 +51,14 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 40px; /* doubled gap here */
+      gap: 40px;
       margin-bottom: 16px;
-      align-items: flex-start; /* keep top alignment */
+      align-items: flex-start;
     }
 
     .input-box {
       flex: none;
-      max-width: 165px; /* 25% smaller */
+      max-width: 165px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -64,7 +67,9 @@
     label {
       margin-bottom: 6px;
       font-weight: bold;
-      line-height: 1.1; /* reduce line height to align label height */
+      line-height: 1.1;
+      text-align: center;
+      color: #FFFFFF;
     }
 
     input {
@@ -85,70 +90,6 @@
 
     input[type=number] {
       -moz-appearance: textfield;
-    }
-
-    .info-box {
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 12px;
-      border-radius: 8px;font-size: 0.95rem;
-      line-height: 1.5;
-      margin-top: 12px;
-      text-align: left;
-      min-height: 90px;
-    }
-
-    .slider-container {
-      margin-bottom: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .slider-label {
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-
-    .slider-value {
-      margin-top: 4px;
-      font-size: 0.95rem;
-    }
-
-    input[type=range] {
-      width: 100%;
-      max-width: 300px;
-      -webkit-appearance: none;
-      height: 6px;
-      border-radius: 5px;
-      background: #00EDD9;
-      outline: none;
-      transition: background 0.3s ease;
-    }
-
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      background: #FFFFFF;
-      border: 2px solid #00EDD9;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    input[type=range]::-webkit-slider-thumb:hover {
-      background: #CFFBF8;
-    }
-
-    input[type=range]::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
-      background: #FFFFFF;
-      border: 2px solid #00EDD9;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background 0.3s;
     }
 
     .preset-buttons {
@@ -172,6 +113,59 @@
 
     .preset-buttons button:hover {
       background-color: #00c7b5;
+    }
+
+    .slider-container {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slider-label {
+      margin-bottom: 4px;
+      font-weight: bold;
+      color: #FFFFFF;
+    }
+
+    .slider-value {
+      margin-top: 4px;
+      font-size: 0.95rem;
+    }
+
+    input[type=range] {
+      width: 100%;
+      max-width: 300px;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 5px;
+      background: #00EDD9;
+      outline: none;
+      transition: background 0.3s ease;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #FFFFFF;
+      border: 2px solid #00EDD9;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -5px;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      background: #CFFBF8;
+    }
+
+    input[type=range]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #FFFFFF;
+      border: 2px solid #00EDD9;
+      border-radius: 50%;
+      cursor: pointer;
     }
 
     .output-box {
@@ -208,14 +202,21 @@
       padding: 6px;
       border-radius: 6px;
       text-align: center;
-
-      /* Remove outlines and borders */
-      outline: none !important;
-      box-shadow: none !important;
-      border: none !important;
+      border: none;
+      outline: none;
     }
 
-    /* MOBILE RESPONSIVE STYLES */
+    .info-box {
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-top: 12px;
+      text-align: left;
+      min-height: 90px;
+    }
+
     @media (max-width: 480px) {
       .widget-container {
         padding: 15px;
@@ -224,9 +225,13 @@
         box-shadow: none;
       }
 
+      .main-title {
+        font-size: 1.5rem;
+      }
+
       .input-row {
         flex-direction: column;
-        gap: 16px; /* smaller vertical gap */
+        gap: 16px;
         margin-bottom: 20px;
       }
 
@@ -263,10 +268,6 @@
         max-width: none;
       }
 
-      input[type=range] {
-        max-width: 100%;
-      }
-
       .output-box {
         flex-direction: column;
         gap: 12px;
@@ -274,82 +275,75 @@
       }
 
       .output-field {
-        min-width: auto;
         width: 100%;
+        min-width: unset;
       }
 
       .output-field input {
         font-size: 1.1rem;
         padding: 8px;
-      }font-size: 0.95rem;
-        min-height: auto;
-      }
-
-      .main-title {
-        font-size: 1.5rem;
       }
     }
-  
-.tool-description { font-size: 0.95rem; }
-
-.info-caption { font-size: 0.95rem; }
-
-.info-note { font-size: 0.95rem; }
-</style>
+  </style>
 </head>
-<body style="overflow-x: hidden">
-<div class="widget-container">
-<div class="logo">
-<img alt="Powered by PFF" src="https://media.pff.com/2025/07/Powered-by-PFF.png"/>
-</div>
-<h1 class="main-title">Kelly Criterion Calculator</h1>
-<div class="input-row">
-<div class="input-box">
-<label for="probability">Win Probability (%)</label>
-<input id="probability" max="100" min="0" placeholder="e.g. 55" step="0.1" type="number"/>
-</div>
-<div class="input-box">
-<label for="americanOdds">American Odds</label>
-<input id="americanOdds" placeholder="e.g. +150 or -200" step="1" type="number"/>
-</div>
-<div class="input-box">
-<label for="bankroll">Bankroll ($)</label>
-<input id="bankroll" min="0" placeholder="e.g. 1000" step="1" type="number"/>
-</div>
-</div>
-<div class="preset-buttons">
-<button onclick="setKellyFraction(25)">25%</button>
-<button onclick="setKellyFraction(50)">50%</button>
-<button onclick="setKellyFraction(75)">75%</button>
-<button onclick="setKellyFraction(100)">100%</button>
-</div>
-<div class="slider-container">
-<label class="slider-label" for="kellyFraction">Fraction of Kelly (%):</label>
-<input id="kellyFraction" max="100" min="0" type="range" value="100"/>
-<div class="slider-value" id="fractionValue">100%</div>
-</div>
-<div class="output-box" id="outputBoxes">
-<div class="output-field">
-<label for="kellyPercentOutput">Adjusted Kelly Fraction (%)</label>
-<input id="kellyPercentOutput" readonly="" type="text"/>
-</div>
-<div class="output-field">
-<label for="betAmountOutput">Bet Amount ($)</label>
-<input id="betAmountOutput" readonly="" type="text"/>
-</div>
-</div>
-<div class="info-box" id="resultBox">
+<body>
+  <div class="widget-container">
+    <div class="logo">
+      <img src="https://media.pff.com/2025/07/Powered-by-PFF.png" alt="Powered by PFF" />
+    </div>
+    <h1 class="main-title">Kelly Criterion Calculator</h1>
+
+    <div class="input-row">
+      <div class="input-box">
+        <label for="probability">Win Probability (%)</label>
+        <input id="probability" type="number" step="0.1" min="0" max="100" placeholder="e.g. 55" />
+      </div>
+      <div class="input-box">
+        <label for="americanOdds">American Odds</label>
+        <input id="americanOdds" type="number" step="1" placeholder="e.g. +150 or -200" />
+      </div>
+      <div class="input-box">
+        <label for="bankroll">Bankroll ($)</label>
+        <input id="bankroll" type="number" step="1" min="0" placeholder="e.g. 1000" />
+      </div>
+    </div>
+
+    <div class="preset-buttons">
+      <button onclick="setKellyFraction(25)">25%</button>
+      <button onclick="setKellyFraction(50)">50%</button>
+      <button onclick="setKellyFraction(75)">75%</button>
+      <button onclick="setKellyFraction(100)">100%</button>
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="kellyFraction">Fraction of Kelly (%):</label>
+      <input id="kellyFraction" type="range" min="0" max="100" value="100" />
+      <div class="slider-value" id="fractionValue">100%</div>
+    </div>
+
+    <div class="output-box" id="outputBoxes">
+      <div class="output-field">
+        <label for="kellyPercentOutput">Adjusted Kelly Fraction (%)</label>
+        <input id="kellyPercentOutput" readonly type="text" />
+      </div>
+      <div class="output-field">
+        <label for="betAmountOutput">Bet Amount ($)</label>
+        <input id="betAmountOutput" readonly type="text" />
+      </div>
+    </div>
+
+    <div class="info-box" id="resultBox">
       Enter your estimated probability, American odds, and bankroll to calculate the Kelly bet.
     </div>
-</div>
-<script>
+  </div>
+
+  <script>
     const probabilityInput = document.getElementById('probability');
     const americanOddsInput = document.getElementById('americanOdds');
     const bankrollInput = document.getElementById('bankroll');
     const resultBox = document.getElementById('resultBox');
     const kellyFractionSlider = document.getElementById('kellyFraction');
     const fractionValue = document.getElementById('fractionValue');
-
     const kellyPercentOutput = document.getElementById('kellyPercentOutput');
     const betAmountOutput = document.getElementById('betAmountOutput');
 
@@ -362,8 +356,7 @@
     function calculateKelly(p, odds) {
       const b = odds - 1;
       const q = 1 - p;
-      const numerator = b * p - q;
-      return numerator / b;
+      return (b * p - q) / b;
     }
 
     function updateKelly() {
@@ -374,14 +367,10 @@
 
       fractionValue.textContent = `${kellyFractionSlider.value}%`;
 
-      if (
-        isNaN(pRaw) || isNaN(amRaw) ||
-        pRaw <= 0 || pRaw > 100 ||
-        amRaw === 0
-      ) {
+      if (isNaN(pRaw) || isNaN(amRaw) || pRaw <= 0 || pRaw > 100 || amRaw === 0) {
         kellyPercentOutput.value = '';
         betAmountOutput.value = '';
-        resultBox.textContent = 'Please enter a valid probability (0-100%) and American odds (non-zero).';
+        resultBox.textContent = 'Please enter a valid probability (0–100%) and non-zero odds.';
         return;
       }
 
@@ -396,8 +385,6 @@
       const decOdds = americanToDecimal(amRaw);
 
       if (decOdds <= 1) {
-        kellyPercentOutput.value = '';
-        betAmountOutput.value = '';
         resultBox.textContent = 'Invalid American odds entered.';
         return;
       }
@@ -409,18 +396,14 @@
       kellyPercentOutput.value = adjustedKelly > 0 ? (adjustedKelly * 100).toFixed(2) : '0.00';
       betAmountOutput.value = betAmount > 0 ? betAmount.toFixed(2) : '0.00';
 
-      if (kellyFraction <= 0) {
-        resultBox.textContent = 'The Kelly calculation suggests no bet or a negative bet amount.';
-      } else {
-        resultBox.innerHTML = `
-          The Kelly fraction is <strong>${(kellyFraction * 100).toFixed(2)}%</strong>. 
-          Using <strong>${(fraction * 100).toFixed(0)}%</strong> of Kelly, you should bet 
-          <strong>$${betAmount.toFixed(2)}</strong> from your bankroll of $${bankroll.toFixed(2)}.
-          <br /><br />
-          <strong>Notes on Fractional Kelly:</strong><br />
-          Many bettors use fractional Kelly (e.g., 25%, 50%, 75%) to reduce volatility and drawdowns. 
-        `;
-      }
+      resultBox.innerHTML = adjustedKelly <= 0
+        ? 'The Kelly calculation suggests no bet or a negative bet amount.'
+        : `The Kelly fraction is <strong>${(kellyFraction * 100).toFixed(2)}%</strong>. 
+           Using <strong>${(fraction * 100).toFixed(0)}%</strong> of Kelly, you should bet 
+           <strong>$${betAmount.toFixed(2)}</strong> from your bankroll of $${bankroll.toFixed(2)}.
+           <br /><br />
+           <strong>Notes on Fractional Kelly:</strong><br />
+           Many bettors use fractional Kelly (e.g., 25%, 50%, 75%) to reduce volatility and drawdowns.`;
     }
 
     function setKellyFraction(percent) {
@@ -429,10 +412,9 @@
       updateKelly();
     }
 
-    probabilityInput.addEventListener('input', updateKelly);
-    americanOddsInput.addEventListener('input', updateKelly);
-    bankrollInput.addEventListener('input', updateKelly);
-    kellyFractionSlider.addEventListener('input', updateKelly);
+    [probabilityInput, americanOddsInput, bankrollInput, kellyFractionSlider].forEach(el =>
+      el.addEventListener('input', updateKelly)
+    );
 
     updateKelly();
   </script>
