@@ -5,25 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bet Tracker - Powered by PFF</title>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet" />
-  
   <style>
-    .fullscreen-toggle {
-      background-color: #00EDD9;
-      color: #0B1533;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-right: 12px;
-    }
-
-    .fullscreen-toggle:hover {
-      background-color: #00c7b5;
-    }
-
     body {
       margin: 0;
       font-family: 'Archivo', sans-serif;
@@ -206,9 +188,8 @@
 </head>
 <body>
   <div class="widget-container">
-    <div class="logo" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="logo">
       <img src="https://media.pff.com/2025/07/Powered-by-PFF.png" alt="Powered by PFF" />
-      <button class="fullscreen-toggle" id="fullscreenBtn">View Full Screen</button>
     </div>
 
     <h1>Bet Tracker</h1>
@@ -434,31 +415,5 @@
       }
     };
   </script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const btn = document.getElementById("fullscreenBtn");
-
-      btn.addEventListener("click", function () {
-        const isFullscreen = document.fullscreenElement !== null;
-
-        if (!isFullscreen) {
-          document.documentElement.requestFullscreen()
-            .then(() => {
-              btn.textContent = "Minimize";
-            })
-            .catch(err => {
-              console.error("Fullscreen failed:", err);
-            });
-        } else {
-          document.exitFullscreen().then(() => {
-            btn.textContent = "View Full Screen";
-          });
-        }
-      });
-    });
-  </script>
 </body>
-</html>
-
 </html>
