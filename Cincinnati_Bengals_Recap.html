@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cincinnati Bengals Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Archivo', sans-serif;
+      background: #fff;
+    }
+    .auburn-widget {
+      position: relative;
+      max-width: 800px;
+      margin: 50px auto;
+      border: 3px solid #FB4F14;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      background: #fff;
+    }
+    .auburn-widget .watermark {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      width: 80px;
+      height: 80px;
+      background: url('https://a.espncdn.com/i/teamlogos/nfl/500/cin.png') no-repeat center;
+      background-size: contain;
+      opacity: 0.08;
+      animation: pulse 4s infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.08; transform: scale(1); }
+      50% { opacity: 0.15; transform: scale(1.05); }
+    }
+    .swiper {
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0;
+    }
+    .slide-content {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+    h3 {
+      color: #FB4F14;
+      margin-bottom: 20px;
+      font-size: 2.2em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: auto;
+      font-size: 1em;
+    }
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f1f1f1;
+      color: #333;
+    }
+    .pill {
+      background-color: #FB4F14;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 1em;
+    }
+    .pill:hover {
+      background-color: #000000;
+      transform: scale(1.05);
+    }
+    .swiper-button-next, .swiper-button-prev {
+      color: #FB4F14;
+    }
+    .swiper-pagination-bullet {
+      background-color: #FB4F14;
+      opacity: 0.7;
+    }
+    .swiper-pagination-bullet-active {
+      background-color: #9E70C;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+<div class="auburn-widget">
+  <div class="watermark"></div>
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+
+      <!-- Slide 1: Performance -->
+      <div class="swiper-slide">
+        <div class="slide-content">
+          <h3>2024 Performance</h3>
+          <table>
+            <thead><tr><th>Metric</th><th>Value</th><th>Rank (NFL)</th></tr></thead>
+            <tbody>
+              <tr><td>Offensive Grade</td><td>78.6</td><td>12th</td></tr>
+              <tr><td>EPA Per Play (Offense)</td><td>0.046</td><td>10th</td></tr>
+              <tr><td>Defensive Grade</td><td>66.0</td><td>22nd</td></tr>
+              <tr><td>EPA Allowed Per Play (Defense)</td><td>-0.003</td><td>22nd</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Slide 2: Players in Rankings -->
+      <div class="swiper-slide">
+        <div class="slide-content">
+          
+
+
+
+<h3>Players in Preseason PFF Rankings</h3>
+<table>
+  <thead><tr><th>Player</th><th>Pos Rank</th><th></th></tr></thead>
+  <tbody>
+    <tr><td>Joe Burrow</td><td>QB2</td><td><a class="pill" href="https://www.pff.com/news/nfl-quarterback-rankings-all-32-starters-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Chase Brown</td><td>HB25</td><td><a class="pill" href="https://www.pff.com/news/nfl-running-back-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Ja’Marr Chase</td><td>WR3</td><td><a class="pill" href="https://www.pff.com/news/nfl-pff-wide-receiver-rankings-top-32-2025-season" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Tee Higgins</td><td>WR14</td><td><a class="pill" href="https://www.pff.com/news/nfl-pff-wide-receiver-rankings-top-32-2025-season" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Mike Gesicki</td><td>TE27</td><td><a class="pill" href="https://www.pff.com/news/nfl-tight-end-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Ted Karras</td><td>C18</td><td><a class="pill" href="https://www.pff.com/news/nfl-center-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Trey Hendrickson</td><td>ED7</td><td><a class="pill" href="https://www.pff.com/news/nfl-pff-edge-defender-rankings-top-32-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Logan Wilson</td><td>LB24</td><td><a class="pill" href="https://www.pff.com/news/nfl-linebacker-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+  </tbody>
+</table>
+
+
+
+
+        </div>
+      </div>
+
+      <!-- Slide 3: Units in Rankings -->
+      <div class="swiper-slide">
+        <div class="slide-content">
+          
+
+
+
+
+<h3>Units in Preseason Rankings</h3>
+<table>
+  <thead><tr><th>Unit</th><th>Rank</th><th></th></tr></thead>
+  <tbody>
+    <tr><td>Running Backs</td><td>#27</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-running-back-unit-rankings" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Wide Receivers</td><td>#3</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-receiving-corps-rankings-eagles" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Offensive Line</td><td>#31</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-nfl-offensive-line-rankings" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Defensive Line</td><td>#25</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-nfl-defensive-line-rankings" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Linebackers</td><td>#15</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-nfl-linebacker-unit-rankings" target="_blank">View Rankings</a></td></tr>
+    <tr><td>Secondary</td><td>#25</td><td><a class="pill" href="https://www.pff.com/news/nfl-secondary-rankings-2025" target="_blank">View Rankings</a></td></tr>
+  </tbody>
+</table>
+
+
+
+
+
+        </div>
+      </div>
+
+      <!-- Slide 4: NFL Draft Class -->
+      <div class="swiper-slide">
+        <div class="slide-content">
+          
+
+
+
+
+
+<h3>2025 NFL Draft Class</h3>
+<table>
+  <thead><tr><th>Pos.</th><th>Player (School)</th><th>2024 Grade</th></tr></thead>
+  <tbody>
+    <tr><td>ED</td><td>Shemar Stewart (Texas A&M)</td><td>79.5</td></tr>
+    <tr><td>LB</td><td>Demetrius Knight Jr. (South Carolina)</td><td>82.8</td></tr>
+    <tr><td>OG</td><td>Dylan Fairchild (Georgia)</td><td>74.6</td></tr>
+    <tr><td>LB</td><td>Barrett Carter (Clemson)</td><td>67.3</td></tr>
+    <tr><td>OT</td><td>Jalen Rivers (Miami FL)</td><td>70.7</td></tr>
+    <tr><td>HB</td><td>Tahj Brooks (Texas Tech)</td><td>83.3</td></tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+        </div>
+      </div>
+
+      <!-- Slide 5: Free Agents -->
+      <div class="swiper-slide">
+        <div class="slide-content">
+          
+
+
+
+
+<h3>Notable Free Agent Additions</h3>
+<table>
+  <thead><tr><th>Pos.</th><th>Player</th><th>2024 Grade</th></tr></thead>
+  <tbody>
+    <tr><td>HB</td><td>Samaje Perine</td><td>67.2</td></tr>
+    <tr><td>OG</td><td>Lucas Patrick</td><td>64.6</td></tr>
+    <tr><td>DI</td><td>T.J. Slaton</td><td>43.0</td></tr>
+    <tr><td>LB</td><td>Oren Burks</td><td>86.0</td></tr>
+  </tbody>
+</table>
+
+
+
+
+
+        </div>
+      </div>
+
+      <!-- Slide 6: Draft Grade -->
+      <div class="swiper-slide">
+        <div class="slide-content">
+          <h3>2025 NFL Draft Grade</h3>
+          <div style="font-size: 8em; font-weight: bold; color: #FB4F14;">C</div>
+          <a class="pill" href="https://www.pff.com/news/draft-grades-for-all-32-teams-2025-nfl-draft" target="_blank">View 2025 Draft Grades</a>
+        </div>
+      </div>
+
+      <!-- Slide 7: Free Agency Grade -->
+      <div class="swiper-slide">
+        <div class="slide-content">
+          <h3>2025 Free Agency Grade</h3>
+          <div style="font-size: 8em; font-weight: bold; color: #FB4F14;">B+</div>
+          <a class="pill" href="https://www.pff.com/news/nfl-free-agency-grades-for-all-32-teams-2025" target="_blank">View Free Agency Grades</a>
+        </div>
+      </div>
+
+    </div>
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    new Swiper('.mySwiper', {
+      loop: true,
+      effect: 'fade',
+      fadeEffect: { crossFade: true },
+      autoHeight: true,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      }
+    });
+  });
+</script>
+</body>
+</html>
