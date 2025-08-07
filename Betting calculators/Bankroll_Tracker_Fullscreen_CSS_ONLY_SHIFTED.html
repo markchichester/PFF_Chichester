@@ -8,7 +8,6 @@
   
   <style>
     .fullscreen-toggle {
-      margin-right: 24px;
       background-color: #00EDD9;
       color: #0B1533;
       font-weight: bold;
@@ -18,24 +17,11 @@
       font-size: 0.9rem;
       cursor: pointer;
       transition: background-color 0.3s;
+      margin-right: 12px;
     }
 
     .fullscreen-toggle:hover {
       background-color: #00c7b5;
-    }
-
-    .widget-container.fullscreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      max-width: none;
-      border-radius: 0;
-      padding: 24px 16px;
-      z-index: 9999;
-      overflow-y: auto;
-      background: linear-gradient(135deg, #0B1533 60%, #00EDD9);
     }
 
     body {
@@ -219,7 +205,7 @@
   </style>
 </head>
 <body>
-  <div class="widget-container" id="widgetTracker">
+  <div class="widget-container">
     <div class="logo" style="display: flex; justify-content: space-between; align-items: center;">
       <img src="https://media.pff.com/2025/07/Powered-by-PFF.png" alt="Powered by PFF" />
       <button class="fullscreen-toggle" id="fullscreenBtn">View Full Screen</button>
@@ -452,11 +438,23 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const btn = document.getElementById("fullscreenBtn");
-      const tracker = document.getElementById("widgetTracker");
 
       btn.addEventListener("click", function () {
-        const isFullscreen = tracker.classList.toggle("fullscreen");
-        btn.textContent = isFullscreen ? "Minimize" : "View Full Screen";
+        const isFullscreen = document.fullscreenElement !== null;
+
+        if (!isFullscreen) {
+          document.documentElement.requestFullscreen()
+            .then(() => {
+              btn.textContent = "Minimize";
+            })
+            .catch(err => {
+              console.error("Fullscreen failed:", err);
+            });
+        } else {
+          document.exitFullscreen().then(() => {
+            btn.textContent = "View Full Screen";
+          });
+        }
       });
     });
   </script>
