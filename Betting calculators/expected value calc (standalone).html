@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Expected Value Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<style>
+  
+  
+  <title>Expected Value Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
     body {
       margin: 0;
+      padding: 16px;
       font-family: 'Archivo', sans-serif;
       background: #FFFFFF;
       color: #0B1533;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      padding: 16px; /* prevents overflow on small screens */
       box-sizing: border-box;
+      overflow-x: hidden;
     }
+
     .widget-container {
       background: linear-gradient(135deg, #0B1533 60%, #00EDD9);
       color: #FFFFFF;
@@ -28,19 +28,25 @@
       max-width: 700px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       text-align: center;
+      box-sizing: border-box;
     }
-    .logo {
-      margin-bottom: 16px;
-    }
+
     .logo img {
       height: 40px;
+      width: auto;
+      max-width: 240px;
+      object-fit: contain;
+      margin-bottom: 16px;
     }
+
     .title {
       margin-top: 0;
       margin-bottom: 24px;
       font-size: 1.8rem;
       font-weight: 700;
+      color: #FFFFFF;
     }
+
     .input-row {
       display: flex;
       flex-direction: column;
@@ -48,12 +54,15 @@
       margin-bottom: 16px;
       align-items: center;
     }
+
     .input-group {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 24px;
+      width: 100%;
     }
+
     .input-box {
       flex: none;
       width: 140px;
@@ -61,10 +70,13 @@
       flex-direction: column;
       align-items: center;
     }
+
     label {
       margin-bottom: 6px;
       font-weight: bold;
+      color: #FFFFFF;
     }
+
     input {
       width: 100%;
       padding: 8px;
@@ -74,42 +86,51 @@
       font-size: 1.1rem;
       color: #0B1533;
     }
+
     input[readonly] {
       background: rgba(255, 255, 255, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.3);
       font-weight: bold;
       cursor: default;
     }
+
     #evResult {
       background-color: rgba(0, 0, 0, 0.4);
       border: none;
       font-weight: bold;
       cursor: default;
+      color: #FFFFFF;
     }
+
     .ev-positive {
-      color: #00FF99;
+      color: #00FF99 !important;
     }
+
     .ev-negative {
-      color: #FF5555;
+      color: #FF5555 !important;
     }
+
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
+
     input[type=number] {
       -moz-appearance: textfield;
     }
+
     .info-box {
       background-color: rgba(0, 0, 0, 0.4);
       padding: 12px;
-      border-radius: 8px;font-size: 0.95rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
       line-height: 1.5;
       margin-top: 12px;
       text-align: left;
+      color: rgba(255, 255, 255, 0.95);
     }
 
-    /* === Mobile Styles === */
     @media (max-width: 500px) {
       .input-group {
         flex-direction: column;
@@ -121,60 +142,54 @@
         max-width: 280px;
       }
 
-      .widget-container {
-        padding: 16px;
-      }
-
       .title {
         font-size: 1.5rem;
+        color: #FFFFFF;
+      }
+
+      .info-box {
+        font-size: 0.9rem;
       }
     }
-  
-.tool-description { font-size: 0.95rem; }
-
-.info-caption { font-size: 0.95rem; }
-
-.info-note { font-size: 0.95rem; }
-</style>
+  </style>
 </head>
-<body style="overflow-x: hidden">
-<div class="widget-container">
-<div class="logo">
-<img alt="Powered by PFF" src="https://media.pff.com/2025/07/Powered-by-PFF.png"/>
-</div>
-<h1 class="title">Expected Value Calculator</h1>
-<div class="input-row">
-<!-- Input Group: Odds, Win %, Stake -->
-<div class="input-group">
-<div class="input-box">
-<label for="american">American Odds</label>
-<input id="american" placeholder="e.g. +250" type="number"/>
-</div>
-<div class="input-box">
-<label for="probability">Win %</label>
-<input id="probability" placeholder="e.g. 55" type="number"/>
-</div>
-<div class="input-box">
-<label for="stake">Stake ($)</label>
-<input id="stake" placeholder="e.g. 100" type="number"/>
-</div>
-</div>
-<!-- Output: Expected Value -->
-<div class="input-box">
-<label for="evResult">Expected Value</label>
-<input id="evResult" placeholder="$0.00" readonly="" type="text"/>
-</div>
-</div>
-<div class="info-box" id="evInfo">
-      Expected value (EV) estimates your average profit or loss per bet if the same wager were repeated many times. It's a key concept for identifying long-term profitable opportunities in sports betting.
+<body>
+  <div class="widget-container">
+    <div class="logo">
+      <img src="https://media.pff.com/2025/07/Powered-by-PFF.png" alt="Powered by PFF"/>
     </div>
-</div>
-<script>
+    <h2 class="title">Expected Value Calculator</h2>
+    <div class="input-row">
+      <div class="input-group">
+        <div class="input-box">
+          <label for="american">American Odds</label>
+          <input id="american" placeholder="e.g. +250" type="number" step="any"/>
+        </div>
+        <div class="input-box">
+          <label for="probability">Win %</label>
+          <input id="probability" placeholder="e.g. 55" type="number" min="0" max="100" step="any"/>
+        </div>
+        <div class="input-box">
+          <label for="stake">Stake ($)</label>
+          <input id="stake" placeholder="e.g. 100" type="number" min="0.01" step="any"/>
+        </div>
+      </div>
+      <div class="input-box">
+        <label for="evResult">Expected Value</label>
+        <input id="evResult" placeholder="$0.00" type="text" readonly/>
+      </div>
+    </div>
+    <div class="info-box" id="evInfo">
+      Expected value (EV) estimates your average profit or loss per bet if the same wager were repeated many times. It’s a key concept for identifying long-term profitable opportunities in sports betting.
+    </div>
+  </div>
+
+  <script>
     const american = document.getElementById('american');
     const probability = document.getElementById('probability');
     const stake = document.getElementById('stake');
-    const evInfo = document.getElementById('evInfo');
     const evResult = document.getElementById('evResult');
+    const evInfo = document.getElementById('evInfo');
 
     function calculateEV() {
       const amVal = parseFloat(american.value);
@@ -188,36 +203,30 @@
         isNaN(stakeVal) ||
         isNaN(probVal) ||
         stakeVal <= 0 ||
-        probVal < 0 || probVal > 100
+        probVal < 0 ||
+        probVal > 100
       ) {
         evResult.value = '';
-        evInfo.innerHTML = 'Expected value (EV) estimates your average profit or loss per bet if the same wager were repeated many times. It\'s a key concept for identifying long-term profitable opportunities in sports betting.';
+        evInfo.innerHTML =
+          `Expected value (EV) estimates your average profit or loss per bet if the same wager were repeated many times. It’s a key concept for identifying long-term profitable opportunities in sports betting.`;
         return;
       }
 
-      let dec;
-      if (amVal > 0) {
-        dec = (amVal / 100) + 1;
-      } else {
-        dec = (100 / Math.abs(amVal)) + 1;
-      }
+      const dec = amVal > 0
+        ? (amVal / 100) + 1
+        : (100 / Math.abs(amVal)) + 1;
 
       const winProb = probVal / 100;
       const profit = (dec - 1) * stakeVal;
       const ev = (winProb * profit) - ((1 - winProb) * stakeVal);
-
       const evFormatted = ev >= 0 ? `+$${ev.toFixed(2)}` : `$${ev.toFixed(2)}`;
-      evResult.value = evFormatted;
 
-      if (ev >= 0) {
-        evResult.classList.add('ev-positive');
-      } else {
-        evResult.classList.add('ev-negative');
-      }
+      evResult.value = evFormatted;
+      evResult.classList.add(ev >= 0 ? 'ev-positive' : 'ev-negative');
 
       evInfo.innerHTML = `
         <strong>This is a ${ev >= 0 ? '+EV' : '-EV'} bet.</strong><br><br>
-        Expected value (EV) estimates your average profit or loss per bet if the same wager were repeated many times. It's a key concept for identifying long-term profitable opportunities in sports betting.
+        Expected value (EV) estimates your average profit or loss per bet if the same wager were repeated many times. It’s a key concept for identifying long-term profitable opportunities in sports betting.
       `;
     }
 
