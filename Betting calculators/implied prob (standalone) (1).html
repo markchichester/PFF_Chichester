@@ -1,72 +1,82 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Implied Probability Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<style>
+  
+  
+  <title>Implied Probability Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
     body {
       margin: 0;
+      padding: 20px;
       font-family: 'Archivo', sans-serif;
       background: #FFFFFF;
       color: #0B1533;
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     .widget-container {
       background: linear-gradient(135deg, #0B1533 60%, #00EDD9);
       color: #FFFFFF;
-      padding: 24px;
+      padding: 16px 20px;
       border-radius: 12px;
+      max-width: 700px;
       width: 100%;
-      max-width: 500px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       text-align: center;
+      box-sizing: border-box;
+    }
+
+    .logo {
+      margin-bottom: 10px;
     }
 
     .logo img {
-      height: 40px;
-      margin-bottom: 16px;
+      height: 36px;
+      width: auto;
+      max-width: 220px;
+      object-fit: contain;
     }
 
     .title {
-      margin: 0;
-      margin-bottom: 16px;
+      margin: 0 0 16px 0;
       font-weight: 700;
-      font-size: 1.8rem;
-      color: #FFFFFF;
+      font-size: 1.5rem;
+      color: #FFFFFF !important;
     }
 
     .input-row {
       display: flex;
-      gap: 40px;
+      gap: 24px;
       justify-content: center;
       align-items: center;
-      margin-top: 16px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
+      width: 100%;
     }
 
-    .input-box, .output-box {
-      flex: 1 1 100px;
+    .input-box,
+    .output-box {
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-width: 120px;
+      flex: 1 1 0;
     }
 
     label {
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       font-weight: bold;
+      font-size: 0.9rem;
     }
 
     input {
       width: 100%;
-      padding: 10px;
-      font-size: 1.1rem;
+      padding: 8px;
+      font-size: 1.05rem;
       border-radius: 6px;
       border: none;
       text-align: center;
@@ -75,73 +85,80 @@
 
     .implied-box {
       background-color: rgba(0, 0, 0, 0.25);
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
-      font-size: 1.2rem;
-      width: 100%;
-      text-align: center;
+      font-size: 1.1rem;
       font-weight: bold;
+      color: #FFFFFF;
+      width: 100%;
     }
 
     .info-note {
-      margin-top: 20px;font-size: 0.95rem;
+      margin-top: 10px;
+      font-size: 0.9rem;
       background-color: rgba(0, 0, 0, 0.2);
       padding: 10px;
       border-radius: 6px;
     }
 
-    /* Mobile responsiveness */
     @media (max-width: 480px) {
       .input-row {
         flex-direction: column;
         gap: 16px;
       }
 
-      .input-box, .output-box {
-        flex: 1 1 100%;
-        max-width: 300px;
+      .input-box,
+      .output-box {
         width: 100%;
+        max-width: 280px;
       }
 
       input {
-        font-size: 1rem;
-        padding: 8px;
+        font-size: 1.2rem;
       }
 
       .implied-box {
-        font-size: 1.1rem;
-        padding: 10px;
+        font-size: 1.15rem;
+      }
+
+      .title {
+        font-size: 1.4rem;
       }
     }
-  
-.info-box { font-size: 0.95rem; }
-
-.tool-description { font-size: 0.95rem; }
-
-.info-caption { font-size: 0.95rem; }
-</style>
+  </style>
 </head>
-<body style="overflow-x: hidden">
-<div class="widget-container">
-<div class="logo">
-<img alt="Powered by PFF" src="https://media.pff.com/2025/07/Powered-by-PFF.png"/>
-</div>
-<h2 class="title">Implied Probability Calculator</h2>
-<div class="input-row">
-<div class="input-box">
-<label for="americanOdds">American Odds</label>
-<input id="americanOdds" placeholder="+150 or -200" type="number"/>
-</div>
-<div class="output-box">
-<label>Implied Probability</label>
-<div class="implied-box" id="impliedOutput">--%</div>
-</div>
-</div>
-<div class="info-note">
+<body>
+  <div class="widget-container">
+    <div class="logo">
+      <img src="https://media.pff.com/2025/07/Powered-by-PFF.png" alt="Powered by PFF"/>
+    </div>
+
+    <h2 class="title">Implied Probability Calculator</h2>
+
+    <div class="input-row">
+      <div class="input-box">
+        <label for="americanOdds">American Odds</label>
+        <input
+          id="americanOdds"
+          type="text"
+          inputmode="text"
+          pattern="[0-9+\-]*"
+          placeholder="+150 or -200"
+        />
+      </div>
+
+      <div class="output-box">
+        <label>Implied Probability</label>
+        <div class="implied-box" id="impliedOutput">--%</div>
+      </div>
+    </div>
+
+    <div class="info-note">
       Enter American odds to see the implied probability.
     </div>
-</div>
-<script>
+  </div>
+
+  <script>
     const americanInput = document.getElementById('americanOdds');
     const impliedOutput = document.getElementById('impliedOutput');
 
@@ -157,18 +174,16 @@
     }
 
     americanInput.addEventListener('input', (e) => {
-      const value = e.target.value;
+      const value = e.target.value.replace(/[^0-9+\-]/g, '');
+      e.target.value = value;
+
       if (value === '' || isNaN(value)) {
         impliedOutput.textContent = '--%';
         return;
       }
 
       const prob = calculateImpliedProbability(Number(value));
-      if (prob === null) {
-        impliedOutput.textContent = '--%';
-      } else {
-        impliedOutput.textContent = `${prob}%`;
-      }
+      impliedOutput.textContent = prob === null ? '--%' : `${prob}%`;
     });
   </script>
 </body>
