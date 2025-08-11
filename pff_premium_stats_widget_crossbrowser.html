@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PFF Premium Stats Widget - Cross-browser + Anti-clipping</title>
+</head>
+<body>
+
+<!-- PFF Premium Stats In-Article Widget (cross-browser + anti-clipping) -->
+<div class="pff-stats-widget" role="region" aria-label="Explore PFF Premium Stats">
+  <div class="pff-stats-widget__copy">
+    <h3 class="pff-stats-widget__title">Explore PFF Premium Stats</h3>
+    <p class="pff-stats-widget__desc">
+      Advanced grades, positional splits and high-level metrics for the 2025 season.
+    </p>
+  </div>
+
+  <a
+    class="pff-stats-widget__cta"
+    href="https://premium.pff.com/nfl/positions/2025/PRE"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Open PFF Premium Stats in a new tab"
+  >
+    <span class="pff-stats-widget__label">Open Premium Stats</span>
+    <svg class="pff-stats-widget__icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M13.5 5a1 1 0 1 1 0-2H21a1 1 0 0 1 1 1v7.5a1 1 0 1 1-2 0V7.414l-9.793 9.793a1 1 0 0 1-1.414-1.414L18.586 6H13.5Z"/>
+      <path fill="currentColor" d="M19 19H5V5h7a1 1 0 1 0 0-2H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8a1 1 0 1 0-2 0v8Z"/>
+    </svg>
+  </a>
+</div>
+
+<style>
+  /* ---------- Base ---------- */
+  .pff-stats-widget{
+    --pff-bg:#0B1533;      /* brand navy */
+    --pff-accent:#006BFF;  /* brand blue */
+    --pff-text:#FFFFFF;
+    --pff-text-dim:#D6D9E6;
+
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--pff-bg);
+    color: var(--pff-text);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: 0 2px 14px rgba(11,21,51,0.25);
+    border: 1px solid rgba(255,255,255,0.08);
+    -webkit-font-smoothing: antialiased;
+    margin: 16px 0;
+  }
+
+  .pff-stats-widget__copy{ min-width: 0; }
+  .pff-stats-widget__title{
+    margin: 0 0 6px;
+    font-size: 20px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--pff-text) !important; /* beat theme h3 */
+  }
+  .pff-stats-widget__desc{
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--pff-text-dim) !important; /* beat theme p */
+  }
+
+  /* ---------- Button: anti-clipping + centering ---------- */
+  .pff-stats-widget__cta{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--pff-accent);
+    color: #fff !important;       /* keep label white (beats a:hover) */
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 9999px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px rgba(0,107,255,0.32);
+    transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+    -webkit-tap-highlight-color: transparent;
+
+    /* Anti-clipping/squeeze */
+    overflow: hidden;             /* clip icon during hover (Safari, etc.) */
+    -webkit-appearance: none;
+    width: auto;                  /* size to content */
+    min-width: fit-content;       /* ensure content fits */
+    max-width: 100%;              /* never overflow parent */
+    flex: none;                   /* don't let parent flex shrink the button */
+    text-align: center;
+  }
+  .pff-stats-widget__cta:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(0,107,255,0.38);
+    background-color: #0057CC;
+    color: #fff !important;
+  }
+  .pff-stats-widget__cta:active{
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0,107,255,0.30);
+    color: #fff !important;
+  }
+  .pff-stats-widget__cta:focus-visible{
+    outline: 3px solid #FFFFFF;
+    outline-offset: 2px;
+    color: #fff !important;
+  }
+
+  .pff-stats-widget__label{
+    display: inline-block;
+    line-height: 1;
+    /* allow graceful trimming if a theme/container forces tight width */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+  }
+  .pff-stats-widget__icon{
+    display: block;               /* fix SVG baseline across browsers */
+    width: 18px; height: 18px;
+    flex-shrink: 0;               /* icon never squashes */
+    transition: transform .15s ease;
+  }
+  .pff-stats-widget__cta:hover .pff-stats-widget__icon{
+    transform: translateX(2px);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 640px){
+    .pff-stats-widget{
+      flex-direction: column;
+      align-items: stretch;
+      text-align: left;
+      gap: 12px;
+    }
+    .pff-stats-widget__cta{
+      width: 100%;
+      padding: 14px 18px;         /* larger touch target */
+      justify-content: center;
+    }
+  }
+
+  /* ---------- Reduced Motion ---------- */
+  @media (prefers-reduced-motion: reduce){
+    .pff-stats-widget__cta,
+    .pff-stats-widget__icon{
+      transition: none;
+    }
+  }
+</style>
+
+</body>
+</html>
