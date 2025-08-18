@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chargers Schedule Swipe</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" rel="stylesheet">
+<style>
+    body { font-family: 'Archivo', sans-serif; background: #ffffff; margin: 0; padding: 0; overflow-x: hidden; }
+    .record-bar { position: fixed; top: 0; left: 0; right: 0; background: white; text-align: center; font-size: 1.3rem; font-weight: bold; z-index: 100; padding: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .reset-btn { font-size: 0.9rem; background: #0080C6; color: white; padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.3s ease; margin-top: 6px; }
+    .reset-btn:hover { opacity: 0.9; }
+    .swiper-container { width: 100%; max-width: 650px; height: 500px; margin: 0 auto; padding-top: 90px; padding-bottom: 0; display: flex; flex-direction: column; }
+    .swiper-wrapper { flex-grow: 1; }
+    .swiper-slide { height: 100%; background: #fff; border-radius: 20px; border: 4px solid #0080C6; box-sizing: border-box; text-align: center; display: flex; flex-direction: column; justify-content: start; align-items: center; padding: 20px; overflow-y: auto; }
+    .game-header { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 10px; }
+    .week { font-size: 1.4rem; font-weight: bold; color: #0080C6; }
+    .date { font-size: 0.95rem; color: #555; }
+    .match-info { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; }
+    .pill { padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: white; }
+    .home { background: #007A33; } .away { background: #D5002B; }
+    .logo { height: 130px; margin: 12px auto 6px; }
+    .team-name { font-weight: bold; font-size: 1.1rem; margin-top: 5px; }
+    .kickoff { font-size: 0.9rem; color: #555; margin-top: 2px; }
+    .btn-group { margin-top: 15px; }
+    .btn { padding: 12px 28px; margin: 0 10px; border: none; border-radius: 30px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .btn.win { background: linear-gradient(135deg, #007A33, #00A76C); color: white; }
+    .btn.loss { background: linear-gradient(135deg, #D5002B, #FF4C4C); color: white; }
+    .btn.selected { border: 3px solid #000; transform: scale(1.08); }
+    @media (max-width: 480px) { .week { font-size: 1.2rem; } .btn { padding: 10px 20px; font-size: 0.95rem; margin: 0 6px; } .logo { height: 110px; } }
+  </style>
+</head>
+<body>
+  <div class="record-bar">
+    <div id="record">Record: 0-0</div>
+    <button class="reset-btn" onclick="resetAll()">Reset</button>
+  </div>
+  <div class="swiper-container">
+    <div class="swiper-wrapper" id="scheduleSlides"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script>
+    let swiper;
+    const schedule = [
+      { week: 1, date: "Sep 5", opponent: "Kansas City Chiefs", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/kc.png", home: true, time: "8:00 PM" },
+      { week: 2, date: "Sep 15", opponent: "Las Vegas Raiders", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/lv.png", home: false, time: "10:00 PM" },
+      { week: 3, date: "Sep 21", opponent: "Denver Broncos", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/den.png", home: true, time: "4:05 PM" },
+      { week: 4, date: "Sep 28", opponent: "New York Giants", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png", home: false, time: "1:00 PM" },
+      { week: 5, date: "Oct 5", opponent: "Washington Commanders", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png", home: true, time: "4:25 PM" },
+      { week: 6, date: "Oct 12", opponent: "Miami Dolphins", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/mia.png", home: false, time: "1:00 PM" },
+      { week: 7, date: "Oct 19", opponent: "Indianapolis Colts", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/ind.png", home: true, time: "4:05 PM" },
+      { week: 8, date: "Oct 23", opponent: "Minnesota Vikings", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/min.png", home: true, time: "8:15 PM" },
+      { week: 9, date: "Nov 2", opponent: "Tennessee Titans", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/ten.png", home: false, time: "1:00 PM" },
+      { week: 10, date: "Nov 9", opponent: "Pittsburgh Steelers", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/pit.png", home: true, time: "8:20 PM" },
+      { week: 11, date: "Nov 16", opponent: "Jacksonville Jaguars", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/jax.png", home: false, time: "1:00 PM" },
+      { week: 12, date: "BYE WEEK", bye: true },
+      { week: 13, date: "Nov 30", opponent: "Las Vegas Raiders", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/lv.png", home: true, time: "4:25 PM" },
+      { week: 14, date: "Dec 8", opponent: "Philadelphia Eagles", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/phi.png", home: true, time: "8:15 PM" },
+      { week: 15, date: "Dec 14", opponent: "Kansas City Chiefs", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/kc.png", home: false, time: "1:00 PM" },
+      { week: 16, date: "Dec 21", opponent: "Dallas Cowboys", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/dal.png", home: false, time: "1:00 PM" },
+      { week: 17, date: "TBD", opponent: "Houston Texans", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/hou.png", home: true, time: "TBD" },
+      { week: 18, date: "TBD", opponent: "Denver Broncos", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/den.png", home: false, time: "TBD" }
+    ];
+
+    let record = Array(schedule.length).fill(null);
+    const slidesContainer = document.getElementById("scheduleSlides");
+
+    schedule.forEach((game, i) => {
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+
+      if (game.bye) {
+        slide.innerHTML = `
+          <div class="game-header">
+            <div class="week">Week ${game.week}</div>
+            <div class="match-info"><span class="pill home">BYE</span></div>
+            <div class="date">${game.date}</div>
+          </div>
+        `;
+      } else {
+        slide.innerHTML = `
+          <div class="game-header">
+            <div class="week">Week ${game.week}</div>
+            <div class="date">${game.date}</div>
+            <div class="match-info">
+              <span class="pill ${game.home ? 'home' : 'away'}">${game.home ? 'Home' : 'Away'}</span>
+            </div>
+          </div>
+          <img class="logo" src="${game.logo}" alt="${game.opponent} logo">
+          <div class="team-name">${game.opponent}</div>
+          <div class="kickoff">Kickoff: ${game.time}</div>
+          <div class="btn-group">
+            <button class="btn win" onclick="updateResult(${i}, 'W', this)">Win</button>
+            <button class="btn loss" onclick="updateResult(${i}, 'L', this)">Loss</button>
+          </div>
+        `;
+      }
+
+      slidesContainer.appendChild(slide);
+    });
+
+    function updateResult(index, result, btn) {
+      record[index] = result;
+      const wins = record.filter(r => r === 'W').length;
+      const losses = record.filter(r => r === 'L').length;
+      document.getElementById('record').textContent = `Record: ${wins}-${losses}`;
+
+      const group = btn.parentNode;
+      group.querySelectorAll('.btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    function resetAll() {
+      record = Array(schedule.length).fill(null);
+      document.getElementById('record').textContent = "Record: 0-0";
+      document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
+      swiper.slideTo(0);
+    }
+
+    swiper = new Swiper('.swiper-container', {
+      slidesPerView: 1,
+      spaceBetween: 30,
+      keyboard: { enabled: true },
+      mousewheel: { forceToAxis: true }
+    });
+  </script>
+</body>
+</html>
