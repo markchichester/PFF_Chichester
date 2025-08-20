@@ -26,7 +26,7 @@
   .team { display: grid; grid-template-columns: 56px 1fr; gap: 8px; align-items: center; min-width: 0; }
   .team.right { grid-template-columns: 1fr 56px; text-align: right; }
   .logo { width: 56px; height: 56px; padding: 6px; background: rgba(255,255,255,.08); border-radius: 14px; backdrop-filter: blur(2px); }
-  .logo img { width: 100%; height: 100%; object-fit: contain; }
+  .logo img { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; }
   .name { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
   .team.right .name { align-items: flex-end; }
   .name .city   { font-weight: 700; font-size: clamp(12px, 3.6vw, 14px); letter-spacing: .02em; opacity: .92; }
@@ -35,55 +35,54 @@
   .score .num { font-size: clamp(36px, 10vw, 52px); font-weight: 800; line-height: .95; }
   .score .dash { opacity: .7; font-size: clamp(18px, 5vw, 24px); }
   .cta { display: flex; justify-content: center; }
-  .cta a { position: relative; display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 18px; border-radius: 999px; background: var(--pill); color: #fff; text-decoration: none; font-weight: 800; font-size: 16px; letter-spacing: .01em; box-shadow: 0 8px 20px rgba(10,102,255,.35), inset 0 -2px 0 rgba(255,255,255,.22); touch-action: manipulation; will-change: transform, box-shadow; transform: translateZ(0); transition: transform .12s ease, box-shadow .18s ease, background-color .12s ease; overflow: hidden; }
+  .cta a {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    min-height: 48px; padding: 0 18px; border-radius: 999px; background: var(--pill); color: #fff; text-decoration: none;
+    font-weight: 800; font-size: 16px; letter-spacing: .01em; box-shadow: 0 8px 20px rgba(10,102,255,.35), inset 0 -2px 0 rgba(255,255,255,.22);
+    touch-action: manipulation; will-change: transform, box-shadow; transform: translateZ(0);
+    transition: transform .12s ease, box-shadow .18s ease, background-color .12s ease; overflow: hidden;
+  }
   .cta a:hover { transform: translateY(-1px) scale(1.012); box-shadow: 0 12px 26px rgba(10,102,255,.38); }
   .cta a:active { transform: translateY(0) scale(.985); background: var(--pill-press); box-shadow: 0 6px 16px rgba(10,102,255,.34); }
   .cta a:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgba(10,102,255,.45), 0 8px 22px rgba(10,102,255,.36); }
   .cta a::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,.45), transparent 40%); opacity: 0; transform: scale(0); transition: opacity .2s ease, transform .2s ease; pointer-events: none; }
   .cta a:active::after { opacity: .32; transform: scale(1); transition: none; }
-  img.powered { position: absolute; left: 50%; transform: translateX(-50%); bottom: 10px; width: clamp(120px, 28vw, 180px) !important; height: auto !important; max-width: none !important; pointer-events: none; z-index: 2; }
-  @media (max-width: 420px) {
-    .matchup { grid-template-columns: 1fr; grid-template-areas: "away" "score" "home"; row-gap: 8px; }
-    .team.left  { grid-area: away; justify-self: stretch; }
-    .team.right { grid-area: home; justify-self: stretch; }
-    .score      { grid-area: score; }
-    .team { grid-template-columns: 48px 1fr; }
-    .logo { width: 48px; height: 48px; }
-    .name .mascot { font-size: clamp(16px, 6vw, 19px); }
-    .name .city   { font-size: clamp(12px, 4.4vw, 13px); }
-    .score .num { font-size: clamp(34px, 12vw, 48px); }
-  }
-  @media (min-width: 760px) {
-    .veil { padding: 24px 24px clamp(96px, 14vw, 142px); }
-    .logo { width: 68px; height: 68px; border-radius: 16px; }
-    .team { grid-template-columns: 68px 1fr; gap: 12px; }
-    .team.right { grid-template-columns: 1fr 68px; }
-    .cta a { min-height: 52px; font-size: 17px; padding: 0 20px; }
-  }
-  @media (prefers-reduced-motion: reduce) { .cta a, .cta a::after { transition: none; } }
+  img.powered { position: absolute; left: 50%; transform: translateX(-50%); bottom: 10px; width: clamp(120px, 28vw, 180px) !important; height: auto !important; pointer-events: none; z-index: 2; }
 
+  /* Swipe track */
   .page{max-width: var(--maxw); margin: 0 auto; padding: 16px}
   .track{display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:16px; -webkit-overflow-scrolling:touch; padding-bottom:6px; scrollbar-width:none}
   .track::-webkit-scrollbar{display:none}
-  .slide{scroll-snap-align:start; flex:0 0 88%; max-width:88%;}
-  .card{height:var(--card-h); display:flex; flex-direction:column; background:linear-gradient(180deg, rgba(255,255,255,.04), transparent), #0e1624; border:1px solid rgba(255,255,255,.08); border-radius:16px; overflow:hidden; box-shadow:0 10px 24px rgba(0,0,0,.35);}
+  .slide{scroll-snap-align:start; flex:0 0 88%; max-width:88%}
+  .card{height:var(--card-h); display:flex; flex-direction:column; background:linear-gradient(180deg, rgba(255,255,255,.04), transparent), #0e1624; border:1px solid rgba(255,255,255,.08); border-radius:16px; overflow:hidden; box-shadow:0 10px 24px rgba(0,0,0,.35)}
   .head{flex:0 0 var(--head-h); display:flex; justify-content:center; gap:16px; align-items:center; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08)}
-  .badge{display:flex; align-items:center; gap:8px; font-weight:800; font-size:13px; color:#fff; white-space:nowrap; min-width:0}
-  .badge img{width:18px; height:18px; object-fit:contain; border-radius:4px; background:#0a0f18; padding:2px}
+  .badge{display:flex; align-items:center; gap:8px; font-weight:800; font-size:13px; color:#fff; white-space:nowrap; min-width:0; overflow:hidden}
+  .badge img{width:18px; height:18px; max-width:18px; max-height:18px; object-fit:contain; border-radius:4px; background:#0a0f18; padding:2px}
   .sep{opacity:.5; font-size:12px}
   .content{flex:1 1 auto; min-height:var(--content-h); max-height:var(--content-h); overflow:hidden}
-  .chart{display:block; width:100%; height:100%; background:linear-gradient(180deg, #0f1a2a, #0c1626);}
+  .chart{display:block; width:100%; height:100%; background:linear-gradient(180deg, #0f1a2a, #0c1626)}
   .pad{height:100%; padding:12px; overflow:auto; display:flex; flex-direction:column; gap:12px}
+  .firstdowns{gap:32px}
   .meta{flex:0 0 var(--meta-h); display:flex; justify-content:space-between; align-items:center; padding:10px 12px; font-size:12px; color:rgba(255,255,255,.78); border-top:1px solid rgba(255,255,255,.06)}
 
-  .kpi-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-  .kpi{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px;}
+  /* KPI & Drives — single column (one per row) */
+  #kpis-1 .kpi-grid{display:grid; grid-template-columns:1fr; gap:10px}
+  .kpi{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px}
   .kpi .label{font-size:12px; color:rgba(255,255,255,.78); margin-bottom:8px; white-space:normal}
   .rowv{display:flex; justify-content:space-between; align-items:center; gap:8px}
   .v{display:flex; align-items:center; gap:8px; font-weight:800; font-size:18px; color:#fff}
-  .v img{width:16px;height:16px;object-fit:contain; border-radius:3px; background:#0a0f18; padding:1px}
+  .v img{width:16px; height:16px; object-fit:contain; border-radius:3px; background:#0a0f18; padding:1px}
 
-  .pad.firstdowns{justify-content:space-evenly; gap:0}
+  .split2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  #drives .split2{display:grid; grid-template-columns:1fr; gap:10px}
+  .tile{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px}
+  .tile h4{margin:0 0 6px; font-size:12px; color:rgba(255,255,255,.78)}
+  .rowpair{display:flex; justify-content:space-between; align-items:center; margin:6px 0}
+  .tag{display:flex; align-items:center; gap:6px; font-weight:800; font-size:13px; color:#fff}
+  .tag img{width:16px; height:16px; object-fit:contain; border-radius:3px; background:#0a0f18; padding:1px}
+  .big{font-size:20px; font-weight:800; color:#fff}
+
+  /* First downs bars */
   .metric{display:flex; flex-direction:column; gap:10px}
   .lbl{font-size:12px; color:rgba(255,255,255,.78)}
   .teamrow{display:grid; grid-template-columns: auto 1fr auto; gap:12px; align-items:center}
@@ -92,14 +91,61 @@
   .fill{position:absolute; left:0; top:0; bottom:0; background:rgba(255,255,255,.92)}
   .val{font-size:12px; font-weight:800; color:#fff; min-width:40px; text-align:right}
 
-  .split2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-  .tile{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px;}
-  .tile h4{margin:0 0 6px; font-size:12px; color:rgba(255,255,255,.78)}
-  .rowpair{display:flex; justify-content:space-between; align-items:center; margin:6px 0}
-  .tag{display:flex; align-items:center; gap:6px; font-weight:800; font-size:13px; color:#fff}
-  .tag img{width:16px;height:16px;object-fit:contain; border-radius:3px; background:#0a0f18; padding:1px}
-  .big{font-size:20px; font-weight:800; color:#fff}
+  /* More space between 3rd & 4th down blocks */
+  #third-fourth { gap: 32px }
+
+  /* Mobile polish */
+  html, body, .wrap, .page { overflow-x: hidden }
+  @media (max-width: 420px) {
+    :root { --card-h: 460px }
+    .track { padding-inline: 0 }
+    .slide { flex: 0 0 100%; max-width: 100% }
+    .head { padding: 8px 10px; gap: 12px }
+    .badge { font-size: 12px; gap: 6px }
+    .meta { font-size: 11px; padding: 8px 10px }
+  }
+
+  /* Micro layout for very small screens: stack Away / Score / Home */
+  @media (max-width: 420px) {
+    .matchup {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "away"
+        "score"
+        "home";
+      row-gap: 8px;
+    }
+    .team.left  { grid-area: away; justify-self: stretch; grid-template-columns: 48px 1fr; }
+    .team.right { grid-area: home; justify-self: stretch; grid-template-columns: 1fr 48px; }
+    .logo { width: 48px; height: 48px; }
+    .name .mascot { font-size: clamp(16px, 6vw, 19px); }
+    .name .city   { font-size: clamp(12px, 4.4vw, 13px); }
+    .score .num { font-size: clamp(34px, 12vw, 48px); }
+  }
+
 </style>
+
+<!-- Mobile-fit hotfix (proven) -->
+<style id="mobile-fit-hotfix">
+  @media (max-width: 420px) {
+    :root { --card-h: 78dvh; --head-h: 52px; --meta-h: 40px; --content-h: calc(var(--card-h) - var(--head-h) - var(--meta-h)) }
+    .track { padding-inline: 0 }
+    .slide { flex: 0 0 100%; max-width: 100% }
+    #kpis-1 .kpi-grid, #drives .split2 { grid-template-columns: 1fr }
+  }
+  svg.chart, .chart { max-width: 100%; height: 100%; display: block }
+  svg:not(.chart) { height: auto; max-width: 100% }
+  .pad { overflow: auto; padding-bottom: calc(16px + env(safe-area-inset-bottom)) }
+  img { max-width: 100%; height: auto }
+</style>
+
+<style id="firstdowns-spacing-overrides">
+  /* Extra readability for first-downs sections */
+  .firstdowns{gap:32px;}               /* space BETWEEN sections */
+  #firstdowns .metric { gap: 16px; }    /* space BETWEEN label and each bar row */
+  #firstdowns .teamrow { margin: 0; }   /* no extra margin inside rows */
+</style>
+
 </head>
 <body>
   <div class="wrap">
@@ -200,44 +246,48 @@
     </section>
   </div>
 
-<script id="game-data" type="application/json">{"away":{"name":"Indianapolis Colts","q":[6,3,7,0],"cum":[6,9,16,16],"color":"#002C5F","color2":"#a5acaf","logo":"https://a.espncdn.com/i/teamlogos/nfl/500/ind.png"},"home":{"name":"Baltimore Ravens","q":[14,7,0,3],"cum":[14,21,21,24],"color":"#241773","color2":"#9E7C0C","logo":"https://a.espncdn.com/i/teamlogos/nfl/500/bal.png"},"quarters":["1Q","2Q","3Q","4Q"],"metrics":{"Total points":{"away":"16","home":"24"},"Total offensive plays":{"away":"78","home":"60"},"Average EPA per play":{"away":"-0.164","home":"-0.149"},"Total net yards":{"away":"333","home":"213"},"Avg yards per play":{"away":"4.3","home":"3.5"},"Total first downs":{"away":"19","home":"15"},"Rushing first downs":{"away":"6","home":"10"},"Passing first downs":{"away":"13","home":"3"},"Penalty first downs":{"away":"0","home":"2"},"3rd down efficiency":{"away":"32%","home":"36%"},"4th down efficiency":{"away":"8%","home":"13%"},"Possessions":{"away":"13","home":"13"},"Avg plays per drive":{"away":"6.7","home":"5.4"},"Avg yards per drive":{"away":"23.8","home":"15.2"},"Avg points per drive":{"away":"1.1","home":"1.3"},"Red zone posessions":{"away":"3","home":"2"},"Red zone plays":{"away":"9","home":"6"},"Red zone TDs":{"away":"1","home":"1"},"Red zone FGs":{"away":"1","home":"0"},"RZ scoring efficiency":{"away":"67%","home":"50%"},"Goal-to-go possessions":{"away":"1","home":"1"},"Goal-to-go plays":{"away":"3","home":"1"},"Goal-to-go TDs":{"away":"1","home":"1"},"Goal-to-go FGs":{"away":"0","home":"0"},"GTG scoring efficiency":{"away":"100%","home":"100%"},"Total turnovers":{"away":"1","home":"2"},"INTs (thrown)":{"away":"1","home":"2"},"Dropped INTs (thrown)":{"away":"1","home":"0"},"INT return yards":{"away":"2","home":"0"},"Fumbles":{"away":"0","home":"1"},"Fumbles lost":{"away":"0","home":"0"},"Turnover on downs":{"away":"1","home":"0"},"Penalties assessed":{"away":"9","home":"7"},"Penalties assessed - yards lost":{"away":"107","home":"43"},"Penalties declined / offset":{"away":"0","home":"1"},"Total touchdowns":{"away":"1","home":"2"},"Rushing touchdowns":{"away":"1","home":"2"},"Passing touchdowns":{"away":"0","home":"0"},"Return touchdowns":{"away":"0","home":"1"},"Defensive touchdowns":{"away":"0","home":"0"},"Safeties surrendered":{"away":"0","home":"0"},"2-point conversion attempts":{"away":"0","home":"0"},"2-point conversion successes":{"away":"0","home":"0"},"Challenges by team":{"away":"0","home":"1"},"Successful Challenges":{"away":"0","home":"0"},"Trick plays":{"away":"0","home":"0"},"Red zone possessions":{"away":"3","home":"2"}}}</script>
+<script id="game-data" type="application/json">{"meta":{"week":1,"date":"September 8, 2024","season":2024,"premium_url":"https://premium.pff.com/nfl/games/2024/1"},"away":{"name":"Indianapolis Colts","city":"Indianapolis Colts","mascot":"","q":[6,3,7,0],"cum":[6,9,16,16],"color":"#002C5F","color2":"#a5acaf","logo":"https://a.espncdn.com/i/teamlogos/nfl/500/ind.png","score":16},"home":{"name":"Baltimore Ravens","city":"Baltimore Ravens","mascot":"","q":[14,7,0,3],"cum":[14,21,21,24],"color":"#241773","color2":"#9E7C0C","logo":"https://a.espncdn.com/i/teamlogos/nfl/500/bal.png","score":24},"quarters":["1Q","2Q","3Q","4Q"],"metrics":{"Total points":{"away":"16","home":"24"},"Total offensive plays":{"away":"78","home":"60"},"Average EPA per play":{"away":"-0.164","home":"-0.149"},"Total net yards":{"away":"333","home":"213"},"Avg yards per play":{"away":"4.3","home":"3.5"},"Total first downs":{"away":"19","home":"15"},"Rushing first downs":{"away":"6","home":"10"},"Passing first downs":{"away":"13","home":"3"},"Penalty first downs":{"away":"0","home":"2"},"3rd down efficiency":{"away":"32%","home":"36%"},"4th down efficiency":{"away":"8%","home":"13%"},"Possessions":{"away":"13","home":"13"},"Avg plays per drive":{"away":"6.7","home":"5.4"},"Avg yards per drive":{"away":"23.8","home":"15.2"},"Avg points per drive":{"away":"1.1","home":"1.3"},"Red zone posessions":{"away":"3","home":"2"},"Red zone plays":{"away":"9","home":"6"},"Red zone TDs":{"away":"1","home":"1"},"Red zone FGs":{"away":"1","home":"0"},"RZ scoring efficiency":{"away":"67%","home":"50%"},"Goal-to-go possessions":{"away":"1","home":"1"},"Goal-to-go plays":{"away":"3","home":"1"},"Goal-to-go TDs":{"away":"1","home":"1"},"Goal-to-go FGs":{"away":"0","home":"0"},"GTG scoring efficiency":{"away":"100%","home":"100%"},"Total turnovers":{"away":"1","home":"2"},"INTs (thrown)":{"away":"1","home":"2"},"Dropped INTs (thrown)":{"away":"1","home":"0"},"INT return yards":{"away":"2","home":"0"},"Fumbles":{"away":"0","home":"1"},"Fumbles lost":{"away":"0","home":"0"},"Turnover on downs":{"away":"1","home":"0"},"Penalties assessed":{"away":"9","home":"7"},"Penalties assessed - yards lost":{"away":"107","home":"43"},"Penalties declined / offset":{"away":"0","home":"1"},"Total touchdowns":{"away":"1","home":"2"},"Rushing touchdowns":{"away":"1","home":"2"},"Passing touchdowns":{"away":"0","home":"0"},"Return touchdowns":{"away":"0","home":"1"},"Defensive touchdowns":{"away":"0","home":"0"},"Safeties surrendered":{"away":"0","home":"0"},"2-point conversion attempts":{"away":"0","home":"0"},"2-point conversion successes":{"away":"0","home":"0"},"Challenges by team":{"away":"0","home":"1"},"Successful Challenges":{"away":"0","home":"0"},"Trick plays":{"away":"0","home":"0"},"Red zone possessions":{"away":"3","home":"2"}}}</script>
 <script>
-const btn = document.getElementById("premium-cta");
-btn.addEventListener("pointerdown", (e) => {
-  const rect = btn.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
-  btn.style.setProperty("--x", x + "%");
-  btn.style.setProperty("--y", y + "%");
-});
+// CTA ripple
+(function(){
+  var btn = document.getElementById("premium-cta");
+  if (!btn) return;
+  btn.addEventListener("pointerdown", function(e){
+    var rect = btn.getBoundingClientRect();
+    var x = ((e.clientX - rect.left) / rect.width) * 100;
+    var y = ((e.clientY - rect.top) / rect.height) * 100;
+    btn.style.setProperty("--x", x + "%");
+    btn.style.setProperty("--y", y + "%");
+  });
+})();
 
 (function(){
-  function parseDATA(){try{return JSON.parse(document.getElementById("game-data").textContent);}catch(e){return {away:{},home:{},metrics:{},quarters:[]};}}
+  function parseDATA(){try{return JSON.parse(document.getElementById("game-data").textContent)}catch(e){return {away:{},home:{},metrics:{},quarters:[]}}}
   var DATA = parseDATA(), AWAY = DATA.away||{}, HOME = DATA.home||{};
 
   function setHeads(){
     var heads = document.querySelectorAll("[data-head]");
     for(var i=0;i<heads.length;i++){
-      heads[i].innerHTML = `
-        <div class="badge"><img src="${AWAY.logo||""}" alt=""><span>${AWAY.name||"Away"}</span></div>
-        <span class="sep">•</span>
-        <div class="badge"><img src="${HOME.logo||""}" alt=""><span>${HOME.name||"Home"}</span></div>
-      `;
+      heads[i].innerHTML = "<div class=\"badge\"><img src=\"" + (AWAY.logo||"") + "\" alt=\"\"><span>" + (AWAY.name||"Away") + "</span></div>"
+                          + "<span class=\"sep\">•</span>"
+                          + "<div class=\"badge\"><img src=\"" + (HOME.logo||"") + "\" alt=\"\"><span>" + (HOME.name||"Home") + "</span></div>";
     }
   }
   setHeads();
 
+  // Score timeline
   (function(){
     var svg = document.getElementById("score-timeline");
+    if (!svg) return;
     function draw(){
       while(svg.firstChild) svg.removeChild(svg.firstChild);
       var rect = svg.getBoundingClientRect();
       var W=rect.width||320, H=rect.height||360, P=28, PR=48;
       svg.setAttribute("viewBox","0 0 "+W+" "+H);
-      var x = function(t){ return P + t*((W-P-PR)/3); };
+      var x = function(t){ return P + t*((W-P-PR)/3) };
       var maxScore = Math.max((AWAY.cum||[0,0,0,0])[3]||0, (HOME.cum||[0,0,0,0])[3]||0) || 1;
-      var y = function(s){ return H - P - (s/maxScore)*(H-2*P); };
-      function mk(tag){ return document.createElementNS("http://www.w3.org/2000/svg", tag); }
+      var y = function(s){ return H - P - (s/maxScore)*(H-2*P) };
+      function mk(tag){ return document.createElementNS("http://www.w3.org/2000/svg", tag) }
       var ticks = [0, Math.round(maxScore/2), maxScore];
       for(var i=0;i<ticks.length;i++){
         var yy = y(ticks[i]);
@@ -263,7 +313,7 @@ btn.addEventListener("pointerdown", (e) => {
       }
       function stepPath(values){
         var d = "M " + x(0) + " " + y(values[0]);
-        for(var i=1;i<values.length;i++){ d += " H " + x(i) + " V " + y(values[i]); }
+        for(var i=1;i<values.length;i++){ d += " H " + x(i) + " V " + y(values[i]) }
         return d;
       }
       var pathA = mk("path"); pathA.setAttribute("d", stepPath(AWAY.cum||[0,0,0,0])); pathA.setAttribute("fill","none"); pathA.setAttribute("stroke", AWAY.color||"#aaa"); pathA.setAttribute("stroke-width","3"); svg.appendChild(pathA);
@@ -276,14 +326,14 @@ btn.addEventListener("pointerdown", (e) => {
         bg.setAttribute("width", tw); bg.setAttribute("height","20");
         bg.setAttribute("fill","rgba(0,0,0,.45)"); g.appendChild(bg);
         var t = mk("text"); t.setAttribute("x", xp+(logoUrl?26:8)); t.setAttribute("y", Math.max(P, yp-13)+16); t.setAttribute("fill","#fff"); t.setAttribute("font-size","12"); t.textContent = txt; g.appendChild(t);
-        if(logoUrl){ var ico = mk("image"); ico.setAttributeNS("http://www.w3.org/1999/xlink","href", logoUrl); ico.setAttribute("x", xp+6); ico.setAttribute("y", Math.max(P, yp-11)); ico.setAttribute("width","14"); ico.setAttribute("height","14"); g.appendChild(ico); }
+        if(logoUrl){ var ico = mk("image"); ico.setAttributeNS("http://www.w3.org/1999/xlink","href", logoUrl); ico.setAttribute("x", xp+6); ico.setAttribute("y", Math.max(P, yp-11)); ico.setAttribute("width","14"); ico.setAttribute("height","14"); g.appendChild(ico) }
         return g;
       }
       svg.appendChild(cap(x(3)+6, y((AWAY.cum||[0,0,0,0])[3]||0), (AWAY.name||"Away") + " " + ((AWAY.cum||[0,0,0,0])[3]||0), AWAY.logo));
       svg.appendChild(cap(x(3)+6, y((HOME.cum||[0,0,0,0])[3]||0)+16, (HOME.name||"Home") + " " + ((HOME.cum||[0,0,0,0])[3]||0), HOME.logo));
     }
     draw();
-    window.addEventListener("resize", function(){ clearTimeout(svg._rt); svg._rt=setTimeout(draw,150); });
+    window.addEventListener("resize", function(){ clearTimeout(svg._rt); svg._rt=setTimeout(draw,150) });
   })();
 
   function metric(lbl, side){
@@ -295,31 +345,23 @@ btn.addEventListener("pointerdown", (e) => {
     return (v===null || v===undefined || v==="") ? "—" : v;
   }
   function metricAny(lbls, side){
-    for(var i=0;i<lbls.length;i++){
-      var v = metric(lbls[i], side);
-      if(v !== "—") return v;
-    }
+    for(var i=0;i<lbls.length;i++){ var v = metric(lbls[i], side); if(v !== "—") return v }
     return "—";
   }
 
   (function(){
     var el = document.getElementById("kpis-1");
+    if (!el) return;
     function card(lbl){
       var a = metric(lbl,"away"), h = metric(lbl,"home");
-      return `
-        <div class="kpi">
-          <div class="label">${lbl}</div>
-          <div class="rowv">
-            <div class="v"><img src="${AWAY.logo||""}" alt=""><span class="n">${a}</span></div>
-            <div class="v"><img src="${HOME.logo||""}" alt=""><span class="n">${h}</span></div>
-          </div>
-        </div>`;
+      return "        <div class=\"kpi\">          <div class=\"label\">" + lbl + "</div>          <div class=\"rowv\">            <div class=\"v\"><img src=\"" + (AWAY.logo||"") + "\" alt=\"\"><span class=\"n\">" + a + "</span></div>            <div class=\"v\"><img src=\"" + (HOME.logo||"") + "\" alt=\"\"><span class=\"n\">" + h + "</span></div>          </div>        </div>";
     }
-    el.innerHTML = `<div class="kpi-grid">${["Total offensive plays","Total net yards","Avg yards per play","Average EPA per play"].map(card).join("")}</div>`;
+    el.innerHTML = "<div class=\"kpi-grid\">" + ["Total offensive plays","Total net yards","Avg yards per play","Average EPA per play"].map(card).join("") + "</div>";
   })();
 
   (function(){
     var el = document.getElementById("firstdowns");
+    if (!el) return;
     function sums(){
       var a = parseFloat(metric("Rushing first downs","away"))||0,
           b = parseFloat(metric("Passing first downs","away"))||0,
@@ -327,87 +369,76 @@ btn.addEventListener("pointerdown", (e) => {
       var d = parseFloat(metric("Rushing first downs","home"))||0,
           e = parseFloat(metric("Passing first downs","home"))||0,
           f = parseFloat(metric("Penalty first downs","home"))||0;
-      return {sa:a+b+c, sh:d+e+f};
+      return {sa:a+b+c, sh:d+e+f, a:{rush:a,pass:b,pen:c}, h:{rush:d,pass:e,pen:f}};
     }
     var S = sums();
-    function block(label){
-      var a = parseFloat(metric(label,"away"))||0;
-      var h = parseFloat(metric(label,"home"))||0;
-      var wa = S.sa>0? (a/S.sa*100) : 0;
-      var wh = S.sh>0? (h/S.sh*100) : 0;
-      return `
-        <div class="metric">
-          <div class="lbl">${label} (share of team 1st downs)</div>
-          <div class="teamrow"><div class="teamname">${AWAY.name||"Away"}</div><div class="bar"><span class="fill" style="width:${wa}%"></span></div><div class="val">${a}</div></div>
-          <div class="teamrow"><div class="teamname">${HOME.name||"Home"}</div><div class="bar"><span class="fill" style="width:${wh}%"></span></div><div class="val">${h}</div></div>
-        </div>`;
+    function block(label, a, h, sa, sh){
+      var wa = sa>0? (a/sa*100) : 0;
+      var wh = sh>0? (h/sh*100) : 0;
+      return "        <div class=\"metric\">          <div class=\"lbl\">" + label + " (share of team 1st downs)</div>          <div class=\"teamrow\"><div class=\"teamname\">" + (AWAY.name||"Away") + "</div><div class=\"bar\"><span class=\"fill\" style=\"width:" + wa + "%\"></span></div><div class=\"val\">" + a + "</div></div>          <div class=\"teamrow\"><div class=\"teamname\">" + (HOME.name||"Home") + "</div><div class=\"bar\"><span class=\"fill\" style=\"width:" + wh + "%\"></span></div><div class=\"val\">" + h + "</div></div>        </div>";
     }
-    el.innerHTML = ["Rushing first downs","Passing first downs","Penalty first downs"].map(block).join("");
+    el.innerHTML = block("Rushing first downs", S.a.rush, S.h.rush, S.sa, S.sh)
+                 + block("Passing first downs", S.a.pass, S.h.pass, S.sa, S.sh)
+                 + block("Penalty first downs", S.a.pen, S.h.pen, S.sa, S.sh);
   })();
 
   (function(){
     var el = document.getElementById("third-fourth");
+    if (!el) return;
     function row(lbl){
       var a = String(metric(lbl,"away")), h = String(metric(lbl,"home"));
-      var ap = (function(){ var n=parseFloat((a||"").replace("%","")); return isNaN(n)?0:n; })();
-      var hp = (function(){ var n=parseFloat((h||"").replace("%","")); return isNaN(n)?0:n; })();
-      return `
-        <div class="metric">
-          <div class="lbl">${lbl.replace(" efficiency","")}</div>
-          <div class="teamrow"><div class="teamname">${AWAY.name||"Away"}</div><div class="bar"><span class="fill" style="width:${ap}%"></span></div><div class="val">${a}</div></div>
-          <div class="teamrow"><div class="teamname">${HOME.name||"Home"}</div><div class="bar"><span class="fill" style="width:${hp}%"></span></div><div class="val">${h}</div></div>
-        </div>`;
+      var ap = (function(){ var n=parseFloat((a||"").replace("%","")); return isNaN(n)?0:n })();
+      var hp = (function(){ var n=parseFloat((h||"").replace("%","")); return isNaN(n)?0:n })();
+      return "        <div class=\"metric\">          <div class=\"lbl\">" + lbl.replace(" efficiency","") + "</div>          <div class=\"teamrow\"><div class=\"teamname\">" + (AWAY.name||"Away") + "</div><div class=\"bar\"><span class=\"fill\" style=\"width:" + ap + "%\"></span></div><div class=\"val\">" + a + "</div></div>          <div class=\"teamrow\"><div class=\"teamname\">" + (HOME.name||"Home") + "</div><div class=\"bar\"><span class=\"fill\" style=\"width:" + hp + "%\"></span></div><div class=\"val\">" + h + "</div></div>        </div>";
     }
-    el.innerHTML = ["3rd down efficiency","4th down efficiency"].map(row).join("");
+    el.innerHTML = row("3rd down efficiency") + row("4th down efficiency");
   })();
 
   (function(){
     var el = document.getElementById("drives");
+    if (!el) return;
     var fields = ["Possessions","Avg plays per drive","Avg yards per drive","Avg points per drive"];
-    el.innerHTML = `<div class="split2">${
-      fields.map(function(lbl){
-        return `
-          <div class="tile"><h4>${lbl}</h4>
-            <div class="rowpair"><span class="tag"><img src="${AWAY.logo||""}" alt="">${AWAY.name||"Away"}</span><span class="big">${metric(lbl,"away")}</span></div>
-            <div class="rowpair"><span class="tag"><img src="${HOME.logo||""}" alt="">${HOME.name||"Home"}</span><span class="big">${metric(lbl,"home")}</span></div>
-          </div>`;
-      }).join("")
-    }</div>`;
+    el.innerHTML = "<div class=\"split2\">" + fields.map(function(lbl){
+      return "        <div class=\"tile\"><h4>" + lbl + "</h4>          <div class=\"rowpair\"><span class=\"tag\"><img src=\"" + (AWAY.logo||"") + "\" alt=\"\">" + (AWAY.name||"Away") + "</span><span class=\"big\">" + metric(lbl,"away") + "</span></div>          <div class=\"rowpair\"><span class=\"tag\"><img src=\"" + (HOME.logo||"") + "\" alt=\"\">" + (HOME.name||"Home") + "</span><span class=\"big\">" + metric(lbl,"home") + "</span></div>        </div>";
+    }).join("") + "</div>";
   })();
 
   (function(){
     var el = document.getElementById("redzone");
+    if (!el) return;
     var groups = [
       {label:"Red zone possessions", keys:["Red zone possessions","Red zone posessions"]},
       {label:"Red zone plays", keys:["Red zone plays"]},
       {label:"Red zone TDs", keys:["Red zone TDs"]},
       {label:"Red zone FGs", keys:["Red zone FGs"]},
-      {label:"RZ scoring efficiency", keys:["RZ scoring efficiency"]},
+      {label:"RZ scoring efficiency", keys:["RZ scoring efficiency"]}
     ];
-    el.innerHTML = `<div class="split2">${
-      groups.map(function(g){
-        return `
-          <div class="tile"><h4>${g.label}</h4>
-            <div class="rowpair"><span class="tag"><img src="${AWAY.logo||""}" alt="">${AWAY.name||"Away"}</span><span class="big">${metricAny(g.keys,"away")}</span></div>
-            <div class="rowpair"><span class="tag"><img src="${HOME.logo||""}" alt="">${HOME.name||"Home"}</span><span class="big">${metricAny(g.keys,"home")}</span></div>
-          </div>`;
-      }).join("")
-    }</div>`;
+    el.innerHTML = "<div class=\"split2\">" + groups.map(function(g){
+      return "        <div class=\"tile\"><h4>" + g.label + "</h4>          <div class=\"rowpair\"><span class=\"tag\"><img src=\"" + (AWAY.logo||"") + "\" alt=\"\">" + (AWAY.name||"Away") + "</span><span class=\"big\">" + (DATA.metrics[g.keys[0]]? (DATA.metrics[g.keys[0]].away||"—") : (DATA.metrics[g.keys[1]]? (DATA.metrics[g.keys[1]].away||"—") : "—")) + "</span></div>          <div class=\"rowpair\"><span class=\"tag\"><img src=\"" + (HOME.logo||"") + "\" alt=\"\">" + (HOME.name||"Home") + "</span><span class=\"big\">" + (DATA.metrics[g.keys[0]]? (DATA.metrics[g.keys[0]].home||"—") : (DATA.metrics[g.keys[1]]? (DATA.metrics[g.keys[1]].home||"—") : "—")) + "</span></div>        </div>";
+    }).join("") + "</div>";
   })();
 
   (function(){
     var el = document.getElementById("scoring");
+    if (!el) return;
     var fields = ["Total touchdowns","Rushing touchdowns","Passing touchdowns","Return touchdowns","Defensive touchdowns"];
-    el.innerHTML = `<div class="split2">${
-      fields.map(function(lbl){
-        return `
-          <div class="tile"><h4>${lbl}</h4>
-            <div class="rowpair"><span class="tag"><img src="${AWAY.logo||""}" alt="">${AWAY.name||"Away"}</span><span class="big">${metric(lbl,"away")}</span></div>
-            <div class="rowpair"><span class="tag"><img src="${HOME.logo||""}" alt="">${HOME.name||"Home"}</span><span class="big">${metric(lbl,"home")}</span></div>
-          </div>`;
-      }).join("")
-    }</div>`;
+    el.innerHTML = "<div class=\"split2\">" + fields.map(function(lbl){
+      return "        <div class=\"tile\"><h4>" + lbl + "</h4>          <div class=\"rowpair\"><span class=\"tag\"><img src=\"" + (AWAY.logo||"") + "\" alt=\"\">" + (AWAY.name||"Away") + "</span><span class=\"big\">" + metric(lbl,"away") + "</span></div>          <div class=\"rowpair\"><span class=\"tag\"><img src=\"" + (HOME.logo||"") + "\" alt=\"\">" + (HOME.name||"Home") + "</span><span class=\"big\">" + metric(lbl,"home") + "</span></div>        </div>";
+    }).join("") + "</div>";
   })();
-})();</script>
+})();
+</script>
+
+<!-- Dynamic card height tied to innerHeight (quote-safe) -->
+<script>
+  (function () {
+    function setCardH() {
+      var h = Math.max(420, Math.min(560, Math.floor(window.innerHeight * 0.78)));
+      document.documentElement.style.setProperty("--card-h", h + "px");
+    }
+    setCardH();
+    window.addEventListener("resize", setCardH, { passive: true });
+  })();
+</script>
 </body>
 </html>
