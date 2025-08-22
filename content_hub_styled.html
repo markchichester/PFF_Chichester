@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PFF College Football — Content Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand:#FB6616; --brand-600:#E25812;
+    --bg:#F7F8FA; --ink:#0F172A; --muted:#334155; --hair:#E2E8F0;
+    --maxw:650px; --r-xl:20px; --r-lg:14px; --r-md:12px; --r-full:999px;
+    --shadow: 0 10px 30px rgba(2,8,23,.08), 0 1px 2px rgba(2,8,23,.05);
+  }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    margin:0;
+    font-family:'Archivo', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:12px 12px calc(92px + env(safe-area-inset-bottom)); }
+
+  /* Toolbar (matches team widget) */
+  .toolbar { position:sticky; top:0; z-index:30; background:var(--bg); padding:10px 0 12px; border-bottom:1px solid var(--hair); }
+  .controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .search { position:relative; }
+  .search input {
+    width:100%; padding:12px 14px 12px 40px; border:1px solid var(--hair);
+    border-radius:var(--r-full); background:#fff; font:inherit;
+  }
+  .search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:.65; }
+  select {
+    width:100%; appearance:none; padding:12px 14px; border:1px solid var(--hair);
+    border-radius:var(--r-full); background:#fff; font:inherit;
+  }
+  .status { margin-top:8px; font-size:12px; color:var(--muted); }
+
+  /* Card grid */
+  .grid { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
+  @media (min-width:560px) { .grid { grid-template-columns:1fr 1fr; } }
+
+  /* Article card */
+  .card {
+    background:#fff; border:1px solid var(--hair); border-radius:var(--r-lg);
+    box-shadow:0 2px 8px rgba(2,8,23,.06); padding:14px; position:relative; overflow:hidden;
+    transition: transform .08s ease, box-shadow .2s ease;
+  }
+  .card:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(2,8,23,0.10); }
+  .card a { color:inherit; text-decoration:none; display:block; }
+  .headline { font-weight:700; line-height:1.2; margin:0 0 8px; letter-spacing:-0.01em; }
+  .meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
+  .pill {
+    display:inline-flex; align-items:center; gap:6px; border-radius:var(--r-full);
+    padding:6px 10px; font-weight:700; font-size:12px; background:#FFF5EF; color:#7a2e0e;
+  }
+
+  /* Load more */
+  .load-more { margin: 16px 0; }
+  .load-btn {
+    display:block; width:100%; text-align:center; padding:12px 14px; border-radius:var(--r-full);
+    background:var(--brand); color:#fff; font-weight:700; text-decoration:none; border:none; font-size:15px;
+  }
+  .load-btn:hover { background:var(--brand-600); }
+
+  /* Sticky subscribe (glassy, matching team widget) */
+  .sticky-sub {
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: max(10px, env(safe-area-inset-bottom)); width: min(var(--maxw), calc(100% - 16px));
+    z-index: 60; pointer-events: none;
+  }
+  .sticky-inner {
+    pointer-events: auto; backdrop-filter: blur(10px);
+    background: color-mix(in lab, #ffffff 85%, transparent);
+    border:1px solid var(--hair); border-radius: var(--r-full);
+    box-shadow: var(--shadow); padding: 8px; position: relative;
+    display:flex; align-items:center; gap:8px;
+  }
+  .sticky-inner a {
+    margin-left:auto; display:inline-block; text-align:center; padding:10px 16px;
+    border-radius: var(--r-full); background: var(--brand); color:#fff; font-weight:700; text-decoration:none;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar" role="region" aria-label="Search and filters">
+      <div class="controls">
+        <div class="search">
+          <input id="searchInput" placeholder="Search articles…" aria-label="Search articles" />
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 20l-3-3" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <select id="categorySelect" aria-label="Filter by category">
+          <option value="">All categories</option>
+        </select>
+      </div>
+      <div class="status" id="status">Loading…</div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div class="load-more"><button id="loadBtn" class="load-btn">Load more</button></div>
+  </div>
+
+  <!-- Sticky subscribe -->
+  <div class="sticky-sub">
+    <div class="sticky-inner">
+      <a href="https://subscribe.pff.com/?utm_source=editorial&utm_campaign=collegegamerecaps&utm_medium=article" target="_blank" rel="noopener">Subscribe to PFF+</a>
+    </div>
+  </div>
+
+<script>
+  const DATA = [{"Headline": "2025 PFF Preseason All-ACC Team: Cade Klubnik, Peter Woods and more", "Category": "Preseason All-Conference Team", "URL": "https://pff.com/news/college-football-2025-pff-preseason-all-acc-team"}, {"Headline": "College Football: PFF's preseason top 25", "Category": "Preseason Top 25", "URL": "https://pff.com/news/college-football-pff-preseason-top-25-2025"}, {"Headline": "10 true freshmen to know in college football entering the 2025 season", "Category": "Incoming freshmen", "URL": "https://pff.com/news/college-football-10-true-freshmen-to-know-in-college-football-entering-the-2025-season"}, {"Headline": "2025 PFF Preseason All-Big 12 Team: Sam Leavitt, Spencer Fano and more", "Category": "Preseason All-Conference Team", "URL": "https://pff.com/news/college-football-2025-pff-preseason-all-big-12-team"}, {"Headline": "2025 PFF Preseason All-Big Ten Team: Jeremiah Smith, Caleb Downs and more", "Category": "Preseason All-Conference Team", "URL": "https://pff.com/news/college-football-2025-pff-preseason-all-big-ten-team-jeremiah-smith-caleb-downs-and-more"}, {"Headline": "College Football 2025: The most valuable returning players, according to PFF WAA", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-2025-the-most-valuable-returning-players-according-to-pff-waa"}, {"Headline": "College Football: Best offensive, defensive player in every conference", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-best-offensive-defensive-player-every-conference-2025"}, {"Headline": "Top 10 defenses ahead of the 2025 college football season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-top-10-defenses-2025"}, {"Headline": "Top 10 offenses ahead of the 2025 college football season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-top-10-offenses-2025"}, {"Headline": "Top-10 college football head coaches", "Category": "Top Head Coaches", "URL": "https://pff.com/news/college-football-top-10-college-football-head-coaches"}, {"Headline": "College Football Power Rankings: Ohio State starts the preseason at No. 1, Oregon comes in at No. 2", "Category": "Power Rankings", "URL": "https://pff.com/news/college-football-power-rankings-2025"}, {"Headline": "PFF College 50: The 50 best players in college football ahead of the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-pff50-ranking-50-best-players-2025"}, {"Headline": "College football programs under the most pressure in 2025", "Category": "Analysis", "URL": "https://pff.com/news/college-football-programs-under-pressure-2025"}, {"Headline": "Clustering the Power Four: An analytical look at college football’s 2025 starting quarterbacks", "Category": "Analysis", "URL": "https://pff.com/news/college-football-clustering-the-power-four-an-analytical-look-at-college-footballs-2025-starting-quarterbacks"}, {"Headline": "Why the 2027 NFL Draft already has scouts drooling", "Category": "Analysis", "URL": "https://pff.com/news/draft-why-the-2027-nfl-draft-already-has-scouts-drooling"}, {"Headline": "Revisiting College Football's Transfer Portal: 10 impact players to know", "Category": "Transfer Portal", "URL": "https://pff.com/news/college-football-revisiting-college-footballs-transfer-portal-10-impact-players-to-know"}, {"Headline": "College Football: The top-10 secondaries entering the 2025 season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-the-top-10-secondaries-entering-the-2025-season"}, {"Headline": "College Football: Top 10 linebacker units entering the 2025 season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-the-top-10-linebacker-units-entering-the-2025-season"}, {"Headline": "College Football: Top 10 defensive lines entering the 2025 season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-top-10-defensive-lines-entering-the-2025-season"}, {"Headline": "College Football: Top 10 offensive lines entering the 2025 season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-the-top-10-offensive-lines-entering-the-2025-season"}, {"Headline": "College Football: Top 10 receiving corps entering the 2025 season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-top-10-receiving-corps-entering-2025-season"}, {"Headline": "With more experience, Arch Manning is set to develop into a star", "Category": "Analysis", "URL": "https://pff.com/news/college-arch-manning-experience-texas-star-2026-nfl-draft"}, {"Headline": "College Football: Top 10 running back units entering the 2025 season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-top-10-running-back-units-entering-the-2025-season"}, {"Headline": "College Football: 5 Heisman Trophy candidates to know entering the 2025 season", "Category": "Analysis", "URL": "https://pff.com/news/college-football-5-heisman-trophy-candidates-to-know-entering-the-2025-season"}, {"Headline": "College Football: Top 10 quarterback rooms entering the 2025 season", "Category": "Top Units ", "URL": "https://pff.com/news/college-football-the-top-10-quarterback-rooms-entering-the-2025-season"}, {"Headline": "10 defensive linemen to know for the 2026 NFL Draft", "Category": "2026 NFL Draft", "URL": "https://pff.com/news/draft-defensive-linemen-to-know-2026-nfl-draft"}, {"Headline": "10 offensive linemen to know for the 2026 NFL Draft", "Category": "2026 NFL Draft", "URL": "https://pff.com/news/draft-offensive-linemen-to-know-2026-nfl-draft"}, {"Headline": "10 tight ends to know for the 2026 NFL Draft", "Category": "2026 NFL Draft", "URL": "https://pff.com/news/draft-tight-ends-to-know-2026-nfl-draft"}, {"Headline": "10 wide receivers to know for the 2026 NFL Draft", "Category": "2026 NFL Draft", "URL": "https://pff.com/news/draft-wide-receivers-to-know-2026-nfl-draft"}, {"Headline": "10 running backs to know for the 2026 NFL Draft", "Category": "2026 NFL Draft", "URL": "https://pff.com/news/draft-running-backs-to-know-2026-nfl-draft"}, {"Headline": "10 quarterbacks to know for the 2026 NFL Draft", "Category": "2026 NFL Draft", "URL": "https://pff.com/news/draft-10-quarterbacks-to-know-2026-nfl-draft"}, {"Headline": "PFF’s Preseason 2025 All-American Team: Cade Klubnik, Jeremiah Smith and more ", "Category": "Preseason All-America Team", "URL": "https://pff.com/news/college-football-pff-preseason-2025-all-american-team-cade-klubnik-jeremiah-smith-and-more"}, {"Headline": "College Football: The top 10 returning safeties for the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-safeties-2025-season"}, {"Headline": "College Football: Top 10 returning cornerbacks for the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-cornerbacks-for-the-2025-season"}, {"Headline": "College Football: Top 10 returning linebackers entering the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-linebackers-2025"}, {"Headline": "College Football: Top 10 returning edge defenders for the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-edge-defenders-for-the-2025-season"}, {"Headline": "College Football: Top 10 returning interior defensive linemen entering the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-interior-defensive-linemen-entering-the-2025-season"}, {"Headline": "Why every 2024 College Football Playoff team can make it back next season", "Category": "Analysis", "URL": "https://pff.com/news/college-football-why-every-2024-college-football-playoff-team-can-make-it-back-next-season"}, {"Headline": "College Football: Top 10 returning interior offensive linemen entering the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-interior-offensive-linemen-2025"}, {"Headline": "College Football: Top 10 returning offensive tackles for the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-offensive-tackles-2025"}, {"Headline": "College Football: Top 10 returning tight ends entering the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-tight-ends-2025"}, {"Headline": "College Football: Top 10 returning wide receivers entering the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-wide-receivers-2025"}, {"Headline": "College Football: Top 10 returning quarterbacks entering the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-quarterbacks-2025"}, {"Headline": "College Football: Top 10 returning running backs entering the 2025 season", "Category": "Top Returning Players", "URL": "https://pff.com/news/college-football-top-10-returning-running-backs-2025"}];
+  const PAGE_SIZE = 12;
+  let filtered = [];
+  let page = 1;
+
+  const grid = document.getElementById('grid');
+  const status = document.getElementById('status');
+  const searchInput = document.getElementById('searchInput');
+  const categorySelect = document.getElementById('categorySelect');
+  const loadBtn = document.getElementById('loadBtn');
+
+  // Build category filter options
+  const cats = Array.from(new Set(DATA.map(r => (r.Category||'').trim()).filter(Boolean))).sort();
+  cats.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; categorySelect.appendChild(o); });
+
+  function applyFilters() {
+    const q = (searchInput.value||'').toLowerCase();
+    const cat = categorySelect.value;
+    filtered = DATA.filter(r => {
+      const okCat = !cat || (r.Category||'') === cat;
+      const okText = (r.Headline||'').toLowerCase().includes(q);
+      return okCat && okText;
+    });
+    page = 1;
+    render();
+  }
+
+  function card(article) {
+    const wrap = document.createElement('article');
+    wrap.className = 'card';
+    const url = article.URL || '#';
+    const cat = (article.Category || '').trim();
+    const pill = cat ? `<span class="pill">${cat}</span>` : '';
+    wrap.innerHTML = `<a href="${url}" target="_blank" rel="noopener">
+        <h3 class="headline">${article.Headline || 'Untitled'}</h3>
+        <div class="meta">${pill}</div>
+      </a>`;
+    return wrap;
+  }
+
+  function render() {
+    grid.innerHTML = '';
+    const slice = filtered.slice(0, page * PAGE_SIZE);
+    slice.forEach(a => grid.appendChild(card(a)));
+    status.textContent = `${slice.length} of ${filtered.length} articles`;
+    loadBtn.style.display = slice.length < filtered.length ? '' : 'none';
+  }
+
+  // Events
+  searchInput.addEventListener('input', applyFilters);
+  categorySelect.addEventListener('change', applyFilters);
+  loadBtn.addEventListener('click', () => { page++; render(); });
+
+  // Init
+  filtered = DATA.slice();
+  render();
+</script>
+</body>
+</html>
