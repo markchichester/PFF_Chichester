@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PFF College Football Guide – Subscribe</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* Brand + neutrals */
+      --brand-500: #FB6616;   /* base */
+      --brand-600: #E25812;   /* hover */
+      --brand-050: #FFF3EB;   /* soft wash */
+      --text-900: #0F172A;    /* slate-900 */
+      --text-700: #334155;    /* slate-700 */
+      --text-500: #64748B;    /* slate-500 */
+      --surface: #FFFFFF;
+      --surface-2: #F8FAFC;
+      --ring: rgba(251,102,22,0.4);
+      --shadow: 0 8px 30px rgba(2, 8, 23, 0.08), 0 2px 8px rgba(2,8,23,0.06);
+      --radius-xl: 20px;
+      --radius-lg: 14px;
+      --radius-full: 999px;
+      --maxw: 650px;
+      /* Spacing scale */
+      --sp-1: 6px;  --sp-2: 10px; --sp-3: 14px; --sp-4: 18px; --sp-5: 24px; --sp-6: 28px;
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: 'Archivo', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text-900);
+      background: var(--surface);
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    }
+    .wrap{ max-width: var(--maxw); margin: 0 auto; padding: var(--sp-5) var(--sp-4) calc(var(--sp-6) + 4px); }
+    .banner{
+      position: relative;
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .banner::before{
+      content: ""; position: absolute; inset: -40% -10% auto -10%; height: 70%;
+      background: radial-gradient(120% 80% at 50% 0%, var(--brand-050) 0%, rgba(251,102,22,0.07) 40%, transparent 70%);
+      pointer-events: none;
+    }
+    .content{ padding: var(--sp-5); }
+
+    /* Logo */
+    .logo{ display: flex; justify-content: center; margin: var(--sp-2) 0 var(--sp-4); }
+    .logo img{ width: auto; max-width: 220px; height: auto; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.06)); }
+
+    h1{ margin: 0 0 var(--sp-2); font-size: clamp(22px, 5.5vw, 30px); line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+    .lede{ margin: 0 0 var(--sp-4); font-size: clamp(16px, 4.2vw, 18px); line-height: 1.55; color: var(--text-700); }
+
+    .section-title{ margin: var(--sp-5) 0 var(--sp-3); font-size: clamp(14px, 3.5vw, 16px); font-weight: 700; color: var(--text-900); }
+
+    /* Reactive feature list */
+    .features{ display: grid; gap: var(--sp-2); }
+    .feature{ border: 1px solid #EEF2F6; border-radius: var(--radius-lg); background: #fff; box-shadow: 0 1px 0 rgba(2,8,23,0.02); overflow: hidden; }
+    .feature-head{ width: 100%; display: grid; grid-template-columns: 28px 1fr 20px; align-items: center; gap: var(--sp-2);
+      padding: 12px 14px; background: transparent; border: none; text-align: left; cursor: pointer; font: inherit; color: inherit; }
+    .feature-head:focus-visible{ outline: 3px solid var(--ring); border-radius: 10px; }
+    .feature-icon svg{ width: 20px; height: 20px; opacity: 0.9; }
+    .feature-title{ font-weight: 600; font-size: 15px; }
+    .feature-chev{ justify-self: end; transition: transform .2s ease; opacity: .8; }
+    .feature-body{ padding: 0 14px 12px 42px; color: var(--text-700); font-size: 14px; line-height: 1.55; }
+
+    /* Collapsible behavior */
+    .feature-body[hidden]{ display: block; max-height: 0; padding-bottom: 0; overflow: hidden; }
+    .feature.open .feature-chev{ transform: rotate(180deg); }
+    .feature.open .feature-body{ max-height: 400px; transition: max-height .25s ease; }
+
+    @media (prefers-reduced-motion: reduce){
+      .feature-chev{ transition: none; }
+      .feature.open .feature-body{ transition: none; }
+    }
+
+    /* CTA */
+    .cta{ margin-top: var(--sp-5); }
+    .btn{
+      appearance: none; border: none; width: 100%;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 18px; border-radius: var(--radius-full);
+      background: var(--brand-500); color: #fff; font-weight: 700; font-size: 16px;
+      text-decoration: none; box-shadow: 0 6px 18px rgba(251,102,22,0.25);
+      transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .btn:hover{ background: var(--brand-600); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(251,102,22,0.28); }
+    .btn:active{ transform: translateY(0); box-shadow: 0 3px 12px rgba(251,102,22,0.20); }
+    .btn:focus-visible{ outline: 4px solid var(--ring); outline-offset: 2px; }
+
+    /* Signature byline */
+    .byline{ margin-top: var(--sp-4); color: var(--text-700); font-size: 14px; }
+    .signature{ display: inline-block; font-family: 'Caveat', cursive; font-size: 28px; color: var(--text-900); transform: rotate(-1.5deg); position: relative; }
+    .signature::after{ content: ""; position: absolute; left: 2px; right: -6px; bottom: 2px; height: 2px; background: linear-gradient(90deg, transparent 0%, var(--brand-500) 30%, var(--brand-600) 70%, transparent 100%); opacity: .85; }
+    .role{ color: var(--text-500); }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark){
+      :root{ --surface: #0B0F17; --surface-2: #0E1420; --text-900:#F8FAFC; --text-700:#CBD5E1; --text-500:#94A3B8; --ring: rgba(251,102,22,0.55); }
+      .banner{ border-color: #162033; }
+      .feature{ background:#0E1420; border-color:#1C2942; }
+    }
+
+    /* Desktop tweaks within 650px iframe */
+    @media (min-width: 680px){
+      .content{ padding: var(--sp-6); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="banner" aria-labelledby="cfb-subscribe-title">
+      <div class="content">
+        <!-- Logo -->
+        <div class="logo">
+          <img src="https://media.pff.com/2025/08/College-logo-2-2.jpg" alt="PFF College Football Guide Logo" loading="lazy">
+        </div>
+
+        <h1 id="cfb-subscribe-title">Welcome to the 2025 edition of PFF’s College Football Guide!</h1>
+        <p class="lede">Inside, you’ll find in-depth previews of all 68 Power Four teams, rankings of the top 10 players at every position, unit-by-unit breakdowns of the top 10 teams, and much more. This guide is your ultimate resource for navigating what promises to be a wild and unpredictable 2025 season.</p>
+
+        <h2 class="section-title">What’s new this year</h2>
+        <div class="features" role="list">
+          <!-- Feature 1 -->
+          <div class="feature" data-feature>
+            <button class="feature-head" aria-expanded="false">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M8 11l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="feature-title">Team Preview Hub</span>
+              <span class="feature-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="feature-body" hidden>
+              <p>A centralized landing page featuring every major team in an easy-to-navigate grid or list format, allowing you to instantly jump to any team's detailed preview.</p>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature" data-feature>
+            <button class="feature-head" aria-expanded="false">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M8 11l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="feature-title">Content Hub</span>
+              <span class="feature-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="feature-body" hidden>
+              <p>A curated feed of college football analysis and articles, updated regularly to keep you informed throughout the season.</p>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature" data-feature>
+            <button class="feature-head" aria-expanded="false">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M8 11l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="feature-title">Depth Chart Visualizer</span>
+              <span class="feature-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="feature-body" hidden>
+              <p>Select any team to view its projected depth chart, complete with 2024 player grades and insights.</p>
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature" data-feature>
+            <button class="feature-head" aria-expanded="false">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M8 11l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="feature-title">Player Data Visualizer</span>
+              <span class="feature-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="feature-body" hidden>
+              <p>Filter and sort data by position and key metrics to see the top-performing players, powered by dynamic Google Sheets integrations.</p>
+            </div>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="feature" data-feature>
+            <button class="feature-head" aria-expanded="false">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M8 11l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="feature-title">EPA Scatter Plot Tool</span>
+              <span class="feature-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="feature-body" hidden>
+              <p>Explore team-level EPA per pass and run from the 2024 season. Toggle between offensive and defensive views, and highlight any team for deeper analysis.</p>
+            </div>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="feature" data-feature>
+            <button class="feature-head" aria-expanded="false">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M8 11l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="feature-title">Team Data Visualizer</span>
+              <span class="feature-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="feature-body" hidden>
+              <p>Compare entire units or position groups using custom filters and live data visualizations.</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="lede">These interactive elements bring our analysis to life and allow you to engage with our data like never before.</p>
+
+        <p class="byline">Thanks for diving in—enjoy the read!<br>
+          <span class="signature">Max Chadwick</span><br>
+          <span class="role">PFF College Football Analyst</span>
+        </p>
+
+        <div class="cta">
+          <a class="btn" href="https://www.pff.com/subscribe" target="_blank" rel="noopener" aria-label="Subscribe to PFF+">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 10V8a5 5 0 1 1 10 0v2M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            Subscribe to PFF+
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Collapsible feature interactions
+    const features = document.querySelectorAll('[data-feature]');
+    features.forEach(f => {
+      const btn = f.querySelector('.feature-head');
+      const body = f.querySelector('.feature-body');
+      btn.addEventListener('click', () => {
+        const isOpen = f.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen){ body.removeAttribute('hidden'); } else { body.setAttribute('hidden', ''); }
+      });
+    });
+  </script>
+</body>
+</html>
