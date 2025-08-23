@@ -1,0 +1,242 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PFF College | 2024 Team EPA Scatter (Info Panel)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --brand:#FB6616; --ink:#0F172A; --muted:#475569; --hair:#E2E8F0; --bg:#fff;
+      --maxw:650px; --r-full:999px; --r-lg:14px; --shadow:0 10px 30px rgba(2,8,23,.08),0 1px 2px rgba(2,8,23,.05);
+      --avg:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:'Archivo',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:12px}
+    .toolbar{position:sticky;top:0;z-index:10;background:#fff;padding:8px 0 10px;border-bottom:1px solid var(--hair)}
+    .controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .seg{display:flex;background:#fff;border:1px solid var(--hair);border-radius:999px;overflow:hidden}
+    .seg button{flex:1;padding:10px 12px;border:none;background:#fff;cursor:pointer;font-weight:700}
+    .seg button.active{background:var(--brand);color:#fff}
+    select{padding:10px 12px;border:1px solid var(--hair);border-radius:999px;font:inherit;background:#fff}
+    .card{margin-top:10px;border:1px solid var(--hair);border-radius:var(--r-lg);box-shadow:var(--shadow);background:#fff;overflow:hidden}
+    .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--hair)}
+    .hdr h3{margin:0;font-size:16px;letter-spacing:-0.01em}
+    .canvas{position:relative;width:100%;height:500px}
+    svg{display:block;width:100%;height:100%}
+    .axis text{font-size:11px;fill:#334155}
+    .tick line, .domain{stroke:#E5E7EB}
+    .legend{padding:8px 12px;font-size:12px;color:var(--muted)}
+    .avg-line{stroke:var(--avg); stroke-width:1.5; opacity:.35}
+    .panel{display:flex;align-items:center;gap:12px;padding:12px;border-top:1px solid var(--hair);background:#fff}
+    .panel .logo{width:28px;height:28px;border-radius:4px;border:1px solid #e5e7eb;background:#fff;object-fit:contain}
+    .panel .meta{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:#334155}
+    .panel .meta b{color:#0f172a}
+    .panel .team{font-weight:700;color:#0f172a;margin-right:8px}
+    .panel .hint{color:#64748B}
+    .glow{filter: drop-shadow(0 0 6px rgba(0,0,0,.25));}
+    @media (max-width:420px){
+      .canvas{height:420px}
+      .hdr h3{font-size:14px}
+      .panel{gap:10px}
+      .panel .meta{font-size:12px}
+      .panel .logo{width:24px;height:24px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="controls">
+        <div class="seg" role="tablist" aria-label="EPA View">
+          <button class="active" data-view="off" aria-selected="true">Offense</button>
+          <button data-view="def" aria-selected="false">Defense</button>
+        </div>
+        <select id="teamSelect" aria-label="Highlight a team">
+          <option value="">Highlight a team (optional)</option>
+        </select>
+      </div>
+    </div>
+
+    <section class="card">
+      <div class="hdr">
+        <h3 id="title">2024 Team EPA — Offense</h3>
+        <div id="selStatus" style="font-size:12px;color:#64748B"></div>
+      </div>
+      <div class="canvas" id="canvas"></div>
+      <div id="infoPanel" class="panel">
+        <span class="hint">Hover/tap a dot, or pick a team above.</span>
+      </div>
+      <div class="legend">
+        Gray = 0; faint red = averages.
+      </div>
+    </section>
+  </div>
+
+<script>
+  const DATA_OFF = [{"team": "Alabama Crimson Tide", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/333.png", "epa_pass": 0.0878505747126436, "epa_run": 0.0715637583892617, "color": "#690014"}, {"team": "Arkansas Razorbacks", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/8.png", "epa_pass": 0.113324324324324, "epa_run": 0.0675289855072463, "color": "#9c1831"}, {"team": "Auburn Tigers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2.png", "epa_pass": 0.0574213973799127, "epa_run": 0.00123511904761902, "color": "#03244d"}, {"team": "Florida Gators", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/57.png", "epa_pass": -0.0627518427518427, "epa_run": 0.0370308788598574, "color": "#0021A5"}, {"team": "Georgia Bulldogs", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/61.png", "epa_pass": 0.0983284072249589, "epa_run": 0.0299272727272727, "color": "#CC0000"}, {"team": "Kentucky Wildcats", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/96.png", "epa_pass": -0.0972679900744416, "epa_run": -0.0963627204030227, "color": "#005DAA"}, {"team": "Lsu Tigers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/99.png", "epa_pass": 0.170530884808013, "epa_run": -0.0337052023121387, "color": "#22005c"}, {"team": "Ole Miss Rebels", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/145.png", "epa_pass": 0.345046210720887, "epa_run": 0.0198979118329466, "color": "#001148"}, {"team": "Mississippi State Bulldogs", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/344.png", "epa_pass": 0.0172530864197531, "epa_run": 0.0063176470588235, "color": "#762123"}, {"team": "Missouri Tigers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/142.png", "epa_pass": 0.0713104166666666, "epa_run": 0.0152416666666666, "color": "#000000"}, {"team": "Oklahoma Sooners", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/201.png", "epa_pass": -0.164844402277039, "epa_run": -0.104232098765432, "color": "#7b0000"}, {"team": "South Carolina Gamecocks", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2579.png", "epa_pass": 0.132615221987315, "epa_run": -0.0662159827213822, "color": "#670010"}, {"team": "Tennessee Volunteers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2633.png", "epa_pass": 0.0299294354838709, "epa_run": 0.117556, "color": "#EE9627"}, {"team": "Texas Longhorns", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/251.png", "epa_pass": 0.1449515625, "epa_run": -0.00958412098298677, "color": "#EE7524"}, {"team": "Texas A&M Aggies", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/245.png", "epa_pass": 0.115094827586206, "epa_run": -0.00220652173913043, "color": "#5C0025"}, {"team": "Vanderbilt Commodores", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/238.png", "epa_pass": 0.18621875, "epa_run": -0.103546728971962, "color": "#FEEEB6"}, {"team": "Illinois Fighting Illini", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/356.png", "epa_pass": 0.0979, "epa_run": 0.0203, "color": "#f77329"}, {"team": "Indiana Hoosiers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/84.png", "epa_pass": 0.3379, "epa_run": 0.1069, "color": "#7D110C"}, {"team": "Iowa Hawkeyes", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2294.png", "epa_pass": -0.2072, "epa_run": 0.0199, "color": "#000000"}, {"team": "Maryland Terrapins", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/120.png", "epa_pass": -0.0475, "epa_run": -0.061, "color": "#D5002B"}, {"team": "Michigan Wolverines", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/130.png", "epa_pass": -0.1886, "epa_run": -0.049, "color": "#00274c"}, {"team": "Michigan State Spartans", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/127.png", "epa_pass": -0.0481, "epa_run": -0.0698, "color": "#18453B"}, {"team": "Minnesota Golden Gophers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/135.png", "epa_pass": 0.0909, "epa_run": -0.0025, "color": "#7F011B"}, {"team": "Nebraska Cornhuskers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/158.png", "epa_pass": -0.0204, "epa_run": 0.0193, "color": "#F20017"}, {"team": "Northwestern Wildcats", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/77.png", "epa_pass": -0.1661, "epa_run": -0.1576, "color": "#372286"}, {"team": "Ohio State Buckeyes", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/194.png", "epa_pass": 0.3102, "epa_run": 0.0991, "color": "#DE3121"}, {"team": "Oregon Ducks", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2483.png", "epa_pass": 0.2119, "epa_run": 0.1018, "color": "#044520"}, {"team": "Penn State Nittany Lions", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/213.png", "epa_pass": 0.2496, "epa_run": 0.1123, "color": "#00265D"}, {"team": "Purdue Boilermakers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2509.png", "epa_pass": -0.1868, "epa_run": -0.2386, "color": "#B89D29"}, {"team": "Rutgers Scarlet Knights", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/164.png", "epa_pass": 0.1062, "epa_run": 0.0449, "color": "#d21034"}, {"team": "Ucla Bruins", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/26.png", "epa_pass": 0.0496, "epa_run": -0.1783, "color": "#005C8E"}, {"team": "Usc Trojans", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/30.png", "epa_pass": 0.0605, "epa_run": 0.1277, "color": "#AE2531"}, {"team": "Washington Huskies", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/264.png", "epa_pass": 0.0759, "epa_run": -0.0308, "color": "#2B2F64"}, {"team": "Wisconsin Badgers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/275.png", "epa_pass": -0.0793, "epa_run": 0.0257, "color": "#A00001"}, {"team": "Arizona Wildcats", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/12.png", "epa_pass": -0.0207, "epa_run": -0.1785, "color": "#002449"}, {"team": "Arizona State Sun Devils", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/9.png", "epa_pass": 0.2638, "epa_run": 0.0639, "color": "#942139"}, {"team": "Baylor Bears", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/239.png", "epa_pass": 0.1604, "epa_run": 0.0123, "color": "#004834"}, {"team": "Byu Cougars", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/252.png", "epa_pass": 0.1146, "epa_run": 0.016, "color": "#001E4C"}, {"team": "Cincinnati Bearcats", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2132.png", "epa_pass": 0.0568, "epa_run": 0.0633, "color": "#000000"}, {"team": "Colorado Buffaloes", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/38.png", "epa_pass": 0.1816, "epa_run": -0.2077, "color": "#d1c57e"}, {"team": "Houston Cougars", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/248.png", "epa_pass": -0.29, "epa_run": -0.1726, "color": "#C90822"}, {"team": "Iowa State Cyclones", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/66.png", "epa_pass": 0.1686, "epa_run": 0.0119, "color": "#660015"}, {"team": "Kansas Jayhawks", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2305.png", "epa_pass": 0.1005, "epa_run": 0.1941, "color": "#0022B4"}, {"team": "Kansas State Wildcats", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2306.png", "epa_pass": 0.0804, "epa_run": 0.067, "color": "#633194"}, {"team": "Oklahoma State Cowboys", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/197.png", "epa_pass": 0.0261, "epa_run": -0.0546, "color": "#FF6500"}, {"team": "Tcu Horned Frogs", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2628.png", "epa_pass": 0.2194, "epa_run": -0.1173, "color": "#3C377D"}, {"team": "Texas Tech Red Raiders", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2641.png", "epa_pass": 0.0492, "epa_run": 0.1092, "color": "#C80025"}, {"team": "Ucf Knights", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2116.png", "epa_pass": -0.0867, "epa_run": 0.2054, "color": "#000000"}, {"team": "Utah Utes", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/254.png", "epa_pass": -0.109, "epa_run": -0.1489, "color": "#890012"}, {"team": "West Virginia Mountaineers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/277.png", "epa_pass": 0.1345, "epa_run": 0.0159, "color": "#FFC600"}, {"team": "Boston College Eagles", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/103.png", "epa_pass": 0.108097156, "epa_run": -0.095467391, "color": "#88001a"}, {"team": "California Golden Bears", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/25.png", "epa_pass": 0.035846667, "epa_run": -0.17722191, "color": "#031522"}, {"team": "Clemson Tigers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/228.png", "epa_pass": 0.14378135, "epa_run": 0.108571429, "color": "#F66733"}, {"team": "Duke Blue Devils", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/150.png", "epa_pass": -0.01396699, "epa_run": -0.28421123, "color": "#001A57"}, {"team": "Florida State Seminoles", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/52.png", "epa_pass": -0.191741525, "epa_run": -0.19662543, "color": "#782F40"}, {"team": "Georgia Tech Yellow Jackets", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/59.png", "epa_pass": 0.202954545, "epa_run": 0.015840173, "color": "#00223e"}, {"team": "Louisville Cardinals", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/97.png", "epa_pass": 0.195037037, "epa_run": 0.087329923, "color": "#ad000a"}, {"team": "Miami Hurricanes", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2390.png", "epa_pass": 0.287736041, "epa_run": 0.275701058, "color": "#004325"}, {"team": "North Carolina Tar Heels", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/153.png", "epa_pass": -0.098753479, "epa_run": 0.099189252, "color": "#99bfe5"}, {"team": "North Carolina State Wolfpack", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/152.png", "epa_pass": -0.026334669, "epa_run": -0.072677778, "color": "#EF1216"}, {"team": "Pittsburgh Panthers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/221.png", "epa_pass": 0.013385802, "epa_run": -0.001338462, "color": "#003263"}, {"team": "Smu Mustangs", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2567.png", "epa_pass": 0.104102612, "epa_run": 0.009322515, "color": "#E32F38"}, {"team": "Stanford Cardinal", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/24.png", "epa_pass": -0.075823647, "epa_run": -0.152643059, "color": "#A80532"}, {"team": "Syracuse Orange", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/183.png", "epa_pass": 0.246021802, "epa_run": -0.027598886, "color": "#F37321"}, {"team": "Virginia Cavaliers", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/258.png", "epa_pass": -0.11724031, "epa_run": -0.033820728, "color": "#00204e"}, {"team": "Virginia Tech Hokies", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/259.png", "epa_pass": -0.086372998, "epa_run": 0.038552693, "color": "#74232D"}, {"team": "Wake Forest Demon Deacons", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/154.png", "epa_pass": -0.025428305, "epa_run": -0.053124294, "color": "#9E7E38"}, {"team": "Notre Dame Fighting Irish", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/87.png", "epa_pass": 0.115243292, "epa_run": 0.193730539, "color": "#00122b"}];
+  const DATA_DEF = [{"team": "Illinois Fighting Illini", "epa_pass": -0.0323, "epa_run": 0.0919, "color": "#f77329", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/356.png"}, {"team": "Indiana Hoosiers", "epa_pass": -0.2026, "epa_run": -0.2745, "color": "#7D110C", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/84.png"}, {"team": "Iowa Hawkeyes", "epa_pass": -0.1723, "epa_run": -0.0806, "color": "#000000", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2294.png"}, {"team": "Maryland Terrapins", "epa_pass": 0.1507, "epa_run": -0.1091, "color": "#D5002B", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/120.png"}, {"team": "Michigan Wolverines", "epa_pass": -0.0369, "epa_run": -0.0852, "color": "#00274c", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/130.png"}, {"team": "Michigan State Spartans", "epa_pass": 0.1845, "epa_run": -0.1003, "color": "#18453B", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/127.png"}, {"team": "Minnesota Golden Gophers", "epa_pass": -0.1607, "epa_run": -0.1486, "color": "#7F011B", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/135.png"}, {"team": "Nebraska Cornhuskers", "epa_pass": 0.0042, "epa_run": -0.2399, "color": "#F20017", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/158.png"}, {"team": "Northwestern Wildcats", "epa_pass": -0.0389, "epa_run": -0.0185, "color": "#372286", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/77.png"}, {"team": "Ohio State Buckeyes", "epa_pass": -0.2219, "epa_run": -0.1788, "color": "#DE3121", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/194.png"}, {"team": "Oregon Ducks", "epa_pass": -0.1219, "epa_run": 0.017, "color": "#044520", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2483.png"}, {"team": "Penn State Nittany Lions", "epa_pass": -0.0923, "epa_run": -0.1787, "color": "#00265D", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/213.png"}, {"team": "Purdue Boilermakers", "epa_pass": 0.3081, "epa_run": 0.1902, "color": "#B89D29", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2509.png"}, {"team": "Rutgers Scarlet Knights", "epa_pass": 0.0438, "epa_run": 0.1445, "color": "#d21034", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/164.png"}, {"team": "Ucla Bruins", "epa_pass": 0.0648, "epa_run": 0.0191, "color": "#005C8E", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/26.png"}, {"team": "Usc Trojans", "epa_pass": -0.0172, "epa_run": 0.0523, "color": "#AE2531", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/30.png"}, {"team": "Washington Huskies", "epa_pass": -0.0692, "epa_run": 0.0715, "color": "#2B2F64", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/264.png"}, {"team": "Wisconsin Badgers", "epa_pass": -0.0404, "epa_run": 0.0314, "color": "#A00001", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/275.png"}, {"team": "Arizona Wildcats", "epa_pass": 0.1352, "epa_run": 0.0292, "color": "#002449", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/12.png"}, {"team": "Arizona State Sun Devils", "epa_pass": 0.0443, "epa_run": -0.0993, "color": "#942139", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/9.png"}, {"team": "Baylor Bears", "epa_pass": 0.0963, "epa_run": -0.1025, "color": "#004834", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/239.png"}, {"team": "Byu Cougars", "epa_pass": -0.1416, "epa_run": -0.0743, "color": "#001E4C", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/252.png"}, {"team": "Cincinnati Bearcats", "epa_pass": 0.0707, "epa_run": -0.0468, "color": "#000000", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2132.png"}, {"team": "Colorado Buffaloes", "epa_pass": -0.1192, "epa_run": -0.0655, "color": "#d1c57e", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/38.png"}, {"team": "Houston Cougars", "epa_pass": -0.0618, "epa_run": -0.0779, "color": "#C90822", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/248.png"}, {"team": "Iowa State Cyclones", "epa_pass": -0.0819, "epa_run": 0.0185, "color": "#660015", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/66.png"}, {"team": "Kansas Jayhawks", "epa_pass": 0.0762, "epa_run": 0.0478, "color": "#0022B4", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2305.png"}, {"team": "Kansas State Wildcats", "epa_pass": -0.0681, "epa_run": -0.0801, "color": "#633194", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2306.png"}, {"team": "Oklahoma State Cowboys", "epa_pass": 0.1998, "epa_run": 0.0915, "color": "#FF6500", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/197.png"}, {"team": "Tcu Horned Frogs", "epa_pass": -0.0864, "epa_run": 0.0566, "color": "#3C377D", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2628.png"}, {"team": "Texas Tech Red Raiders", "epa_pass": 0.1495, "epa_run": -0.0445, "color": "#C80025", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2641.png"}, {"team": "Ucf Knights", "epa_pass": 0.1066, "epa_run": -0.1563, "color": "#000000", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2116.png"}, {"team": "Utah Utes", "epa_pass": -0.1738, "epa_run": -0.12, "color": "#890012", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/254.png"}, {"team": "West Virginia Mountaineers", "epa_pass": 0.3616, "epa_run": 0.0056, "color": "#FFC600", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/277.png"}, {"team": "Boston College Eagles", "epa_pass": -0.044426415, "epa_run": -0.131263158, "color": "#88001a", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/103.png"}, {"team": "California Golden Bears", "epa_pass": -0.037083942, "epa_run": -0.114675749, "color": "#031522", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/25.png"}, {"team": "Clemson Tigers", "epa_pass": -0.100278547, "epa_run": -0.002149758, "color": "#F66733", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/228.png"}, {"team": "Duke Blue Devils", "epa_pass": -0.141856884, "epa_run": -0.096383178, "color": "#001A57", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/150.png"}, {"team": "Florida State Seminoles", "epa_pass": 0.167871605, "epa_run": 0.017972093, "color": "#782F40", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/52.png"}, {"team": "Georgia Tech Yellow Jackets", "epa_pass": 0.089658635, "epa_run": -0.111354167, "color": "#00223e", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/59.png"}, {"team": "Louisville Cardinals", "epa_pass": 0.024294333, "epa_run": -0.134809019, "color": "#ad000a", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/97.png"}, {"team": "Miami Fl Hurricanes", "epa_pass": 0.005211946, "epa_run": -0.101705882, "color": "#004325", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2390.png"}, {"team": "North Carolina Tar Heels", "epa_pass": 0.038995842, "epa_run": -0.038298368, "color": "#99bfe5", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/153.png"}, {"team": "North Carolina State Wolfpack", "epa_pass": 0.020960317, "epa_run": 0.023320755, "color": "#EF1216", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/152.png"}, {"team": "Pittsburgh Panthers", "epa_pass": 0.018941379, "epa_run": -0.134436451, "color": "#003263", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/221.png"}, {"team": "Smu Mustangs", "epa_pass": -0.124714521, "epa_run": -0.220338235, "color": "#E32F38", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2567.png"}, {"team": "Stanford Cardinal", "epa_pass": 0.155640244, "epa_run": 0.015716923, "color": "#A80532", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/24.png"}, {"team": "Syracuse Orange", "epa_pass": 0.103799189, "epa_run": -0.013469388, "color": "#F37321", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/183.png"}, {"team": "Virginia Cavaliers", "epa_pass": 0.062048729, "epa_run": 0.019517333, "color": "#00204e", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/258.png"}, {"team": "Virginia Tech Hokies", "epa_pass": -0.066954455, "epa_run": -0.103154791, "color": "#74232D", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/259.png"}, {"team": "Wake Forest Demon Deacons", "epa_pass": 0.101325714, "epa_run": 0.081448649, "color": "#9E7E38", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/154.png"}, {"team": "Alabama Crimson Tide", "epa_pass": -0.13264887063655, "epa_run": -0.161614485981308, "color": "#690014", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/333.png"}, {"team": "Arkansas Razorbacks", "epa_pass": 0.104243243243243, "epa_run": -0.0988459657701712, "color": "#9c1831", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/8.png"}, {"team": "Auburn Tigers", "epa_pass": 0.0469470198675497, "epa_run": -0.158365, "color": "#03244d", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2.png"}, {"team": "Florida Gators", "epa_pass": -0.0240455407969639, "epa_run": -0.0477905405405405, "color": "#0021A5", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/57.png"}, {"team": "Georgia Bulldogs", "epa_pass": -0.0254448462929475, "epa_run": -0.121398533007334, "color": "#CC0000", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/61.png"}, {"team": "Kentucky Wildcats", "epa_pass": -0.0127346368715083, "epa_run": 0.00656135770234986, "color": "#005DAA", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/96.png"}, {"team": "Lsu Tigers", "epa_pass": 0.031626582278481, "epa_run": -0.00258241758241757, "color": "#22005c", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/99.png"}, {"team": "Ole Miss Rebels", "epa_pass": -0.108564236111111, "epa_run": -0.301295999999999, "color": "#001148", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/145.png"}, {"team": "Mississippi State Bulldogs", "epa_pass": 0.337927860696517, "epa_run": 0.0053306451612903, "color": "#762123", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/344.png"}, {"team": "Missouri Tigers", "epa_pass": -0.0817975308641976, "epa_run": -0.166538258575197, "color": "#000000", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/142.png"}, {"team": "Oklahoma Sooners", "epa_pass": -0.0880921052631579, "epa_run": -0.205163461538461, "color": "#7b0000", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/201.png"}, {"team": "South Carolina Gamecocks", "epa_pass": -0.187895918367346, "epa_run": -0.107007518796992, "color": "#670010", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2579.png"}, {"team": "Tennessee Volunteers", "epa_pass": -0.154652806652806, "epa_run": -0.286350125944584, "color": "#EE9627", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/2633.png"}, {"team": "Texas Longhorns", "epa_pass": -0.25214309484193, "epa_run": -0.166787096774193, "color": "#EE7524", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/251.png"}, {"team": "Texas A&M Aggies", "epa_pass": -0.0119503816793893, "epa_run": -0.0707396907216494, "color": "#5C0025", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/245.png"}, {"team": "Vanderbilt Commodores", "epa_pass": 0.165934210526315, "epa_run": -0.0206751918158567, "color": "#FEEEB6", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/238.png"}, {"team": "Notre Dame Fighting Irish", "epa_pass": 0.287251761, "epa_run": 0.082452569, "color": "#00122b", "logo": "http://a.espncdn.com/i/teamlogos/ncaa/500/87.png"}];
+
+  const MARGIN = {top:20,right:20,bottom:42,left:44};
+  const canvas = document.getElementById('canvas');
+  const title = document.getElementById('title');
+  const selStatus = document.getElementById('selStatus');
+  const segBtns = Array.from(document.querySelectorAll('.seg button'));
+  const teamSelect = document.getElementById('teamSelect');
+  const infoPanel = document.getElementById('infoPanel');
+
+  let view = 'off';
+  let selectedTeam = null;
+
+  function getData(){ return view === 'off' ? DATA_OFF : DATA_DEF; }
+  function mean(arr){ const xs=arr.map(v=>+v).filter(Number.isFinite); return xs.length? xs.reduce((a,b)=>a+b,0)/xs.length:0; }
+  function extent(vals){
+    let min=Infinity, max=-Infinity;
+    for(const v of vals){ const n=+v; if(!Number.isFinite(n)) continue; if(n<min) min=n; if(n>max) max=n; }
+    if(min===Infinity) min=-1; if(max===-Infinity) max=1;
+    const span=max-min||1; return [min-span*0.08, max+span*0.08];
+  }
+  function fmt(n){ if(n==null||!Number.isFinite(+n)) return '—'; const x=+n; const s=Math.abs(x)>=1?x.toFixed(2):x.toFixed(3); return (x>0?'+':'')+s; }
+
+  function populateDropdown(){
+    teamSelect.innerHTML = '<option value="">Highlight a team (optional)</option>';
+    const names = getData().map(d=>d.team).sort((a,b)=>a.localeCompare(b));
+    for(const n of names){
+      const opt=document.createElement('option'); opt.value=n; opt.textContent=n; teamSelect.appendChild(opt);
+    }
+    teamSelect.value = selectedTeam || "";
+  }
+
+  function updatePanel(d){
+    const xlabel=(view==='off'?'EPA per Pass':'EPA Allowed per Pass');
+    const ylabel=(view==='off'?'EPA per Run':'EPA Allowed per Run');
+    if(!d){
+      infoPanel.innerHTML = '<span class="hint">Hover/tap a dot, or pick a team above.</span>';
+      return;
+    }
+    infoPanel.innerHTML = ''
+      + (d.logo ? '<img class="logo" src="'+d.logo+'" onerror="this.style.display=\'none\'"/>' : '')
+      + '<div class="meta">'
+      +   '<span class="team">'+d.team+'</span>'
+      +   '<span>'+xlabel+': <b>'+fmt(+d.epa_pass)+'</b></span>'
+      +   '<span>'+ylabel+': <b>'+fmt(+d.epa_run)+'</b></span>'
+      + '</div>';
+  }
+
+  function render(){
+    canvas.innerHTML='';
+    const W=canvas.clientWidth, H=canvas.clientHeight;
+    const NS='http://www.w3.org/2000/svg';
+
+    const data=getData();
+    const xvals=data.map(d=>+d.epa_pass), yvals=data.map(d=>+d.epa_run);
+    const [xmin,xmax]=extent(xvals), [ymin,ymax]=extent(yvals);
+
+    const x=v=>MARGIN.left+((v-xmin)/((xmax-xmin)||1))*(W-MARGIN.left-MARGIN.right);
+    const y=v=>(H-MARGIN.bottom)-((v-ymin)/((ymax-ymin)||1))*(H-MARGIN.top-MARGIN.bottom);
+
+    const svg=document.createElementNS(NS,'svg'); svg.setAttribute('width',W); svg.setAttribute('height',H); canvas.appendChild(svg);
+
+    // labels
+    const xlabel=(view==='off'?'EPA per Pass':'EPA Allowed per Pass');
+    const ylabel=(view==='off'?'EPA per Run':'EPA Allowed per Run');
+
+    // axes ticks
+    function makeTicks(a,b,steps=6){
+      const span=b-a||1; let step=Math.pow(10,Math.floor(Math.log10(span/steps)));
+      let err=(steps*step)/span; if(err<=0.15) step*=10; else if(err<=0.35) step*=5; else if(err<=0.75) step*=2;
+      const start=Math.ceil(a/step)*step; const out=[]; for(let v=start; v<=b; v+=step) out.push(+v.toFixed(6)); return out;
+    }
+    const xt=makeTicks(xmin,xmax), yt=makeTicks(ymin,ymax);
+    const gx=document.createElementNS(NS,'g'); gx.setAttribute('transform','translate(0,'+(H-MARGIN.bottom)+')'); svg.appendChild(gx);
+    xt.forEach(t=>{ const g=document.createElementNS(NS,'g'); g.setAttribute('transform','translate('+x(t)+',0)');
+      const line=document.createElementNS(NS,'line'); line.setAttribute('y1','0'); line.setAttribute('y2','6'); line.setAttribute('stroke','#E5E7EB');
+      const text=document.createElementNS(NS,'text'); text.setAttribute('y','18'); text.setAttribute('fill','#334155'); text.setAttribute('font-size','11'); text.setAttribute('text-anchor','middle'); text.textContent=(Math.abs(t)<1? t.toFixed(3): t.toFixed(2)); g.appendChild(line); g.appendChild(text); gx.appendChild(g);
+    });
+    const gy=document.createElementNS(NS,'g'); gy.setAttribute('transform','translate('+MARGIN.left+',0)'); svg.appendChild(gy);
+    yt.forEach(t=>{ const g=document.createElementNS(NS,'g'); g.setAttribute('transform','translate(0,'+y(t)+')');
+      const line=document.createElementNS(NS,'line'); line.setAttribute('x1','-6'); line.setAttribute('x2','0'); line.setAttribute('stroke','#E5E7EB');
+      const text=document.createElementNS(NS,'text'); text.setAttribute('x','-9'); text.setAttribute('dy','0.32em'); text.setAttribute('fill','#334155'); text.setAttribute('font-size','11'); text.setAttribute('text-anchor','end'); text.textContent=(Math.abs(t)<1? t.toFixed(3): t.toFixed(2)); g.appendChild(line); g.appendChild(text); gy.appendChild(g);
+    });
+
+    // axis labels
+    const xlab=document.createElementNS(NS,'text'); xlab.setAttribute('x',W/2); xlab.setAttribute('y',H-6); xlab.setAttribute('text-anchor','middle'); xlab.setAttribute('fill','#334155'); xlab.setAttribute('font-size','11'); xlab.textContent=xlabel; svg.appendChild(xlab);
+    const ylab=document.createElementNS(NS,'text'); ylab.setAttribute('transform','rotate(-90)'); ylab.setAttribute('x',-H/2); ylab.setAttribute('y',14); ylab.setAttribute('text-anchor','middle'); ylab.setAttribute('fill','#334155'); ylab.setAttribute('font-size','11'); ylab.textContent=ylabel; svg.appendChild(ylab);
+
+    // zero and average lines
+    const zx=x(0), zy=y(0);
+    const zvert=document.createElementNS(NS,'line'); zvert.setAttribute('x1',zx); zvert.setAttribute('x2',zx); zvert.setAttribute('y1',MARGIN.top); zvert.setAttribute('y2',H-MARGIN.bottom); zvert.setAttribute('stroke','#CBD5E1'); zvert.setAttribute('stroke-dasharray','4,4'); svg.appendChild(zvert);
+    const zhor=document.createElementNS(NS,'line'); zhor.setAttribute('y1',zy); zhor.setAttribute('y2',zy); zhor.setAttribute('x1',MARGIN.left); zhor.setAttribute('x2',W-MARGIN.right); zhor.setAttribute('stroke','#CBD5E1'); zhor.setAttribute('stroke-dasharray','4,4'); svg.appendChild(zhor);
+    const xavg=mean(xvals), yavg=mean(yvals);
+    const xavgl=document.createElementNS(NS,'line'); xavgl.setAttribute('x1',x(xavg)); xavgl.setAttribute('x2',x(xavg)); xavgl.setAttribute('y1',MARGIN.top); xavgl.setAttribute('y2',H-MARGIN.bottom); xavgl.setAttribute('class','avg-line'); svg.appendChild(xavgl);
+    const yavgl=document.createElementNS(NS,'line'); yavgl.setAttribute('y1',y(yavg)); yavgl.setAttribute('y2',y(yavg)); yavgl.setAttribute('x1',MARGIN.left); yavgl.setAttribute('x2',W-MARGIN.right); yavgl.setAttribute('class','avg-line'); svg.appendChild(yavgl);
+
+    // dots with group-level events
+    const gDots=document.createElementNS(NS,'g'); svg.appendChild(gDots);
+    const selected=data.find(d=>selectedTeam && d.team===selectedTeam) || null;
+
+    data.forEach(d=>{
+      const cx=x(+d.epa_pass), cy=y(+d.epa_run);
+      const col=d.color||'#0ea5b7';
+      const rVisible=12, rSelected=16, rHit=22;
+      const isSel=(selected && selected.team===d.team);
+
+      const grp=document.createElementNS(NS,'g'); grp.setAttribute('transform','translate('+cx+','+cy+')');
+
+      const hit=document.createElementNS(NS,'circle');
+      hit.setAttribute('r', rHit); hit.setAttribute('fill', '#000'); hit.setAttribute('fill-opacity', '0.001');
+      hit.setAttribute('pointer-events','all');
+      grp.appendChild(hit);
+
+      const dot=document.createElementNS(NS,'circle');
+      dot.setAttribute('r', isSel? rSelected : rVisible);
+      dot.setAttribute('fill', col);
+      dot.setAttribute('stroke', isSel? '#0f172a':'#fff');
+      dot.setAttribute('stroke-width', isSel? 2:1);
+      dot.setAttribute('class','glow');
+      grp.appendChild(dot);
+
+      if(isSel && d.logo){
+        const imgSel=document.createElementNS(NS,'image');
+        imgSel.setAttributeNS('http://www.w3.org/1999/xlink','href', d.logo);
+        imgSel.setAttribute('x', -14); imgSel.setAttribute('y', -14); imgSel.setAttribute('width', 28); imgSel.setAttribute('height', 28);
+        imgSel.setAttribute('pointer-events','none');
+        grp.appendChild(imgSel);
+      }
+
+      const show = ()=>{ updatePanel(d); gDots.appendChild(grp); };
+      const clear = ()=>{ updatePanel(selected || null); };
+
+      grp.addEventListener('pointerenter', show, {passive:true});
+      grp.addEventListener('pointermove', show, {passive:true});
+      grp.addEventListener('pointerleave', clear, {passive:true});
+      grp.addEventListener('pointerdown', ()=>{ selectedTeam=(selectedTeam===d.team)?null:d.team; updatePanel(d); render(); });
+
+      gDots.appendChild(grp);
+    });
+
+    title.textContent=(view==='off')?'2024 Team EPA — Offense':'2024 Team EPA — Defense';
+    selStatus.textContent=selectedTeam?('Selected: '+selectedTeam):'';
+    populateDropdown();
+    // initialize panel with selection if any
+    updatePanel(selectedTeam ? data.find(d=>d.team===selectedTeam) : null);
+  }
+
+  segBtns.forEach(btn=>btn.addEventListener('click',()=>{
+    segBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); view=btn.dataset.view;
+    const exists=getData().some(d=>d.team===selectedTeam); if(!exists) selectedTeam=null;
+    render();
+  }));
+
+  teamSelect.addEventListener('change',()=>{ selectedTeam=teamSelect.value||null; render(); });
+
+  window.addEventListener('load',render);
+  window.addEventListener('resize',()=>requestAnimationFrame(render));
+</script>
+</body>
+</html>
