@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Orleans Saints Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <style>
+    body { margin: 0; font-family: 'Archivo', sans-serif; background: #fff; }
+    .auburn-widget {
+      position: relative; max-width: 800px; margin: 50px auto;
+      border: 3px solid #D3BC8D; border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1); overflow: hidden; background: #fff;
+    }
+    .auburn-widget .watermark {
+      position: absolute; bottom: 15px; right: 15px; width: 80px; height: 80px;
+      background: url('https://a.espncdn.com/i/teamlogos/nfl/500/no.png') no-repeat center;
+      background-size: contain; opacity: 0.08; animation: pulse 4s infinite;
+      pointer-events: none; z-index: 1;
+    }
+    @keyframes pulse { 0%,100%{opacity:.08;transform:scale(1);} 50%{opacity:.15;transform:scale(1.05);} }
+    .swiper { width: 100%; position: relative; z-index: 2; }
+    .swiper-slide { display: flex; justify-content: center; align-items: center; text-align: center; }
+    .slide-content { width: 100%; padding: 20px; box-sizing: border-box; }
+    h3 { color: #101820; margin-bottom: 20px; font-size: 2.2em; }
+    table { width: 100%; border-collapse: collapse; margin: auto; font-size: 1em; }
+    th, td { padding: 14px; border-bottom: 1px solid #ddd; }
+    th { background: #f1f1f1; color: #333; }
+    .pill {
+      background: #101820; color: #fff; padding: 10px 18px; border-radius: 999px;
+      text-decoration: none; font-weight: bold; display: inline-block; font-size: 1em;
+      transition: background .3s, transform .2s;
+    }
+    .pill:hover { background: #D3BC8D; transform: scale(1.05); color: #101820; }
+    .swiper-button-next, .swiper-button-prev { color: #101820; }
+    .swiper-pagination-bullet { background: #101820; opacity: .7; }
+    .swiper-pagination-bullet-active { background: #D3BC8D; opacity: 1; }
+  </style>
+</head>
+<body>
+<div class="auburn-widget">
+  <div class="watermark"></div>
+  <div class="swiper mySwiper"><div class="swiper-wrapper">
+
+    <!-- Performance -->
+    <div class="swiper-slide"><div class="slide-content">
+      <h3>2024 Performance</h3>
+      <table><thead><tr><th>Metric</th><th>Value</th><th>Rank (NFL)</th></tr></thead><tbody>
+        <tr><td>Offensive Grade</td><td>71.0</td><td>23rd</td></tr>
+        <tr><td>EPA Per Play (Offense)</td><td>-0.057</td><td>23rd</td></tr>
+        <tr><td>Defensive Grade</td><td>57.5</td><td>29th</td></tr>
+        <tr><td>EPA Allowed Per Play (Defense)</td><td>0.048</td><td>T-27th</td></tr>
+      </tbody></table>
+    </div></div>
+
+    <!-- Players -->
+    <div class="swiper-slide"><div class="slide-content">
+      <h3>Players in Preseason PFF Rankings</h3>
+      <table><thead><tr><th>Player</th><th>Pos Rank</th><th></th></tr></thead><tbody>
+        <tr><td>Tyler Shough</td><td>QB32</td><td><a class="pill" href="https://www.pff.com/news/nfl-quarterback-rankings-all-32-starters-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Alvin Kamara</td><td>HB20</td><td><a class="pill" href="https://www.pff.com/news/nfl-running-back-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Chris Olave</td><td>WR24</td><td><a class="pill" href="https://www.pff.com/news/nfl-pff-wide-receiver-rankings-top-32-2025-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Taysom Hill</td><td>TE14</td><td><a class="pill" href="https://www.pff.com/news/nfl-tight-end-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Juwan Johnson</td><td>TE31</td><td><a class="pill" href="https://www.pff.com/news/nfl-tight-end-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Cesar Ruiz</td><td>OG30</td><td><a class="pill" href="https://www.pff.com/news/nfl-guard-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Erik McCoy</td><td>C4</td><td><a class="pill" href="https://www.pff.com/news/nfl-center-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Carl Granderson</td><td>ED22</td><td><a class="pill" href="https://www.pff.com/news/nfl-pff-edge-defender-rankings-top-32-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Demario Davis</td><td>LB21</td><td><a class="pill" href="https://www.pff.com/news/nfl-linebacker-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Justin Reid</td><td>S14</td><td><a class="pill" href="https://www.pff.com/news/nfl-safety-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Julian Blackmon</td><td>S23</td><td><a class="pill" href="https://www.pff.com/news/nfl-safety-rankings-top-32-ahead-of-2025-nfl-season" target="_blank">View Rankings</a></td></tr>
+      </tbody></table>
+    </div></div>
+
+    <!-- Units -->
+    <div class="swiper-slide"><div class="slide-content">
+      <h3>Units in Preseason Rankings</h3>
+      <table><thead><tr><th>Unit</th><th>Rank</th><th></th></tr></thead><tbody>
+        <tr><td>Running Backs</td><td>#21</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-running-back-unit-rankings" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Wide Receivers</td><td>#23</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-receiving-corps-rankings-eagles" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Offensive Line</td><td>#22</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-nfl-offensive-line-rankings" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Defensive Line</td><td>#32</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-nfl-defensive-line-rankings" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Linebackers</td><td>#8</td><td><a class="pill" href="https://www.pff.com/news/nfl-2025-nfl-linebacker-unit-rankings" target="_blank">View Rankings</a></td></tr>
+        <tr><td>Secondary</td><td>#20</td><td><a class="pill" href="https://www.pff.com/news/nfl-secondary-rankings-2025" target="_blank">View Rankings</a></td></tr>
+      </tbody></table>
+    </div></div>
+
+    <!-- Draft -->
+    <div class="swiper-slide"><div class="slide-content">
+      <h3>2025 NFL Draft Class</h3>
+      <table><thead><tr><th>Pos.</th><th>Player (School)</th><th>2024 Grade</th></tr></thead><tbody>
+        <tr><td>OT</td><td>Kelvin Banks Jr. (Texas)</td><td>86.2</td></tr>
+        <tr><td>QB</td><td>Tyler Shough (Louisville)</td><td>87.4</td></tr>
+        <tr><td>DI</td><td>Vernon Broughton (Texas)</td><td>86.2</td></tr>
+        <tr><td>S</td><td>Jonas Sanker (Virginia)</td><td>72.8</td></tr>
+        <tr><td>LB</td><td>Danny Stutsman (Oklahoma)</td><td>76.6</td></tr>
+        <tr><td>CB</td><td>Quincy Riley (Louisville)</td><td>62.4</td></tr>
+        <tr><td>HB</td><td>Devin Neal (Kansas)</td><td>87.9</td></tr>
+        <tr><td>TE</td><td>Moliki Matavao (UCLA)</td><td>65.3</td></tr>
+        <tr><td>ED</td><td>Fadil Diggs (Syracuse)</td><td>74.7</td></tr>
+      </tbody></table>
+    </div></div>
+
+    <!-- Free Agents -->
+    <div class="swiper-slide"><div class="slide-content">
+      <h3>Notable Free Agent Additions</h3>
+      <table><thead><tr><th>Pos.</th><th>Player</th><th>2024 Grade</th></tr></thead><tbody>
+        <tr><td>WR</td><td>Brandin Cooks</td><td>63.2</td></tr>
+        <tr><td>OG</td><td>Dillon Radunz</td><td>57.0</td></tr>
+        <tr><td>C</td><td>Will Clapp</td><td>50.4</td></tr>
+        <tr><td>DI</td><td>Davon Godchaux</td><td>51.6</td></tr>
+        <tr><td>ED</td><td>Jonathan Bullard</td><td>55.1</td></tr>
+        <tr><td>CB</td><td>Isaac Yiadom</td><td>59.5</td></tr>
+        <tr><td>S</td><td>Justin Reid</td><td>78.2</td></tr>
+        <tr><td>S</td><td>Julian Blackmon</td><td>69.3</td></tr>
+      </tbody></table>
+    </div></div>
+
+    <!-- Draft Grade -->
+    <div class="swiper-slide"><div class="slide-content">
+      <h3>2025 NFL Draft Grade</h3>
+      <div style="font-size: 8em; font-weight: bold; color: #101820;">C+</div>
+    </div></div>
+
+    <!-- FA Grade -->
+    <div class="swiper-slide"><div class="slide-content">
+      <h3>2025 Free Agency Grade</h3>
+      <div style="font-size: 8em; font-weight: bold; color: #101820;">B-</div>
+    </div></div>
+
+  </div>
+  <div class="swiper-pagination"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){new Swiper('.mySwiper',{loop:true,effect:'fade',fadeEffect:{crossFade:true},autoHeight:true,navigation:{nextEl:'.swiper-button-next',prevEl:'.swiper-button-prev'},pagination:{el:'.swiper-pagination',clickable:true}})});
+</script>
+</body>
+</html>
