@@ -1,0 +1,202 @@
+
+<style>
+  .modern-table-wrapper {
+    max-width: 900px;
+    margin: 2rem auto;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(237, 237, 237, 0.7);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    font-family: 'Archivo', sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  .modern-table thead {
+    background: #ccc;
+    color: white;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .modern-table th,
+  .modern-table td {
+    padding: 14px 16px;
+    vertical-align: middle;
+  }
+  .modern-table td img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .modern-table .player-link {
+    text-decoration: none;
+    color: #111;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+  .modern-table .player-link:hover {
+    color: #0055ff;
+  }
+  .modern-table .stat {
+    font-weight: 600;
+    color: #111;
+  }
+  .modern-table tbody tr {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: linear-gradient(to right, #ededed, #fdfdfd);
+    position: relative;
+  }
+  .modern-table tbody tr:hover {
+    background: linear-gradient(to right, #e0e0e0, #fafafa);
+    transform: scale(1.01);
+    box-shadow: 0 0 0 2px var(--team-color, #aaa), 0 0 12px var(--team-color, #aaa);
+    z-index: 1;
+  }
+  @media (max-width: 600px) {
+    .modern-table th,
+    .modern-table td {
+      font-size: 14px;
+      padding: 10px;
+    }
+    .modern-table td img {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".clickable-row").forEach(row => {
+      row.addEventListener("click", function () {
+        const url = this.getAttribute("data-href");
+        if (url) window.open(url, "_blank");
+      });
+    });
+  });
+</script>
+
+<div class="modern-table-wrapper">
+  <table class="modern-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Player</th>
+        <th>Targets</th>
+        <th>Pos Grade Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Puka Nacua/100632"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/100632.webp" alt="Puka Nacua"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Puka Nacua/100632" target="_blank">Puka Nacua</a></td>
+        <td class="stat">111</td>
+        <td class="stat">90.1%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Nico Collins/61441"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/61441.webp" alt="Nico Collins"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Nico Collins/61441" target="_blank">Nico Collins</a></td>
+        <td class="stat">105</td>
+        <td class="stat">78.1%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Ja'Marr Chase/84270"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/84270.webp" alt="Ja'Marr Chase"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Ja'Marr Chase/84270" target="_blank">Ja'Marr Chase</a></td>
+        <td class="stat">180</td>
+        <td class="stat">70.9%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Malik Nabers/146759"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/146759.webp" alt="Malik Nabers"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Malik Nabers/146759" target="_blank">Malik Nabers</a></td>
+        <td class="stat">179</td>
+        <td class="stat">69.2%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/CeeDee Lamb/61570"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/61570.webp" alt="CeeDee Lamb"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/CeeDee Lamb/61570" target="_blank">CeeDee Lamb</a></td>
+        <td class="stat">162</td>
+        <td class="stat">64.5%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Drake London/86519"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/86519.webp" alt="Drake London"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Drake London/86519" target="_blank">Drake London</a></td>
+        <td class="stat">158</td>
+        <td class="stat">64.3%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Justin Jefferson/61398"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/61398.webp" alt="Justin Jefferson"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Justin Jefferson/61398" target="_blank">Justin Jefferson</a></td>
+        <td class="stat">169</td>
+        <td class="stat">62.0%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Tee Higgins/61211"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/61211.webp" alt="Tee Higgins"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Tee Higgins/61211" target="_blank">Tee Higgins</a></td>
+        <td class="stat">114</td>
+        <td class="stat">61.0%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Mike Evans/8642"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/8642.webp" alt="Mike Evans"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Mike Evans/8642" target="_blank">Mike Evans</a></td>
+        <td class="stat">114</td>
+        <td class="stat">58.8%</td>
+      </tr>
+    
+      <tr class="clickable-row" data-href="https://www.pff.com/nfl/players/Jauan Jennings/48027"
+          onmouseover="this.style.boxShadow='0 0 0 2px #888, 0 0 12px #888'; this.style.transform='scale(1.01)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='scale(1)'"
+          style="transition: all 0.3s ease; cursor: pointer; background: linear-gradient(to right, #ededed, #fdfdfd);">
+        <td><img src="https://media.pff.com/player-photos/nfl/48027.webp" alt="Jauan Jennings"></td>
+        <td><a class="player-link" href="https://www.pff.com/nfl/players/Jauan Jennings/48027" target="_blank">Jauan Jennings</a></td>
+        <td class="stat">115</td>
+        <td class="stat">57.6%</td>
+      </tr>
+    
+    </tbody>
+  </table>
+</div>
