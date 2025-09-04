@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PFF Passing Grades vs. Spagnuolo Blitzes</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0B1533;
+      color: white;
+      font-family: 'Archivo', sans-serif;
+      padding: 20px;
+    }
+    #chart-container {
+      max-width: 700px;
+      margin: auto;
+      position: relative;
+    }
+    .logo {
+      position: absolute;
+      bottom: -20px;
+      right: 0;
+      width: 140px;
+      opacity: 1;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">PFF Passing Grades vs. Steve Spagnuolo Blitzes (2019–2024, incl. playoffs)</h2>
+  <div id="chart-container">
+    <canvas id="barChart"></canvas>
+    <img src="https://media.pff.com/2025/07/PFF_PoweredBy_White.png" alt="Powered by PFF" class="logo" />
+  </div>
+
+  <script>
+    const ctx = document.getElementById('barChart').getContext('2d');
+
+    const data = {
+      labels: ['Baker Mayfield', 'Justin Herbert', 'Deshaun Watson', 'Trevor Lawrence', 'Josh Allen', 'Joe Burrow', 'Jalen Hurts', 'Derek Carr', 'Tua Tagovailoa', 'Tom Brady'],
+      datasets: [{
+        label: 'PFF Grade',
+        data: [84.1, 81.3, 76.8, 72.8, 70.2, 69.1, 68.9, 68.8, 65.9, 63.3],
+        backgroundColor: ['rgba(255,255,255,0.3)', '#00EDD9', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)'],
+        borderColor: ['#00EDD9', 'white', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9'],
+        borderWidth: [1, 2, 1, 1, 1, 1, 1, 1, 1, 1]
+      }]
+    };
+
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        layout: {
+          padding: {
+            bottom: 40
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: false,
+            min: 60,
+            max: 90,
+            ticks: {
+              color: 'white'
+            },
+            grid: {
+              color: 'rgba(255,255,255,0.1)'
+            }
+          },
+          y: {
+            ticks: {
+              color: 'white',
+              font: {
+                weight: 'bold'
+              }
+            },
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'PFF Grade: ' + context.parsed.x;
+              }
+            }
+          }
+        }
+      },
+    };
+
+    new Chart(ctx, config);
+  </script>
+</body>
+</html>
