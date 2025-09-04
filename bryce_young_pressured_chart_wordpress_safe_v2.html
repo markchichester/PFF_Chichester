@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bryce Young Pressured Passing Grades (2024)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0B1533;
+      color: white;
+      font-family: 'Archivo', sans-serif;
+      padding: 20px;
+    }
+    #chart-container {
+      max-width: 700px;
+      margin: auto;
+      position: relative;
+    }
+    .logo {
+      position: absolute;
+      bottom: -20px;
+      right: 0;
+      width: 140px;
+      opacity: 1;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Bryce Young Pressured Passing Grades (2024)</h2>
+  <div id="chart-container">
+    <canvas id="barChart"></canvas>
+    <img src="https://media.pff.com/2025/07/PFF_PoweredBy_White.png" alt="Powered by PFF" class="logo" />
+  </div>
+
+  <script>
+    const ctx = document.getElementById('barChart').getContext('2d');
+
+    const data = {
+      labels: ['Wk. 1', 'Wk. 2', 'Wk. 5', 'Wk. 8', 'Wk. 9', 'Wk. 10', 'Wk. 12', 'Wk. 13', 'Wk. 14', 'Wk. 15', 'Wk. 16', 'Wk. 17', 'Wk. 18'],
+      datasets: [{
+        label: 'PFF Grade',
+        data: [25.1, 34.7, 86.0, 72.0, 67.4, 62.3, 54.3, 75.2, 76.0, 43.9, 72.2, 82.8, 53.3],
+        backgroundColor: ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.3)', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9'],
+        borderColor: ['#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', '#00EDD9', 'white', 'white', 'white', 'white', 'white', 'white', 'white'],
+        borderWidth: [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2]
+      }]
+    };
+
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {
+        responsive: true,
+        layout: {
+          padding: {
+            bottom: 40
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: 'white'
+            },
+            grid: {
+              color: 'rgba(255,255,255,0.1)'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            min: 0,
+            max: 100,
+            ticks: {
+              color: 'white',
+              font: {
+                weight: 'bold'
+              }
+            },
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'PFF Grade: ' + context.parsed.y.toFixed(1);
+              }
+            }
+          },
+          datalabels: false
+        },
+        animation: {
+          onComplete: () => {
+            const chart = window.myChart;
+            const ctx = chart.ctx;
+            ctx.save();
+            chart.data.datasets.forEach((dataset, i) => {
+              const meta = chart.getDatasetMeta(i);
+              meta.data.forEach((bar, index) => {
+                const value = dataset.data[index].toFixed(1);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 12px Archivo';
+                ctx.textAlign = 'center';
+                ctx.fillText(value, bar.x, bar.y - 6);
+              });
+            });
+          }
+        }
+      }
+    };
+
+    window.myChart = new Chart(ctx, config);
+  </script>
+</body>
+</html>
