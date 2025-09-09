@@ -1,0 +1,59 @@
+<div style="max-width: 658px; margin: 0 auto;">
+
+  <!-- Pill-style Season Toggle Buttons -->
+  <div class="pill-container" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;">
+    <button class="pill active" onclick="switchCFLSeason(0)">2023</button>
+    <button class="pill" onclick="switchCFLSeason(1)">2024</button>
+    <button class="pill" onclick="switchCFLSeason(2)">2025</button>
+  </div>
+
+  <!-- Iframe Toggle Container -->
+  <div style="position: relative; width: 100%; height: 1200px; overflow: hidden;">
+    <iframe id="cfl-2023" src="https://markchichester.github.io/PFF_Chichester/2023_all_positions.html" style="position: absolute; top: 0; left: 0; width: 100%; height: 1200px; border: none; z-index: 3;"></iframe>
+    <iframe id="cfl-2024" src="https://markchichester.github.io/PFF_Chichester/2024_all_positions.html" style="position: absolute; top: 0; left: 0; width: 100%; height: 1200px; border: none; z-index: 2; display: none;"></iframe>
+    <iframe id="cfl-2025" src="https://markchichester.github.io/PFF_Chichester/2025_all_positions.html" style="position: absolute; top: 0; left: 0; width: 100%; height: 1200px; border: none; z-index: 1; display: none;"></iframe>
+  </div>
+
+  <!-- Styling for Pill Buttons -->
+  <style>
+    .pill {
+      background-color: #f0f0f0;
+      color: #0B1533;
+      border: 1px solid #ccc;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .pill.active {
+      background-color: #006BFF !important;
+      color: white !important;
+      border-color: #006BFF;
+    }
+    .pill:hover:not(.active) {
+      background-color: #006BFF;
+      color: white;
+    }
+  </style>
+
+  <!-- Toggle Script -->
+  <script>
+    function switchCFLSeason(index) {
+      const iframes = [
+        document.getElementById('cfl-2023'),
+        document.getElementById('cfl-2024'),
+        document.getElementById('cfl-2025')
+      ];
+      const buttons = document.querySelectorAll('.pill');
+
+      iframes.forEach((iframe, i) => {
+        iframe.style.display = (i === index) ? 'block' : 'none';
+      });
+
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+    }
+  </script>
+</div>
