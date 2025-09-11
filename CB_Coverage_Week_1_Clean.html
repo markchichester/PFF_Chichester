@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CB Coverage Rankings</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      background: #fff;
+    }
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding-bottom: 2rem;
+    }
+    .branding {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .branding img {
+      max-height: 30px;
+    }
+    .dataTables_wrapper {
+      overflow-x: auto;
+    }
+    table.dataTable {
+      border-collapse: collapse !important;
+      width: 100% !important;
+      table-layout: auto;
+    }
+    table.dataTable thead th {
+      background-color: #0B1533;
+      color: white;
+      text-align: center;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      padding: 8px;
+    }
+    table.dataTable tbody td {
+      text-align: center;
+      padding: 8px;
+      white-space: nowrap;
+      background: #fff;
+    }
+    table.dataTable tbody tr:hover td {
+      background-color: #f2f2f2;
+    }
+    table.dataTable thead th:nth-child(1) {
+      position: sticky;
+      left: 0;
+      z-index: 6;
+      background-color: #0B1533;
+      color: white;
+      text-align: left;
+    }
+    table.dataTable tbody td:nth-child(1) {
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      background: #fff;
+      text-align: left;
+    }
+    .dt-buttons {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="branding">
+      <img src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png" alt="Powered by PFF" />
+    </div>
+    <table id="cb-table" class="display nowrap">
+      <thead>
+        <tr>
+<th>Player</th><th>Team</th><th>Pos Grade Rate</th><th>Adv. Cov. Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr><td>Josh Jobe</td><td>SEA</td><td>83.87%</td><td>2.601</td></tr><tr><td>Will Johnson</td><td>ARZ</td><td>87.88%</td><td>2.537</td></tr><tr><td>Cooper DeJean</td><td>PHI</td><td>81.25%</td><td>2.386</td></tr><tr><td>Trent McDuffie</td><td>KC</td><td>83.33%</td><td>2.254</td></tr><tr><td>Chidobe Awuzie</td><td>BLT</td><td>85.37%</td><td>2.035</td></tr><tr><td>Max Melton</td><td>ARZ</td><td>79.07%</td><td>1.957</td></tr><tr><td>Jamel Dean</td><td>TB</td><td>76.74%</td><td>1.918</td></tr><tr><td>DJ Turner II</td><td>CIN</td><td>79.31%</td><td>1.833</td></tr><tr><td>Carrington Valentine</td><td>GB</td><td>76.47%</td><td>1.724</td></tr><tr><td>Marshon Lattimore</td><td>WAS</td><td>86.49%</td><td>1.721</td></tr><tr><td>Tyson Campbell</td><td>JAX</td><td>89.47%</td><td>1.69</td></tr><tr><td>Pat Surtain II</td><td>DEN</td><td>74.19%</td><td>1.679</td></tr><tr><td>Kool-Aid McKinstry</td><td>NO</td><td>86.21%</td><td>1.572</td></tr><tr><td>Jacob Parrish</td><td>TB</td><td>85.29%</td><td>1.545</td></tr><tr><td>Tarheeb Still</td><td>LAC</td><td>78.95%</td><td>1.445</td></tr><tr><td>Mike Sainristil</td><td>WAS</td><td>78.38%</td><td>1.402</td></tr><tr><td>Riley Moss</td><td>DEN</td><td>75.76%</td><td>1.401</td></tr><tr><td>Donte Jackson</td><td>LAC</td><td>76.67%</td><td>1.358</td></tr><tr><td>Garrett Williams</td><td>ARZ</td><td>85.00%</td><td>1.318</td></tr><tr><td>Zyon McCollum</td><td>TB</td><td>82.22%</td><td>1.255</td></tr><tr><td>Jourdan Lewis</td><td>JAX</td><td>83.33%</td><td>1.111</td></tr><tr><td>Keisean Nixon</td><td>GB</td><td>82.35%</td><td>1.08</td></tr><tr><td>Charvarius Ward</td><td>IND</td><td>83.33%</td><td>1.073</td></tr><tr><td>Carlton Davis III</td><td>NE</td><td>77.14%</td><td>0.973</td></tr><tr><td>Andru Phillips</td><td>NYG</td><td>66.67%</td><td>0.845</td></tr><tr><td>A.J. Terrell</td><td>ATL</td><td>75.00%</td><td>0.829</td></tr><tr><td>Sauce Gardner</td><td>NYJ</td><td>95.83%</td><td>0.811</td></tr><tr><td>Marlon Humphrey</td><td>BLT</td><td>72.73%</td><td>0.702</td></tr><tr><td>Kyu Blu Kelly</td><td>LV</td><td>81.82%</td><td>0.654</td></tr><tr><td>Paulson Adebo</td><td>NYG</td><td>71.43%</td><td>0.532</td></tr><tr><td>Trey Amos</td><td>WAS</td><td>77.78%</td><td>0.446</td></tr><tr><td>Kamari Lassiter</td><td>HST</td><td>74.19%</td><td>0.434</td></tr><tr><td>Isaac Yiadom</td><td>NO</td><td>69.70%</td><td>0.389</td></tr><tr><td>Nate Wiggins</td><td>BLT</td><td>81.25%</td><td>0.379</td></tr><tr><td>Mike Jackson</td><td>CAR</td><td>88.00%</td><td>0.362</td></tr><tr><td>Jalen Ramsey</td><td>PIT</td><td>85.71%</td><td>0.347</td></tr><tr><td>Denzel Ward</td><td>CLV</td><td>76.00%</td><td>0.318</td></tr><tr><td>Quinyon Mitchell</td><td>PHI</td><td>72.22%</td><td>0.307</td></tr><tr><td>Kenny Moore II</td><td>IND</td><td>80.00%</td><td>0.251</td></tr><tr><td>Cam Taylor-Britt</td><td>CIN</td><td>72.09%</td><td>0.242</td></tr><tr><td>Greg Newsome II</td><td>CLV</td><td>69.57%</td><td>0.213</td></tr><tr><td>Deommodore Lenoir</td><td>SF</td><td>80.95%</td><td>0.203</td></tr><tr><td>Cor'Dale Flott</td><td>NYG</td><td>81.82%</td><td>0.179</td></tr><tr><td>Roger McCreary</td><td>TEN</td><td>80.95%</td><td>0.161</td></tr><tr><td>Xavien Howard</td><td>IND</td><td>83.33%</td><td>0.145</td></tr><tr><td>Tyrique Stevenson</td><td>CHI</td><td>65.38%</td><td>0.14</td></tr><tr><td>Javon Bullard</td><td>GB</td><td>74.19%</td><td>0.138</td></tr><tr><td>Kaiir Elam</td><td>DAL</td><td>84.62%</td><td>0.132</td></tr><tr><td>Ja'Quan McMillian</td><td>DEN</td><td>88.24%</td><td>0.13</td></tr><tr><td>Darius Slay</td><td>PIT</td><td>73.91%</td><td>0.114</td></tr><tr><td>Trevon Diggs</td><td>DAL</td><td>100.00%</td><td>0.109</td></tr><tr><td>Nahshon Wright</td><td>CHI</td><td>64.00%</td><td>0.088</td></tr><tr><td>Marcus Jones</td><td>NE</td><td>70.00%</td><td>0.081</td></tr><tr><td>DaRon Bland</td><td>DAL</td><td>80.95%</td><td>0.073</td></tr><tr><td>Chau Smith-Wade</td><td>CAR</td><td>80.95%</td><td>0.069</td></tr><tr><td>Jaycee Horn</td><td>CAR</td><td>63.64%</td><td>0.056</td></tr><tr><td>Josh Newton</td><td>CIN</td><td>61.11%</td><td>0.053</td></tr><tr><td>Ahkello Witherspoon</td><td>LA</td><td>72.73%</td><td>0.043</td></tr><tr><td>Renardo Green</td><td>SF</td><td>63.16%</td><td>0.039</td></tr><tr><td>Christian Benford</td><td>BUF</td><td>66.67%</td><td>0.033</td></tr><tr><td>Michael Carter II</td><td>NYJ</td><td>56.25%</td><td>0.033</td></tr><tr><td>Cobie Durant</td><td>LA</td><td>58.82%</td><td>0.032</td></tr><tr><td>Mekhi Blackmon</td><td>IND</td><td>75.00%</td><td>0.025</td></tr><tr><td>Billy Bowman Jr.</td><td>ATL</td><td>71.43%</td><td>0.024</td></tr><tr><td>Mike Hughes</td><td>ATL</td><td>66.67%</td><td>0.019</td></tr><tr><td>Alex Austin</td><td>NE</td><td>57.58%</td><td>-0.001</td></tr><tr><td>Derek Stingley Jr.</td><td>HST</td><td>64.29%</td><td>-0.029</td></tr><tr><td>Eric Stokes</td><td>LV</td><td>70.45%</td><td>-0.034</td></tr><tr><td>Darrell Baker Jr.</td><td>TEN</td><td>66.67%</td><td>-0.041</td></tr><tr><td>Dorian Strong</td><td>BUF</td><td>62.50%</td><td>-0.048</td></tr><tr><td>Tariq Woolen</td><td>SEA</td><td>74.29%</td><td>-0.059</td></tr><tr><td>Nick McCloud</td><td>CHI</td><td>57.14%</td><td>-0.066</td></tr><tr><td>Devon Witherspoon</td><td>SEA</td><td>65.52%</td><td>-0.074</td></tr><tr><td>Emmanuel Forbes</td><td>LA</td><td>52.00%</td><td>-0.089</td></tr><tr><td>Brandon Stephens</td><td>NYJ</td><td>59.26%</td><td>-0.089</td></tr><tr><td>D.J. Reed</td><td>DET</td><td>60.00%</td><td>-0.155</td></tr><tr><td>Isaiah Rodgers</td><td>MIN</td><td>73.68%</td><td>-0.35</td></tr><tr><td>Jaire Alexander</td><td>BLT</td><td>62.50%</td><td>-0.383</td></tr><tr><td>Jarrian Jones</td><td>JAX</td><td>66.67%</td><td>-0.445</td></tr><tr><td>Jack Jones</td><td>MIA</td><td>60.00%</td><td>-0.454</td></tr><tr><td>Byron Murphy Jr.</td><td>MIN</td><td>76.92%</td><td>-0.517</td></tr><tr><td>Jarvis Brownlee Jr.</td><td>TEN</td><td>60.00%</td><td>-0.66</td></tr><tr><td>Adoree' Jackson</td><td>PHI</td><td>60.71%</td><td>-0.8</td></tr><tr><td>Jaylen Watson</td><td>KC</td><td>54.29%</td><td>-0.987</td></tr><tr><td>Cam Hart</td><td>LAC</td><td>65.52%</td><td>-1.528</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#cb-table').DataTable({
+        responsive: true,
+        paging: false,
+        info: false,
+        searching: true,
+        scrollX: true,
+        dom: 'Bfrtip',
+        buttons: ['csvHtml5']
+      });
+    });
+  </script>
+</body>
+</html>
