@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>College Grades Widget</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College HOF Grades Widget</title>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
@@ -12,10 +12,11 @@
       padding: 0;
       font-family: 'Archivo', sans-serif;
       background: #fff;
+      width: 100%;
       overflow-x: hidden;
     }
+
     .hof-widget {
-      position: relative;
       width: 100%;
       max-width: 800px;
       margin: 20px auto;
@@ -24,106 +25,156 @@
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
       background: #fff;
+      position: relative;
       box-sizing: border-box;
-      overflow: hidden;
     }
-    .powered-by {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      width: 110px;
-      opacity: 0.08;
-      z-index: 1;
-    }
+
     .swiper {
       width: 100%;
+      position: relative;
       z-index: 2;
     }
+
     .swiper-slide {
+      width: 100%;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      text-align: center;
       padding: 20px;
+      box-sizing: border-box;
     }
+
     .slide-content {
       width: 100%;
-      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
     }
+
     h3 {
       color: #0B1533;
       margin-bottom: 20px;
-      font-size: 1.8em;
+      font-size: 2em;
     }
+
     .table-container {
       overflow-x: auto;
       width: 100%;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin: auto;
       font-size: 1em;
     }
+
     th, td {
-      padding: 12px;
+      padding: 14px;
       border-bottom: 1px solid #ddd;
-      text-align: center;
     }
+
     th {
       background-color: #f1f1f1;
       color: #333;
     }
-    .swiper-button-next,
-    .swiper-button-prev {
+
+    .pill {
+      background-color: #0B1533;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 1em;
+      margin-top: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .pill:hover {
+      background-color: #09112b;
+    }
+
+    .powered-by {
+      margin-top: 30px;
+      text-align: right;
+    }
+
+    .powered-by img {
+      height: 36px;
+      opacity: 0.9;
+    }
+
+    .swiper-button-next, .swiper-button-prev {
       color: #0B1533;
     }
+
     .swiper-pagination-bullet {
       background-color: #0B1533;
-      opacity: 0.6;
+      opacity: 0.7;
     }
+
     .swiper-pagination-bullet-active {
       background-color: #09112b;
       opacity: 1;
     }
+
     @media (max-width: 600px) {
       h3 {
-        font-size: 1.4em;
+        font-size: 1.5em;
       }
+
       table {
         font-size: 0.9em;
       }
+
       th, td {
         padding: 10px;
+      }
+
+      .pill {
+        font-size: 0.9em;
+        padding: 8px 14px;
+      }
+
+      .powered-by {
+        text-align: center;
       }
     }
   </style>
 </head>
 <body>
   <div class="hof-widget">
-    <img class="powered-by" src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png" alt="Powered by PFF" />
     <div class="swiper mySwiper">
       <div class="swiper-wrapper">
 
         <!-- Slide 1: Offense -->
         <div class="swiper-slide">
           <div class="slide-content">
-            <h3>Highest-Graded Players: Offense</h3>
+            <h3>Highest-Graded College Players: Offense</h3>
             <div class="table-container">
               <table>
-                <thead><tr><th>Name</th><th>Team</th><th>Pos.</th><th>Snaps</th><th>PFF Grade</th></tr></thead>
+                <thead>
+                  <tr><th>Pos.</th><th>Player</th><th>Team</th><th>Snaps</th><th>PFF Grade</th></tr>
+                </thead>
                 <tbody>
-                  <tr><td>Brendan Sorsby</td><td>CINCINNATI</td><td>QB</td><td>29</td><td>95.5</td></tr>
-                  <tr><td>Omar Cooper Jr.</td><td>INDIANA</td><td>WR</td><td>39</td><td>95.3</td></tr>
-                  <tr><td>Fernando Mendoza</td><td>INDIANA</td><td>QB</td><td>38</td><td>94.3</td></tr>
-                  <tr><td>Colton Joseph</td><td>DOMINION</td><td>QB</td><td>64</td><td>94.1</td></tr>
-                  <tr><td>Toreon Penright</td><td>FRESNO ST</td><td>T</td><td>23</td><td>94.1</td></tr>
-                  <tr><td>Steve Angeli</td><td>SYRACUSE</td><td>QB</td><td>59</td><td>93.5</td></tr>
-                  <tr><td>Malik Washington</td><td>MARYLAND</td><td>QB</td><td>51</td><td>93.1</td></tr>
-                  <tr><td>Josh Hoover</td><td>TCU</td><td>QB</td><td>52</td><td>92.8</td></tr>
-                  <tr><td>Ahmad Hardy</td><td>MISSOURI</td><td>HB</td><td>29</td><td>92.8</td></tr>
-                  <tr><td>Joshua Moore</td><td>MIAMI FL</td><td>WR</td><td>22</td><td>92.7</td></tr>
+                  <tr><td>QB</td><td>Brendan Sorsby</td><td>CINCINNATI</td><td>29</td><td>95.5</td></tr>
+                  <tr><td>WR</td><td>Omar Cooper Jr.</td><td>INDIANA</td><td>39</td><td>95.3</td></tr>
+                  <tr><td>QB</td><td>Fernando Mendoza</td><td>INDIANA</td><td>38</td><td>94.3</td></tr>
+                  <tr><td>QB</td><td>Colton Joseph</td><td>DOMINION</td><td>64</td><td>94.1</td></tr>
+                  <tr><td>T</td><td>Toreon Penright</td><td>FRESNO ST</td><td>23</td><td>94.1</td></tr>
+                  <tr><td>QB</td><td>Steve Angeli</td><td>SYRACUSE</td><td>59</td><td>93.5</td></tr>
+                  <tr><td>QB</td><td>Malik Washington</td><td>MARYLAND</td><td>51</td><td>93.1</td></tr>
+                  <tr><td>QB</td><td>Josh Hoover</td><td>TCU</td><td>52</td><td>92.8</td></tr>
+                  <tr><td>HB</td><td>Ahmad Hardy</td><td>MISSOURI</td><td>29</td><td>92.8</td></tr>
+                  <tr><td>WR</td><td>Joshua Moore</td><td>MIAMI FL</td><td>22</td><td>92.7</td></tr>
                 </tbody>
               </table>
+            </div>
+            <div class="powered-by">
+              <img src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png" alt="Powered by PFF" />
             </div>
           </div>
         </div>
@@ -131,29 +182,35 @@
         <!-- Slide 2: Defense -->
         <div class="swiper-slide">
           <div class="slide-content">
-            <h3>Highest-Graded Players: Defense</h3>
+            <h3>Highest-Graded College Players: Defense</h3>
             <div class="table-container">
               <table>
-                <thead><tr><th>Name</th><th>Team</th><th>Pos.</th><th>Snaps</th><th>PFF Grade</th></tr></thead>
+                <thead>
+                  <tr><th>Pos.</th><th>Player</th><th>Team</th><th>Snaps</th><th>PFF Grade</th></tr>
+                </thead>
                 <tbody>
-                  <tr><td>Isaiah Shirley</td><td>NC STATE</td><td>DI</td><td>26</td><td>94.4</td></tr>
-                  <tr><td>Caden Curry</td><td>OHIO STATE</td><td>ED</td><td>30</td><td>92.5</td></tr>
-                  <tr><td>Elijah Green</td><td>TULSA</td><td>CB</td><td>66</td><td>92.3</td></tr>
-                  <tr><td>J'Mond Tapp</td><td>SO MISS</td><td>ED</td><td>47</td><td>92.1</td></tr>
-                  <tr><td>Julien Davis</td><td>E CAROLINA</td><td>LB</td><td>27</td><td>92.1</td></tr>
-                  <tr><td>Bray Hubbard</td><td>ALABAMA</td><td>S</td><td>39</td><td>92.0</td></tr>
-                  <tr><td>Landon Robinson</td><td>NAVY</td><td>DI</td><td>63</td><td>91.8</td></tr>
-                  <tr><td>La'khi Roland</td><td>MARYLAND</td><td>CB</td><td>27</td><td>91.4</td></tr>
-                  <tr><td>Clay Patterson</td><td>STANFORD</td><td>DI</td><td>38</td><td>91.3</td></tr>
-                  <tr><td>Damon Wilson II</td><td>MISSOURI</td><td>ED</td><td>20</td><td>91.0</td></tr>
+                  <tr><td>DI</td><td>Isaiah Shirley</td><td>NC STATE</td><td>26</td><td>94.4</td></tr>
+                  <tr><td>ED</td><td>Caden Curry</td><td>OHIO STATE</td><td>30</td><td>92.5</td></tr>
+                  <tr><td>CB</td><td>Elijah Green</td><td>TULSA</td><td>66</td><td>92.3</td></tr>
+                  <tr><td>ED</td><td>J'Mond Tapp</td><td>SO MISS</td><td>47</td><td>92.1</td></tr>
+                  <tr><td>LB</td><td>Julien Davis</td><td>E CAROLINA</td><td>27</td><td>92.1</td></tr>
+                  <tr><td>S</td><td>Bray Hubbard</td><td>ALABAMA</td><td>39</td><td>92.0</td></tr>
+                  <tr><td>DI</td><td>Landon Robinson</td><td>NAVY</td><td>63</td><td>91.8</td></tr>
+                  <tr><td>CB</td><td>La'khi Roland</td><td>MARYLAND</td><td>27</td><td>91.4</td></tr>
+                  <tr><td>DI</td><td>Clay Patterson</td><td>STANFORD</td><td>38</td><td>91.3</td></tr>
+                  <tr><td>ED</td><td>Damon Wilson II</td><td>MISSOURI</td><td>20</td><td>91.0</td></tr>
                 </tbody>
               </table>
+            </div>
+            <div class="powered-by">
+              <img src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png" alt="Powered by PFF" />
             </div>
           </div>
         </div>
 
       </div>
-      <!-- Pagination and Nav Arrows -->
+
+      <!-- Swiper controls -->
       <div class="swiper-pagination"></div>
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>
@@ -165,13 +222,13 @@
     const swiper = new Swiper('.mySwiper', {
       loop: true,
       autoHeight: true,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true
-      },
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev'
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
       }
     });
   </script>
