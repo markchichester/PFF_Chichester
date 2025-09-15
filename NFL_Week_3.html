@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFL Week 2 HOF Grades</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+    }
+    .hof-widget {
+      max-width: 650px;
+      margin: 20px auto;
+      border: 3px solid #0B1533;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .swiper {
+      width: 100%;
+    }
+    .swiper-slide {
+      padding: 24px;
+      box-sizing: border-box;
+      background: #fff;
+    }
+    h2 {
+      font-size: 1.8em;
+      color: #0B1533;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95em;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background: #f5f5f5;
+      color: #0B1533;
+    }
+    .cta-button {
+      display: block;
+      width: fit-content;
+      margin: 20px auto 10px;
+      background: #0B1533;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .cta-button:hover {
+      background: #09112b;
+    }
+    .powered-by {
+      width: 120px;
+      margin: 0 auto 16px;
+      display: block;
+    }
+    .swiper-button-next, .swiper-button-prev {
+      color: #0B1533;
+    }
+    @media (max-width: 600px) {
+      h2 { font-size: 1.4em; }
+      table { font-size: 0.85em; }
+      .cta-button { font-size: 0.9em; padding: 8px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hof-widget">
+    <div class="swiper">
+      <div class="swiper-wrapper">
+
+        <!-- Slide 1: Offense -->
+        <div class="swiper-slide">
+          <h2>NFL Week 2: Offense</h2>
+          <table>
+            <thead><tr><th>Name</th><th>Team</th><th>Pos.</th><th>Snaps</th><th>PFF Grade</th></tr></thead>
+            <tbody>
+              <tr><td>Malik Heath</td><td>Packers</td><td>WR</td><td>22</td><td>91.7</td></tr>
+              <tr><td>Amon-Ra St. Brown</td><td>Lions</td><td>WR</td><td>50</td><td>91.6</td></tr>
+              <tr><td>Kenneth Walker III</td><td>Seahawks</td><td>HB</td><td>23</td><td>91.0</td></tr>
+              <tr><td>Elijah Higgins</td><td>Cardinals</td><td>TE</td><td>22</td><td>90.4</td></tr>
+              <tr><td>Tucker Kraft</td><td>Packers</td><td>TE</td><td>62</td><td>89.8</td></tr>
+              <tr><td>Davis Allen</td><td>Rams</td><td>TE</td><td>25</td><td>89.4</td></tr>
+              <tr><td>Russell Wilson</td><td>Giants</td><td>QB</td><td>64</td><td>88.3</td></tr>
+              <tr><td>Ja'Marr Chase</td><td>Bengals</td><td>WR</td><td>66</td><td>88.1</td></tr>
+              <tr><td>Wan'Dale Robinson</td><td>Giants</td><td>WR</td><td>47</td><td>87.4</td></tr>
+              <tr><td>Jordan Love</td><td>Packers</td><td>QB</td><td>68</td><td>86.7</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Slide 2: Defense -->
+        <div class="swiper-slide">
+          <h2>NFL Week 2: Defense</h2>
+          <table>
+            <thead><tr><th>Name</th><th>Team</th><th>Pos.</th><th>Snaps</th><th>PFF Grade</th></tr></thead>
+            <tbody>
+              <tr><td>Joey Bosa</td><td>Bills</td><td>ED</td><td>26</td><td>95.8</td></tr>
+              <tr><td>Fred Warner</td><td>49ers</td><td>LB</td><td>71</td><td>95.1</td></tr>
+              <tr><td>Maliek Collins</td><td>Browns</td><td>DI</td><td>41</td><td>92.6</td></tr>
+              <tr><td>Roquan Smith</td><td>Ravens</td><td>LB</td><td>66</td><td>91.9</td></tr>
+              <tr><td>Brian Branch</td><td>Lions</td><td>S</td><td>59</td><td>91.5</td></tr>
+              <tr><td>Micah Parsons</td><td>Packers</td><td>ED</td><td>47</td><td>91.4</td></tr>
+              <tr><td>Myles Garrett</td><td>Browns</td><td>ED</td><td>38</td><td>91.1</td></tr>
+              <tr><td>Devin Bush</td><td>Browns</td><td>LB</td><td>44</td><td>90.8</td></tr>
+              <tr><td>Keisean Nixon</td><td>Packers</td><td>CB</td><td>69</td><td>90.7</td></tr>
+              <tr><td>Devin Lloyd</td><td>Jaguars</td><td>LB</td><td>48</td><td>90.4</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Slide 3: Rookies -->
+        <div class="swiper-slide">
+          <h2>NFL Week 2: Rookies</h2>
+          <table>
+            <thead><tr><th>Name</th><th>Team</th><th>Pos.</th><th>Snaps</th><th>PFF Grade</th></tr></thead>
+            <tbody>
+              <tr><td>Jackson Hawes</td><td>Bills</td><td>TE</td><td>35</td><td>85.3</td></tr>
+              <tr><td>Cam Skattebo</td><td>Giants</td><td>HB</td><td>35</td><td>73.6</td></tr>
+              <tr><td>Elic Ayomanor</td><td>Titans</td><td>WR</td><td>48</td><td>73.6</td></tr>
+              <tr><td>Donovan Ezeiruaku</td><td>Cowboys</td><td>ED</td><td>26</td><td>73.3</td></tr>
+              <tr><td>Josaiah Stewart</td><td>Rams</td><td>ED</td><td>25</td><td>72.4</td></tr>
+              <tr><td>Aeneas Peebles</td><td>Ravens</td><td>DI</td><td>22</td><td>71.6</td></tr>
+              <tr><td>Jack Sawyer</td><td>Steelers</td><td>ED</td><td>26</td><td>71.4</td></tr>
+              <tr><td>Jihaad Campbell</td><td>Eagles</td><td>LB</td><td>58</td><td>71.4</td></tr>
+              <tr><td>Jonas Sanker</td><td>Saints</td><td>S</td><td>71</td><td>70.2</td></tr>
+              <tr><td>Josh Simmons</td><td>Chiefs</td><td>T</td><td>56</td><td>69.3</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Navigation arrows -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <!-- Pagination dots -->
+      <div class="swiper-pagination"></div>
+    </div>
+
+    <a class="cta-button" href="https://premium.pff.com/nfl/games/2025/2" target="_blank">Explore PFF Premium Stats</a>
+    <img class="powered-by" src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png" alt="Powered by PFF" />
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    new Swiper('.swiper', {
+      loop: false,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      }
+    });
+  </script>
+</body>
+</html>
