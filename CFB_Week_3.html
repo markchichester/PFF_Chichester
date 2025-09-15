@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>College Grades Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Archivo', sans-serif;
+      background: #fff;
+      width: 100%;
+      overflow-x: hidden;
+    }
+    .hof-widget {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 16px;
+      border: 3px solid #0B1533;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      background: #fff;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .powered-by {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 110px;
+      opacity: 0.08;
+      z-index: 1;
+    }
+    .swiper {
+      width: 100%;
+      max-width: 100vw;
+      position: relative;
+      z-index: 2;
+    }
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+    .slide-content {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 20px;
+      text-align: center;
+    }
+    h3 {
+      color: #0B1533;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+    .table-container {
+      overflow-x: auto;
+      width: 100%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: auto;
+      font-size: 1em;
+    }
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f1f1f1;
+      color: #333;
+    }
+    @media (max-width: 600px) {
+      h3 {
+        font-size: 1.4em;
+      }
+      table {
+        font-size: 0.9em;
+      }
+      th, td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hof-widget">
+    <img class="powered-by" src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png" alt="Powered by PFF">
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+
+        <!-- Slide 1: Offense -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>Highest-Graded Players: Offense</h3>
+            <div class="table-container">
+              <table>
+                <thead><tr><th>Name</th><th>Team</th><th>Pos.</th><th>Snaps</th><th>PFF Grade</th></tr></thead>
+                <tbody>
+                  <tr><td>Brendan Sorsby</td><td>CINCINNATI</td><td>QB</td><td>29</td><td>95.5</td></tr>
+                  <tr><td>Omar Cooper Jr.</td><td>INDIANA</td><td>WR</td><td>39</td><td>95.3</td></tr>
+                  <tr><td>Fernando Mendoza</td><td>INDIANA</td><td>QB</td><td>38</td><td>94.3</td></tr>
+                  <tr><td>Colton Joseph</td><td>DOMINION</td><td>QB</td><td>64</td><td>94.1</td></tr>
+                  <tr><td>Toreon Penright</td><td>FRESNO ST</td><td>T</td><td>23</td><td>94.1</td></tr>
+                  <tr><td>Steve Angeli</td><td>SYRACUSE</td><td>QB</td><td>59</td><td>93.5</td></tr>
+                  <tr><td>Malik Washington</td><td>MARYLAND</td><td>QB</td><td>51</td><td>93.1</td></tr>
+                  <tr><td>Josh Hoover</td><td>TCU</td><td>QB</td><td>52</td><td>92.8</td></tr>
+                  <tr><td>Ahmad Hardy</td><td>MISSOURI</td><td>HB</td><td>29</td><td>92.8</td></tr>
+                  <tr><td>Joshua Moore</td><td>MIAMI FL</td><td>WR</td><td>22</td><td>92.7</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Defense -->
+        <div class="swiper-slide">
+          <div class="slide-content">
+            <h3>Highest-Graded Players: Defense</h3>
+            <div class="table-container">
+              <table>
+                <thead><tr><th>Name</th><th>Team</th><th>Pos.</th><th>Snaps</th><th>PFF Grade</th></tr></thead>
+                <tbody>
+                  <tr><td>Isaiah Shirley</td><td>NC STATE</td><td>DI</td><td>26</td><td>94.4</td></tr>
+                  <tr><td>Caden Curry</td><td>OHIO STATE</td><td>ED</td><td>30</td><td>92.5</td></tr>
+                  <tr><td>Elijah Green</td><td>TULSA</td><td>CB</td><td>66</td><td>92.3</td></tr>
+                  <tr><td>J'Mond Tapp</td><td>SO MISS</td><td>ED</td><td>47</td><td>92.1</td></tr>
+                  <tr><td>Julien Davis</td><td>E CAROLINA</td><td>LB</td><td>27</td><td>92.1</td></tr>
+                  <tr><td>Bray Hubbard</td><td>ALABAMA</td><td>S</td><td>39</td><td>92.0</td></tr>
+                  <tr><td>Landon Robinson</td><td>NAVY</td><td>DI</td><td>63</td><td>91.8</td></tr>
+                  <tr><td>La'khi Roland</td><td>MARYLAND</td><td>CB</td><td>27</td><td>91.4</td></tr>
+                  <tr><td>Clay Patterson</td><td>STANFORD</td><td>DI</td><td>38</td><td>91.3</td></tr>
+                  <tr><td>Damon Wilson II</td><td>MISSOURI</td><td>ED</td><td>20</td><td>91.0</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      new Swiper('.mySwiper', {
+        loop: true,
+        autoHeight: true,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        }
+      });
+    });
+  </script>
+</body>
+</html>
