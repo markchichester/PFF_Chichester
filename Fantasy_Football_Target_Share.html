@@ -144,38 +144,6 @@
     #chart-container {
       overflow: visible;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 10px;
-      max-width: 400px;
-      width: 90%;
-    }
-    .modal-content h3 {
-      margin-top: 0;
-    }
-    .stat-line {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-    }
-    .stat-green { color: green; font-weight: bold; }
-    .stat-red { color: red; font-weight: bold; }
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -200,11 +168,9 @@
     max-width: 420px;
     width: 92%;
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    animation: slideUp 0.3s ease-out;
-  }
-  @keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    position: relative;
+    transform: none;
+    margin: 0;
   }
   .modal-header {
     display: flex;
@@ -568,7 +534,6 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
             </div>
             <div class=\"meta\">${player['Pos.'] || meta['Pos.'] || ''} | ${player['Targets'] || 0} Targets</div>
             <div class="button-row">
-              <button onclick="openModal('${player['Player Id']}', '${player['Name']}', event)">View More Metrics</button>
               <button onclick="window.open('${profileURL}', '_blank')">Premium Stats</button>
             </div>
           </div>
@@ -606,9 +571,9 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
           y = event.clientY - modalHeight - 10; // Show above click
         }
         
-        // Ensure modal stays within viewport bounds
-        if (x < 10) x = 10;
-        if (y < 10) y = 10;
+        // Ensure modal stays within viewport bounds (more lenient)
+        if (x < 5) x = 5;
+        if (y < 5) y = 5;
         
         modalContent.style.position = 'fixed';
         modalContent.style.left = x + 'px';
@@ -659,15 +624,28 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
         const rawVal = parseFloat(player[field]);
         const rawAvg = averages[field];
 
-        // Display player values exactly as they appear in the Google Sheet
-        const formattedVal = player[field] || '0';
-        
-        // Format averages to one decimal place
-        let formattedAvg;
-        if (rawAvg !== undefined && rawAvg !== null) {
+        let formattedVal = rawVal;
+        let formattedAvg = rawAvg;
+
+        // Percentages to one decimal place
+        if (field === "Completion %" || field === "Deep Target %" || field === "Slot Target %" || field === "Contested Catch %" || field === "Drop Rate") {
+          formattedVal = rawVal.toFixed(1) + "%";
+          formattedAvg = rawAvg.toFixed(1) + "%";
+        }
+        // Two decimal places
+        else if (field === "Yards Per Route Run") {
+          formattedVal = rawVal.toFixed(2);
+          formattedAvg = rawAvg.toFixed(2);
+        }
+        // One decimal place
+        else if (field === "Yards Per Reception" || field === "Average Depth of Target" || field === "Passer Rating When Targeted") {
+          formattedVal = rawVal.toFixed(1);
           formattedAvg = rawAvg.toFixed(1);
-        } else {
-          formattedAvg = '0.0';
+        }
+        // Whole numbers (no decimal)
+        else {
+          formattedVal = Math.round(rawVal);
+          formattedAvg = Math.round(rawAvg);
         }
 
         const trend = rawVal > rawAvg ? 'stat-green' : 'stat-red';
