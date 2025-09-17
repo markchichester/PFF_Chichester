@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fantasy Football Share Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<style>
+    body {
+      font-family: 'Archivo', sans-serif;
+      background: white;
+      color: #0B1533;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    header {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    header img {
+      width: 200px;
+    }
+    .toggle-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 10px;
+    }
+    .toggle-buttons button {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: none;
+      background: #0B1533;
+      color: white;
+      font-weight: bold;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .toggle-buttons button:hover {
+      background: #1d2654;
+    }
+    .table-view, .chart-view {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .table-view.active, .chart-view.active {
+      display: block;
+    }
+    .player-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f7f9fb;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .team-logo-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.06;
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      z-index: 0;
+    }
+    .headshot {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 0.75rem;
+      z-index: 1;
+      flex-grow: 1;
+    }
+    .player-info .name {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .player-info .meta {
+      font-size: 0.75rem;
+      color: #555;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      z-index: 1;
+      margin-top: 0.5rem;
+    }
+    .button-row button {
+      background: #0B1533;
+      color: white;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .metric-block {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #0B1533;
+      text-align: right;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+    .metric-rank {
+      font-size: 0.8rem;
+      color: white;
+      background: #0B1533;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    #chart-container {
+      overflow: visible;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+    }
+    .stat-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+    }
+    .stat-green { color: green; font-weight: bold; }
+    .stat-red { color: red; font-weight: bold; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .modal.active { display: flex; }
+  .modal-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    max-width: 420px;
+    width: 92%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    animation: slideUp 0.3s ease-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .modal-headshot {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .modal-player-details {
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-player-details .player-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0B1533;
+  }
+  .modal-player-details .player-meta {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 2px;
+  }
+  .stat-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    background: #f4f6fa;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .stat-green { color: green; }
+  .stat-red { color: red; }
+  .modal-close {
+    text-align: right;
+    margin-top: 1rem;
+  }
+  .modal-close button {
+    background: #0B1533;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  #filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  @media (max-width: 768px) {
+    #filter-bar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+    
+    #filter-bar input,
+    #filter-bar select,
+    #filter-bar button {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .toggle-buttons {
+      flex-direction: row;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .toggle-buttons button {
+      flex: 1;
+      max-width: 150px;
+      font-size: 0.9rem;
+      padding: 0.5rem 0.75rem;
+    }
+    
+    .player-row {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .player-info {
+      margin-left: 0;
+      flex-grow: 1;
+    }
+    
+    .player-info .name {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+    
+    .player-info .name .metric-inline {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #0B1533;
+      text-align: right;
+    }
+    
+    .player-info .name .metric-inline .rank {
+      font-size: 0.7rem;
+      color: white;
+      background: #0B1533;
+      padding: 2px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+    }
+    
+    .metric-block {
+      display: none;
+    }
+    
+    .button-row {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .button-row button {
+      flex: 1;
+      min-width: 120px;
+      font-size: 0.7rem;
+      padding: 6px 8px;
+      white-space: nowrap;
+    }
+    
+    .button-row button:last-child {
+      font-size: 0.65rem;
+    }
+    
+    #chart-container {
+      padding: 0 20px;
+      overflow: visible;
+    }
+    
+    
+    body {
+      padding: 0.5rem;
+    }
+  }
+  #filter-bar input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: 'Archivo', sans-serif;
+  }
+  #filter-bar button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Archivo', sans-serif;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  #filter-bar button.apply {
+    background: #0B1533;
+    color: white;
+  }
+  #filter-bar button.apply:hover {
+    background: #1d2654;
+  }
+  #filter-bar button.clear {
+    background: #aaa;
+    color: white;
+  }
+  #filter-bar button.clear:hover {
+    background: #888;
+  }
+  #filter-bar button.export {
+    background: #28a745;
+    color: white;
+  }
+  #filter-bar button.export:hover {
+    background: #218838;
+  }
+</style>
+</head>
+<body>
+<header>
+<img alt="Powered by PFF" src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png"/>
+</header>
+
+<div id="filter-bar">
+  <input id="searchName" type="text" placeholder="Search by Name" />
+  <input id="minAttempts" type="number" placeholder="Min. Attempts" />
+  <select id="tableTeamFilter" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; font-family: 'Archivo', sans-serif;">
+    <option value="">All Teams</option>
+  </select>
+  <button class="apply" onclick="applyFilters()">Apply Filters</button>
+  <button class="clear" onclick="resetFilters()">Clear</button>
+  <button class="export" onclick="downloadCSV()">Export CSV</button>
+</div>
+
+<div class="toggle-buttons">
+<button onclick="showView('table')">Table View</button>
+<button onclick="showView('chart')">Chart View</button>
+</div>
+<div class="table-view active" id="table-view">
+<div id="share-table"></div>
+</div>
+<div class="chart-view" id="chart-view">
+  <div id="chart-controls" style="margin-bottom: 1rem;">
+    <select id="teamFilter" onchange="updateChart()" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; font-family: 'Archivo', sans-serif;">
+      <option value="">All Teams</option>
+    </select>
+  </div>
+  <div id="chart-container" style="width: 100%; position: relative;">
+    <canvas id="share-chart"></canvas>
+  </div>
+</div>
+<script>
+const fields = [
+  "Attempts",
+  "Rushing Share (%)",
+  "Rush Yards",
+  "Yards Per Carry",
+  "Rushing Touchdowns",
+  "Forced Missed Tackles",
+  "Yards Before Contact/Attempt",
+  "Yards After Contact/Attempts",
+  "Forced Missed Tackles/Attempt"
+];
+
+let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart = null;
+    const SHEET_ID = '1NZ0bUQ_eFhtjvNR_dkNsuio0CVKwsfDgvgX26gXbFVI';
+    const API_KEY = 'AIzaSyAVTDYDvtOYkoAJTLqEGQ0ve0OMCmdSyvs';
+
+    // Team colors mapping - both abbreviations and full names
+    const teamColors = {
+      // Abbreviations
+      'ARI': '#97233F', 'ATL': '#A71930', 'BAL': '#241773', 'BUF': '#00338D',
+      'CAR': '#0085CA', 'CHI': '#0B162A', 'CIN': '#FB4F14', 'CLE': '#311D00',
+      'DAL': '#003594', 'DEN': '#FB4F14', 'DET': '#0076B6', 'GB': '#203731',
+      'HOU': '#03202F', 'IND': '#002C5F', 'JAX': '#006778', 'KC': '#E31837',
+      'LV': '#000000', 'LAC': '#0080C6', 'LAR': '#003594', 'MIA': '#008E97',
+      'MIN': '#4F2683', 'NE': '#002244', 'NO': '#D3BC8D', 'NYG': '#0B2265',
+      'NYJ': '#125740', 'PHI': '#004C54', 'PIT': '#FFB612', 'SF': '#AA0000',
+      'SEA': '#002244', 'TB': '#D50A0A', 'TEN': '#0C2340', 'WAS': '#5A1414',
+      // Full team names
+      'Arizona Cardinals': '#97233F', 'Atlanta Falcons': '#A71930', 'Baltimore Ravens': '#241773', 'Buffalo Bills': '#00338D',
+      'Carolina Panthers': '#0085CA', 'Chicago Bears': '#0B162A', 'Cincinnati Bengals': '#FB4F14', 'Cleveland Browns': '#311D00',
+      'Dallas Cowboys': '#003594', 'Denver Broncos': '#FB4F14', 'Detroit Lions': '#0076B6', 'Green Bay Packers': '#203731',
+      'Houston Texans': '#03202F', 'Indianapolis Colts': '#002C5F', 'Jacksonville Jaguars': '#006778', 'Kansas City Chiefs': '#E31837',
+      'Las Vegas Raiders': '#000000', 'Los Angeles Chargers': '#0080C6', 'Los Angeles Rams': '#003594', 'Miami Dolphins': '#008E97',
+      'Minnesota Vikings': '#4F2683', 'New England Patriots': '#002244', 'New Orleans Saints': '#D3BC8D', 'New York Giants': '#0B2265',
+      'New York Jets': '#125740', 'Philadelphia Eagles': '#004C54', 'Pittsburgh Steelers': '#FFB612', 'San Francisco 49ers': '#AA0000',
+      'Seattle Seahawks': '#002244', 'Tampa Bay Buccaneers': '#D50A0A', 'Tennessee Titans': '#0C2340', 'Washington Commanders': '#5A1414'
+    };
+
+    function getTeamColor(teamName) {
+      if (!teamName) return '#666666';
+      
+      // Try exact match first
+      if (teamColors[teamName]) {
+        return teamColors[teamName];
+      }
+      
+      // Try to find partial match
+      const teamKey = Object.keys(teamColors).find(key => 
+        key.toLowerCase().includes(teamName.toLowerCase()) || 
+        teamName.toLowerCase().includes(key.toLowerCase())
+      );
+      
+      return teamKey ? teamColors[teamKey] : '#666666';
+    }
+
+    async function fetchSheet(tab) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${tab}?key=${API_KEY}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      const rows = json.values;
+      const headers = rows[0];
+      return rows.slice(1).map(row => {
+        let obj = {};
+        headers.forEach((key, i) => obj[key] = row[i]);
+        return obj;
+      });
+    }
+
+    
+
+
+
+    async function loadData() {
+      const [players, teams, playerMeta] = await Promise.all([
+        fetchSheet('Rushing Share'),
+        fetchSheet('teams'),
+        fetchSheet('players')
+      ]);
+
+      teamLogoMap = {};
+      teams.forEach(team => {
+        teamLogoMap[team.team_nick] = team.team_logo_espn;
+      });
+
+      playerMeta.forEach(p => {
+        playerMetaMap[p['Player Id']] = p;
+      });
+
+      const metricFields = fields;
+      metricFields.forEach(field => {
+        const filteredVals = players.map(p => parseFloat(p[field])).filter(v => !isNaN(v) && v > 0);
+    const avg = filteredVals.reduce((a, b) => a + b, 0) / filteredVals.length;
+        averages[field] = avg;
+      });
+
+      players.sort((a, b) => parseFloat(b['Rushing Share (%)']) - parseFloat(a['Rushing Share (%)']));
+      playerRows = players;
+      renderTable(players, teamLogoMap);
+      
+      // Populate team filter dropdown
+      populateTeamFilter(teams);
+      
+      // Initialize chart
+      initializeChart();
+    }
+
+    function renderTable(data, teamLogoMap) {
+      const container = document.getElementById("share-table");
+      container.innerHTML = "";
+
+      data.forEach((player, i) => {
+        const meta = playerMetaMap[player['Player Id']] || {};
+        const headshotURL = meta['Headshot id'] || 'https://media.pff.com/2025/07/Placeholder-image-scaled.png';
+        const teamLogo = teamLogoMap[player['Team']] || 'https://media.pff.com/logos/default_team.png';
+        const metric = parseFloat(player['Rushing Share (%)'] || 0).toFixed(1);
+        const rank = i + 1;
+        const profileURL = meta['Player profile'] || '#';
+
+        const row = document.createElement("div");
+        row.className = "player-row";
+        row.innerHTML = `
+          <img class="team-logo-bg" src="${teamLogo}" alt="team logo" />
+          <img class="headshot" src="${headshotURL}" onerror="this.src='https://media.pff.com/2025/07/Placeholder-image-scaled.png'" />
+          <div class="player-info">
+            <div class="name">
+              ${player['Name']}
+              <div class="metric-inline">
+                ${metric}%<span class="rank">#${rank}</span>
+              </div>
+            </div>
+            <div class=\"meta\">${player['Pos.'] || meta['Pos.'] || ''} | ${player['Attempts'] || 0} Attempts</div>
+            <div class="button-row">
+              <button onclick="openModal('${player['Player Id']}', '${player['Name']}')">View More Metrics</button>
+              <button onclick="window.open('${profileURL}', '_blank')">Premium Stats</button>
+            </div>
+          </div>
+          <div class="metric-block">
+            ${metric}%<br><span class="metric-rank">#${rank}</span>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function openModal(playerId, name) {
+      const modal = document.getElementById("playerModal");
+      const statBox = document.getElementById("modal-stats");
+      const player = playerRows.find(p => p['Player Id'] === playerId);
+
+      document.getElementById("modal-player-name").textContent = name;
+      statBox.innerHTML = '';
+      const fields = [
+  "Attempts",
+  "Rushing Share (%)",
+  "Rush Yards",
+  "Yards Per Carry",
+  "Rushing Touchdowns",
+  "Forced Missed Tackles",
+  "Yards Before Contact/Attempt",
+  "Yards After Contact/Attempts",
+  "Forced Missed Tackles/Attempt"
+];
+
+      fields.forEach(field => {
+        const rawVal = parseFloat(player[field]);
+        const rawAvg = averages[field];
+
+        let formattedVal = rawVal;
+        let formattedAvg = rawAvg;
+
+        if (field === "Rushing Share (%)") {
+          formattedVal = rawVal.toFixed(1) + "%";
+          formattedAvg = rawAvg.toFixed(1) + "%";
+        } else if (["Yards Per Carry", "Yards Before Contact/Attempt", "Yards After Contact/Attempts", "Forced Missed Tackles/Attempt"].includes(field)) {
+          formattedVal = rawVal.toFixed(2);
+          formattedAvg = rawAvg.toFixed(2);
+        } else {
+          formattedVal = Math.round(rawVal);
+          formattedAvg = Math.round(rawAvg);
+        }
+
+        const trend = rawVal > rawAvg ? 'stat-green' : 'stat-red';
+        statBox.innerHTML += `<div class='stat-line'><span>${field}</span><span class='${trend}'>${formattedVal} <span style='color:#888; font-weight:normal;'>(NFL Avg. ${formattedAvg})</span></span></div>`;
+      });
+
+      modal.classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("playerModal").classList.remove("active");
+    }
+
+    function showView(view) {
+      document.getElementById('table-view').classList.remove('active');
+      document.getElementById('chart-view').classList.remove('active');
+      document.getElementById(view + '-view').classList.add('active');
+      
+      // Update chart when switching to chart view
+      if (view === 'chart' && chart) {
+        updateChart();
+      }
+    }
+
+    function populateTeamFilter(teams) {
+      const teamFilter = document.getElementById('teamFilter');
+      const tableTeamFilter = document.getElementById('tableTeamFilter');
+      
+      teams.forEach(team => {
+        const option1 = document.createElement('option');
+        option1.value = team.team_nick;
+        option1.textContent = team.team_name;
+        teamFilter.appendChild(option1);
+        
+        const option2 = document.createElement('option');
+        option2.value = team.team_nick;
+        option2.textContent = team.team_name;
+        tableTeamFilter.appendChild(option2);
+      });
+    }
+
+    function initializeChart() {
+      const ctx = document.getElementById('share-chart').getContext('2d');
+      
+      // Destroy existing chart if it exists
+      if (chart) {
+        chart.destroy();
+      }
+      
+      // Register the datalabels plugin
+      Chart.register(ChartDataLabels);
+      
+      
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Rushing Share %',
+            data: [],
+            backgroundColor: [],
+            borderColor: [],
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          indexAxis: 'y', // This makes it horizontal
+          responsive: true,
+          maintainAspectRatio: false,
+          resizeDelay: 0,
+          devicePixelRatio: window.innerWidth <= 768 ? 1.5 : 2,
+          layout: {
+            padding: {
+              left: 30,
+              right: window.innerWidth <= 768 ? 60 : 30,
+              top: 60,
+              bottom: 60
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            datalabels: {
+              display: true,
+              color: '#0B1533',
+              font: {
+                weight: 'bold',
+                size: 12
+              },
+              formatter: function(value, context) {
+                return value.toFixed(1) + '%';
+              },
+              anchor: 'end',
+              align: 'right',
+              offset: 8
+            },
+            tooltip: {
+              callbacks: {
+                title: function(context) {
+                  return context[0].label;
+                },
+                label: function(context) {
+                  const playerData = context.dataset.playerData;
+                  const player = playerData ? playerData[context.dataIndex] : null;
+                  if (player) {
+                    return [
+                      `Rushing Share: ${context.parsed.x.toFixed(1)}%`,
+                      `Attempts: ${player['Attempts']}`,
+                      `Team: ${player['Team']}`
+                    ];
+                  }
+                  return `Value: ${context.parsed.x.toFixed(1)}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              max: 105, // Slightly increased to accommodate high values and labels
+              title: {
+                display: true,
+                text: 'Rushing Share (%)',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                color: 'rgba(0,0,0,0.1)'
+              },
+              ticks: {
+                font: {
+                  size: 12
+                }
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Players',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                }
+              },
+              ticks: {
+                maxRotation: 0,
+                minRotation: 0,
+                font: {
+                  size: 11
+                },
+                maxTicksLimit: 25
+              },
+              grid: {
+                display: false
+              },
+              offset: true // Always use offset to add padding
+            }
+          },
+          animation: {
+            duration: 1000,
+            easing: 'easeInOutQuart'
+          }
+        }
+      });
+      
+      updateChart();
+    }
+
+    function preloadHeadshots(players) {
+      if (!chart.headshotImages) {
+        chart.headshotImages = {};
+      }
+      
+      players.forEach(player => {
+        const meta = playerMetaMap[player['Player Id']] || {};
+        const headshotURL = meta['Headshot id'] || 'https://media.pff.com/2025/07/Placeholder-image-scaled.png';
+        
+        if (!chart.headshotImages[headshotURL]) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = function() {
+            chart.headshotImages[headshotURL] = img;
+          };
+          img.src = headshotURL;
+        }
+      });
+    }
+
+    function updateChart() {
+      if (!chart) {
+        console.log('Chart not initialized yet');
+        return;
+      }
+      
+      const selectedTeam = document.getElementById('teamFilter').value;
+      const searchName = document.getElementById("searchName").value.trim().toLowerCase();
+      const min = parseInt(document.getElementById("minAttempts").value) || 0;
+      
+      let dataToShow = playerRows;
+      
+      console.log('Updating chart with', playerRows.length, 'total players');
+      
+      // Apply team filter
+      if (selectedTeam) {
+        dataToShow = dataToShow.filter(p => p['Team'] === selectedTeam);
+      }
+      
+      // Apply search filters
+      if (searchName || min > 0) {
+        dataToShow = dataToShow.filter(p => {
+          const name = p['Name']?.toLowerCase() || '';
+          const attempts = parseInt(p['Attempts']) || 0;
+          return name.includes(searchName) && attempts >= min;
+        });
+      }
+      
+      // Limit to top 25 players for better readability
+      const topPlayers = dataToShow.slice(0, 25);
+      
+      console.log('Showing', topPlayers.length, 'players in chart');
+      
+      // Set reasonable container height
+      const chartContainer = document.getElementById('chart-container');
+      const isMobile = window.innerWidth <= 768;
+      const heightPerPlayer = isMobile ? 35 : 30; // Reasonable spacing
+      const containerHeight = topPlayers.length * heightPerPlayer + 150; // Buffer
+      
+      chartContainer.style.height = containerHeight + 'px';
+      
+      console.log('Chart debugging:', {
+        topPlayersCount: topPlayers.length,
+        containerHeight,
+        heightPerPlayer,
+        isMobile
+      });
+      
+      
+      if (topPlayers.length === 0) {
+        chart.data.labels = ['No Data'];
+        chart.data.datasets[0].data = [0];
+        chart.data.datasets[0].backgroundColor = ['#f0f0f0'];
+        chart.data.datasets[0].borderColor = ['#ccc'];
+      } else {
+        const labels = topPlayers.map(p => p['Name']);
+        const data = topPlayers.map(p => parseFloat(p['Rushing Share (%)']) || 0);
+        const colors = topPlayers.map(p => {
+          const team = p['Team'];
+          const color = getTeamColor(team);
+          console.log(`Player: ${p['Name']}, Team: ${team}, Color: ${color}`);
+          return color;
+        });
+        
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = data; // Simple array of numbers for horizontal bars
+        chart.data.datasets[0].backgroundColor = colors.map(color => color + '80'); // Add transparency
+        chart.data.datasets[0].borderColor = colors;
+        
+        // Store player data for tooltips
+        chart.data.datasets[0].playerData = topPlayers;
+        
+        
+        console.log('Chart data:', {
+          labels: labels.slice(0, 3),
+          data: data.slice(0, 3),
+          colors: colors.slice(0, 3),
+          teams: topPlayers.slice(0, 3).map(p => p['Team'])
+        });
+      }
+      
+      // Let Chart.js handle everything naturally
+      chart.update('none');
+    }
+
+    function applyFilters() {
+      // Check if data is loaded
+      if (playerRows.length === 0) {
+        alert('Data still loading, please wait...');
+        return;
+      }
+
+      const searchName = document.getElementById("searchName").value.trim().toLowerCase();
+      const min = parseInt(document.getElementById("minAttempts").value) || 0;
+      const selectedTeam = document.getElementById("tableTeamFilter").value;
+      
+      const filtered = playerRows.filter(p => {
+        const name = p['Name']?.toLowerCase() || '';
+        const attempts = parseInt(p['Attempts']) || 0;
+        const teamMatch = !selectedTeam || p['Team'] === selectedTeam;
+        return name.includes(searchName) && attempts >= min && teamMatch;
+      });
+
+      // Show message if no results found
+      if (filtered.length === 0) {
+        const container = document.getElementById("share-table");
+        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">No players found matching your criteria</div>';
+        return;
+      }
+
+      // Use the existing teamLogoMap instead of fetching again
+      renderTable(filtered, teamLogoMap);
+      
+      // Update chart if it exists
+      if (chart) {
+        updateChart();
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById("searchName").value = '';
+      document.getElementById("minAttempts").value = '';
+      document.getElementById("tableTeamFilter").value = '';
+      
+      // Use the existing teamLogoMap instead of fetching again
+      renderTable(playerRows, teamLogoMap);
+      
+      // Update chart if it exists
+      if (chart) {
+        updateChart();
+      }
+    }
+
+    function downloadCSV() {
+      if (playerRows.length === 0) {
+        alert('No data available to export');
+        return;
+      }
+
+      // Get current filtered data or all data
+      const searchName = document.getElementById("searchName").value.trim().toLowerCase();
+      const min = parseInt(document.getElementById("minAttempts").value) || 0;
+      
+      let dataToExport = playerRows;
+      if (searchName || min > 0) {
+        dataToExport = playerRows.filter(p => {
+          const name = p['Name']?.toLowerCase() || '';
+          const attempts = parseInt(p['Attempts']) || 0;
+          return name.includes(searchName) && attempts >= min;
+        });
+      }
+
+      // Create CSV content
+      const headers = ['Name', 'Team', 'Pos.', 'Attempts', 'Rushing Share (%)', 'Rush Yards', 'Yards Per Carry', 'Rushing Touchdowns', 'Forced Missed Tackles', 'Yards Before Contact/Attempt', 'Yards After Contact/Attempts', 'Forced Missed Tackles/Attempt'];
+      const csvContent = [
+        headers.join(','),
+        ...dataToExport.map(player => 
+          headers.map(header => {
+            const value = player[header] || '';
+            // Escape commas and quotes in CSV
+            return `"${value.toString().replace(/"/g, '""')}"`;
+          }).join(',')
+        )
+      ].join('\n');
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `fantasy_rushing_data_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    loadData();
+  </script>
+<script>
+function openModal(playerId, name) {
+  const modal = document.getElementById("playerModal");
+  const statBox = document.getElementById("modal-stats");
+  const header = document.getElementById("modal-header");
+  const player = playerRows.find(p => p['Player Id'] === playerId);
+  const meta = playerMetaMap[playerId] || {};
+
+  const headshotURL = meta['Headshot id'] || 'https://media.pff.com/2025/07/Placeholder-image-scaled.png';
+  const pos = player['Pos.'] || meta['Pos.'] || '';
+  const team = player['Team'] || meta['Team'] || '';
+  const profile = meta['Player profile'] || '#';
+
+  header.innerHTML = `
+    <img class="modal-headshot" src="${headshotURL}" onerror="this.src='https://media.pff.com/2025/07/Placeholder-image-scaled.png'" />
+    <div class="modal-player-details">
+      <div class="player-name">${name}</div>
+      <div class="player-meta">${pos} | ${team}</div>
+    </div>
+  `;
+  document.getElementById("modal-player-name").textContent = name;
+  document.getElementById("modal-profile-link").href = profile;
+
+  statBox.innerHTML = '';
+  fields.forEach(field => {
+    let val = parseFloat(player[field] || 0);
+    let avg = averages[field] || 0;
+    let trend = val > avg ? 'stat-green' : 'stat-red';
+    let formattedVal = '';
+    let formattedAvg = '';
+
+    if (field === 'Rushing Share (%)') {
+      formattedVal = val.toFixed(1) + '%';
+      formattedAvg = avg.toFixed(1) + '%';
+    } else if (["Yards Per Carry", "Yards Before Contact/Attempt", "Yards After Contact/Attempts", "Forced Missed Tackles/Attempt"].includes(field)) {
+      formattedVal = val.toFixed(2);
+      formattedAvg = avg.toFixed(2);
+    } else {
+      formattedVal = val.toFixed(0);
+      formattedAvg = avg.toFixed(0);
+    }
+
+    statBox.innerHTML += `
+      <div class='stat-line'>
+        <span>${field}</span>
+        <span class='${trend}'>${formattedVal} <span style="color:#888; font-weight:normal">(Avg: ${formattedAvg})</span></span>
+      </div>`;
+  });
+
+  modal.classList.add("active");
+}
+</script>
+<div class="modal" id="playerModal">
+<div class="modal-content">
+<div class="modal-header" id="modal-header">
+<!-- Injected dynamically -->
+</div>
+<h3 id="modal-player-name"></h3>
+<div id="modal-stats"></div>
+<div style="text-align:right; margin-top: 1rem;">
+<a href="#" id="modal-profile-link" style="text-decoration: none;" target="_blank">
+<button style="background: #0B1533; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; margin-right: 0.5rem;">
+          View in Premium Stats
+        </button>
+</a>
+<button onclick="closeModal()" style="background: #aaa; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px;">
+        Close
+      </button>
+</div>
+</div>
+</div>
+</body>
+</html>
