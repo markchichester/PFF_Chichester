@@ -132,6 +132,9 @@
       display: inline-block;
       margin-top: 4px;
     }
+    .metric-inline {
+      display: none;
+    }
     #chart-container {
       overflow: visible;
     }
@@ -321,8 +324,20 @@
       display: none;
     }
     
+    @media (min-width: 769px) {
+      .metric-block {
+        display: block;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .metric-inline {
+        display: block;
+      }
+    }
+    
     .button-row {
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 8px;
     }
     
@@ -546,6 +561,9 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
           <div class="player-info">
             <div class="name">
               ${player['Name']}
+              <div class="metric-inline">
+                ${metric}%<span class="rank">#${rank}</span>
+              </div>
             </div>
             <div class=\"meta\">${player['Pos.'] || meta['Pos.'] || ''} | ${player['Attempts'] || 0} Attempts</div>
             <div class="button-row">
