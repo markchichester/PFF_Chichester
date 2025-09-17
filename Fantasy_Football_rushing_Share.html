@@ -588,13 +588,8 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
 
       // Position modal next to clicked button
       if (event) {
-        console.log('Click coordinates:', event.clientX, event.clientY);
-        console.log('Viewport size:', window.innerWidth, window.innerHeight);
-        
         let x = event.clientX + 10; // Offset slightly from click point
         let y = event.clientY + 10;
-        
-        console.log('Initial position:', x, y);
         
         // Adjust position to keep modal in viewport
         const modalWidth = 420; // max-width from CSS
@@ -605,18 +600,14 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
         // Only adjust if modal would go off-screen
         if (x + modalWidth > viewportWidth) {
           x = event.clientX - modalWidth - 10; // Show to the left of click
-          console.log('Adjusted x to left:', x);
         }
         if (y + modalHeight > viewportHeight) {
           y = event.clientY - modalHeight - 10; // Show above click
-          console.log('Adjusted y to above:', y);
         }
         
-        // Ensure modal stays within viewport bounds
-        if (x < 10) x = 10;
-        if (y < 10) y = 10;
-        
-        console.log('Final position:', x, y);
+        // Ensure modal stays within viewport bounds (more lenient)
+        if (x < 5) x = 5;
+        if (y < 5) y = 5;
         
         modalContent.style.position = 'fixed';
         modalContent.style.left = x + 'px';
