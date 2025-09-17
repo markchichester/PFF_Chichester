@@ -132,6 +132,15 @@
       display: inline-block;
       margin-top: 4px;
     }
+    .metric-inline {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .metric-inline {
+        display: block;
+      }
+    }
     #chart-container {
       overflow: visible;
     }
@@ -322,7 +331,7 @@
     }
     
     .button-row {
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 8px;
     }
     
@@ -553,6 +562,9 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
           <div class="player-info">
             <div class="name">
               ${player['Name']}
+              <div class="metric-inline">
+                ${metric}%<span class="rank">#${rank}</span>
+              </div>
             </div>
             <div class=\"meta\">${player['Pos.'] || meta['Pos.'] || ''} | ${player['Targets'] || 0} Targets</div>
             <div class="button-row">
@@ -577,8 +589,8 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
 
       // Position modal next to clicked button
       if (event) {
-        let x = event.clientX;
-        let y = event.clientY;
+        let x = event.clientX + 10; // Offset slightly from click point
+        let y = event.clientY + 10;
         
         // Adjust position to keep modal in viewport
         const modalWidth = 420; // max-width from CSS
@@ -586,14 +598,17 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
+        // Only adjust if modal would go off-screen
         if (x + modalWidth > viewportWidth) {
-          x = viewportWidth - modalWidth - 20;
+          x = event.clientX - modalWidth - 10; // Show to the left of click
         }
         if (y + modalHeight > viewportHeight) {
-          y = viewportHeight - modalHeight - 20;
+          y = event.clientY - modalHeight - 10; // Show above click
         }
-        if (x < 20) x = 20;
-        if (y < 20) y = 20;
+        
+        // Ensure modal stays within viewport bounds
+        if (x < 10) x = 10;
+        if (y < 10) y = 10;
         
         modalContent.style.position = 'fixed';
         modalContent.style.left = x + 'px';
