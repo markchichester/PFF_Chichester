@@ -368,7 +368,7 @@
 
 <div id="filter-bar">
   <input id="searchName" type="text" placeholder="Search by Name" />
-  <input id="minTargets" type="number" placeholder="Min. Targets" />
+  <input id="minTargets" type="number" placeholder="Min. Targets" min="0" step="1" oninput="this.value = Math.abs(this.value)" />
   <select id="tableTeamFilter" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; font-family: 'Archivo', sans-serif;">
     <option value="">All Teams</option>
   </select>
@@ -385,11 +385,6 @@
 <div id="share-table"></div>
 </div>
 <div class="chart-view" id="chart-view">
-  <div id="chart-controls" style="margin-bottom: 1rem;">
-    <select id="teamFilter" onchange="updateChart()" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; font-family: 'Archivo', sans-serif;">
-      <option value="">All Teams</option>
-    </select>
-  </div>
   <div id="chart-container" style="width: 100%; position: relative;">
     <canvas id="share-chart"></canvas>
   </div>
@@ -678,19 +673,18 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
     }
 
     function populateTeamFilter(teams) {
-      const teamFilter = document.getElementById('teamFilter');
       const tableTeamFilter = document.getElementById('tableTeamFilter');
       
       teams.forEach(team => {
-        const option1 = document.createElement('option');
-        option1.value = team.team_nick;
-        option1.textContent = team.team_name;
-        teamFilter.appendChild(option1);
-        
-        const option2 = document.createElement('option');
-        option2.value = team.team_nick;
-        option2.textContent = team.team_name;
-        tableTeamFilter.appendChild(option2);
+        const option = document.createElement('option');
+        option.value = team.team_nick;
+        option.textContent = team.team_name;
+        tableTeamFilter.appendChild(option);
+      });
+      
+      // Add event listener to update both table and chart when team filter changes
+      tableTeamFilter.addEventListener('change', function() {
+        applyFilters();
       });
     }
 
@@ -731,7 +725,7 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
               left: 30,
               right: window.innerWidth <= 768 ? 60 : 30,
               top: 60,
-              bottom: 60
+              bottom: 80
             }
           },
           plugins: {
@@ -775,13 +769,16 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
           scales: {
             x: {
               beginAtZero: true,
-              max: 105, // Slightly increased to accommodate high values and labels
+              max: 75, // More appropriate range for target share percentages
               title: {
                 display: true,
                 text: 'Target Share (%)',
                 font: {
                   size: 14,
                   weight: 'bold'
+                },
+                padding: {
+                  top: 20
                 }
               },
               grid: {
@@ -852,7 +849,7 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
         return;
       }
       
-      const selectedTeam = document.getElementById('teamFilter').value;
+      const selectedTeam = document.getElementById('tableTeamFilter').value;
       const searchName = document.getElementById("searchName").value.trim().toLowerCase();
       const min = parseInt(document.getElementById("minTargets").value) || 0;
       
@@ -866,11 +863,18 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
       }
       
       // Apply search filters
-      if (searchName || min > 0) {
+      if (searchName) {
         dataToShow = dataToShow.filter(p => {
           const name = p['Name']?.toLowerCase() || '';
+          return name.includes(searchName);
+        });
+      }
+      
+      // Apply minimum targets filter
+      if (min > 0) {
+        dataToShow = dataToShow.filter(p => {
           const targets = parseInt(p['Targets']) || 0;
-          return name.includes(searchName) && targets >= min;
+          return targets >= min;
         });
       }
       
@@ -883,7 +887,8 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
       const chartContainer = document.getElementById('chart-container');
       const isMobile = window.innerWidth <= 768;
       const heightPerPlayer = isMobile ? 35 : 30; // Reasonable spacing
-      const containerHeight = topPlayers.length * heightPerPlayer + 150; // Buffer
+      const minHeight = isMobile ? 300 : 250; // Minimum height to prevent cutoff
+      const containerHeight = Math.max(minHeight, topPlayers.length * heightPerPlayer + 200); // Increased buffer
       
       chartContainer.style.height = containerHeight + 'px';
       
@@ -896,11 +901,28 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
       
       
       if (topPlayers.length === 0) {
-        chart.data.labels = ['No Data'];
-        chart.data.datasets[0].data = [0];
-        chart.data.datasets[0].backgroundColor = ['#f0f0f0'];
-        chart.data.datasets[0].borderColor = ['#ccc'];
+        // Hide the chart and show a "No Data" message
+        chartContainer.style.display = 'none';
+        const noDataMessage = document.createElement('div');
+        noDataMessage.id = 'chart-no-data';
+        noDataMessage.style.cssText = 'text-align: center; padding: 2rem; color: #666; font-size: 16px; background: #f9f9f9; border-radius: 8px; margin: 1rem 0;';
+        noDataMessage.textContent = 'No players found matching your criteria';
+        
+        // Remove existing no-data message if it exists
+        const existingMessage = document.getElementById('chart-no-data');
+        if (existingMessage) {
+          existingMessage.remove();
+        }
+        
+        // Insert the message after the chart container
+        chartContainer.parentNode.insertBefore(noDataMessage, chartContainer.nextSibling);
       } else {
+        // Show the chart and remove any no-data message
+        chartContainer.style.display = 'block';
+        const existingMessage = document.getElementById('chart-no-data');
+        if (existingMessage) {
+          existingMessage.remove();
+        }
         const labels = topPlayers.map(p => p['Name']);
         const data = topPlayers.map(p => parseFloat(p['Target Share']) || 0);
         const colors = topPlayers.map(p => {
