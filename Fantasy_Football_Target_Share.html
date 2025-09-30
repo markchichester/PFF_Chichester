@@ -393,6 +393,7 @@
 const fields = [
   "Targets",
   "Target Share",
+  "Previous Week Target Share",
   "Receptions",
   "Receiving Yards",
   "Yards Per Reception",
@@ -450,6 +451,38 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
       );
       
       return teamKey ? teamColors[teamKey] : '#666666';
+    }
+
+    function calculateWeekOverWeekChange(current, previous) {
+      if (!current || !previous || isNaN(current) || isNaN(previous)) {
+        return { change: 0, direction: 'neutral', display: '-' };
+      }
+      
+      const change = parseFloat(current) - parseFloat(previous);
+      const absChange = Math.abs(change);
+      
+      if (change > 0) {
+        return { 
+          change: change, 
+          direction: 'up', 
+          display: `+${absChange.toFixed(1)}%`,
+          color: '#28a745'
+        };
+      } else if (change < 0) {
+        return { 
+          change: change, 
+          direction: 'down', 
+          display: `${change.toFixed(1)}%`,
+          color: '#dc3545'
+        };
+      } else {
+        return { 
+          change: 0, 
+          direction: 'neutral', 
+          display: '0.0%',
+          color: '#6c757d'
+        };
+      }
     }
 
     async function fetchSheet(tab) {
@@ -514,6 +547,17 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
         const metric = parseFloat(player['Target Share'] || 0).toFixed(1);
         const rank = i + 1;
         const profileURL = meta['Player profile'] || '#';
+        
+        // Calculate week-over-week change
+        const currentShare = parseFloat(player['Target Share'] || 0);
+        const previousShare = parseFloat(player['Previous Week Target Share'] || 0);
+        const weekChange = calculateWeekOverWeekChange(currentShare, previousShare);
+        
+        // Create arrow symbol
+        let arrowSymbol = '';
+        if (weekChange.direction === 'up') arrowSymbol = '↑';
+        else if (weekChange.direction === 'down') arrowSymbol = '↓';
+        else arrowSymbol = '—';
 
         const row = document.createElement("div");
         row.className = "player-row";
@@ -527,13 +571,16 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
                 ${metric}%<span class="rank">#${rank}</span>
               </div>
             </div>
-            <div class=\"meta\">${player['Pos.'] || meta['Pos.'] || ''} | ${player['Targets'] || 0} Targets</div>
+            <div class="meta">${player['Pos.'] || meta['Pos.'] || ''} | ${player['Targets'] || 0} Targets</div>
             <div class="button-row">
               <button onclick="window.open('${profileURL}', '_blank')">Player Profile</button>
             </div>
           </div>
           <div class="metric-block">
             ${metric}%<br><span class="metric-rank">#${rank}</span>
+            <div style="font-size: 0.7rem; color: ${weekChange.color}; font-weight: bold; margin-top: 2px;">
+              ${arrowSymbol} ${weekChange.display}
+            </div>
           </div>
         `;
         container.appendChild(row);
@@ -599,6 +646,7 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
       const fields = [
   "Targets",
   "Target Share",
+  "Previous Week Target Share",
   "Receptions",
   "Receiving Yards",
   "Yards Per Reception",
@@ -623,7 +671,22 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
         let formattedAvg = rawAvg;
 
         // Percentages to one decimal place
-        if (field === "Completion %" || field === "Deep Target %" || field === "Slot Target %" || field === "Contested Catch %" || field === "Drop Rate") {
+        if (field === "Target Share") {
+          formattedVal = rawVal.toFixed(1) + "%";
+          formattedAvg = rawAvg.toFixed(1) + "%";
+          
+          // Add week-over-week change for target share
+          const currentShare = parseFloat(player['Target Share'] || 0);
+          const previousShare = parseFloat(player['Previous Week Target Share'] || 0);
+          const weekChange = calculateWeekOverWeekChange(currentShare, previousShare);
+          
+          let arrowSymbol = '';
+          if (weekChange.direction === 'up') arrowSymbol = '↑';
+          else if (weekChange.direction === 'down') arrowSymbol = '↓';
+          else arrowSymbol = '—';
+          
+          formattedVal += ` <span style="color: ${weekChange.color}; font-weight: bold; font-size: 0.9em;">${arrowSymbol} ${weekChange.display}</span>`;
+        } else if (field === "Completion %" || field === "Deep Target %" || field === "Slot Target %" || field === "Contested Catch %" || field === "Drop Rate") {
           formattedVal = rawVal.toFixed(1) + "%";
           formattedAvg = rawAvg.toFixed(1) + "%";
         }
@@ -1021,7 +1084,7 @@ let playerMetaMap = {}, averages = {}, playerRows = [], teamLogoMap = {}, chart 
       }
 
       // Create CSV content
-      const headers = ['Name', 'Team', 'Pos.', 'Targets', 'Target Share', 'Receptions', 'Receiving Yards', 'Yards Per Reception', 'Receiving Touchdown', 'Yards After Catch/Reception', 'Completion %', 'Average Depth of Target', 'Yards Per Route Run', 'Deep Target %', 'Explosive Plays (15+)', 'Passer Rating When Targeted', 'Slot Target %', 'Contested Catch %', 'Drop Rate'];
+      const headers = ['Name', 'Team', 'Pos.', 'Targets', 'Target Share', 'Previous Week Target Share', 'Receptions', 'Receiving Yards', 'Yards Per Reception', 'Receiving Touchdown', 'Yards After Catch/Reception', 'Completion %', 'Average Depth of Target', 'Yards Per Route Run', 'Deep Target %', 'Explosive Plays (15+)', 'Passer Rating When Targeted', 'Slot Target %', 'Contested Catch %', 'Drop Rate'];
       const csvContent = [
         headers.join(','),
         ...dataToExport.map(player => 
