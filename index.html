@@ -6,6 +6,155 @@
     <title>Weekly WAR Rankings</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .nav-scroll {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        /* Carousel Styles - Minimal, no color overrides */
+        .carousel-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .carousel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .carousel-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .carousel-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .carousel-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .carousel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pagination-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .carousel-wrapper {
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+        }
+
+        .position-cards-row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 1rem;
+            padding: 1rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            width: 100%;
+            min-width: max-content;
+        }
+
+        .position-card {
+            width: 200px;
+            min-width: 200px;
+            max-width: 200px;
+            flex-shrink: 0;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+        }
+
+        /* Remove hover effects from position cards - only profile buttons should be interactive */
+        
+        /* Ensure player cards are not interactive */
+        .player-card, .player-row, .player-item {
+            cursor: default !important;
+        }
+        
+        .player-card:hover, .player-row:hover, .player-item:hover {
+            transform: none !important;
+            background: inherit !important;
+            border-color: inherit !important;
+        }
+        
+        /* Only profile buttons should be interactive */
+        .profile-button, .view-profile-btn, [data-action="profile"] {
+            cursor: pointer !important;
+        }
+        
+        .profile-button:hover, .view-profile-btn:hover, [data-action="profile"]:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .position-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .position-count {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Touch/swipe support */
+        .carousel-track {
+            touch-action: pan-y;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .carousel-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
     <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
@@ -18,19 +167,19 @@
     <nav class="position-nav">
         <div class="nav-container">
             <div class="nav-scroll">
-                <button class="nav-item active" data-position="all">All Positions</button>
-                <button class="nav-item" data-position="QB">Quarterback</button>
-                <button class="nav-item" data-position="HB">Running Back</button>
-                <button class="nav-item" data-position="WR">Wide Receiver</button>
-                <button class="nav-item" data-position="TE">Tight End</button>
-                <button class="nav-item" data-position="T">Tackle</button>
-                <button class="nav-item" data-position="G">Guard</button>
-                <button class="nav-item" data-position="C">Center</button>
-                <button class="nav-item" data-position="DI">Defensive Interior</button>
-                <button class="nav-item" data-position="ED">Edge Defender</button>
-                <button class="nav-item" data-position="LB">Linebacker</button>
-                <button class="nav-item" data-position="CB">Cornerback</button>
-                <button class="nav-item" data-position="S">Safety</button>
+                <button class="nav-item active" data-position="all">All</button>
+                <button class="nav-item" data-position="QB">QB</button>
+                <button class="nav-item" data-position="HB">RB</button>
+                <button class="nav-item" data-position="WR">WR</button>
+                <button class="nav-item" data-position="TE">TE</button>
+                <button class="nav-item" data-position="T">T</button>
+                <button class="nav-item" data-position="G">G</button>
+                <button class="nav-item" data-position="C">C</button>
+                <button class="nav-item" data-position="DI">DI</button>
+                <button class="nav-item" data-position="ED">ED</button>
+                <button class="nav-item" data-position="LB">LB</button>
+                <button class="nav-item" data-position="CB">CB</button>
+                <button class="nav-item" data-position="S">S</button>
             </div>
         </div>
     </nav>
@@ -43,7 +192,36 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Position Sections will be dynamically generated -->
+        <!-- All Positions Carousel (shown when "All" is selected) -->
+        <div class="carousel-container" id="allPositionsCarousel" style="display: block;">
+            <div class="carousel-header">
+                <h2>All Positions</h2>
+                <div class="carousel-controls">
+                    <button class="carousel-btn prev-btn" aria-label="Previous page">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15,18 9,12 15,6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="pagination-dots" id="paginationDots"></div>
+                    <button class="carousel-btn next-btn" aria-label="Next page">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9,18 15,12 9,6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="carousel-wrapper">
+                <div class="position-cards-row" id="positionCardsRow">
+                    <!-- Position cards will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Individual Position Sections (shown when specific position is selected) -->
+        <div class="position-sections" id="positionSections">
+            <!-- Position Sections will be dynamically generated -->
+        </div>
     </main>
 
 
@@ -58,5 +236,170 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Position Cards Horizontal Scrolling
+        class PositionCardsScroller {
+            constructor() {
+                this.cardsRow = document.getElementById('positionCardsRow');
+                this.prevBtn = document.querySelector('.prev-btn');
+                this.nextBtn = document.querySelector('.next-btn');
+                this.paginationDots = document.getElementById('paginationDots');
+                this.scrollAmount = 0;
+                this.maxScroll = 0;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupTouchEvents();
+                this.setupKeyboardEvents();
+                this.calculateScrollLimits();
+            }
+
+            setupEventListeners() {
+                this.prevBtn?.addEventListener('click', () => this.scrollLeft());
+                this.nextBtn?.addEventListener('click', () => this.scrollRight());
+                
+                // Update scroll limits when window resizes
+                window.addEventListener('resize', () => this.calculateScrollLimits());
+            }
+
+            setupTouchEvents() {
+                let startX = 0;
+                let isDragging = false;
+
+                this.cardsRow?.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                });
+
+                this.cardsRow?.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                });
+
+                this.cardsRow?.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    
+                    const endX = e.changedTouches[0].clientX;
+                    const diffX = startX - endX;
+                    
+                    if (Math.abs(diffX) > 50) { // Minimum swipe distance
+                        if (diffX > 0) {
+                            this.scrollRight();
+                        } else {
+                            this.scrollLeft();
+                        }
+                    }
+                    
+                    isDragging = false;
+                });
+            }
+
+            setupKeyboardEvents() {
+                document.addEventListener('keydown', (e) => {
+                    if (document.getElementById('allPositionsCarousel').style.display === 'none') return;
+                    
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.scrollLeft();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.scrollRight();
+                    }
+                });
+            }
+
+            calculateScrollLimits() {
+                if (!this.cardsRow) return;
+                
+                const containerWidth = this.cardsRow.offsetWidth;
+                const contentWidth = this.cardsRow.scrollWidth;
+                this.maxScroll = Math.max(0, contentWidth - containerWidth);
+                this.updateButtons();
+            }
+
+            scrollLeft() {
+                if (!this.cardsRow) return;
+                
+                const cardWidth = 200 + 16; // card width + gap
+                this.scrollAmount = Math.max(0, this.scrollAmount - cardWidth);
+                this.cardsRow.scrollTo({
+                    left: this.scrollAmount,
+                    behavior: 'smooth'
+                });
+                this.updateButtons();
+            }
+
+            scrollRight() {
+                if (!this.cardsRow) return;
+                
+                const cardWidth = 200 + 16; // card width + gap
+                this.scrollAmount = Math.min(this.maxScroll, this.scrollAmount + cardWidth);
+                this.cardsRow.scrollTo({
+                    left: this.scrollAmount,
+                    behavior: 'smooth'
+                });
+                this.updateButtons();
+            }
+
+            updateButtons() {
+                if (this.prevBtn) {
+                    this.prevBtn.disabled = this.scrollAmount <= 0;
+                }
+                if (this.nextBtn) {
+                    this.nextBtn.disabled = this.scrollAmount >= this.maxScroll;
+                }
+            }
+
+            // Method to populate position cards
+            populatePositionCards(positions) {
+                if (!this.cardsRow) return;
+                
+                this.cardsRow.innerHTML = '';
+                
+                positions.forEach(position => {
+                    const card = document.createElement('div');
+                    card.className = 'position-card';
+                    card.innerHTML = `
+                        <div class="position-title">${position.name}</div>
+                        <div class="position-count">${position.count} players</div>
+                    `;
+                    card.addEventListener('click', () => {
+                        // Trigger position selection
+                        const positionBtn = document.querySelector(`[data-position="${position.code}"]`);
+                        if (positionBtn) positionBtn.click();
+                    });
+                    this.cardsRow.appendChild(card);
+                });
+                
+                this.calculateScrollLimits();
+            }
+        }
+
+        // Initialize position cards scroller when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.positionScroller = new PositionCardsScroller();
+            
+            // Add some test position cards to demonstrate horizontal scrolling
+            const testPositions = [
+                { name: 'Quarterback', code: 'QB', count: 32 },
+                { name: 'Running Back', code: 'RB', count: 64 },
+                { name: 'Wide Receiver', code: 'WR', count: 96 },
+                { name: 'Tight End', code: 'TE', count: 32 },
+                { name: 'Tackle', code: 'T', count: 64 },
+                { name: 'Guard', code: 'G', count: 64 },
+                { name: 'Center', code: 'C', count: 32 },
+                { name: 'Defensive Interior', code: 'DI', count: 64 },
+                { name: 'Edge Defender', code: 'ED', count: 64 },
+                { name: 'Linebacker', code: 'LB', count: 64 },
+                { name: 'Cornerback', code: 'CB', count: 64 },
+                { name: 'Safety', code: 'S', count: 32 }
+            ];
+            
+            window.positionScroller.populatePositionCards(testPositions);
+        });
+    </script>
 </body>
 </html>
