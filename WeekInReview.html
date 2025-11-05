@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PFF End Zone — Editors’ Week in Review</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    /* Scope all styles to the widget container to prevent conflicts with parent page */
+    .pff-widget-container { font-family: 'Archivo', sans-serif; background:#0b1533; color:#c9cedd; margin:0; padding:0; }
+    .pff-widget-container h1{color:#fff;}
+    .pff-widget-container h2{color:#2563eb!important;} /* Keep headers blue */
+    .pff-widget-container h3,.pff-widget-container h4{color:#0b1533!important;}
+    .pff-widget-container a{color:#2563eb;} .pff-widget-container a:hover{color:#1d4ed8;}
+    .pff-widget-container .section{border-top:1px solid rgba(0,0,0,0.1);background:#ffffff!important;}
+    .pff-widget-container .section > *{color:#0b1533!important;} 
+    .pff-widget-container .hero-header {
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(96,224,255,0.08), transparent 70%),
+        linear-gradient(145deg, #0b1533 0%, #101d4d 70%);
+      overflow: hidden;
+    }
+    .pff-widget-container .hero-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://www.transparenttextures.com/patterns/dark-mosaic.png') center/cover;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+    .pff-widget-container .hero-header::after {
+      content: '';
+      position: absolute;
+      left: -20%;
+      top: 0;
+      width: 140%;
+      height: 100%;
+      background: linear-gradient(100deg, rgba(96,224,255,0.05), transparent 70%);
+      transform: skewY(-4deg);
+      pointer-events: none;
+    }
+    .bar-track{height:12px;background:rgba(11,21,51,0.1);border-radius:9999px;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.05);border:1px solid rgba(11,21,51,0.15);}
+    .bar-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#22d3ee,#06b6d4,#3b82f6);box-shadow:0 0 12px rgba(34,211,238,0.6), inset 0 1px 2px rgba(255,255,255,0.2);transition:width 0.8s cubic-bezier(0.4, 0, 0.2, 1);position:relative;overflow:hidden;}
+    .bar-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:shimmer 2s infinite;}
+    @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+    .viz-swiper{width:100%;height:70vh;margin:0;padding:0;background:#ffffff!important;}
+    .social-swiper{width:100%;min-height:600px;margin:0;padding:0;background:#ffffff!important;}
+    .viz-slide{display:flex;align-items:center;justify-content:center;position:relative;background:#ffffff!important;margin:0;padding:0;}
+    .swiper-wrapper{margin:0;padding:0;}
+    .viz-slide img{width:100%;height:100%;object-fit:contain;background:#ffffff!important;}
+    .social-slide{display:flex;align-items:flex-start;justify-content:center;position:relative;background:#ffffff!important;padding:0.5rem;min-height:600px;overflow:visible;margin:0;}
+    .social-slide .social-content{width:100%;max-width:600px;margin:0 auto;padding:0;overflow:visible;min-height:550px;}
+    /* Reset WordPress paragraph spacing - override WordPress defaults */
+    #topfive li>div>div{margin:0!important;padding:0!important;}
+    #topfive li>div>div>h3{margin-bottom:0.5rem!important;margin-top:0!important;padding:0!important;}
+    .social-content>*:first-child{margin-top:0!important;padding-top:0!important;}
+    .social-content>*:last-child{margin-bottom:0!important;padding-bottom:0!important;}
+    .social-slide .twitter-tweet{width:100%!important;max-width:100%!important;margin:0 auto!important;overflow:visible!important;min-height:550px!important;}
+    .social-slide .twitter-tweet iframe{width:100%!important;max-width:100%!important;overflow:visible!important;min-height:550px!important;}
+    .social-slide iframe{width:100%;max-width:100%;overflow:visible;}
+    .viz-caption{position:absolute;left:1rem;bottom:1rem;background:rgba(255,255,255,0.95);backdrop-filter:blur(4px);padding:0.75rem 1rem;border-radius:0.75rem;max-width:min(92vw,800px);color:#0b1533!important;border:1px solid rgba(11,21,51,0.1);}
+    .viz-caption *{color:#0b1533!important;}
+    .hint{position:absolute;right:1rem;bottom:1rem;color:#0b1533!important;background:rgba(255,255,255,0.9);padding:0.35rem 0.6rem;border-radius:9999px;font-size:0.8rem;opacity:0.9;transition:opacity .3s;border:1px solid rgba(11,21,51,0.1);}
+    .hint.hidden{opacity:0;pointer-events:none}
+    .pff-logo{max-width:100%;height:auto;object-fit:contain;display:block;margin:0 auto;max-height:80px;width:auto;}
+    @media (max-width:640px){.pff-logo{max-height:60px;max-width:min(90vw,280px);}}
+    .pff-cta-button{display:inline-block;padding:0.75rem 2rem;background:linear-gradient(90deg,#38bdf8,#60e0ff);color:#0b1533;font-weight:600;text-decoration:none;border-radius:9999px;margin-top:1.5rem;transition:all 0.3s ease;box-shadow:0 4px 12px rgba(56,189,248,0.3);}
+    .pff-cta-button:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(56,189,248,0.4);background:linear-gradient(90deg,#60e0ff,#38bdf8);}
+  </style>
+</head>
+<body>
+<div class="pff-widget-container">
+  <header class="hero-header text-center py-16 px-4">
+    <div class="max-w-4xl mx-auto relative z-10">
+      <div class="relative inline-block mb-4">
+        <div class="absolute inset-0 rounded-full bg-[#60e0ff]/10 blur-3xl"></div>
+        <img src="https://media.pff.com/2025/07/Powered-by-PFF.png" alt="PFF Logo" class="pff-logo relative" />
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold uppercase tracking-wide text-white">The PFF End Zone</h1>
+      <p class="text-gray-400 mt-2 text-lg md:text-xl">Editors' Week in Review</p>
+      <div class="mt-6 mx-auto w-2/5 border-t border-blue-500/30"></div>
+      <div class="mt-6">
+        <a href="https://subscribe.pff.com/" target="_blank" class="pff-cta-button">Subscribe to PFF+</a>
+      </div>
+    </div>
+  </header>
+
+  <div id="loading" class="text-center py-6" style="color:#0b1533!important;background:#ffffff!important;">Loading data…</div>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4" aria-labelledby="top5-title">
+    <h2 id="top5-title" class="text-2xl font-semibold mb-6">Trending fantasy football analysis</h2>
+    <ol id="topfive" class="space-y-4" aria-live="polite"></ol>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-6">Editor Highlights</h2>
+    <div id="editor-highlights" class="grid md:grid-cols-2 gap-6"></div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-6">Podcasts</h2>
+    <div id="podcasts" class="grid md:grid-cols-2 gap-6"></div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-6">Note from the Editor</h2>
+    <div class="bg-white rounded-2xl p-6 md:p-8 border border-gray-200" style="background:#ffffff!important;">
+      <div class="prose max-w-none">
+        <p class="leading-relaxed mb-4" style="font-size: 1.1rem; line-height: 1.8; color:#0b1533!important;">
+          <!-- Update this text each week -->
+          This week's analysis brings exciting insights from across the NFL landscape. Our team has been diving deep into the data, examining player performances, and identifying key trends that are shaping the fantasy football landscape.
+        </p>
+        <p class="leading-relaxed mb-6" style="font-size: 1.1rem; line-height: 1.8; color:#0b1533!important;">
+          We hope you find these insights valuable as you navigate your fantasy football decisions. As always, we're here to provide you with the most comprehensive and data-driven analysis possible.
+        </p>
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <p class="italic mb-1" style="color:#0b1533!important;">Mark Chichester</p>
+          <p class="text-sm" style="color:#0b1533!important;">PFF Editorial Manager</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-6">🎧 Voices from the Desk</h2>
+    <div id="voices" class="space-y-6"></div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-4">📊 By the Numbers</h2>
+    <div class="relative">
+      <div class="swiper viz-swiper" aria-label="Data visualization gallery">
+        <div class="swiper-wrapper" id="viz-wrapper"></div>
+        <div class="swiper-button-prev" aria-label="Previous visualization"></div>
+        <div class="swiper-button-next" aria-label="Next visualization"></div>
+        <div class="swiper-pagination" aria-label="Slide pagination"></div>
+      </div>
+      <div id="viz-hint" class="hint">Swipe →</div>
+    </div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-4">📱 Social Highlights</h2>
+    <div class="swiper social-swiper">
+      <div class="swiper-wrapper" id="social-wrapper"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-4">🏆 Top 10 Offensive Grades from Week 9</h2>
+    <div id="offense-carousel" class="overflow-x-auto flex space-x-4 py-4"></div>
+    <p class="text-center text-sm mt-2 italic" style="color:#0b1533!important;">← Scroll to see more →</p>
+    <div class="text-center mt-4">
+      <a href="https://premium.pff.com/nfl/positions/2025/REGPO" target="_blank" class="pff-cta-button">Click to explore PFF Premium Stats</a>
+    </div>
+
+    <h2 class="text-2xl font-semibold mt-10 mb-4">💪 Top 10 Defensive Grades from Week 9</h2>
+    <div id="defense-carousel" class="overflow-x-auto flex space-x-4 py-4"></div>
+    <p class="text-center text-sm mt-2 italic" style="color:#0b1533!important;">← Scroll to see more →</p>
+    <div class="text-center mt-4">
+      <a href="https://premium.pff.com/nfl/positions/2025/REGPO" target="_blank" class="pff-cta-button">Click to explore PFF Premium Stats</a>
+    </div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-6">📰 Editor’s Picks</h2>
+    <div id="picks" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <section class="section max-w-6xl mx-auto py-10 px-4">
+    <h2 id="preview-title" class="text-2xl font-semibold mb-6">Week Preview</h2>
+    <div id="nextweek" class="grid md:grid-cols-3 gap-6"></div>
+  </section>
+
+  <footer class="section py-8 text-center" style="color:#0b1533!important;">
+    <p>© 2025 Pro Football Focus | Editors' Interactive Weekly Recap</p>
+  </footer>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script async src="https://platform.twitter.com/widgets.js"></script>
+  <script async src="https://www.instagram.com/embed.js"></script>
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
+  <script>
+    const FEED_URL = "https://script.google.com/macros/s/AKfycbzO9rzLwf9aengOcFJ7Q9V2QHOL0Q0BU03IUHsgplvEGHjdjUflPyvdYqCk-O_54nqH/exec";
+
+    // Suppress harmless embed script errors (Twitter/Instagram message channel errors)
+    window.addEventListener('unhandledrejection', function(event) {
+      const errorMsg = event.reason?.message || event.reason?.toString() || '';
+      // Suppress known harmless embed script errors
+      if (errorMsg.includes('message channel closed') || 
+          errorMsg.includes('asynchronous response') ||
+          errorMsg.includes('Tweet.html') ||
+          errorMsg.includes('instagram.com')) {
+        event.preventDefault(); // Suppress the error
+        return false;
+      }
+    });
+
+    // Also catch console errors from embeds
+    const originalError = console.error;
+    console.error = function(...args) {
+      const errorMsg = args.join(' ');
+      // Suppress known harmless embed errors
+      if (errorMsg.includes('message channel closed') || 
+          errorMsg.includes('asynchronous response') ||
+          errorMsg.includes('Tweet.html') ||
+          errorMsg.includes('instagram.com/p/')) {
+        return; // Don't log these errors
+      }
+      // Log other errors normally
+      originalError.apply(console, args);
+    };
+
+    function escapeHtml(str){return String(str||'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s]));}
+    
+    function isValidUrl(str) {
+      if (!str || typeof str !== 'string' || str.trim() === '') return false;
+      try {
+        const url = new URL(str);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+      } catch {
+        return false;
+      }
+    }
+
+    (async function(){
+      // Check if we're running from file:// protocol (needed for error display)
+      const isFileProtocol = window.location.protocol === 'file:';
+      
+      try{
+        if (isFileProtocol) {
+          console.warn('Running from file:// protocol - CORS may be blocked. Consider using a local server.');
+        }
+
+        const res = await fetch(FEED_URL, {
+          method: 'GET',
+          mode: 'cors',
+          cache: 'no-store',
+          credentials: 'omit'
+        });
+        
+        if(!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errorText}`);
+        }
+        
+        // Try to parse as JSON, but be flexible about content-type
+        let data;
+        try {
+          data = await res.json();
+        } catch (jsonError) {
+          // If JSON parsing fails, try to get text and parse manually
+          const text = await res.text();
+          console.warn('Response text:', text.substring(0, 200));
+          try {
+            data = JSON.parse(text);
+          } catch (parseError) {
+            throw new Error(`Failed to parse response as JSON: ${parseError.message}`);
+          }
+        }
+        
+        console.log('Data loaded successfully:', data);
+        document.getElementById('loading').style.display='none';
+        populateTopFive(data.StoryPerformance||[]);
+        populateEditorHighlights(data.EditorHighlights||[]);
+        populatePodcasts(data.PFFNFLShow||[]);
+        populateVoices(data.VoicesFromTheDesk||[]);
+        populateDataVizSwiper(data.DataVizCarousel||[]);
+        populateSocialCarousel(data.SocialHighlights||[]);
+        populatePlayers(data.OffenseCarousel||[], document.querySelector('#offense-carousel'));
+        populatePlayers(data.DefenseCarousel||[], document.querySelector('#defense-carousel'));
+        populatePicks(data.EditorsPicks||[]);
+        populateNextWeek(data.NextWeekPreview||[], data);
+      }catch(e){ 
+        console.error('Feed error:', e);
+        const loadingEl = document.getElementById('loading');
+        const errorMsg = e.message || 'Unknown error';
+        const isCorsError = errorMsg.includes('CORS') || errorMsg.includes('Failed to fetch');
+        
+        if (isCorsError) {
+          const currentUrl = window.location.href;
+          const isLocalhost = currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1');
+          const fileName = currentUrl.split('/').pop() || 'week_in_motion_widget (2).html';
+          
+          loadingEl.innerHTML = `<div class="text-red-400 p-6 bg-red-900/30 rounded-lg border border-red-600/50">
+            <p class="font-bold text-lg mb-3">⚠️ CORS Error: Cannot load data from Google Sheets</p>
+            <p class="text-sm mb-4">You're currently accessing: <code class="bg-gray-800 px-2 py-1 rounded text-xs break-all">${escapeHtml(currentUrl)}</code></p>
+            ${isFileProtocol ? `
+            <div class="bg-yellow-900/30 border border-yellow-600/50 p-4 rounded mb-4">
+              <p class="font-semibold mb-2">⚠️ You're opening the file directly (file:// protocol)</p>
+              <p class="text-sm mb-3">To fix this, you need to access it through a web server:</p>
+              <ol class="text-sm list-decimal list-inside space-y-2 mb-3 ml-2">
+                <li><strong>Server is running!</strong> Open this URL in your browser:</li>
+                <li class="ml-4"><code class="bg-gray-800 px-2 py-1 rounded text-yellow-300">http://localhost:8000/${escapeHtml(fileName)}</code></li>
+                <li class="mt-2">Or go to <code class="bg-gray-800 px-2 py-1 rounded">http://localhost:8000/</code> and click the file</li>
+              </ol>
+            </div>
+            ` : isLocalhost ? `
+            <p class="text-sm mb-3">You're using a local server, but CORS is still blocked. This might mean:</p>
+            <ul class="text-sm list-disc list-inside space-y-1 mb-3 ml-2">
+              <li>Your Google Apps Script needs to be deployed with "Anyone" access</li>
+              <li>The script URL might be incorrect</li>
+              <li>Check the browser console for more details</li>
+            </ul>
+            ` : ''}
+            <p class="text-xs text-gray-400 mt-4">Error details: ${escapeHtml(errorMsg)}</p>
+          </div>`;
+        } else {
+          loadingEl.innerHTML = `<div class="text-red-400">Error loading data: ${escapeHtml(errorMsg)}<br><small>Check console for details</small></div>`;
+        }
+      }
+    })();
+
+    function populateTopFive(items){
+      const top5 = items.slice(0,5);
+      const max = Math.max(...top5.map(i => Number(i.engagement_index)||0), 1);
+      const ol = document.getElementById('topfive');
+      console.log('Top 5 items:', top5); // Debug log
+      ol.innerHTML = top5.map((it,idx)=>{
+        const pct = Math.round(((Number(it.engagement_index)||0)/max)*100);
+        // Check for url field (case-insensitive, try both url and URL)
+        const urlValue = it.url || it.URL || it.link_url || '';
+        console.log(`Item ${idx + 1} URL:`, urlValue); // Debug log
+        
+        // Make headline clickable if URL exists - handle relative and absolute URLs
+        let linkUrl = '';
+        if (urlValue && typeof urlValue === 'string' && urlValue.trim() !== '') {
+          const trimmedUrl = urlValue.trim();
+          // If it's a full URL, use it as-is
+          if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+            linkUrl = escapeHtml(trimmedUrl);
+          } 
+          // If it starts with www., add https://
+          else if (trimmedUrl.startsWith('www.')) {
+            linkUrl = escapeHtml('https://' + trimmedUrl);
+          }
+          // If it's a relative URL (starts with /), prepend the PFF domain
+          else if (trimmedUrl.startsWith('/')) {
+            linkUrl = escapeHtml('https://www.pff.com' + trimmedUrl);
+          }
+          // For any other format, try to use it as-is
+          else {
+            linkUrl = escapeHtml(trimmedUrl);
+          }
+        }
+        
+        // Option 5: Number with subtle underline accent
+        const accentColors = ['#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fb7185'];
+        const accentColor = accentColors[idx] || accentColors[0];
+        
+        const headlineHtml = linkUrl 
+          ? `<h3 class='font-bold text-xl mb-2 leading-tight' style='margin:0 0 0.5rem 0;padding:0;'><a href='${linkUrl}' target='_blank' class='hover:text-blue-600 transition-all duration-200 cursor-pointer group' style='text-decoration:none;color:#0b1533!important;'><span class='hover:underline' style='text-decoration-color:rgba(37,99,235,0.7);'>${escapeHtml(it.title||'')}</span></a></h3>`
+          : `<h3 class='font-bold text-xl mb-2 leading-tight' style='margin:0 0 0.5rem 0;padding:0;color:#0b1533!important;'>${escapeHtml(it.title||'')}</h3>`;
+        
+        return `<li class='bg-white rounded-2xl p-6 md:p-7 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] hover:-translate-y-1 group relative overflow-hidden border border-gray-200' style='margin:0;padding:1.5rem 1.75rem;position:relative;background:#ffffff!important;'><div class='absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300' style='pointer-events:none;'></div><div class='flex items-start gap-4 relative z-10' style='margin:0;padding:0;gap:1rem;'><div class='flex-shrink-0 flex flex-col items-start' style='margin:0;padding:0;padding-top:0.125rem;'><span class='font-semibold text-lg tabular-nums' style='font-size:1.125rem;color:#0b1533!important;line-height:1.2;'>${idx+1}</span><div class='h-0.5 rounded-full mt-1 transition-all duration-300 group-hover:h-1' style='background:linear-gradient(to right, ${accentColor}, ${accentColor}88);width:24px;height:2px;box-shadow:0 0 4px ${accentColor}60;'></div></div><div class='flex-1 min-w-0' style='margin:0;padding:0;'>${headlineHtml}${it.blurb?`<p class='text-sm mt-2 leading-relaxed' style='margin-top:0.5rem;color:#0b1533!important;'>${escapeHtml(it.blurb)}</p>`:''}<div class='bar-track mt-4' style='margin-top:1rem;'><div class='bar-fill' style='width:${pct}%'></div></div></div></div><div class='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/0 via-blue-400/50 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300' style='height:2px;'></div></li>`;
+      }).join('');
+    }
+
+    function populateEditorHighlights(it){
+      document.getElementById('editor-highlights').innerHTML=it.map(x=>{
+        const audioHtml = (x.audio_url && isValidUrl(x.audio_url)) ? `<audio controls class='w-full mt-2 rounded'><source src='${escapeHtml(x.audio_url)}' type='audio/mpeg'></audio>` : '';
+        const featureHtml = (x.feature_url && isValidUrl(x.feature_url)) ? `<a href='${escapeHtml(x.feature_url)}' target='_blank' class='block mt-3' style='color:#2563eb!important;'>Read more →</a>` : '';
+        return `<div class='p-6 bg-white rounded-2xl shadow border border-gray-200' style='background:#ffffff!important;'><h3 class='text-xl font-bold mb-2' style='color:#0b1533!important;'>${escapeHtml(x.editor_name||'')} — ${escapeHtml(x.title||'')}</h3><p class='mb-4' style='color:#0b1533!important;'>${escapeHtml(x.blurb||'')}</p>${audioHtml}${featureHtml}</div>`;
+      }).join('');
+    }
+
+    function populatePodcasts(items){
+      const container = document.getElementById('podcasts');
+      if(!container) return;
+      container.innerHTML = items.map(x=>{
+        let embedHtml = '';
+        
+        // Check for embed_code first (full iframe HTML)
+        const embedSource = x.embed_code || x.video_url || x.audio_url;
+        
+        if (embedSource && typeof embedSource === 'string') {
+          const embedCode = embedSource.trim();
+          
+          // If it's a full iframe tag, extract the src or use as-is
+          if (embedCode.includes('<iframe')) {
+            // Extract src from iframe if it's a full HTML tag
+            const srcMatch = embedCode.match(/src=["']([^"']+)["']/);
+            if (srcMatch && srcMatch[1]) {
+              embedHtml = `<iframe src="${escapeHtml(srcMatch[1])}" width="100%" height="232" frameborder="0" allowtransparency="true" allow="encrypted-media" style="border-radius: 12px;"></iframe>`;
+            } else {
+              // Use the embed code as-is if we can't extract src
+              embedHtml = embedCode;
+            }
+          } 
+          // If it's a Spotify URL, convert to embed format
+          else if (embedCode.includes('spotify.com')) {
+            let embedUrl = embedCode;
+            // Convert Spotify URL to embed format if needed
+            if (!embedUrl.includes('/embed/')) {
+              embedUrl = embedCode.replace('spotify.com/', 'spotify.com/embed/');
+            }
+            embedHtml = `<iframe src="${escapeHtml(embedUrl)}" width="100%" height="232" frameborder="0" allowtransparency="true" allow="encrypted-media" style="border-radius: 12px;"></iframe>`;
+          }
+          // If it's a valid URL, use it as an embed
+          else if (isValidUrl(embedCode)) {
+            embedHtml = `<iframe src="${escapeHtml(embedCode)}" width="100%" height="232" frameborder="0" allowtransparency="true" allow="encrypted-media" style="border-radius: 12px;"></iframe>`;
+          }
+        }
+        
+        const title = x.title || x.episode_title || '';
+        const description = x.description || x.blurb || x.quote || '';
+        return `<div class='p-6 bg-white rounded-2xl shadow border border-gray-200' style='background:#ffffff!important;'><h3 class='text-xl font-bold mb-2' style='color:#0b1533!important;'>${escapeHtml(title)}</h3>${description ? `<p class='mb-4' style='color:#0b1533!important;'>${escapeHtml(description)}</p>` : ''}${embedHtml ? `<div class='mt-4' style='margin-top:1rem;'>${embedHtml}</div>` : ''}</div>`;
+      }).join('');
+    }
+
+    function populateVoices(it){
+      document.getElementById('voices').innerHTML=it.map(v=>{
+        const audioHtml = (v.audio_url && isValidUrl(v.audio_url)) ? `<audio controls class='w-full mt-2 rounded'><source src='${escapeHtml(v.audio_url)}' type='audio/mpeg'></audio>` : '';
+        return `<div class='bg-white p-5 rounded-xl border border-gray-200' style='background:#ffffff!important;'><h3 class='font-semibold text-lg mb-2' style='color:#0b1533!important;'>${escapeHtml(v.editor_name||'')} — ${escapeHtml(v.topic||'')}</h3>${audioHtml}${v.summary?`<p class='mt-2' style='color:#0b1533!important;'>${escapeHtml(v.summary)}</p>`:''}</div>`;
+      }).join('');
+    }
+
+    function populateDataVizSwiper(items){
+      const wrap=document.getElementById('viz-wrapper');
+      const validItems = items.filter(v => v.image_url && isValidUrl(v.image_url));
+      if (validItems.length === 0) {
+        wrap.innerHTML = '<div class="swiper-slide viz-slide"><div class="viz-caption"><div class="font-semibold" style="color:#0b1533!important;">No visualizations available</div></div></div>';
+        return;
+      }
+      wrap.innerHTML=validItems.map(v=>`<div class='swiper-slide viz-slide'><img src='${escapeHtml(v.image_url)}' alt='${escapeHtml(v.title||'')}' onerror="this.style.display='none'"><div class='viz-caption'><div class='font-semibold' style='color:#0b1533!important;'>${escapeHtml(v.title||'')}</div>${v.description?`<div class='text-sm mt-1' style='color:#0b1533!important;'>${escapeHtml(v.description)}</div>`:''}</div></div>`).join('');
+      const swiper=new Swiper('.viz-swiper',{loop:validItems.length>1,centeredSlides:true,slidesPerView:1,spaceBetween:16,pagination:{el:'.swiper-pagination',clickable:true},navigation:{nextEl:'.swiper-button-next',prevEl:'.swiper-button-prev'},keyboard:{enabled:true}});
+      const hint=document.getElementById('viz-hint');['touchstart','mousedown','keydown'].forEach(evt=>swiper.el.addEventListener(evt,()=>hint.classList.add('hidden'),{once:true}));
+    }
+
+    function populateSocialCarousel(items){
+      const wrap=document.getElementById('social-wrapper');
+      const validItems = items.filter(p => p.post_url && isValidUrl(p.post_url));
+      if (validItems.length === 0) {
+        wrap.innerHTML = '<div class="swiper-slide social-slide bg-white rounded-xl border border-gray-200" style="margin:0;padding:0;background:#ffffff!important;"><div class="social-content text-center" style="margin:0;padding:0;"><p style="margin:0;padding:1rem;color:#0b1533!important;">No social media posts available</p></div></div>';
+        return;
+      }
+      wrap.innerHTML=validItems.map(p => {
+        const url = p.post_url;
+        let embed = '';
+        // Handle X.com (formerly Twitter) - both twitter.com and x.com domains
+        if (url.includes('twitter.com') || url.includes('x.com')) {
+          // Convert x.com to twitter.com for embedding (Twitter's embed system works better with twitter.com)
+          const embedUrl = url.includes('x.com') ? url.replace('x.com', 'twitter.com') : url;
+          embed = `<blockquote class="twitter-tweet"><a href="${escapeHtml(embedUrl)}"></a></blockquote>`;
+        } else if (url.includes('instagram.com')) {
+          embed = `<blockquote class="instagram-media" data-instgrm-permalink="${escapeHtml(url)}" data-instgrm-version="14"></blockquote>`;
+        } else if (url.includes('tiktok.com')) {
+          // Use TikTok's blockquote embed method (official method)
+          // TikTok's embed.js script will automatically process blockquotes with class "tiktok-embed"
+          let embedUrl = url.split('?')[0]; // Remove query params
+          
+          // Extract video ID for data attribute
+          let videoId = '';
+          if (embedUrl.includes('/video/')) {
+            const videoMatch = embedUrl.match(/\/video\/(\d+)/);
+            if (videoMatch && videoMatch[1]) {
+              videoId = videoMatch[1];
+            }
+          }
+          
+          // Create blockquote embed - TikTok's embed.js will process this
+          embed = `<blockquote class="tiktok-embed" cite="${escapeHtml(embedUrl)}"${videoId ? ` data-video-id="${escapeHtml(videoId)}"` : ''} style="max-width:100%;width:100%;display:block;margin:0 auto;"><section><a target="_blank" href="${escapeHtml(embedUrl)}"></a></section></blockquote>`;
+        } else if (isValidUrl(url)) {
+          // Only use iframe for URLs that are not social media platforms
+          // X.com blocks iframes, so we should avoid it
+          if (!url.includes('x.com') && !url.includes('twitter.com')) {
+            embed = `<iframe src="${escapeHtml(url)}" frameborder="0" allowfullscreen></iframe>`;
+          } else {
+            // If it's a social media URL we don't support, show a link instead
+            embed = `<div class="p-4" style="background:#ffffff!important;"><p class="mb-2" style="color:#0b1533!important;">Social media post</p><a href="${escapeHtml(url)}" target="_blank" class="underline" style="color:#2563eb!important;">View post →</a></div>`;
+          }
+        } else {
+          return `<div class="swiper-slide social-slide bg-white rounded-xl border border-gray-200" style="margin:0;padding:0;background:#ffffff!important;"><div class="social-content text-center" style="margin:0;padding:0;"><p style="margin:0;padding:1rem;color:#0b1533!important;">Invalid URL</p></div></div>`;
+        }
+        return `<div class="swiper-slide social-slide bg-white rounded-xl border border-gray-200" style="margin:0;padding:0;background:#ffffff!important;"><div class="social-content" style="margin:0;padding:0;">${embed}${p.caption?`<p class="mt-3 text-sm text-center" style="margin-top:0.75rem;margin-bottom:0;padding:0;color:#0b1533!important;">${escapeHtml(p.caption)}</p>`:''}</div></div>`;
+      }).join('');
+      
+      const swiper = new Swiper('.social-swiper',{
+        loop:validItems.length>1,
+        slidesPerView:1,
+        centeredSlides:true,
+        spaceBetween:20,
+        autoHeight:true,
+        pagination:{el:'.swiper-pagination',clickable:true},
+        navigation:{nextEl:'.swiper-button-next',prevEl:'.swiper-button-prev'},
+        on: {
+          slideChange: function() {
+            // Update height when slide changes
+            this.updateAutoHeight(300);
+            // For Twitter and TikTok embeds, check height multiple times as content loads
+            const activeSlide = this.slides[this.activeIndex];
+            if (activeSlide) {
+              const hasTwitter = activeSlide.querySelector('.twitter-tweet');
+              const hasTiktok = activeSlide.querySelector('.tiktok-embed');
+              
+              if (hasTwitter) {
+                setTimeout(() => this.updateAutoHeight(300), 300);
+                setTimeout(() => this.updateAutoHeight(300), 800);
+                setTimeout(() => this.updateAutoHeight(300), 1500);
+                setTimeout(() => this.updateAutoHeight(300), 2500);
+              }
+              
+              if (hasTiktok) {
+                setTimeout(() => this.updateAutoHeight(300), 300);
+                setTimeout(() => this.updateAutoHeight(300), 800);
+                setTimeout(() => this.updateAutoHeight(300), 1500);
+                setTimeout(() => this.updateAutoHeight(300), 2500);
+                setTimeout(() => this.updateAutoHeight(300), 3500);
+              }
+            }
+          },
+          transitionEnd: function() {
+            // Update height after transition completes
+            this.updateAutoHeight(300);
+            // Additional updates for Twitter and TikTok embeds
+            const activeSlide = this.slides[this.activeIndex];
+            if (activeSlide) {
+              const hasTwitter = activeSlide.querySelector('.twitter-tweet');
+              const hasTiktok = activeSlide.querySelector('.tiktok-embed');
+              
+              if (hasTwitter) {
+                setTimeout(() => this.updateAutoHeight(300), 500);
+                setTimeout(() => this.updateAutoHeight(300), 1200);
+                setTimeout(() => this.updateAutoHeight(300), 2000);
+              }
+              
+              if (hasTiktok) {
+                setTimeout(() => this.updateAutoHeight(300), 500);
+                setTimeout(() => this.updateAutoHeight(300), 1200);
+                setTimeout(() => this.updateAutoHeight(300), 2000);
+                setTimeout(() => this.updateAutoHeight(300), 3000);
+              }
+            }
+          }
+        }
+      });
+      
+      // Function to update swiper height
+      const updateSwiperHeight = () => {
+        if (swiper) {
+          swiper.updateAutoHeight(300);
+        }
+      };
+      
+      // Debounced height update for smoother performance
+      let heightUpdateTimer;
+      const debouncedUpdateHeight = () => {
+        clearTimeout(heightUpdateTimer);
+        heightUpdateTimer = setTimeout(updateSwiperHeight, 50);
+      };
+      
+      // Watch for image loads within Twitter embeds
+      const watchForImageLoads = () => {
+        const twitterEmbeds = wrap.querySelectorAll('.twitter-tweet, iframe[src*="twitter"], iframe[src*="x.com"]');
+        twitterEmbeds.forEach(embed => {
+          // Watch for images loading within the embed
+          const images = embed.contentDocument?.querySelectorAll('img') || 
+                        embed.contentWindow?.document?.querySelectorAll('img') || [];
+          images.forEach(img => {
+            if (!img.complete) {
+              img.addEventListener('load', debouncedUpdateHeight, { once: true });
+              img.addEventListener('error', debouncedUpdateHeight, { once: true });
+            }
+          });
+        });
+      };
+      
+      // Load social media widgets after DOM is updated
+      setTimeout(() => {
+        if (window.twttr && window.twttr.widgets) {
+          // Twitter widgets load callback
+          const twitterLoadCallback = () => {
+            updateSwiperHeight();
+            // Update multiple times as Twitter embeds load progressively
+            setTimeout(updateSwiperHeight, 500);
+            setTimeout(updateSwiperHeight, 1000);
+            setTimeout(updateSwiperHeight, 2000);
+            setTimeout(watchForImageLoads, 500);
+          };
+          window.twttr.widgets.load(wrap, twitterLoadCallback);
+        } else {
+          // Twitter script might not be loaded yet, wait a bit more
+          setTimeout(() => {
+            if (window.twttr && window.twttr.widgets) {
+              const twitterLoadCallback = () => {
+                updateSwiperHeight();
+                setTimeout(updateSwiperHeight, 500);
+                setTimeout(updateSwiperHeight, 1000);
+                setTimeout(updateSwiperHeight, 2000);
+                setTimeout(watchForImageLoads, 500);
+              };
+              window.twttr.widgets.load(wrap, twitterLoadCallback);
+            }
+          }, 500);
+        }
+        if (window.instgrm && window.instgrm.Embeds) {
+          window.instgrm.Embeds.process();
+          // Update height after Instagram embeds load
+          setTimeout(updateSwiperHeight, 1000);
+        }
+        
+        // Process TikTok embeds (using blockquote method with embed.js)
+        const tiktokEmbeds = wrap.querySelectorAll('.tiktok-embed');
+        if (tiktokEmbeds.length > 0) {
+          // Function to process TikTok embeds when script is ready
+          const processTiktokEmbeds = () => {
+            tiktokEmbeds.forEach(embed => {
+              // TikTok's embed.js should auto-process, but we can trigger it
+              if (window.tiktokEmbed && typeof window.tiktokEmbed.render === 'function') {
+                try {
+                  window.tiktokEmbed.render(embed);
+                } catch(e) {
+                  console.log('TikTok embed render error:', e);
+                }
+              }
+              
+              // Watch for when TikTok embed transforms into iframe
+              const observer = new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                  if (mutation.addedNodes.length) {
+                    mutation.addedNodes.forEach(node => {
+                      if (node.tagName === 'IFRAME' || node.querySelector?.('iframe')) {
+                        updateSwiperHeight();
+                        setTimeout(updateSwiperHeight, 500);
+                        setTimeout(updateSwiperHeight, 1500);
+                      }
+                    });
+                  }
+                });
+              });
+              
+              observer.observe(embed, {
+                childList: true,
+                subtree: true
+              });
+            });
+            
+            updateSwiperHeight();
+            setTimeout(updateSwiperHeight, 500);
+            setTimeout(updateSwiperHeight, 1500);
+            setTimeout(updateSwiperHeight, 3000);
+          };
+          
+          // Wait for TikTok embed.js script to load
+          if (window.tiktokEmbed) {
+            processTiktokEmbeds();
+          } else {
+            // Wait for script to load
+            let checkCount = 0;
+            const checkInterval = setInterval(() => {
+              checkCount++;
+              if (window.tiktokEmbed || checkCount > 40) {
+                clearInterval(checkInterval);
+                if (window.tiktokEmbed) {
+                  processTiktokEmbeds();
+                } else {
+                  // Script didn't load, but embeds might still work
+                  updateSwiperHeight();
+                }
+              }
+            }, 250);
+          }
+        }
+      }, 100);
+      
+      // Update height when embeds load (Twitter, Instagram, TikTok)
+      const observer = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
+        mutations.forEach(mutation => {
+          // Check if any added nodes are images or iframe content changed
+          if (mutation.addedNodes.length) {
+            mutation.addedNodes.forEach(node => {
+              if (node.nodeType === 1) { // Element node
+                if (node.tagName === 'IMG' || 
+                    node.tagName === 'IFRAME' ||
+                    node.querySelector?.('img') || 
+                    node.querySelector?.('iframe') ||
+                    node.classList?.contains('twitter-tweet') ||
+                    node.classList?.contains('tiktok-embed') ||
+                    node.querySelector?.('.twitter-tweet') ||
+                    node.querySelector?.('.tiktok-embed')) {
+                  shouldUpdate = true;
+                }
+              }
+            });
+          }
+          // Check if attributes changed (like height/width)
+          if (mutation.type === 'attributes' && 
+              (mutation.attributeName === 'style' || mutation.attributeName === 'class')) {
+            shouldUpdate = true;
+          }
+        });
+        if (shouldUpdate) {
+          debouncedUpdateHeight();
+        }
+      });
+      
+      observer.observe(wrap, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class', 'height', 'width']
+      });
+      
+      // Also watch for iframe load events (Twitter embeds use iframes)
+      const iframes = wrap.querySelectorAll('iframe');
+      iframes.forEach(iframe => {
+        iframe.addEventListener('load', () => {
+          updateSwiperHeight();
+          // Update again after iframe content loads
+          setTimeout(updateSwiperHeight, 500);
+          setTimeout(updateSwiperHeight, 1500);
+          setTimeout(watchForImageLoads, 300);
+        }, { once: true });
+      });
+      
+      // Also update on window resize
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(updateSwiperHeight, 250);
+      });
+      
+      // Periodic check for Twitter embeds that load images late
+      let embedCheckInterval;
+      const startEmbedHeightCheck = () => {
+        if (embedCheckInterval) clearInterval(embedCheckInterval);
+        embedCheckInterval = setInterval(() => {
+          const activeSlide = swiper?.slides[swiper?.activeIndex];
+          if (activeSlide) {
+            const hasTwitter = activeSlide.querySelector('.twitter-tweet');
+            const hasTiktok = activeSlide.querySelector('.tiktok-embed');
+            
+            if (hasTwitter || hasTiktok) {
+              // Check if height has changed
+              const currentHeight = swiper?.el?.offsetHeight;
+              updateSwiperHeight();
+              // Check again after a short delay
+              setTimeout(() => {
+                const newHeight = swiper?.el?.offsetHeight;
+                if (currentHeight !== newHeight) {
+                  updateSwiperHeight();
+                }
+              }, 100);
+            }
+          }
+        }, 500);
+        
+        // Stop checking after 10 seconds (embeds should be loaded by then)
+        setTimeout(() => {
+          if (embedCheckInterval) {
+            clearInterval(embedCheckInterval);
+            embedCheckInterval = null;
+          }
+        }, 10000);
+      };
+      
+      // Start checking when swiper is ready
+      setTimeout(startEmbedHeightCheck, 500);
+      
+      // Restart check when slide changes to a Twitter or TikTok embed
+      swiper.on('slideChange', () => {
+        const activeSlide = swiper.slides[swiper.activeIndex];
+        if (activeSlide) {
+          const hasTwitter = activeSlide.querySelector('.twitter-tweet');
+          const hasTiktok = activeSlide.querySelector('.tiktok-embed');
+          if (hasTwitter || hasTiktok) {
+            startEmbedHeightCheck();
+          }
+        }
+      });
+    }
+
+    function populatePlayers(p,c){
+      c.innerHTML=p.slice(0,10).map(x=>{
+        const imgHtml = (x.image_url && isValidUrl(x.image_url)) ? `<img src='${escapeHtml(x.image_url)}' alt='${escapeHtml(x.player_name||'')}' class='mx-auto w-16 h-16 rounded-full mb-2' style='object-fit:cover;width:64px;height:64px;min-width:64px;min-height:64px;' onerror="this.style.display='none'">` : '';
+        // Format grade to one decimal point
+        let formattedGrade = '';
+        if (x.grade) {
+          const gradeNum = parseFloat(x.grade);
+          if (!isNaN(gradeNum)) {
+            formattedGrade = gradeNum.toFixed(1);
+          } else {
+            formattedGrade = x.grade; // If it's not a number, use as-is
+          }
+        }
+        return `<div class='min-w-[200px] bg-white p-4 rounded-xl text-center border border-gray-200' style='background:#ffffff!important;'>${imgHtml}<h4 class='font-semibold' style='color:#0b1533!important;'>${escapeHtml(x.player_name||'')}</h4>${formattedGrade?`<p class='font-bold' style='color:#2563eb!important;'>${escapeHtml(formattedGrade)} Grade</p>`:''}</div>`;
+      }).join('');
+    }
+
+    function populatePicks(items){
+      const container = document.getElementById('picks');
+      if(!container) return;
+      container.innerHTML = items.map(x => {
+        const linkUrl = (x.article_url && isValidUrl(x.article_url)) ? escapeHtml(x.article_url) : '#';
+        const imgHtml = (x.image_url && isValidUrl(x.image_url)) ? `<img src='${escapeHtml(x.image_url)}' alt='${escapeHtml(x.title||'')}' class='w-full h-48 object-cover rounded-t-xl' onerror="this.style.display='none'">` : '';
+        const linkTag = linkUrl === '#' ? 'div' : 'a';
+        const linkAttrs = linkUrl === '#' ? '' : `href='${linkUrl}' target='_blank'`;
+        return `<${linkTag} ${linkAttrs} class='bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-gray-200' style='background:#ffffff!important;'><div>${imgHtml}<div class='p-4'><h3 class='font-semibold text-lg mb-2' style='color:#0b1533!important;'>${escapeHtml(x.title||'')}</h3><p class='text-sm' style='color:#0b1533!important;'>${escapeHtml(x.subtitle||x.blurb||'')}</p></div></div></${linkTag}>`;
+      }).join('');
+    }
+
+    function populateNextWeek(items, data){
+      const container = document.getElementById('nextweek');
+      if(!container) return;
+      console.log('NextWeek data:', items);
+      
+      // Update the header with week number
+      const weekTitle = document.getElementById('preview-title');
+      if(weekTitle) {
+        // Try to get week number from various possible locations
+        let weekNumber = null;
+        if(data) {
+          weekNumber = data.week || data.WeekNumber || data.week_number || null;
+        }
+        if(!weekNumber && items && items.length > 0) {
+          weekNumber = items[0].week || items[0].WeekNumber || items[0].week_number || null;
+        }
+        
+        if(weekNumber) {
+          weekTitle.textContent = `Week ${weekNumber} Preview`;
+        } else {
+          weekTitle.textContent = 'Week Preview';
+        }
+      }
+      
+      container.innerHTML = items.map(x => {
+        const linkUrl = (x.link_url && isValidUrl(x.link_url)) ? escapeHtml(x.link_url) : '#';
+        const imgHtml = (x.image_url && isValidUrl(x.image_url)) ? `<img src='${escapeHtml(x.image_url)}' alt='${escapeHtml(x.title||'')}' class='w-full h-48 object-cover rounded-t-xl' onerror="this.style.display='none'">` : '';
+        const linkTag = linkUrl === '#' ? 'div' : 'a';
+        const linkAttrs = linkUrl === '#' ? '' : `href='${linkUrl}' target='_blank'`;
+        return `<${linkTag} ${linkAttrs} class='bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-gray-200' style='background:#ffffff!important;'><div>${imgHtml}<div class='p-4'><h3 class='font-semibold text-lg mb-2' style='color:#0b1533!important;'>${escapeHtml(x.title||x.headline||'')}</h3><p class='text-sm' style='color:#0b1533!important;'>${escapeHtml(x.description||x.blurb||'')}</p></div></div></${linkTag}>`;
+      }).join('');
+    }
+
+  </script>
+</body>
+</html>
