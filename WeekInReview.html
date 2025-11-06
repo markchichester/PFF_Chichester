@@ -46,11 +46,12 @@
     .bar-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#22d3ee,#06b6d4,#3b82f6);box-shadow:0 0 12px rgba(34,211,238,0.6), inset 0 1px 2px rgba(255,255,255,0.2);transition:width 0.8s cubic-bezier(0.4, 0, 0.2, 1);position:relative;overflow:hidden;}
     .bar-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:shimmer 2s infinite;}
     @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
-    .viz-swiper{width:100%;height:70vh;margin:0;padding:0;background:#ffffff!important;}
+    .viz-swiper{width:100%;min-height:600px;margin:0;padding:0;background:#ffffff!important;}
     .social-swiper{width:100%;min-height:600px;margin:0;padding:0;background:#ffffff!important;}
-    .viz-slide{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:#ffffff!important;margin:0;padding:0;}
+    .viz-slide{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;position:relative;background:#ffffff!important;margin:0;padding:0.5rem;overflow:visible;}
     .swiper-wrapper{margin:0;padding:0;}
-    .viz-slide img{width:100%;height:100%;object-fit:contain;background:#ffffff!important;}
+    .viz-slide img{width:100%;max-width:100%;height:auto;object-fit:contain;background:#ffffff!important;display:block;}
+    .viz-slide .viz-content{width:100%;max-width:600px;margin:0 auto;padding:0;overflow:visible;}
     .social-slide{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;position:relative;background:#ffffff!important;padding:0.5rem;min-height:600px;overflow:visible;margin:0;}
     .social-slide .social-content{width:100%;max-width:600px;margin:0 auto;padding:0;overflow:visible;min-height:550px;}
     /* Reset WordPress paragraph spacing - override WordPress defaults */
@@ -131,14 +132,11 @@
 
   <section class="section max-w-6xl mx-auto py-10 px-4">
     <h2 class="text-2xl font-semibold mb-4">📊 By the Numbers</h2>
-    <div class="relative">
-      <div class="swiper viz-swiper" aria-label="Data visualization gallery">
-        <div class="swiper-wrapper" id="viz-wrapper"></div>
-        <div class="swiper-button-prev" aria-label="Previous visualization"></div>
-        <div class="swiper-button-next" aria-label="Next visualization"></div>
-        <div class="swiper-pagination" aria-label="Slide pagination"></div>
-      </div>
-      <div id="viz-hint" class="hint">Swipe →</div>
+    <div class="swiper viz-swiper">
+      <div class="swiper-wrapper" id="viz-wrapper"></div>
+      <div class="swiper-button-prev" aria-label="Previous visualization"></div>
+      <div class="swiper-button-next" aria-label="Next visualization"></div>
+      <div class="swiper-pagination" aria-label="Slide pagination"></div>
     </div>
   </section>
 
@@ -175,7 +173,7 @@
 
   <section class="section max-w-6xl mx-auto py-10 px-4">
     <h2 id="preview-title" class="text-2xl font-semibold mb-6">Week Preview</h2>
-    <div id="nextweek" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+    <div id="nextweek" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </section>
 
   <footer class="section py-8 text-center" style="color:#0b1533!important;">
@@ -430,9 +428,8 @@
         wrap.innerHTML = '<div class="swiper-slide viz-slide"><div style="text-align:center;color:#0b1533!important;padding:2rem;">No visualizations available</div></div>';
         return;
       }
-      wrap.innerHTML=validItems.map(v=>`<div class='swiper-slide viz-slide'><div style='width:100%;display:flex;justify-content:center;align-items:center;'><img src='${escapeHtml(v.image_url)}' alt='${escapeHtml(v.title||'')}' onerror="this.style.display='none'"></div></div>`).join('');
-      const swiper=new Swiper('.viz-swiper',{loop:validItems.length>1,centeredSlides:true,slidesPerView:1,spaceBetween:16,pagination:{el:'.swiper-pagination',clickable:true},navigation:{nextEl:'.swiper-button-next',prevEl:'.swiper-button-prev'},keyboard:{enabled:true}});
-      const hint=document.getElementById('viz-hint');['touchstart','mousedown','keydown'].forEach(evt=>swiper.el.addEventListener(evt,()=>hint.classList.add('hidden'),{once:true}));
+      wrap.innerHTML=validItems.map(v=>`<div class='swiper-slide viz-slide'><div class='viz-content' style='width:100%;max-width:600px;margin:0 auto;padding:0;overflow:visible;'><img src='${escapeHtml(v.image_url)}' alt='${escapeHtml(v.title||'')}' onerror="this.style.display='none'"></div></div>`).join('');
+      const swiper=new Swiper('.viz-swiper',{loop:validItems.length>1,loopedSlides:validItems.length,loopAdditionalSlides:2,centeredSlides:true,slidesPerView:1,spaceBetween:20,autoHeight:true,pagination:{el:'.swiper-pagination',clickable:true},navigation:{nextEl:'.swiper-button-next',prevEl:'.swiper-button-prev'},keyboard:{enabled:true},on:{slideChange:function(){this.updateAutoHeight(300);},imagesReady:function(){this.updateAutoHeight(300);}}});
     }
 
     function populateSocialCarousel(items){
@@ -834,7 +831,7 @@
       
       container.innerHTML = items.map(x => {
         const linkUrl = (x.link_url && isValidUrl(x.link_url)) ? escapeHtml(x.link_url) : '#';
-        const imgHtml = (x.image_url && isValidUrl(x.image_url)) ? `<img src='${escapeHtml(x.image_url)}' alt='${escapeHtml(x.title||'')}' class='w-full h-48 object-cover rounded-t-xl' onerror="this.style.display='none'">` : '';
+        const imgHtml = (x.image_url && isValidUrl(x.image_url)) ? `<img src='${escapeHtml(x.image_url)}' alt='${escapeHtml(x.title||x.headline||'')}' class='w-full h-48 object-cover rounded-t-xl' onerror="this.style.display='none'">` : '';
         const linkTag = linkUrl === '#' ? 'div' : 'a';
         const linkAttrs = linkUrl === '#' ? '' : `href='${linkUrl}' target='_blank'`;
         return `<${linkTag} ${linkAttrs} class='bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-gray-200' style='background:#ffffff!important;'><div>${imgHtml}<div class='p-4'><h3 class='font-semibold text-lg mb-2' style='color:#0b1533!important;'>${escapeHtml(x.title||x.headline||'')}</h3><p class='text-sm' style='color:#0b1533!important;'>${escapeHtml(x.description||x.blurb||'')}</p></div></div></${linkTag}>`;
