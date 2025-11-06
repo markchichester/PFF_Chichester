@@ -429,7 +429,64 @@
         return;
       }
       wrap.innerHTML=validItems.map(v=>`<div class='swiper-slide viz-slide'><div class='viz-content' style='width:100%;max-width:600px;margin:0 auto;padding:0;overflow:visible;'><img src='${escapeHtml(v.image_url)}' alt='${escapeHtml(v.title||'')}' onerror="this.style.display='none'"></div></div>`).join('');
-      const swiper=new Swiper('.viz-swiper',{loop:validItems.length>1,loopedSlides:validItems.length,loopAdditionalSlides:2,centeredSlides:true,slidesPerView:1,spaceBetween:20,autoHeight:true,pagination:{el:'.swiper-pagination',clickable:true},navigation:{nextEl:'.swiper-button-next',prevEl:'.swiper-button-prev'},keyboard:{enabled:true},on:{slideChange:function(){this.updateAutoHeight(300);},imagesReady:function(){this.updateAutoHeight(300);}}});
+      
+      // Wait for images to load before initializing Swiper to prevent loop issues
+      const images = wrap.querySelectorAll('img');
+      let imagesLoaded = 0;
+      const totalImages = images.length;
+      let swiperInitialized = false;
+      
+      const initSwiper = () => {
+        if (swiperInitialized) return;
+        swiperInitialized = true;
+        
+        const swiper = new Swiper('.viz-swiper', {
+          loop: validItems.length > 1,
+          centeredSlides: true,
+          slidesPerView: 1,
+          spaceBetween: 20,
+          autoHeight: true,
+          loopPreventsSliding: false,
+          pagination: { el: '.swiper-pagination', clickable: true },
+          navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+          keyboard: { enabled: true },
+          on: {
+            slideChange: function() {
+              this.updateAutoHeight(300);
+            },
+            imagesReady: function() {
+              this.updateAutoHeight(300);
+            }
+          }
+        });
+      };
+      
+      if (totalImages === 0) {
+        setTimeout(initSwiper, 100);
+      } else {
+        const checkAllLoaded = () => {
+          imagesLoaded++;
+          if (imagesLoaded >= totalImages && !swiperInitialized) {
+            setTimeout(initSwiper, 100);
+          }
+        };
+        
+        images.forEach(img => {
+          if (img.complete) {
+            checkAllLoaded();
+          } else {
+            img.addEventListener('load', checkAllLoaded, { once: true });
+            img.addEventListener('error', checkAllLoaded, { once: true });
+          }
+        });
+        
+        // Fallback timeout in case some images never load
+        setTimeout(() => {
+          if (!swiperInitialized) {
+            initSwiper();
+          }
+        }, 2000);
+      }
     }
 
     function populateSocialCarousel(items){
