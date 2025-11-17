@@ -232,7 +232,7 @@
             pointer-events: auto;
         }
         
-        @media (max-width: 640px) {
+        @media (max-width: 799px) {
             .tooltip-content {
                 width: 280px;
                 font-size: 11px;
@@ -242,6 +242,59 @@
         
         .drag-handle:active {
             cursor: grabbing;
+        }
+        
+        /* Fullscreen button - styled to match other header buttons */
+        #fullscreen-btn {
+            position: relative;
+        }
+        
+        /* Mobile fullscreen landscape styles */
+        @media (max-width: 799px) {
+            .container:fullscreen,
+            .container:-webkit-full-screen,
+            .container:-moz-full-screen,
+            .container:-ms-fullscreen {
+                width: 100vw;
+                height: 100vh;
+                max-width: 100vw;
+                max-height: 100vh;
+            }
+            
+            /* Force desktop layout in fullscreen on mobile using class */
+            .mobile-fullscreen-landscape #mainContent > div {
+                flex-direction: row !important;
+                height: calc(100vh - 120px) !important;
+            }
+            
+            .mobile-fullscreen-landscape #mainContent > div > div:first-child {
+                border-bottom: none !important;
+                border-right: 1px solid rgba(55, 65, 81, 1) !important;
+                width: 50% !important;
+                flex: 0 0 50% !important;
+            }
+            
+            .mobile-fullscreen-landscape #mainContent > div > div:last-child {
+                width: 50% !important;
+                flex: 0 0 50% !important;
+            }
+            
+            /* Show desktop elements, hide mobile elements */
+            .mobile-fullscreen-landscape [class*="md:hidden"] {
+                display: none !important;
+            }
+            
+            .mobile-fullscreen-landscape [class*="hidden"][class*="md:flex"] {
+                display: flex !important;
+            }
+            
+            .mobile-fullscreen-landscape [class*="md:flex"]:not([class*="hidden"]) {
+                display: flex !important;
+            }
+            
+            .mobile-fullscreen-landscape [class*="md:w-1/2"] {
+                width: 50% !important;
+            }
         }
         
         /* Screen reader only class */
@@ -296,7 +349,46 @@
             flex-shrink: 0;
         }
         
-        @media (max-width: 640px) {
+        /* Intermediate screen sizes - prevent overlap */
+        @media (max-width: 900px) and (min-width: 800px) {
+            .header-buttons {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .header-buttons button {
+                flex: 1 1 auto;
+                min-width: 140px;
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+            
+            .header-buttons button svg {
+                width: 14px;
+                height: 14px;
+            }
+            
+            /* Prevent stat boxes from overlapping */
+            .grade-boxes-container {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .grade-box {
+                min-width: 50px !important;
+                padding: 0.5rem 0.75rem !important;
+            }
+            
+            .grade-box-value {
+                font-size: 0.875rem !important;
+            }
+            
+            .grade-box-label {
+                font-size: 0.625rem !important;
+            }
+        }
+        
+        @media (max-width: 799px) {
             .container {
                 padding: 0;
             }
@@ -407,7 +499,7 @@
             }
             
             /* Desktop layout - keep original */
-            @media (min-width: 641px) {
+            @media (min-width: 800px) {
                 .mobile-player-card {
                     flex-direction: row;
                 }
@@ -444,7 +536,7 @@
                         onerror="this.style.display='none'"
                     />
                 </div>
-                <div class="flex-1 flex justify-end gap-2 header-buttons header-export-container">
+                <div class="flex-1 flex justify-end gap-2 header-buttons header-export-container" style="flex-wrap: wrap;">
                     <button 
                         onclick="exportToCSV()"
                         class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 justify-center"
@@ -462,6 +554,17 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         Export Image
+                    </button>
+                    <button 
+                        id="fullscreen-btn" 
+                        onclick="toggleFullscreen()"
+                        aria-label="Toggle fullscreen"
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 justify-center"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                        </svg>
+                        <span id="fullscreen-btn-text">View Full Screen</span>
                     </button>
                 </div>
             </div>
@@ -855,6 +958,81 @@
             );
         }
 
+        // Fullscreen functionality
+        function toggleFullscreen() {
+            const container = document.querySelector('.container');
+            const btn = document.getElementById('fullscreen-btn');
+            const isMobile = window.innerWidth < 800 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Check if we're currently in fullscreen
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                
+                // Unlock orientation on mobile
+                if (isMobile && screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            } else {
+                // Enter fullscreen
+                const enterFullscreen = () => {
+                    if (container.requestFullscreen) {
+                        container.requestFullscreen();
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen();
+                    } else if (container.mozRequestFullScreen) {
+                        container.mozRequestFullScreen();
+                    } else if (container.msRequestFullscreen) {
+                        container.msRequestFullscreen();
+                    }
+                };
+                
+                // On mobile, try to lock to landscape orientation
+                if (isMobile && screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').then(() => {
+                        enterFullscreen();
+                    }).catch(() => {
+                        // If orientation lock fails, still enter fullscreen
+                        enterFullscreen();
+                    });
+                } else {
+                    enterFullscreen();
+                }
+            }
+        }
+        
+        // Update button text when fullscreen changes
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+        
+        function updateFullscreenButton() {
+            const btn = document.getElementById('fullscreen-btn');
+            const btnText = document.getElementById('fullscreen-btn-text');
+            const container = document.querySelector('.container');
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            
+            if (isFullscreen) {
+                btnText.textContent = 'Minimize';
+                // Add class to container for mobile landscape styling
+                if (window.innerWidth < 800) {
+                    container.classList.add('mobile-fullscreen-landscape');
+                }
+            } else {
+                btnText.textContent = 'View Full Screen';
+                container.classList.remove('mobile-fullscreen-landscape');
+            }
+        }
+        
         // Auto-load on page load
         async function loadPlayers() {
             const loadingState = document.getElementById('loadingState');
@@ -1106,7 +1284,7 @@
                             </div>
                             
                             <!-- Desktop: Stats on the right -->
-                            <div class="hidden md:flex gap-2 flex-shrink-0 items-center grade-boxes-container">
+                            <div class="hidden md:flex gap-2 flex-shrink-0 items-center grade-boxes-container" style="flex-wrap: wrap;">
                                 ${pffRank ? `
                                     <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
                                         <div class="grade-box-value text-cyan-400 font-bold text-base">${pffRank}</div>
@@ -1327,7 +1505,7 @@
                         </div>
                         
                         <!-- Desktop: Stats on the right -->
-                        <div class="hidden md:flex gap-2 flex-shrink-0 grade-boxes-container">
+                        <div class="hidden md:flex gap-2 flex-shrink-0 grade-boxes-container" style="flex-wrap: wrap;">
                             ${pffRank ? `
                                 <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-center min-w-[60px]">
                                     <div class="grade-box-value text-cyan-400 font-bold text-lg">${pffRank}</div>
