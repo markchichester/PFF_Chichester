@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Draft Big Board 2026 - Portrait Layout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Archivo', sans-serif;
+            background-color: #0B1533;
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 0;
+            }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            background-color: #0B1533;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Custom sleek scrollbar for player pool */
+        .scrollbar-sleek {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 255, 0.3) rgba(31, 41, 55, 0.5);
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-track {
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 4px;
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 255, 0.5);
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-thumb:active {
+            background: rgba(0, 255, 255, 0.7);
+        }
+        
+        .player-card {
+            transition: all 0.2s ease;
+        }
+        
+        .player-card:hover {
+            transform: translateX(2px) scale(1.01);
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.2);
+        }
+        
+        /* Big Board drag cursor */
+        #bigBoard .player-card {
+            cursor: grab;
+        }
+        
+        #bigBoard .player-card:active {
+            cursor: grabbing;
+        }
+        
+        /* Drag animations */
+        .dragging {
+            opacity: 0.5;
+            transform: scale(0.95) rotate(2deg);
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        
+        .drag-over {
+            border-color: rgba(0, 255, 255, 0.6) !important;
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+        
+        /* Add/Remove animations */
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.9);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-5px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes slideOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-5px) scale(0.98);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.9);
+            }
+        }
+        
+        .player-card-enter {
+            animation: slideIn 0.3s ease-in;
+            will-change: transform, opacity;
+        }
+        
+        .player-card-initial {
+            opacity: 0;
+            transform: translateY(-15px) scale(0.9);
+        }
+        
+        .player-card-exit {
+            animation: slideOut 0.3s ease-in;
+        }
+        
+        .drag-handle {
+            cursor: grab;
+        }
+        
+        /* Tooltip styles */
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 0.25rem;
+        }
+        
+        .tooltip-icon {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: help;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .tooltip-icon:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .tooltip-content {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            padding: 12px 16px;
+            background-color: rgba(17, 24, 39, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            line-height: 1.5;
+            width: 320px;
+            max-width: calc(100vw - 2rem);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .tooltip-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(17, 24, 39, 0.98);
+        }
+        
+        .tooltip-container:hover .tooltip-content {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        @media (max-width: 640px) {
+            .tooltip-content {
+                width: 280px;
+                font-size: 11px;
+                padding: 10px 14px;
+            }
+        }
+        
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        
+        /* Screen reader only class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* Focus styles for keyboard navigation */
+        .focus-visible:focus-visible,
+        button:focus-visible,
+        [role="button"]:focus-visible,
+        [tabindex]:focus-visible {
+            outline: 2px solid #00ffff;
+            outline-offset: 2px;
+        }
+        
+        /* Improved contrast for better accessibility */
+        .text-gray-400 {
+            color: rgba(209, 213, 219, 0.9) !important; /* Improved from 0.6 to 0.9 */
+        }
+        
+        .text-gray-500 {
+            color: rgba(209, 213, 219, 0.8) !important; /* Improved from 0.5 to 0.8 */
+        }
+        
+        .text-gray-600 {
+            color: rgba(209, 213, 219, 0.95) !important; /* Improved from 0.6 to 0.95 */
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+        
+        .player-image {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 640px) {
+            .container {
+                padding: 0;
+            }
+            
+            .player-image {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .mobile-stack {
+                flex-direction: column;
+            }
+            
+            .header-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .header-buttons button {
+                width: 100%;
+            }
+            
+            .header-logo-container {
+                order: -1;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .header-export-container {
+                width: 100%;
+            }
+            
+            /* Mobile grade boxes - smaller and more compact */
+            .grade-box {
+                min-width: 50px !important;
+                padding: 0.375rem 0.5rem !important;
+            }
+            
+            .grade-box-value {
+                font-size: 0.875rem !important;
+                line-height: 1.2;
+            }
+            
+            .grade-box-label {
+                font-size: 0.625rem !important;
+                margin-top: 0.125rem;
+            }
+            
+            /* Mobile layout reorganization */
+            .mobile-player-card {
+                flex-direction: column;
+            }
+            
+            .mobile-player-header {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                width: 100%;
+            }
+            
+            .mobile-player-info {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .mobile-player-name-row {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .mobile-player-details-row {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+            
+            .mobile-stats-row {
+                display: flex;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-top: 0.75rem;
+                width: 100%;
+            }
+            
+            .mobile-actions-row {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 0.5rem;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+            
+            /* Make analysis chevron more obvious */
+            .analysis-chevron {
+                width: 1.25rem !important;
+                height: 1.25rem !important;
+                stroke-width: 2.5 !important;
+            }
+            
+            .analysis-button-mobile {
+                padding: 0.5rem 0.75rem !important;
+                border: 1px solid rgba(0, 255, 255, 0.3) !important;
+                background-color: rgba(0, 255, 255, 0.05) !important;
+            }
+            
+            /* Desktop layout - keep original */
+            @media (min-width: 641px) {
+                .mobile-player-card {
+                    flex-direction: row;
+                }
+                
+                .mobile-player-header {
+                    flex-direction: row;
+                }
+                
+                .mobile-stats-row {
+                    display: none;
+                }
+                
+                .mobile-actions-row {
+                    display: none;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Page Title (h1) -->
+        <h1 class="sr-only">NFL Draft Big Board 2026</h1>
+        
+        <!-- Header -->
+        <div class="p-4 border-b border-gray-700">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex-1 hidden md:block"></div>
+                <div class="flex-1 flex justify-center header-logo-container">
+                    <img 
+                        src="https://media.pff.com/2025/07/PFF_PoweredBy_White.png" 
+                        alt="PFF Powered By" 
+                        class="h-12 md:h-16"
+                        onerror="this.style.display='none'"
+                    />
+                </div>
+                <div class="flex-1 flex justify-end gap-2 header-buttons header-export-container">
+                    <button 
+                        onclick="exportToCSV()"
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 justify-center"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export CSV
+                    </button>
+                    <button 
+                        onclick="exportToImage()"
+                        class="px-4 py-2 bg-cyan-400 hover:bg-cyan-300 text-primary-bg text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 justify-center"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Export Image
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="p-8 text-center">
+            <svg class="spinning w-8 h-8 text-cyan-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <p class="text-gray-400">Loading players...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="hidden mx-4 mt-4 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm"></div>
+
+        <!-- ARIA Live Region for Screen Readers -->
+        <div id="ariaAnnounce" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="hidden">
+            <!-- Mobile: Stacked layout (original) -->
+            <!-- Desktop: Side-by-side layout -->
+            <div class="flex flex-col md:flex-row md:h-[calc(100vh-120px)]">
+                <!-- Big Board Section -->
+                <div class="border-b md:border-b-0 md:border-r border-gray-700 md:w-1/2 md:flex md:flex-col">
+                    <div class="p-4 border-b border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl font-bold text-white">My Big Board</h2>
+                                <p class="text-gray-400 text-sm mt-1"><span id="bigBoardCount">0</span> players</p>
+                            </div>
+                            <button 
+                                onclick="resetBigBoard()"
+                                class="px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                            >
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                    <div id="bigBoard" class="p-4 pb-6 max-h-[400px] md:max-h-none md:flex-1 md:pb-4 overflow-y-auto scrollbar-hide">
+                        <div class="text-center text-gray-500 py-12">
+                            <p class="text-base">Your Big Board is empty</p>
+                            <p class="text-sm mt-2 text-gray-600">Tap players below to add them</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Player Pool Section -->
+                <div class="md:w-1/2 md:flex md:flex-col">
+                    <div class="p-4 border-b border-gray-700">
+                        <h2 class="text-xl font-bold text-white">2026 NFL Draft prospects</h2>
+                        <p class="text-gray-400 text-sm mt-1"><span id="poolCount">0</span> available players</p>
+                    </div>
+                    
+                    <!-- Filter Section -->
+                    <div class="bg-gray-800 border-b border-gray-700 p-4">
+                    <div class="mb-3">
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input 
+                                type="text" 
+                                id="searchInput"
+                                placeholder="Search by name, school, position, or grade..." 
+                                class="w-full pl-10 pr-10 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent text-sm"
+                            />
+                            <button 
+                                id="clearSearch"
+                                onclick="clearSearch()"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors hidden"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <!-- School Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">School</label>
+                            <select 
+                                id="filterSchool"
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            >
+                                <option value="">All Schools</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Position Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Position</label>
+                            <select 
+                                id="filterPosition"
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            >
+                                <option value="">All Positions</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Grade Range Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1 flex items-center">
+                                PFF Grade Range
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon">i</span>
+                                    <span class="tooltip-content">
+                                        PFF's 0-100 grades evaluate player performance based on a play-by-play review, converting each snap's grade (on a -2 to +2 scale) into an overall game and season score.
+                                    </span>
+                                </span>
+                            </label>
+                            <div class="flex gap-2">
+                                <input 
+                                    type="number" 
+                                    id="filterGradeMin"
+                                    placeholder="Min"
+                                    step="0.1"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                                <input 
+                                    type="number" 
+                                    id="filterGradeMax"
+                                    placeholder="Max"
+                                    step="0.1"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                            </div>
+                        </div>
+                        
+                        <!-- WAA Range Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1 flex items-center">
+                                WAA Range
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon">i</span>
+                                    <span class="tooltip-content">
+                                        WAA represents the number of wins a player is worth over an average college football player and is a metric that evaluators can utilize to assess performance. It combines how well a player performed in each facet of play (using PFF grades) and how valuable each facet is to winning football games. The result is a first-of-its-kind metric that allows for cross-positional valuation and predicts future value at the player and team levels.
+                                    </span>
+                                </span>
+                            </label>
+                            <div class="flex gap-2">
+                                <input 
+                                    type="number" 
+                                    id="filterWAAMin"
+                                    placeholder="Min"
+                                    step="0.001"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                                <input 
+                                    type="number" 
+                                    id="filterWAAMax"
+                                    placeholder="Max"
+                                    step="0.001"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <button 
+                        onclick="clearFilters()"
+                        class="mt-3 px-4 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                    >
+                        Clear All Filters
+                    </button>
+                </div>
+                    
+                    <div id="playerPool" class="p-4 max-h-[500px] md:max-h-none md:flex-1 overflow-y-auto scrollbar-sleek">
+                        <div class="text-center text-gray-500 py-12">
+                            <p class="text-base">No players found</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Published Google Sheet URLs
+        // This is the URL from "File > Share > Publish to web" for the Builder tab
+        const PUBLISHED_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS7A-5j_EA1mmhqLObj2IGLqEdS3KYJ1FKmWPeRUrpWdwyg_8pRbtGLOlHGG2XPV1gWUjfZKL9stQNn/pub?gid=0&single=true&output=csv';
+        // Alternative JSON endpoint (sometimes has better CORS support)
+        const PUBLISHED_JSON_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS7A-5j_EA1mmhqLObj2IGLqEdS3KYJ1FKmWPeRUrpWdwyg_8pRbtGLOlHGG2XPV1gWUjfZKL9stQNn/pub?gid=0&single=true&output=json';
+
+        // State
+        let allPlayers = [];
+        let bigBoard = [];
+        let filteredPlayers = [];
+        let sortField = '';
+        let sortDirection = '';
+        let uniqueSchools = [];
+        let uniquePositions = [];
+        let expandedPlayers = new Set(); // Track which players have expanded analysis
+
+        // Load from localStorage
+        function loadFromStorage() {
+            const saved = localStorage.getItem('bigBoard');
+            if (saved) {
+                try {
+                    bigBoard = JSON.parse(saved);
+                } catch (e) {
+                    bigBoard = [];
+                }
+            }
+            renderBigBoard();
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            localStorage.setItem('bigBoard', JSON.stringify(bigBoard));
+        }
+
+        // Parse CSV
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim());
+            if (lines.length === 0) return [];
+
+            const headers = parseCSVLine(lines[0]);
+            const players = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length === 0 || !values[0]) continue; // Skip empty rows
+                
+                const player = {};
+                headers.forEach((header, index) => {
+                    player[header] = values[index] || '';
+                });
+                players.push(player);
+            }
+
+            return players;
+        }
+
+        function parseCSVLine(line) {
+            const values = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    values.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            values.push(current.trim());
+            return values;
+        }
+
+        // Parse JSON from Google Sheets
+        function parseJSON(jsonText) {
+            try {
+                // Google Sheets JSON format: {table: {rows: [...]}}
+                const data = JSON.parse(jsonText);
+                if (!data.table || !data.table.rows) {
+                    throw new Error('Unexpected JSON format');
+                }
+
+                const rows = data.table.rows;
+                if (rows.length === 0) return [];
+
+                // First row is headers
+                const headers = rows[0].c.map(cell => cell ? cell.v : '');
+                const players = [];
+
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i].c;
+                    if (!row || row.length === 0 || !row[0] || !row[0].v) continue; // Skip empty rows
+                    
+                    const player = {};
+                    headers.forEach((header, index) => {
+                        player[header] = row[index] ? (row[index].v || '') : '';
+                    });
+                    players.push(player);
+                }
+
+                return players;
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+                throw error;
+            }
+        }
+
+        // Fetch from Google Sheet
+        async function fetchPlayersFromGoogleSheet() {
+            // Try multiple methods to handle CORS issues
+            const methods = [
+                // Method 1: JSON endpoint (sometimes has better CORS support)
+                async () => {
+                    const response = await fetch(PUBLISHED_JSON_URL, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const jsonText = await response.text();
+                    return { type: 'json', data: jsonText };
+                },
+                // Method 2: Direct CSV fetch
+                async () => {
+                    const response = await fetch(PUBLISHED_CSV_URL, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const csvText = await response.text();
+                    return { type: 'csv', data: csvText };
+                },
+                // Method 3: CORS proxy with CSV
+                async () => {
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(PUBLISHED_CSV_URL)}`;
+                    const response = await fetch(proxyUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const csvText = await response.text();
+                    return { type: 'csv', data: csvText };
+                },
+                // Method 4: Alternative CORS proxy
+                async () => {
+                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(PUBLISHED_CSV_URL)}`;
+                    const response = await fetch(proxyUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const csvText = await response.text();
+                    return { type: 'csv', data: csvText };
+                },
+            ];
+
+            let lastError = null;
+
+            // Try methods silently - only log success
+            for (let i = 0; i < methods.length; i++) {
+                try {
+                    const result = await methods[i]();
+                    
+                    // Check if we got actual data (not an error page)
+                    if (result.data.includes('<!DOCTYPE') || result.data.includes('<html') || result.data.includes('Access Denied')) {
+                        throw new Error('Received HTML instead of data');
+                    }
+                    
+                    if (result.data.trim().length === 0) {
+                        throw new Error('Empty response');
+                    }
+                    
+                    let players;
+                    if (result.type === 'json') {
+                        players = parseJSON(result.data);
+                    } else {
+                        // Check if it looks like CSV
+                        if (!result.data.includes(',') || !result.data.includes('\n')) {
+                            throw new Error('Response does not appear to be CSV');
+                        }
+                        players = parseCSV(result.data);
+                    }
+                    
+                    if (players.length === 0) {
+                        throw new Error('No players parsed');
+                    }
+                    
+                    // Only log success
+                    console.log(`✓ Successfully loaded ${players.length} players`);
+                    return players;
+                } catch (error) {
+                    // Silently try next method - CORS errors are expected when running from file://
+                    lastError = error;
+                    continue;
+                }
+            }
+
+            // If all methods failed
+            throw new Error(
+                'Unable to fetch sheet data. All methods failed.\n\n' +
+                'This is likely a CORS (Cross-Origin) issue. Solutions:\n' +
+                '1. Make sure the sheet is published to web (File > Share > Publish to web)\n' +
+                '2. Host this HTML file on a web server (not file://)\n' +
+                '3. Use a local web server: python -m http.server 8000\n' +
+                '4. Last error: ' + (lastError?.message || 'Unknown')
+            );
+        }
+
+        // Auto-load on page load
+        async function loadPlayers() {
+            const loadingState = document.getElementById('loadingState');
+            const mainContent = document.getElementById('mainContent');
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                const players = await fetchPlayersFromGoogleSheet();
+                allPlayers = players;
+                populateFilters();
+                loadFromStorage();
+                filterAndRender();
+                loadingState.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+            } catch (error) {
+                loadingState.classList.add('hidden');
+                errorMessage.textContent = 'Error: ' + error.message + '. Please make sure the Google Sheet is publicly viewable.';
+                errorMessage.classList.remove('hidden');
+            }
+        }
+
+        // Show/hide error
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = 'Error: ' + message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            // Get unique schools and positions
+            const schools = new Set();
+            const positions = new Set();
+            
+            allPlayers.forEach(player => {
+                if (player.School) schools.add(player.School);
+                if (player.Position) positions.add(player.Position);
+            });
+            
+            uniqueSchools = Array.from(schools).sort();
+            uniquePositions = Array.from(positions).sort();
+            
+            // Populate school dropdown
+            const schoolSelect = document.getElementById('filterSchool');
+            uniqueSchools.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school;
+                option.textContent = school;
+                schoolSelect.appendChild(option);
+            });
+            
+            // Populate position dropdown
+            const positionSelect = document.getElementById('filterPosition');
+            uniquePositions.forEach(position => {
+                const option = document.createElement('option');
+                option.value = position;
+                option.textContent = position;
+                positionSelect.appendChild(option);
+            });
+        }
+
+        // Filter players
+        function filterPlayers() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const filterSchool = document.getElementById('filterSchool').value;
+            const filterPosition = document.getElementById('filterPosition').value;
+            const gradeMin = parseFloat(document.getElementById('filterGradeMin').value) || null;
+            const gradeMax = parseFloat(document.getElementById('filterGradeMax').value) || null;
+            const waaMin = parseFloat(document.getElementById('filterWAAMin').value) || null;
+            const waaMax = parseFloat(document.getElementById('filterWAAMax').value) || null;
+            
+            const bigBoardIds = new Set(bigBoard.map(p => p.pff_id));
+
+            filteredPlayers = allPlayers.filter(player => {
+                // Exclude players already in Big Board
+                if (bigBoardIds.has(player.pff_id)) return false;
+                
+                // Text search filter
+                if (searchQuery) {
+                    const matchesSearch = (
+                        (player.name || '').toLowerCase().includes(searchQuery) ||
+                        (player.School || '').toLowerCase().includes(searchQuery) ||
+                        (player.Position || '').toLowerCase().includes(searchQuery) ||
+                        (player['2025 PFF Grade'] || '').toLowerCase().includes(searchQuery) ||
+                        (player.analysis || '').toLowerCase().includes(searchQuery)
+                    );
+                    if (!matchesSearch) return false;
+                }
+                
+                // School filter
+                if (filterSchool && player.School !== filterSchool) return false;
+                
+                // Position filter
+                if (filterPosition && player.Position !== filterPosition) return false;
+                
+                // Grade range filter
+                const grade = parseFloat(player['2025 PFF Grade']) || null;
+                if (grade !== null) {
+                    if (gradeMin !== null && grade < gradeMin) return false;
+                    if (gradeMax !== null && grade > gradeMax) return false;
+                } else if (gradeMin !== null || gradeMax !== null) {
+                    // If we're filtering by grade but player has no grade, exclude them
+                    return false;
+                }
+                
+                // WAA range filter
+                const waa = parseFloat(player['2025 PFF WAA']) || null;
+                if (waa !== null) {
+                    if (waaMin !== null && waa < waaMin) return false;
+                    if (waaMax !== null && waa > waaMax) return false;
+                } else if (waaMin !== null || waaMax !== null) {
+                    // If we're filtering by WAA but player has no WAA, exclude them
+                    return false;
+                }
+                
+                return true;
+            });
+
+            // Sort
+            if (sortField && sortDirection) {
+                filteredPlayers.sort((a, b) => {
+                    const aVal = a[sortField] || '';
+                    const bVal = b[sortField] || '';
+                    const comparison = String(aVal).localeCompare(String(bVal), undefined, { numeric: true });
+                    return sortDirection === 'asc' ? comparison : -comparison;
+                });
+            }
+        }
+        
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterSchool').value = '';
+            document.getElementById('filterPosition').value = '';
+            document.getElementById('filterGradeMin').value = '';
+            document.getElementById('filterGradeMax').value = '';
+            document.getElementById('filterWAAMin').value = '';
+            document.getElementById('filterWAAMax').value = '';
+            document.getElementById('clearSearch').classList.add('hidden');
+            filterAndRender();
+            announceToScreenReader('All filters cleared');
+        }
+
+        // Reset Big Board and clear all filters
+        function resetBigBoard() {
+            if (confirm('Are you sure you want to reset your Big Board? This will remove all players and clear all filters.')) {
+                bigBoard = [];
+                localStorage.setItem('bigBoard', JSON.stringify(bigBoard));
+                clearFilters();
+                renderBigBoard();
+            }
+        }
+
+        // Sort
+        function sortBy(field) {
+            if (sortField === field) {
+                if (sortDirection === 'asc') {
+                    sortDirection = 'desc';
+                } else if (sortDirection === 'desc') {
+                    sortField = '';
+                    sortDirection = '';
+                } else {
+                    sortDirection = 'asc';
+                }
+            } else {
+                sortField = field;
+                sortDirection = 'asc';
+            }
+
+            // Update sort icons
+            document.querySelectorAll('[id^="sort-"]').forEach(el => {
+                el.textContent = '';
+            });
+
+            if (sortField && sortDirection) {
+                const icon = document.getElementById(`sort-${sortField}`);
+                if (icon) {
+                    icon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+                    icon.className = 'text-cyan-400';
+                }
+            }
+
+            filterAndRender();
+        }
+
+        // Render player card
+        function renderPlayerCard(player, isBigBoard = false, index = null) {
+            const imageUrl = player.Image || '';
+            const hasImage = imageUrl && imageUrl.trim() !== '';
+            const pffRank = player.big_board_rank || '';
+            const grade = player['2025 PFF Grade'] || '';
+            const waa = player['2025 PFF WAA'] || '';
+            const profileUrl = player['Player profile'] || '';
+            const rankNumber = isBigBoard ? (index !== null ? index + 1 : '') : '';
+            
+            // Big Board view - slim version with expandable analysis
+            if (isBigBoard) {
+                const isExpanded = expandedPlayers.has(player.pff_id);
+                const hasAnalysis = player.analysis && player.analysis.trim() !== '';
+                
+                return `
+                    <div 
+                        class="player-card bg-gray-800 rounded-xl p-3 mb-2 border border-gray-700 hover:border-cyan-400"
+                        draggable="true" 
+                        role="listitem"
+                        tabindex="0"
+                        aria-label="Player ${index + 1}: ${player.name || ''}, ${player.Position || ''} from ${player.School || ''}"
+                        data-index="${index}"
+                        data-pff-id="${player.pff_id}"
+                        ondragstart="handleDragStart(event, ${index})" 
+                        ondragend="handleDragEnd(event)" 
+                        ondragover="handleDragOver(event)" 
+                        ondrop="handleDrop(event, ${index})"
+                        onkeydown="handleBigBoardKeydown(event, ${index})"
+                    >
+                        <div class="flex items-center gap-3 mobile-player-card">
+                            <!-- Desktop: Left side with rank and player info -->
+                            <div class="hidden md:flex items-center gap-3 flex-1 min-w-0">
+                                <div class="player-image bg-cyan-400/20 border-2 border-cyan-400/50 flex items-center justify-center text-cyan-400 text-lg font-bold flex-shrink-0">
+                                    ${rankNumber}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    ${profileUrl && profileUrl !== '#N/A' ? `
+                                        <button 
+                                            onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openPlayerProfile('${profileUrl}');}"
+                                            aria-label="View profile for ${player.name || 'player'}"
+                                            class="flex items-center gap-2 text-white font-bold text-base md:text-lg mb-0.5 hover:text-cyan-400 transition-colors text-left"
+                                        >
+                                            ${player.name || ''}
+                                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </button>
+                                    ` : `
+                                        <h3 class="text-white font-bold text-base md:text-lg mb-0.5">${player.name || ''}</h3>
+                                    `}
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-gray-300 text-xs">${player.School || ''}</span>
+                                        <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                            ${player.Position || ''}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Desktop: Stats on the right -->
+                            <div class="hidden md:flex gap-2 flex-shrink-0 items-center grade-boxes-container">
+                                ${pffRank ? `
+                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                        <div class="grade-box-value text-cyan-400 font-bold text-base">${pffRank}</div>
+                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                    </div>
+                                ` : ''}
+                                ${grade ? `
+                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                        <div class="grade-box-value text-cyan-400 font-bold text-base">${grade}</div>
+                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                    </div>
+                                ` : ''}
+                                ${waa ? `
+                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                        <div class="grade-box-value text-cyan-400 font-bold text-base">${waa}</div>
+                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                    </div>
+                                ` : ''}
+                                ${hasAnalysis ? `
+                                    <button 
+                                        onclick="event.stopPropagation(); togglePlayerAnalysis('${player.pff_id}')"
+                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerAnalysis('${player.pff_id}');}"
+                                        aria-label="${isExpanded ? 'Collapse' : 'Expand'} analysis for ${player.name || 'player'}"
+                                        aria-expanded="${isExpanded}"
+                                        class="p-1.5 text-white hover:text-gray-300 transition-colors flex-shrink-0"
+                                    >
+                                        <svg class="w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                                <button 
+                                    onclick="event.stopPropagation(); removeFromBigBoard('${player.pff_id}')"
+                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();removeFromBigBoard('${player.pff_id}');}"
+                                    aria-label="Remove ${player.name || 'player'} from Big Board"
+                                    class="p-1 text-gray-400 hover:text-red-400 transition-colors flex-shrink-0"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Mobile: Compact layout with expandable section -->
+                            <div class="md:hidden w-full">
+                                <div class="flex items-center gap-3">
+                                    <div class="player-image bg-cyan-400/20 border-2 border-cyan-400/50 flex items-center justify-center text-cyan-400 text-lg font-bold flex-shrink-0">
+                                        ${rankNumber}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            ${profileUrl && profileUrl !== '#N/A' ? `
+                                                <button 
+                                                    onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openPlayerProfile('${profileUrl}');}"
+                                                    aria-label="View profile for ${player.name || 'player'}"
+                                                    class="flex items-center gap-1.5 text-white font-bold text-base hover:text-cyan-400 transition-colors text-left flex-1 min-w-0"
+                                                >
+                                                    <span class="truncate">${player.name || ''}</span>
+                                                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                    </svg>
+                                                </button>
+                                            ` : `
+                                                <h3 class="text-white font-bold text-base flex-1 min-w-0 truncate">${player.name || ''}</h3>
+                                            `}
+                                            ${((pffRank || grade || waa) || hasAnalysis) ? `
+                                                <button 
+                                                    onclick="event.stopPropagation(); togglePlayerAnalysis('${player.pff_id}')"
+                                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerAnalysis('${player.pff_id}');}"
+                                                    aria-label="${isExpanded ? 'Collapse' : 'Expand'} analysis for ${player.name || 'player'}"
+                                                    aria-expanded="${isExpanded}"
+                                                    class="p-1 text-gray-500 hover:text-gray-400 transition-colors flex-shrink-0"
+                                                >
+                                                    <svg class="w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                    </svg>
+                                                </button>
+                                            ` : ''}
+                                            <button 
+                                                onclick="event.stopPropagation(); removeFromBigBoard('${player.pff_id}')"
+                                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();removeFromBigBoard('${player.pff_id}');}"
+                                                aria-label="Remove ${player.name || 'player'} from Big Board"
+                                                class="p-1 text-gray-400 hover:text-red-400 transition-colors flex-shrink-0"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                                ${player.Position || ''}
+                                            </span>
+                                            <span class="text-gray-300 text-xs">${player.School || ''}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mobile: Expandable stats and analysis -->
+                                ${isExpanded ? `
+                                    <div class="mt-3 pt-3 border-t border-gray-700">
+                                        ${((pffRank || grade || waa)) ? `
+                                            <div class="flex justify-center gap-2 mb-3">
+                                                ${pffRank ? `
+                                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                                        <div class="grade-box-value text-cyan-400 font-bold">${pffRank}</div>
+                                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                                    </div>
+                                                ` : ''}
+                                                ${grade ? `
+                                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                                        <div class="grade-box-value text-cyan-400 font-bold">${grade}</div>
+                                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                                    </div>
+                                                ` : ''}
+                                                ${waa ? `
+                                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                                        <div class="grade-box-value text-cyan-400 font-bold">${waa}</div>
+                                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        ` : ''}
+                                        ${hasAnalysis ? `
+                                            <div class="mt-2">
+                                                <p class="text-sm text-gray-300 leading-relaxed">${player.analysis}</p>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- Desktop: Collapsible analysis -->
+                        ${hasAnalysis && isExpanded ? `
+                            <div class="hidden md:block mt-3 pt-3 border-t border-gray-700">
+                                <p class="text-sm text-gray-300 leading-relaxed">${player.analysis}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            // Player Pool view - full version
+            return `
+                <div 
+                    class="player-card bg-gray-800 rounded-xl p-4 mb-3 border border-gray-700 hover:border-cyan-400 cursor-pointer"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Add ${player.name || 'player'} to Big Board"
+                    onclick="addToBigBoard('${player.pff_id}')"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();addToBigBoard('${player.pff_id}');}"
+                >
+                    <div class="flex items-start gap-4 mobile-player-card">
+                        <!-- Desktop: Left side with image and player info -->
+                        <div class="hidden md:flex items-start gap-4 flex-1 min-w-0">
+                            ${hasImage ? `
+                                <img 
+                                    src="${imageUrl}" 
+                                    alt="${player.name || ''}"
+                                    class="player-image"
+                                    onerror="this.style.display='none'"
+                                />
+                            ` : `
+                                <div class="player-image bg-gray-700 flex items-center justify-center text-gray-500 text-sm font-semibold">
+                                    ${(player.name || '').charAt(0).toUpperCase()}
+                                </div>
+                            `}
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-white font-bold text-lg md:text-xl mb-1">${player.name || ''}</h3>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-gray-300 text-sm">${player.School || ''}</span>
+                                    <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                        ${player.Position || ''}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile: Reorganized layout -->
+                        <div class="md:hidden mobile-player-header">
+                            ${hasImage ? `
+                                <img 
+                                    src="${imageUrl}" 
+                                    alt="${player.name || ''}"
+                                    class="player-image"
+                                    onerror="this.style.display='none'"
+                                />
+                            ` : `
+                                <div class="player-image bg-gray-700 flex items-center justify-center text-gray-500 text-sm font-semibold">
+                                    ${(player.name || '').charAt(0).toUpperCase()}
+                                </div>
+                            `}
+                            <div class="mobile-player-info">
+                                <div class="mobile-player-name-row">
+                                    ${profileUrl && profileUrl !== '#N/A' ? `
+                                        <button 
+                                            onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                            class="flex items-center gap-2 text-white font-bold text-lg hover:text-cyan-400 transition-colors text-left"
+                                        >
+                                            ${player.name || ''}
+                                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </button>
+                                    ` : `
+                                        <h3 class="text-white font-bold text-lg">${player.name || ''}</h3>
+                                    `}
+                                </div>
+                                <div class="mobile-player-details-row">
+                                    <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                        ${player.Position || ''}
+                                    </span>
+                                    <span class="text-gray-300 text-sm">${player.School || ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Desktop: Stats on the right -->
+                        <div class="hidden md:flex gap-2 flex-shrink-0 grade-boxes-container">
+                            ${pffRank ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-center min-w-[60px]">
+                                    <div class="grade-box-value text-cyan-400 font-bold text-lg">${pffRank}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                </div>
+                            ` : ''}
+                            ${grade ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-center min-w-[60px]">
+                                    <div class="grade-box-value text-cyan-400 font-bold text-lg">${grade}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                </div>
+                            ` : ''}
+                            ${waa ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-center min-w-[60px]">
+                                    <div class="grade-box-value text-cyan-400 font-bold text-lg">${waa}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <!-- Mobile: Stats row centered underneath -->
+                        <div class="mobile-stats-row md:hidden">
+                            ${pffRank ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                    <div class="grade-box-value text-cyan-400 font-bold">${pffRank}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                </div>
+                            ` : ''}
+                            ${grade ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                    <div class="grade-box-value text-cyan-400 font-bold">${grade}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                </div>
+                            ` : ''}
+                            ${waa ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                    <div class="grade-box-value text-cyan-400 font-bold">${waa}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Desktop: Analysis always visible -->
+                    ${player.analysis ? `
+                        <div class="hidden md:block mt-3 pt-3 border-t border-gray-700">
+                            <p class="text-sm text-gray-300 leading-relaxed mb-3">${player.analysis}</p>
+                            ${profileUrl && profileUrl !== '#N/A' ? `
+                                <div class="flex justify-center">
+                                    <button 
+                                        onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openPlayerProfile('${profileUrl}');}"
+                                        aria-label="View profile for ${player.name || 'player'}"
+                                        class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-400/20 hover:bg-cyan-400/30 border border-cyan-400/50 rounded-lg text-cyan-400 font-semibold text-sm transition-all hover:scale-105"
+                                    >
+                                        View Player Profile
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Mobile: Collapsible analysis -->
+                    ${(() => {
+                        if (!player.analysis) return '';
+                        const isExpanded = expandedPlayers.has(player.pff_id);
+                        return `
+                        <div class="md:hidden mt-3">
+                            <button 
+                                onclick="event.stopPropagation(); togglePlayerAnalysis('${player.pff_id}')"
+                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerAnalysis('${player.pff_id}');}"
+                                aria-label="${isExpanded ? 'Collapse' : 'Expand'} analysis for ${player.name || 'player'}"
+                                aria-expanded="${isExpanded}"
+                                class="w-full flex items-center justify-between p-2 text-left text-gray-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-gray-700/50 analysis-button-mobile"
+                            >
+                                <span class="text-sm font-medium">Analysis</span>
+                                <svg class="analysis-chevron transform transition-transform ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            ${isExpanded ? `
+                                <div class="mt-2 pt-2 border-t border-gray-700">
+                                    <p class="text-sm text-gray-300 leading-relaxed mb-3">${player.analysis}</p>
+                                    ${profileUrl && profileUrl !== '#N/A' ? `
+                                        <div class="flex justify-center">
+                                            <button 
+                                                onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                                class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-400/20 hover:bg-cyan-400/30 border border-cyan-400/50 rounded-lg text-cyan-400 font-semibold text-sm transition-all hover:scale-105"
+                                            >
+                                                View Player Profile
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+                        `;
+                    })()}
+                </div>
+            `;
+        }
+
+        // Render Big Board
+        function renderBigBoard() {
+            const container = document.getElementById('bigBoard');
+            document.getElementById('bigBoardCount').textContent = bigBoard.length;
+            
+            // Set ARIA label for the Big Board container
+            container.setAttribute('role', 'list');
+            container.setAttribute('aria-label', `Big Board with ${bigBoard.length} player${bigBoard.length !== 1 ? 's' : ''}`);
+
+            if (bigBoard.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <p class="text-base">Your Big Board is empty</p>
+                        <p class="text-sm mt-2 text-gray-600">Tap players below to add them</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bigBoard.map((player, index) => 
+                renderPlayerCard(player, true, index)
+            ).join('');
+            
+            // Immediately apply initial state to newly added card if present
+            if (newlyAddedPlayerId) {
+                const newCard = container.querySelector(`[data-pff-id="${newlyAddedPlayerId}"]`);
+                if (newCard) {
+                    newCard.classList.add('player-card-initial');
+                }
+            }
+        }
+
+        // Render Player Pool
+        function renderPlayerPool() {
+            const container = document.getElementById('playerPool');
+            document.getElementById('poolCount').textContent = filteredPlayers.length;
+            
+            // Set ARIA label for the Player Pool container
+            container.setAttribute('role', 'list');
+            container.setAttribute('aria-label', `Player Pool with ${filteredPlayers.length} player${filteredPlayers.length !== 1 ? 's' : ''}`);
+
+            if (filteredPlayers.length === 0) {
+                const searchQuery = document.getElementById('searchInput').value;
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <p class="text-base">No players found</p>
+                        <p class="text-sm mt-2 text-gray-600">${searchQuery ? 'Try adjusting your search' : ''}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredPlayers.map(player => 
+                renderPlayerCard(player, false)
+            ).join('');
+        }
+
+        // Filter and render
+        function filterAndRender() {
+            const prevCount = filteredPlayers.length;
+            filterPlayers();
+            renderPlayerPool();
+            
+            // Announce filter changes if count changed significantly
+            const newCount = filteredPlayers.length;
+            if (Math.abs(newCount - prevCount) > 5 || (prevCount === 0 && newCount > 0) || (prevCount > 0 && newCount === 0)) {
+                const filterPosition = document.getElementById('filterPosition').value;
+                const filterSchool = document.getElementById('filterSchool').value;
+                const searchQuery = document.getElementById('searchInput').value;
+                
+                let announcement = `Showing ${newCount} player${newCount !== 1 ? 's' : ''}`;
+                if (filterPosition) {
+                    announcement += `, position filter: ${filterPosition}`;
+                }
+                if (filterSchool) {
+                    announcement += `, school filter: ${filterSchool}`;
+                }
+                if (searchQuery) {
+                    announcement += `, search: ${searchQuery}`;
+                }
+                announceToScreenReader(announcement);
+            }
+        }
+
+        let newlyAddedPlayerId = null;
+
+        // ARIA announcement helper
+        function announceToScreenReader(message) {
+            const announceEl = document.getElementById('ariaAnnounce');
+            if (announceEl) {
+                announceEl.textContent = message;
+                // Clear after announcement to allow re-announcement
+                setTimeout(() => {
+                    announceEl.textContent = '';
+                }, 1000);
+            }
+        }
+
+        // Add to Big Board
+        function addToBigBoard(pffId) {
+            const player = allPlayers.find(p => p.pff_id === pffId);
+            if (player && !bigBoard.find(p => p.pff_id === pffId)) {
+                newlyAddedPlayerId = pffId;
+                bigBoard.push(player);
+                saveToStorage();
+                renderBigBoard();
+                filterAndRender();
+                
+                // ARIA announcement
+                announceToScreenReader(`Added ${player.name || 'player'} to Big Board`);
+                
+                // Trigger animation on newly added card
+                requestAnimationFrame(() => {
+                    const container = document.getElementById('bigBoard');
+                    const newCard = container.querySelector(`[data-pff-id="${pffId}"]`);
+                    if (newCard && newCard.classList.contains('player-card-initial')) {
+                        requestAnimationFrame(() => {
+                            newCard.classList.remove('player-card-initial');
+                            newCard.classList.add('player-card-enter');
+                            setTimeout(() => {
+                                newCard.classList.remove('player-card-enter');
+                                newlyAddedPlayerId = null;
+                            }, 300);
+                        });
+                    }
+                });
+            }
+        }
+
+        // Remove from Big Board
+        function removeFromBigBoard(pffId) {
+            const player = bigBoard.find(p => p.pff_id === pffId);
+            const container = document.getElementById('bigBoard');
+            const cardToRemove = container.querySelector(`[data-pff-id="${pffId}"]`);
+            
+            if (cardToRemove) {
+                cardToRemove.classList.add('player-card-exit');
+                setTimeout(() => {
+                    bigBoard = bigBoard.filter(p => p.pff_id !== pffId);
+                    expandedPlayers.delete(pffId);
+                    saveToStorage();
+                    renderBigBoard();
+                    filterAndRender();
+                    // ARIA announcement
+                    if (player) {
+                        announceToScreenReader(`Removed ${player.name || 'player'} from Big Board`);
+                    }
+                }, 300);
+            } else {
+                bigBoard = bigBoard.filter(p => p.pff_id !== pffId);
+                expandedPlayers.delete(pffId);
+                saveToStorage();
+                renderBigBoard();
+                filterAndRender();
+                // ARIA announcement
+                if (player) {
+                    announceToScreenReader(`Removed ${player.name || 'player'} from Big Board`);
+                }
+            }
+        }
+
+        // Drag and Drop
+        let draggedElement = null;
+        let draggedIndex = null;
+
+        function handleDragStart(e, index) {
+            draggedElement = bigBoard[index];
+            draggedIndex = index;
+            e.currentTarget.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.currentTarget.outerHTML);
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            const container = document.getElementById('bigBoard');
+            const cards = container.querySelectorAll('.player-card');
+            cards.forEach(card => card.classList.remove('drag-over'));
+            draggedElement = null;
+            draggedIndex = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const card = e.currentTarget;
+            if (!card.classList.contains('dragging')) {
+                const container = document.getElementById('bigBoard');
+                const cards = container.querySelectorAll('.player-card');
+                cards.forEach(c => c.classList.remove('drag-over'));
+                card.classList.add('drag-over');
+            }
+        }
+
+        function handleDrop(e, dropIndex) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+            const newBigBoard = [...bigBoard];
+            const [removed] = newBigBoard.splice(draggedIndex, 1);
+            newBigBoard.splice(dropIndex, 0, removed);
+
+            bigBoard = newBigBoard;
+            saveToStorage();
+            renderBigBoard();
+            
+            // ARIA announcement
+            const player = removed;
+            if (player) {
+                announceToScreenReader(`Moved ${player.name || 'player'} to position ${dropIndex + 1}`);
+            }
+        }
+        
+        // Keyboard navigation for Big Board
+        function handleBigBoardKeydown(e, index) {
+            const container = document.getElementById('bigBoard');
+            const cards = Array.from(container.querySelectorAll('.player-card[tabindex="0"]'));
+            const currentIndex = cards.findIndex(card => card === e.currentTarget);
+            
+            switch(e.key) {
+                case 'ArrowUp':
+                    e.preventDefault();
+                    if (currentIndex > 0) {
+                        const prevCard = cards[currentIndex - 1];
+                        prevCard.focus();
+                        prevCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    if (currentIndex < cards.length - 1) {
+                        const nextCard = cards[currentIndex + 1];
+                        nextCard.focus();
+                        nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    if (index > 0) {
+                        movePlayerInBigBoard(index, index - 1);
+                    }
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    if (index < bigBoard.length - 1) {
+                        movePlayerInBigBoard(index, index + 1);
+                    }
+                    break;
+            }
+        }
+        
+        // Move player in Big Board (for keyboard navigation)
+        function movePlayerInBigBoard(fromIndex, toIndex) {
+            if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= bigBoard.length || toIndex >= bigBoard.length) {
+                return;
+            }
+            
+            const newBigBoard = [...bigBoard];
+            const [removed] = newBigBoard.splice(fromIndex, 1);
+            newBigBoard.splice(toIndex, 0, removed);
+            
+            bigBoard = newBigBoard;
+            saveToStorage();
+            renderBigBoard();
+            
+            // Focus the moved card
+            requestAnimationFrame(() => {
+                const container = document.getElementById('bigBoard');
+                const movedCard = container.querySelector(`[data-index="${toIndex}"]`);
+                if (movedCard) {
+                    movedCard.focus();
+                }
+            });
+            
+            // ARIA announcement
+            const player = removed;
+            if (player) {
+                announceToScreenReader(`Moved ${player.name || 'player'} to position ${toIndex + 1}`);
+            }
+        }
+
+        // Clear search
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            document.getElementById('clearSearch').classList.add('hidden');
+            filterAndRender();
+        }
+
+        // Toggle player analysis expansion
+        function togglePlayerAnalysis(pffId) {
+            const player = allPlayers.find(p => p.pff_id === pffId) || bigBoard.find(p => p.pff_id === pffId);
+            const wasExpanded = expandedPlayers.has(pffId);
+            
+            if (wasExpanded) {
+                expandedPlayers.delete(pffId);
+            } else {
+                expandedPlayers.add(pffId);
+            }
+            renderBigBoard();
+            renderPlayerPool(); // Also update Player Pool to show/hide analysis
+            
+            // ARIA announcement
+            if (player) {
+                announceToScreenReader(`Analysis ${wasExpanded ? 'collapsed' : 'expanded'} for ${player.name || 'player'}`);
+            }
+        }
+
+        // Open player profile in popup window
+        function openPlayerProfile(url) {
+            const width = 1000;
+            const height = 700;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            window.open(
+                url,
+                'PlayerProfile',
+                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no`
+            );
+        }
+
+        // Export Big Board to CSV
+        function exportToCSV() {
+            if (bigBoard.length === 0) {
+                alert('Your Big Board is empty. Add some players first!');
+                return;
+            }
+
+            const headers = ['Rank', 'Pos', 'Player', 'School', 'PFF Grade', 'PFF WAA'];
+            const rows = bigBoard.map((player, index) => {
+                return [
+                    index + 1,
+                    player.Position || '',
+                    player.name || '',
+                    player.School || '',
+                    player['2025 PFF Grade'] || '',
+                    player['2025 PFF WAA'] || ''
+                ];
+            });
+
+            // Create CSV content
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+            ].join('\n');
+
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `nfl-draft-bigboard-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Export Top 10 to Image
+        async function exportToImage() {
+            if (bigBoard.length === 0) {
+                alert('Your Big Board is empty. Add some players first!');
+                return;
+            }
+
+            const top10 = bigBoard.slice(0, 10);
+            
+            // Create a temporary container for the image (Social media size: 1200x630px - Facebook/LinkedIn standard)
+            // Use 2x resolution for sharp rendering
+            const scale = 2;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1200 * scale;
+            canvas.height = 630 * scale;
+            
+            // Scale context for high DPI
+            ctx.scale(scale, scale);
+            
+            // Enable better text rendering
+            ctx.textBaseline = 'top';
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            const displayWidth = 1200;
+            const displayHeight = 630;
+            
+            // Background
+            ctx.fillStyle = '#0B1533';
+            ctx.fillRect(0, 0, displayWidth, displayHeight);
+
+            // Logo (we'll need to load it first)
+            let logoLoaded = false;
+            const logo = new Image();
+            logo.crossOrigin = 'anonymous';
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => reject(new Error('Timeout')), 5000);
+                    logo.onload = () => {
+                        clearTimeout(timeout);
+                        logoLoaded = true;
+                        resolve();
+                    };
+                    logo.onerror = () => {
+                        clearTimeout(timeout);
+                        logoLoaded = false;
+                        resolve(); // Continue even if logo fails
+                    };
+                    logo.src = 'https://media.pff.com/2025/07/PFF_PoweredBy_White.png';
+                });
+            } catch (e) {
+                logoLoaded = false;
+            }
+            
+            // Draw logo at top if loaded (centered)
+            if (logoLoaded && logo.complete) {
+                const logoHeight = 50;
+                const logoWidth = (logo.width / logo.height) * logoHeight;
+                const logoX = (displayWidth - logoWidth) / 2;
+                ctx.drawImage(logo, logoX, 20, logoWidth, logoHeight);
+            } else {
+                // Draw text fallback if logo doesn't load
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 32px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('PFF', displayWidth / 2, 45);
+                ctx.textAlign = 'left';
+            }
+
+            // Subtitle (moved up 2.5cm = ~94px at 2x scale, ~47px at 1x)
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 36px Archivo, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('2026 NFL Draft: My Top 10', displayWidth / 2, 75);
+            ctx.textAlign = 'left';
+
+            // Draw players: 1-5 on left, 6-10 on right
+            const cardWidth = 520;
+            const cardHeight = 85;
+            const cardPadding = 10;
+            const leftMargin = 50;
+            const topMargin = 120; // Adjusted to give more space after title
+            const gapX = 60;
+            const gapY = 15;
+            const boxGap = 10; // Gap between Grade and WAA boxes
+
+            top10.forEach((player, index) => {
+                const rank = index + 1;
+                const grade = player['2025 PFF Grade'] || 'N/A';
+                const waa = player['2025 PFF WAA'] || 'N/A';
+                
+                // Calculate position: 1-5 on left column, 6-10 on right column
+                let col, row;
+                if (rank <= 5) {
+                    // Left column: ranks 1-5
+                    col = 0;
+                    row = rank - 1;
+                } else {
+                    // Right column: ranks 6-10
+                    col = 1;
+                    row = rank - 6;
+                }
+                
+                const x = leftMargin + col * (cardWidth + gapX);
+                const y = topMargin + row * (cardHeight + gapY);
+                
+                // Card background
+                ctx.fillStyle = '#1F2937';
+                ctx.fillRect(x, y, cardWidth, cardHeight);
+                
+                // Border
+                ctx.strokeStyle = '#374151';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, cardWidth, cardHeight);
+
+                // Rank badge
+                const badgeSize = 50;
+                const badgeX = x + cardPadding;
+                const badgeY = y + cardPadding;
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+                ctx.fillRect(badgeX, badgeY, badgeSize, badgeSize);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(badgeX, badgeY, badgeSize, badgeSize);
+                
+                // Rank number - perfectly centered
+                ctx.fillStyle = '#00FFFF';
+                ctx.font = 'bold 28px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(rank.toString(), badgeX + badgeSize / 2, badgeY + badgeSize / 2);
+
+                // Player name and info - centered vertically in card
+                const nameX = x + cardPadding + badgeSize + 15;
+                const cardCenterY = y + cardHeight / 2;
+                
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 22px Archivo, sans-serif';
+                // Position name slightly above center
+                ctx.fillText(player.name || '', nameX, cardCenterY - 12);
+                
+                // School and Position - slightly below center
+                ctx.fillStyle = '#D1D5DB';
+                ctx.font = '16px Archivo, sans-serif';
+                ctx.fillText(`${player.School || ''} • ${player.Position || ''}`, nameX, cardCenterY + 12);
+
+                // Grade and WAA boxes
+                const boxWidth = 60;
+                const boxHeight = 50;
+                const boxY = y + cardPadding + 5;
+                let boxX = x + cardWidth - cardPadding - (boxWidth * 2) - boxGap;
+
+                // Grade box
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+                ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+                
+                // Grade number - centered horizontally, positioned higher to avoid border
+                ctx.fillStyle = '#00FFFF';
+                ctx.font = 'bold 20px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // Position number higher in the box (about 1/3 from top instead of center)
+                ctx.fillText(grade, boxX + boxWidth / 2, boxY + boxHeight / 3 + 2);
+                
+                // Grade label
+                ctx.font = '12px Archivo, sans-serif';
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.7)';
+                ctx.textBaseline = 'top';
+                ctx.fillText('Grade', boxX + boxWidth / 2, boxY + 38);
+
+                // WAA box
+                boxX += boxWidth + boxGap;
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+                ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+                
+                // WAA number - centered horizontally, positioned higher to avoid border
+                ctx.fillStyle = '#00FFFF';
+                ctx.font = 'bold 20px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // Position number higher in the box (about 1/3 from top instead of center)
+                ctx.fillText(waa, boxX + boxWidth / 2, boxY + boxHeight / 3 + 2);
+                
+                // WAA label
+                ctx.font = '12px Archivo, sans-serif';
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.7)';
+                ctx.textBaseline = 'top';
+                ctx.fillText('WAA', boxX + boxWidth / 2, boxY + 38);
+            });
+
+            // Convert to image and download (high quality)
+            canvas.toBlob((blob) => {
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `nfl-draft-bigboard-top10-${new Date().toISOString().split('T')[0]}.png`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 'image/png', 1.0); // Maximum quality
+        }
+
+        // Event listeners
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value.length > 0) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+            filterAndRender();
+        });
+        
+        // Filter event listeners
+        document.getElementById('filterSchool').addEventListener('change', filterAndRender);
+        document.getElementById('filterPosition').addEventListener('change', filterAndRender);
+        document.getElementById('filterGradeMin').addEventListener('input', filterAndRender);
+        document.getElementById('filterGradeMax').addEventListener('input', filterAndRender);
+        document.getElementById('filterWAAMin').addEventListener('input', filterAndRender);
+        document.getElementById('filterWAAMax').addEventListener('input', filterAndRender);
+
+        // Initialize on page load
+        loadPlayers();
+    </script>
+</body>
+</html>
