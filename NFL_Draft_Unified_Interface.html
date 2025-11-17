@@ -8,18 +8,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { 
+    * {
+      box-sizing: border-box;
+    }
+    html, body { 
       font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
       margin: 0; 
       padding: 0; 
       background: #0B1533; 
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
     #tool-wrapper {
       position: relative;
-      width: 100%;
+      width: 100vw;
       height: 100vh;
       background-color: #0B1533;
+      margin: 0;
+      padding: 0;
     }
     #tool-wrapper:fullscreen {
       width: 100vw;
@@ -42,6 +49,8 @@
       height: 100%;
       border: none;
       display: block;
+      margin: 0;
+      padding: 0;
     }
     #fullscreen-btn {
       position: fixed;
