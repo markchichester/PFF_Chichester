@@ -597,6 +597,48 @@
         <!-- ARIA Live Region for Screen Readers -->
         <div id="ariaAnnounce" aria-live="polite" aria-atomic="true" class="sr-only"></div>
 
+        <!-- Player Profile Modal (iframe overlay) -->
+        <div id="playerProfileModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center" style="backdrop-filter: blur(4px);">
+            <div class="relative w-full h-full max-w-6xl max-h-[90vh] m-4 bg-gray-900 rounded-lg shadow-2xl flex flex-col">
+                <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                    <h3 class="text-lg font-semibold text-white">Player Profile</h3>
+                    <button 
+                        id="closeProfileModal"
+                        onclick="closePlayerProfile()"
+                        aria-label="Close player profile"
+                        class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="iframeContainer" class="flex-1 relative">
+                    <iframe 
+                        id="playerProfileFrame"
+                        src=""
+                        class="w-full h-full border-0 rounded-b-lg"
+                        allow="fullscreen"
+                    ></iframe>
+                    <div id="iframeError" class="hidden absolute inset-0 flex items-center justify-center bg-gray-900 rounded-b-lg">
+                        <div class="text-center p-8 max-w-md">
+                            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="text-white text-lg mb-2 font-semibold">Cannot Display in Frame</p>
+                            <p class="text-gray-400 text-sm mb-6">PFF.com blocks iframe embedding for security. Opening in a new tab...</p>
+                            <button 
+                                onclick="openProfileInNewTab()"
+                                class="px-6 py-3 bg-cyan-400 hover:bg-cyan-300 text-primary-bg font-semibold rounded-lg transition-colors"
+                            >
+                                Open Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <div id="mainContent" class="hidden">
             <!-- Mobile: Stacked layout (original) -->
@@ -643,7 +685,7 @@
                             <input 
                                 type="text" 
                                 id="searchInput"
-                                placeholder="Search by name, school, position, or grade..." 
+                                placeholder="Search by name, school, or position..." 
                                 class="w-full pl-10 pr-10 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent text-sm"
                             />
                             <button 
@@ -984,6 +1026,9 @@
                                  document.mozFullScreenElement || 
                                  document.msFullscreenElement;
             
+            // Reset the maintain flag when user manually toggles fullscreen
+            shouldMaintainFullscreen = false;
+            
             if (isFullscreen) {
                 // Exit fullscreen
                 if (container.classList.contains('mobile-fullscreen-active')) {
@@ -1066,11 +1111,28 @@
             window.scrollTo(0, 0);
         }
         
+        // Track if we should maintain fullscreen (set when opening player profile)
+        let shouldMaintainFullscreen = false;
+        
         // Update button text when fullscreen changes
-        document.addEventListener('fullscreenchange', updateFullscreenButton);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
-        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
-        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        
+        function handleFullscreenChange() {
+            updateFullscreenButton();
+            
+            // If we should maintain fullscreen but it was lost, try to restore it
+            if (shouldMaintainFullscreen && !isInFullscreen()) {
+                // Use a small delay to avoid conflicts
+                setTimeout(() => {
+                    if (shouldMaintainFullscreen && !isInFullscreen()) {
+                        restoreFullscreen();
+                    }
+                }, 50);
+            }
+        }
         
         function updateFullscreenButton() {
             const btn = document.getElementById('fullscreen-btn');
@@ -1091,6 +1153,10 @@
             } else {
                 btnText.textContent = 'View Full Screen';
                 container.classList.remove('mobile-fullscreen-landscape');
+                // Reset the flag when fullscreen is intentionally exited
+                if (!shouldMaintainFullscreen) {
+                    shouldMaintainFullscreen = false;
+                }
             }
         }
         
@@ -1110,8 +1176,13 @@
                 mainContent.classList.remove('hidden');
             } catch (error) {
                 loadingState.classList.add('hidden');
-                errorMessage.textContent = 'Error: ' + error.message + '. Please make sure the Google Sheet is publicly viewable.';
+                // Always show main content structure even on error
+                mainContent.classList.remove('hidden');
+                errorMessage.textContent = 'Error: ' + error.message + '. Please make sure the Google Sheet is publicly viewable. If you\'re opening this file directly (file://), you need to host it on a web server or use a local server like: python -m http.server 8000';
                 errorMessage.classList.remove('hidden');
+                // Initialize empty state so UI is visible
+                document.getElementById('bigBoardCount').textContent = '0';
+                document.getElementById('poolCount').textContent = '0';
             }
         }
 
@@ -1175,14 +1246,12 @@
                 // Exclude players already in Big Board
                 if (bigBoardIds.has(player.pff_id)) return false;
                 
-                // Text search filter
+                // Text search filter - only search Name, School, and Position
                 if (searchQuery) {
                     const matchesSearch = (
                         (player.name || '').toLowerCase().includes(searchQuery) ||
                         (player.School || '').toLowerCase().includes(searchQuery) ||
-                        (player.Position || '').toLowerCase().includes(searchQuery) ||
-                        (player['2025 PFF Grade'] || '').toLowerCase().includes(searchQuery) ||
-                        (player.analysis || '').toLowerCase().includes(searchQuery)
+                        (player.Position || '').toLowerCase().includes(searchQuery)
                     );
                     if (!matchesSearch) return false;
                 }
@@ -1243,11 +1312,22 @@
 
         // Reset Big Board and clear all filters
         function resetBigBoard() {
+            // Preserve fullscreen state
+            const wasFullscreen = isInFullscreen();
+            
             if (confirm('Are you sure you want to reset your Big Board? This will remove all players and clear all filters.')) {
                 bigBoard = [];
                 localStorage.setItem('bigBoard', JSON.stringify(bigBoard));
                 clearFilters();
                 renderBigBoard();
+                
+                // Restore fullscreen if it was active
+                if (wasFullscreen && !isInFullscreen()) {
+                    // Small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        restoreFullscreen();
+                    }, 100);
+                }
             }
         }
 
@@ -1985,19 +2065,292 @@
             }
         }
 
-        // Open player profile in popup window
-        function openPlayerProfile(url) {
-            const width = 1000;
-            const height = 700;
-            const left = (screen.width - width) / 2;
-            const top = (screen.height - height) / 2;
-            
-            window.open(
-                url,
-                'PlayerProfile',
-                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no`
-            );
+        // Helper function to check if we're in fullscreen
+        function isInFullscreen() {
+            const container = document.querySelector('.container');
+            return container.classList.contains('mobile-fullscreen-active') || 
+                   document.fullscreenElement || 
+                   document.webkitFullscreenElement || 
+                   document.mozFullScreenElement || 
+                   document.msFullscreenElement;
         }
+        
+        // Helper function to restore fullscreen
+        function restoreFullscreen() {
+            const container = document.querySelector('.container');
+            const isMobile = window.innerWidth < 800 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Check if we should restore native fullscreen
+            if (!document.fullscreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.mozFullScreenElement && 
+                !document.msFullscreenElement) {
+                
+                // Try to restore native fullscreen
+                if (container.requestFullscreen) {
+                    container.requestFullscreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (isMobile) {
+                    // Restore mobile fallback
+                    useMobileFullscreenFallback();
+                }
+            } else {
+                // Already in fullscreen, but check mobile fallback
+                if (isMobile && !container.classList.contains('mobile-fullscreen-active')) {
+                    useMobileFullscreenFallback();
+                }
+            }
+        }
+        
+        // Store the current profile URL for fallback
+        let currentProfileUrl = '';
+        
+        // Try to proxy URL through CORS proxy (may not work due to X-Frame-Options)
+        function tryProxyUrl(url) {
+            // Try using a CORS proxy - but note: X-Frame-Options is still enforced by browser
+            // This might help with CORS but won't bypass X-Frame-Options
+            const proxyServices = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+            ];
+            return proxyServices[0]; // Try first one
+        }
+        
+        // Open player profile in modal overlay (iframe) - preserves fullscreen
+        function openPlayerProfile(url) {
+            currentProfileUrl = url;
+            
+            // Check if it's a PFF.com URL - these always block iframe embedding
+            if (url.includes('pff.com') || url.includes('profootballfocus.com')) {
+                // PFF.com blocks iframes, so open in popup window
+                // But preserve fullscreen state
+                const wasFullscreen = isInFullscreen();
+                if (wasFullscreen) {
+                    shouldMaintainFullscreen = true;
+                }
+                
+                // Open in popup window
+                const width = 1200;
+                const height = 800;
+                const left = (screen.width - width) / 2;
+                const top = (screen.height - height) / 2;
+                
+                const popup = window.open(
+                    url,
+                    'PlayerProfile',
+                    `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no`
+                );
+                
+                // Try to restore fullscreen when user returns
+                if (wasFullscreen && popup) {
+                    // Listen for when window regains focus
+                    window.addEventListener('focus', () => {
+                        if (shouldMaintainFullscreen && !isInFullscreen()) {
+                            setTimeout(() => {
+                                restoreFullscreen();
+                            }, 100);
+                        }
+                    }, { once: true });
+                    
+                    // Also check when popup closes
+                    const checkPopupClosed = setInterval(() => {
+                        if (popup.closed) {
+                            clearInterval(checkPopupClosed);
+                            // Restore fullscreen when popup closes
+                            setTimeout(() => {
+                                if (shouldMaintainFullscreen && !isInFullscreen()) {
+                                    restoreFullscreen();
+                                }
+                                shouldMaintainFullscreen = false;
+                            }, 100);
+                        }
+                    }, 500);
+                }
+                return;
+            }
+            
+            // For non-PFF sites, try iframe
+            const modal = document.getElementById('playerProfileModal');
+            const frame = document.getElementById('playerProfileFrame');
+            const errorDiv = document.getElementById('iframeError');
+            
+            // Hide error message
+            errorDiv.classList.add('hidden');
+            
+            // Show the modal first
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            
+            // Focus the close button for accessibility
+            document.getElementById('closeProfileModal').focus();
+            
+            // Try direct URL first
+            let attemptDirect = true;
+            frame.src = url;
+            
+            // Set up error detection - check if iframe loads successfully
+            let errorShown = false;
+            let loadTimeout = setTimeout(() => {
+                // If iframe hasn't loaded after 3 seconds, try proxy or show error
+                if (!errorShown) {
+                    if (attemptDirect) {
+                        // Try proxy as fallback
+                        attemptDirect = false;
+                        console.log('Direct load failed, trying proxy...');
+                        frame.src = tryProxyUrl(url);
+                        // Reset timeout for proxy attempt
+                        loadTimeout = setTimeout(() => {
+                            if (!errorShown) {
+                                showIframeError();
+                                errorShown = true;
+                            }
+                        }, 5000);
+                    } else {
+                        // Both attempts failed
+                        showIframeError();
+                        errorShown = true;
+                    }
+                }
+            }, 3000);
+            
+            // Clear timeout if iframe loads successfully
+            frame.onload = () => {
+                clearTimeout(loadTimeout);
+                // Give it a moment, then check if we can see content
+                setTimeout(() => {
+                    try {
+                        const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+                        if (iframeDoc && iframeDoc.body) {
+                            const bodyText = iframeDoc.body.innerText || iframeDoc.body.textContent || '';
+                            // Check for common error messages
+                            if (bodyText.includes('refused to connect') || 
+                                bodyText.includes('X-Frame-Options') ||
+                                bodyText.includes('cannot be displayed in a frame') ||
+                                bodyText.includes('This page cannot be displayed in a frame') ||
+                                bodyText.includes('403') ||
+                                bodyText.includes('Forbidden')) {
+                                if (!errorShown) {
+                                    if (attemptDirect) {
+                                        // Try proxy
+                                        attemptDirect = false;
+                                        frame.src = tryProxyUrl(url);
+                                    } else {
+                                        showIframeError();
+                                        errorShown = true;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // Cross-origin - this is normal and means the iframe loaded
+                        // Don't show error for cross-origin (means it's working!)
+                    }
+                }, 1500);
+            };
+            
+            // Listen for errors
+            frame.onerror = () => {
+                if (!errorShown) {
+                    if (attemptDirect) {
+                        // Try proxy
+                        attemptDirect = false;
+                        clearTimeout(loadTimeout);
+                        frame.src = tryProxyUrl(url);
+                        loadTimeout = setTimeout(() => {
+                            if (!errorShown) {
+                                showIframeError();
+                                errorShown = true;
+                            }
+                        }, 5000);
+                    } else {
+                        clearTimeout(loadTimeout);
+                        showIframeError();
+                        errorShown = true;
+                    }
+                }
+            };
+        }
+        
+        // Show error message in iframe
+        function showIframeError() {
+            const errorDiv = document.getElementById('iframeError');
+            errorDiv.classList.remove('hidden');
+            
+            // Auto-open in new tab after 2 seconds if user doesn't click
+            setTimeout(() => {
+                if (!errorDiv.classList.contains('hidden')) {
+                    // User hasn't closed it, auto-open in new tab
+                    openProfileInNewTab();
+                }
+            }, 2000);
+        }
+        
+        // Open profile in new tab (fallback)
+        function openProfileInNewTab() {
+            if (currentProfileUrl) {
+                window.open(currentProfileUrl, '_blank');
+                closePlayerProfile();
+            }
+        }
+        
+        // Close player profile modal
+        function closePlayerProfile() {
+            const modal = document.getElementById('playerProfileModal');
+            const frame = document.getElementById('playerProfileFrame');
+            const errorDiv = document.getElementById('iframeError');
+            
+            // Hide the modal
+            modal.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+            
+            // Clear the iframe source to stop loading
+            frame.src = 'about:blank';
+            currentProfileUrl = '';
+        }
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('playerProfileModal');
+                if (!modal.classList.contains('hidden')) {
+                    closePlayerProfile();
+                }
+            }
+        });
+        
+        // Close modal when clicking outside the iframe
+        document.getElementById('playerProfileModal').addEventListener('click', (e) => {
+            if (e.target.id === 'playerProfileModal') {
+                closePlayerProfile();
+            }
+        });
 
         // Export Big Board to CSV
         function exportToCSV() {
