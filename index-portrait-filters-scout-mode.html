@@ -1,0 +1,3738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Draft Big Board 2026 - Portrait Layout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Archivo', sans-serif;
+            background-color: #0B1533;
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 0;
+            }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            background-color: #0B1533;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Custom sleek scrollbar for player pool */
+        .scrollbar-sleek {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 255, 0.3) rgba(31, 41, 55, 0.5);
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-track {
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 4px;
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 255, 0.5);
+        }
+        
+        .scrollbar-sleek::-webkit-scrollbar-thumb:active {
+            background: rgba(0, 255, 255, 0.7);
+        }
+        
+        .player-card {
+            transition: all 0.2s ease;
+        }
+        
+        .player-card:hover {
+            transform: translateX(2px) scale(1.01);
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.2);
+        }
+        
+        /* Big Board drag cursor */
+        #bigBoard .player-card {
+            cursor: grab;
+        }
+        
+        #bigBoard .player-card:active {
+            cursor: grabbing;
+        }
+        
+        /* Drag animations */
+        .dragging {
+            opacity: 0.5;
+            transform: scale(0.95) rotate(2deg);
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        
+        .drag-over {
+            border-color: rgba(0, 255, 255, 0.6) !important;
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+        
+        /* Add/Remove animations */
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.9);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-5px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes slideOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-5px) scale(0.98);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.9);
+            }
+        }
+        
+        .player-card-enter {
+            animation: slideIn 0.3s ease-in;
+            will-change: transform, opacity;
+        }
+        
+        .player-card-initial {
+            opacity: 0;
+            transform: translateY(-15px) scale(0.9);
+        }
+        
+        .player-card-exit {
+            animation: slideOut 0.3s ease-in;
+        }
+        
+        .drag-handle {
+            cursor: grab;
+        }
+        
+        /* Tooltip styles */
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 0.25rem;
+        }
+        
+        .tooltip-icon {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: help;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .tooltip-icon:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .tooltip-content {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            padding: 12px 16px;
+            background-color: rgba(17, 24, 39, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            line-height: 1.5;
+            width: 320px;
+            max-width: calc(100vw - 2rem);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .tooltip-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(17, 24, 39, 0.98);
+        }
+        
+        .tooltip-container:hover .tooltip-content {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        @media (max-width: 799px) {
+            .tooltip-content {
+                width: 280px;
+                font-size: 11px;
+                padding: 10px 14px;
+            }
+        }
+        
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        
+        /* Fullscreen button - styled to match other header buttons */
+        #fullscreen-btn {
+            position: relative;
+        }
+        
+        /* Mobile fullscreen landscape styles */
+        @media (max-width: 799px) {
+            /* Mobile fullscreen fallback using CSS */
+            .mobile-fullscreen-active {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: 100vw !important;
+                max-height: 100vh !important;
+                z-index: 999999 !important;
+                background-color: #0B1533 !important;
+            }
+            
+            .container:fullscreen,
+            .container:-webkit-full-screen,
+            .container:-moz-full-screen,
+            .container:-ms-fullscreen {
+                width: 100vw;
+                height: 100vh;
+                max-width: 100vw;
+                max-height: 100vh;
+            }
+            
+            /* Force desktop layout in fullscreen on mobile using class */
+            .mobile-fullscreen-landscape #mainContent > div {
+                flex-direction: row !important;
+                height: calc(100vh - 120px) !important;
+            }
+            
+            .mobile-fullscreen-landscape #mainContent > div > div:first-child {
+                border-bottom: none !important;
+                border-right: 1px solid rgba(55, 65, 81, 1) !important;
+                width: 50% !important;
+                flex: 0 0 50% !important;
+            }
+            
+            .mobile-fullscreen-landscape #mainContent > div > div:last-child {
+                width: 50% !important;
+                flex: 0 0 50% !important;
+            }
+            
+            /* Show desktop elements, hide mobile elements */
+            .mobile-fullscreen-landscape [class*="md:hidden"] {
+                display: none !important;
+            }
+            
+            .mobile-fullscreen-landscape [class*="hidden"][class*="md:flex"] {
+                display: flex !important;
+            }
+            
+            .mobile-fullscreen-landscape [class*="md:flex"]:not([class*="hidden"]) {
+                display: flex !important;
+            }
+            
+            .mobile-fullscreen-landscape [class*="md:w-1/2"] {
+                width: 50% !important;
+            }
+        }
+        
+        /* Screen reader only class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* Focus styles for keyboard navigation */
+        .focus-visible:focus-visible,
+        button:focus-visible,
+        [role="button"]:focus-visible,
+        [tabindex]:focus-visible {
+            outline: 2px solid #00ffff;
+            outline-offset: 2px;
+        }
+        
+        /* Improved contrast for better accessibility */
+        .text-gray-400 {
+            color: rgba(209, 213, 219, 0.9) !important; /* Improved from 0.6 to 0.9 */
+        }
+        
+        .text-gray-500 {
+            color: rgba(209, 213, 219, 0.8) !important; /* Improved from 0.5 to 0.8 */
+        }
+        
+        .text-gray-600 {
+            color: rgba(209, 213, 219, 0.95) !important; /* Improved from 0.6 to 0.95 */
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+        
+        .player-image {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+        
+        /* Intermediate screen sizes - prevent overlap */
+        @media (max-width: 900px) and (min-width: 800px) {
+            .header-buttons {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .header-buttons button {
+                flex: 1 1 auto;
+                min-width: 140px;
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+            
+            .header-buttons button svg {
+                width: 14px;
+                height: 14px;
+            }
+            
+            /* Prevent stat boxes from overlapping */
+            .grade-boxes-container {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .grade-box {
+                min-width: 50px !important;
+                padding: 0.5rem 0.75rem !important;
+            }
+            
+            .grade-box-value {
+                font-size: 0.875rem !important;
+            }
+            
+            .grade-box-label {
+                font-size: 0.625rem !important;
+            }
+        }
+        
+        @media (max-width: 799px) {
+            .container {
+                padding: 0;
+            }
+            
+            .player-image {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .mobile-stack {
+                flex-direction: column;
+            }
+            
+            .header-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .header-buttons button {
+                width: 100%;
+            }
+            
+            .header-logo-container {
+                order: -1;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .header-export-container {
+                width: 100%;
+            }
+            
+            /* Mobile grade boxes - smaller and more compact */
+            .grade-box {
+                min-width: 50px !important;
+                padding: 0.375rem 0.5rem !important;
+            }
+            
+            .grade-box-value {
+                font-size: 0.875rem !important;
+                line-height: 1.2;
+            }
+            
+            .grade-box-label {
+                font-size: 0.625rem !important;
+                margin-top: 0.125rem;
+            }
+            
+            /* Mobile layout reorganization */
+            .mobile-player-card {
+                flex-direction: column;
+            }
+            
+            .mobile-player-header {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                width: 100%;
+            }
+            
+            .mobile-player-info {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .mobile-player-name-row {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .mobile-player-details-row {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+            
+            .mobile-stats-row {
+                display: flex;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-top: 0.75rem;
+                width: 100%;
+            }
+            
+            .mobile-actions-row {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 0.5rem;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+            
+            /* Make analysis chevron more obvious */
+            .analysis-chevron {
+                width: 1.25rem !important;
+                height: 1.25rem !important;
+                stroke-width: 2.5 !important;
+            }
+            
+            .analysis-button-mobile {
+                padding: 0.5rem 0.75rem !important;
+                border: 1px solid rgba(0, 255, 255, 0.3) !important;
+                background-color: rgba(0, 255, 255, 0.05) !important;
+            }
+            
+            /* Desktop layout - keep original */
+            @media (min-width: 800px) {
+                .mobile-player-card {
+                    flex-direction: row;
+                }
+                
+                .mobile-player-header {
+                    flex-direction: row;
+                }
+                
+                .mobile-stats-row {
+                    display: none;
+                }
+                
+                .mobile-actions-row {
+                    display: none;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Page Title (h1) -->
+        <h1 class="sr-only">NFL Draft Big Board 2026</h1>
+        
+        <!-- Header -->
+        <div class="p-4 border-b border-gray-700">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex-1 hidden md:block"></div>
+                <div class="flex-1 flex justify-center header-logo-container">
+                    <img 
+                        src="https://media.pff.com/2025/07/PFF_PoweredBy_White.png" 
+                        alt="PFF Powered By" 
+                        class="h-12 md:h-16"
+                        onerror="this.style.display='none'"
+                    />
+                </div>
+                <div class="flex-1 flex justify-end gap-2 header-buttons header-export-container" style="flex-wrap: wrap;">
+                    <button 
+                        onclick="exportToCSV()"
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 justify-center"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export CSV
+                    </button>
+                    <button 
+                        onclick="exportToImage()"
+                        class="px-4 py-2 bg-cyan-400 hover:bg-cyan-300 text-primary-bg text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 justify-center"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Export Image
+                    </button>
+                    <button 
+                        id="fullscreen-btn" 
+                        onclick="toggleFullscreen()"
+                        aria-label="Toggle fullscreen"
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 justify-center"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                        </svg>
+                        <span id="fullscreen-btn-text">View Full Screen</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="p-8 text-center">
+            <svg class="spinning w-8 h-8 text-cyan-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <p class="text-gray-400">Loading players...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="hidden mx-4 mt-4 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm"></div>
+
+        <!-- ARIA Live Region for Screen Readers -->
+        <div id="ariaAnnounce" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+        <!-- Scout Mode Configuration Modal -->
+        <div id="scoutModeModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center" style="backdrop-filter: blur(4px);">
+            <div class="relative w-full h-full max-w-5xl max-h-[90vh] m-4 bg-gray-900 rounded-lg shadow-2xl flex flex-col">
+                <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                    <h3 class="text-lg font-semibold text-white">PFF Scouting Mode Configuration</h3>
+                    <button 
+                        id="closeScoutModal"
+                        onclick="closeScoutModeModal()"
+                        aria-label="Close scout mode configuration"
+                        class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div id="scoutModeContent">
+                        <!-- Position navigation and configuration will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scoring Modal -->
+        <div id="scoringModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center" style="backdrop-filter: blur(4px);">
+            <div class="relative w-full h-full max-w-3xl max-h-[90vh] m-4 bg-gray-900 rounded-lg shadow-2xl flex flex-col">
+                <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                    <h3 class="text-lg font-semibold text-white">Score Player</h3>
+                    <button 
+                        onclick="closeScoringModal()"
+                        aria-label="Close scoring modal"
+                        class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div id="scoringModalContent">
+                        <!-- Scoring form will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Profile Modal (iframe overlay) -->
+        <div id="playerProfileModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center" style="backdrop-filter: blur(4px);">
+            <div class="relative w-full h-full max-w-6xl max-h-[90vh] m-4 bg-gray-900 rounded-lg shadow-2xl flex flex-col">
+                <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                    <h3 class="text-lg font-semibold text-white">Player Profile</h3>
+                    <button 
+                        id="closeProfileModal"
+                        onclick="closePlayerProfile()"
+                        aria-label="Close player profile"
+                        class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="iframeContainer" class="flex-1 relative">
+                    <iframe 
+                        id="playerProfileFrame"
+                        src=""
+                        class="w-full h-full border-0 rounded-b-lg"
+                        allow="fullscreen"
+                    ></iframe>
+                    <div id="iframeError" class="hidden absolute inset-0 flex items-center justify-center bg-gray-900 rounded-b-lg">
+                        <div class="text-center p-8 max-w-md">
+                            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="text-white text-lg mb-2 font-semibold">Cannot Display in Frame</p>
+                            <p class="text-gray-400 text-sm mb-6">PFF.com blocks iframe embedding for security. Opening in a new tab...</p>
+                            <button 
+                                onclick="openProfileInNewTab()"
+                                class="px-6 py-3 bg-cyan-400 hover:bg-cyan-300 text-primary-bg font-semibold rounded-lg transition-colors"
+                            >
+                                Open Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="hidden">
+            <!-- Mobile: Stacked layout (original) -->
+            <!-- Desktop: Side-by-side layout -->
+            <div class="flex flex-col md:flex-row md:h-[calc(100vh-120px)]">
+                <!-- Big Board Section -->
+                <div class="border-b md:border-b-0 md:border-r border-gray-700 md:w-1/2 md:flex md:flex-col">
+                    <div class="p-4 border-b border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl font-bold text-white">My Big Board</h2>
+                                <p class="text-gray-400 text-sm mt-1"><span id="bigBoardCount">0</span> players</p>
+                            </div>
+                            <button 
+                                onclick="resetBigBoard()"
+                                class="px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                            >
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                    <div id="bigBoard" class="p-4 pb-6 max-h-[400px] md:max-h-none md:flex-1 md:pb-4 overflow-y-auto scrollbar-hide">
+                        <div class="text-center text-gray-500 py-12">
+                            <p class="text-base">Your Big Board is empty</p>
+                            <p class="text-sm mt-2 text-gray-600">Tap players below to add them</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Player Pool Section -->
+                <div class="md:w-1/2 md:flex md:flex-col">
+                    <div class="p-4 border-b border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl font-bold text-white">2026 NFL Draft prospects</h2>
+                                <p class="text-gray-400 text-sm mt-1"><span id="poolCount">0</span> available players</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-400">PFF Scouting Mode</span>
+                                <button 
+                                    id="scoutModeToggle"
+                                    onclick="toggleScoutMode()"
+                                    aria-label="Toggle PFF Scouting Mode"
+                                    class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900"
+                                >
+                                    <span 
+                                        id="scoutModeToggleThumb"
+                                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"
+                                    ></span>
+                                </button>
+                                <button 
+                                    id="scoutConfigureBtn"
+                                    onclick="openScoutConfig()"
+                                    class="px-2 py-1 text-xs text-gray-400 hover:text-cyan-400 transition-colors hidden"
+                                    title="Configure scout mode"
+                                >
+                                    Configure
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Section -->
+                    <div class="bg-gray-800 border-b border-gray-700 p-4">
+                    <div class="mb-3">
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input 
+                                type="text" 
+                                id="searchInput"
+                                placeholder="Search by name, school, or position..." 
+                                class="w-full pl-10 pr-10 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent text-sm"
+                            />
+                            <button 
+                                id="clearSearch"
+                                onclick="clearSearch()"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors hidden"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <!-- School Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">School</label>
+                            <select 
+                                id="filterSchool"
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            >
+                                <option value="">All Schools</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Position Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Position</label>
+                            <select 
+                                id="filterPosition"
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            >
+                                <option value="">All Positions</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Grade Range Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1 flex items-center">
+                                PFF Grade Range
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon">i</span>
+                                    <span class="tooltip-content">
+                                        PFF's 0-100 grades evaluate player performance based on a play-by-play review, converting each snap's grade (on a -2 to +2 scale) into an overall game and season score.
+                                    </span>
+                                </span>
+                            </label>
+                            <div class="flex gap-2">
+                                <input 
+                                    type="number" 
+                                    id="filterGradeMin"
+                                    placeholder="Min"
+                                    step="0.1"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                                <input 
+                                    type="number" 
+                                    id="filterGradeMax"
+                                    placeholder="Max"
+                                    step="0.1"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                            </div>
+                        </div>
+                        
+                        <!-- WAA Range Filter -->
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1 flex items-center">
+                                WAA Range
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon">i</span>
+                                    <span class="tooltip-content">
+                                        WAA represents the number of wins a player is worth over an average college football player and is a metric that evaluators can utilize to assess performance. It combines how well a player performed in each facet of play (using PFF grades) and how valuable each facet is to winning football games. The result is a first-of-its-kind metric that allows for cross-positional valuation and predicts future value at the player and team levels.
+                                    </span>
+                                </span>
+                            </label>
+                            <div class="flex gap-2">
+                                <input 
+                                    type="number" 
+                                    id="filterWAAMin"
+                                    placeholder="Min"
+                                    step="0.001"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                                <input 
+                                    type="number" 
+                                    id="filterWAAMax"
+                                    placeholder="Max"
+                                    step="0.001"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sort Options -->
+                    <div class="mt-4 pt-4 border-t border-gray-700">
+                        <label class="block text-xs text-gray-400 mb-3 text-center">Sort By</label>
+                        <div class="flex flex-wrap gap-2 justify-center">
+                            <button 
+                                id="sort-big_board_rank"
+                                onclick="sortBy('big_board_rank')"
+                                class="px-4 py-2 text-xs font-semibold bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors flex items-center gap-1.5"
+                            >
+                                PFF Rank
+                                <span id="sort-icon-big_board_rank" class="text-cyan-400"></span>
+                            </button>
+                            <button 
+                                id="sort-2025 PFF Grade"
+                                onclick="sortBy('2025 PFF Grade')"
+                                class="px-4 py-2 text-xs font-semibold bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors flex items-center gap-1.5"
+                            >
+                                PFF Grade
+                                <span id="sort-icon-2025 PFF Grade" class="text-cyan-400"></span>
+                            </button>
+                            <button 
+                                id="sort-2025 PFF WAA"
+                                onclick="sortBy('2025 PFF WAA')"
+                                class="px-4 py-2 text-xs font-semibold bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors flex items-center gap-1.5"
+                            >
+                                PFF WAA
+                                <span id="sort-icon-2025 PFF WAA" class="text-cyan-400"></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button 
+                        onclick="clearFilters()"
+                        class="mt-3 px-4 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                    >
+                        Clear All Filters
+                    </button>
+                </div>
+                    
+                    <div id="playerPool" class="p-4 max-h-[500px] md:max-h-none md:flex-1 overflow-y-auto scrollbar-sleek">
+                        <div class="text-center text-gray-500 py-12">
+                            <p class="text-base">No players found</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Published Google Sheet URLs
+        // This is the URL from "File > Share > Publish to web" for the Builder tab
+        const PUBLISHED_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS7A-5j_EA1mmhqLObj2IGLqEdS3KYJ1FKmWPeRUrpWdwyg_8pRbtGLOlHGG2XPV1gWUjfZKL9stQNn/pub?gid=0&single=true&output=csv';
+        // Alternative JSON endpoint (sometimes has better CORS support)
+        const PUBLISHED_JSON_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS7A-5j_EA1mmhqLObj2IGLqEdS3KYJ1FKmWPeRUrpWdwyg_8pRbtGLOlHGG2XPV1gWUjfZKL9stQNn/pub?gid=0&single=true&output=json';
+
+        // State
+        let allPlayers = [];
+        let bigBoard = [];
+        let filteredPlayers = [];
+        let sortField = 'big_board_rank'; // Default to PFF Rank
+        let sortDirection = 'asc';
+        let uniqueSchools = [];
+        let uniquePositions = [];
+        let expandedPlayers = new Set(); // Track which players have expanded analysis
+        let expandedNotes = new Set(); // Track which players have expanded notes
+        let playerNotes = {}; // Store notes by pff_id
+        
+        // Scout Mode State
+        let scoutModeEnabled = false;
+        let scoutConfig = {}; // { position: { categories: [{ name, weight }], totalWeight: 100 } }
+        let playerScores = {}; // { pff_id: { category1: score, category2: score, ... } }
+        let currentPositionIndex = 0; // For position navigation in config modal
+
+        // Load from localStorage
+        function loadFromStorage() {
+            const saved = localStorage.getItem('bigBoard');
+            if (saved) {
+                try {
+                    bigBoard = JSON.parse(saved);
+                } catch (e) {
+                    bigBoard = [];
+                }
+            }
+            
+            // Load notes
+            const savedNotes = localStorage.getItem('playerNotes');
+            if (savedNotes) {
+                try {
+                    playerNotes = JSON.parse(savedNotes);
+                } catch (e) {
+                    playerNotes = {};
+                }
+            }
+            
+            // Load scout mode state
+            const savedScoutMode = localStorage.getItem('scoutModeEnabled');
+            if (savedScoutMode) {
+                scoutModeEnabled = savedScoutMode === 'true';
+                updateScoutModeToggle();
+            }
+            
+            const savedScoutConfig = localStorage.getItem('scoutConfig');
+            if (savedScoutConfig) {
+                try {
+                    scoutConfig = JSON.parse(savedScoutConfig);
+                } catch (e) {
+                    scoutConfig = {};
+                }
+            }
+            
+            const savedPlayerScores = localStorage.getItem('playerScores');
+            if (savedPlayerScores) {
+                try {
+                    playerScores = JSON.parse(savedPlayerScores);
+                } catch (e) {
+                    playerScores = {};
+                }
+            }
+            
+            renderBigBoard();
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            localStorage.setItem('bigBoard', JSON.stringify(bigBoard));
+            localStorage.setItem('playerNotes', JSON.stringify(playerNotes));
+            localStorage.setItem('scoutModeEnabled', scoutModeEnabled.toString());
+            localStorage.setItem('scoutConfig', JSON.stringify(scoutConfig));
+            localStorage.setItem('playerScores', JSON.stringify(playerScores));
+        }
+        
+        
+        // Get notes for a player
+        function getPlayerNote(pffId) {
+            return playerNotes[pffId] || '';
+        }
+        
+        // Toggle notes expansion
+        function togglePlayerNotes(pffId) {
+            if (expandedNotes.has(pffId)) {
+                expandedNotes.delete(pffId);
+            } else {
+                expandedNotes.add(pffId);
+            }
+            renderBigBoard();
+        }
+        
+        // Update notes indicator after saving
+        function savePlayerNote(pffId, note) {
+            if (note && note.trim()) {
+                playerNotes[pffId] = note.trim();
+            } else {
+                delete playerNotes[pffId];
+            }
+            saveToStorage();
+            // Re-render to update checkmark indicator
+            renderBigBoard();
+        }
+        
+        // Clear all notes
+        function clearAllNotes() {
+            const noteCount = Object.keys(playerNotes).length;
+            if (noteCount === 0) {
+                return; // No notes to clear
+            }
+            
+            if (confirm(`Are you sure you want to clear all ${noteCount} draft note${noteCount !== 1 ? 's' : ''}?`)) {
+                playerNotes = {};
+                expandedNotes.clear();
+                saveToStorage();
+                renderBigBoard();
+                announceToScreenReader('All draft notes cleared');
+            }
+        }
+        
+        // Scout Mode Functions
+        function toggleScoutMode() {
+            scoutModeEnabled = !scoutModeEnabled;
+            updateScoutModeToggle();
+            saveToStorage();
+            
+            if (scoutModeEnabled) {
+                // Check if config exists, if not open modal
+                if (Object.keys(scoutConfig).length === 0) {
+                    openScoutModeModal();
+                }
+            }
+            
+            renderBigBoard();
+        }
+        
+        // Allow reopening config modal when scout mode is enabled
+        function openScoutConfig() {
+            if (scoutModeEnabled) {
+                openScoutModeModal();
+            }
+        }
+        
+        function updateScoutModeToggle() {
+            const toggle = document.getElementById('scoutModeToggle');
+            const thumb = document.getElementById('scoutModeToggleThumb');
+            
+            if (scoutModeEnabled) {
+                toggle.classList.remove('bg-gray-700');
+                toggle.classList.add('bg-cyan-400');
+                thumb.classList.remove('translate-x-1');
+                thumb.classList.add('translate-x-6');
+            } else {
+                toggle.classList.remove('bg-cyan-400');
+                toggle.classList.add('bg-gray-700');
+                thumb.classList.remove('translate-x-6');
+                thumb.classList.add('translate-x-1');
+            }
+            
+            // Update Configure button visibility
+            const configureBtn = document.getElementById('scoutConfigureBtn');
+            if (configureBtn) {
+                if (scoutModeEnabled) {
+                    configureBtn.classList.remove('hidden');
+                } else {
+                    configureBtn.classList.add('hidden');
+                }
+            }
+        }
+        
+        function openScoutModeModal() {
+            const modal = document.getElementById('scoutModeModal');
+            currentPositionIndex = 0;
+            renderScoutModeConfig();
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeScoutModeModal() {
+            const modal = document.getElementById('scoutModeModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        function renderScoutModeConfig() {
+            const content = document.getElementById('scoutModeContent');
+            // Fixed order for scout mode configuration
+            const positions = ['QB', 'RB', 'WR', 'TE', 'T', 'G', 'C', 'DI', 'ED', 'LB', 'CB', 'S'];
+            const currentPosition = positions[currentPositionIndex];
+            const positionConfig = scoutConfig[currentPosition] || { categories: [], numCategories: 5 };
+            
+            let html = `
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-semibold text-white">Position: ${currentPosition}</h4>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-400">${currentPositionIndex + 1} of ${positions.length}</span>
+                            <button 
+                                onclick="navigateScoutPosition(-1)"
+                                ${currentPositionIndex === 0 ? 'disabled' : ''}
+                                class="px-3 py-1.5 text-xs font-semibold bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                ← Previous
+                            </button>
+                            <button 
+                                onclick="navigateScoutPosition(1)"
+                                ${currentPositionIndex === positions.length - 1 ? 'disabled' : ''}
+                                class="px-3 py-1.5 text-xs font-semibold bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next →
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-300 mb-2">Number of Evaluation Categories (5-15)</label>
+                        <input 
+                            type="number" 
+                            id="numCategories-${currentPosition}"
+                            min="5" 
+                            max="15" 
+                            value="${positionConfig.numCategories || 5}"
+                            onchange="updateCategoryCount('${currentPosition}')"
+                            class="w-24 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                        />
+                    </div>
+                    
+                    <div id="categoriesContainer-${currentPosition}" class="space-y-3">
+                        ${renderCategoriesForPosition(currentPosition, positionConfig)}
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-gray-800 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Total Weight:</span>
+                            <span id="totalWeight-${currentPosition}" class="text-sm font-semibold ${Math.abs(getTotalWeight(currentPosition) - 100) < 0.01 ? 'text-green-400' : 'text-red-400'}">
+                                ${getTotalWeight(currentPosition).toFixed(2)}%
+                            </span>
+                        </div>
+                        ${Math.abs(getTotalWeight(currentPosition) - 100) >= 0.01 ? `
+                            <p class="text-xs text-red-400 mt-1">Weights must total exactly 100%</p>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-700">
+                    <button 
+                        onclick="closeScoutModeModal()"
+                        class="px-4 py-2 text-sm font-semibold bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        onclick="saveScoutModeConfig()"
+                        ${Math.abs(getTotalWeight(currentPosition) - 100) >= 0.01 ? 'disabled' : ''}
+                        class="px-4 py-2 text-sm font-semibold bg-cyan-400 hover:bg-cyan-300 text-primary-bg rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Save Configuration
+                    </button>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+        }
+        
+        function renderCategoriesForPosition(position, config) {
+            const numCategories = config.numCategories || 5;
+            const categories = config.categories || [];
+            
+            // Ensure we have the right number of categories
+            while (categories.length < numCategories) {
+                categories.push({ name: '', weight: 0 });
+            }
+            while (categories.length > numCategories) {
+                categories.pop();
+            }
+            
+            // Auto-fill weights evenly if they're all zero or empty
+            const allWeightsZero = categories.every(cat => !cat.weight || cat.weight === 0);
+            if (allWeightsZero && numCategories > 0) {
+                // Distribute weights evenly, ensuring total is exactly 100%
+                const evenWeight = 100 / numCategories;
+                let totalAssigned = 0;
+                
+                // Assign rounded weights to all but the last category
+                for (let i = 0; i < numCategories - 1; i++) {
+                    // Round to 2 decimal places
+                    const roundedWeight = Math.round(evenWeight * 100) / 100;
+                    categories[i].weight = roundedWeight;
+                    totalAssigned += roundedWeight;
+                }
+                
+                // Last category gets the remainder to ensure exactly 100.00%
+                const remainder = 100 - totalAssigned;
+                categories[numCategories - 1].weight = Math.round(remainder * 100) / 100;
+                
+                // Final check: ensure total is exactly 100.00 (handle floating point precision)
+                const finalTotal = categories.reduce((sum, cat) => sum + (parseFloat(cat.weight) || 0), 0);
+                const difference = 100 - finalTotal;
+                // If there's a rounding difference, adjust the last category
+                if (Math.abs(difference) > 0.0001) {
+                    categories[numCategories - 1].weight = Math.round((categories[numCategories - 1].weight + difference) * 100) / 100;
+                }
+            }
+            
+            return categories.map((cat, index) => `
+                <div class="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
+                    <div class="flex-1">
+                        <label class="block text-xs text-gray-400 mb-1">Category ${index + 1} Name</label>
+                        <input 
+                            type="text" 
+                            id="catName-${position}-${index}"
+                            value="${cat.name || ''}"
+                            placeholder="e.g., Arm Strength, Route Running"
+                            onchange="updateCategory('${position}', ${index})"
+                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                        />
+                    </div>
+                    <div class="w-32">
+                        <label class="block text-xs text-gray-400 mb-1">Weight (%)</label>
+                        <input 
+                            type="number" 
+                            id="catWeight-${position}-${index}"
+                            min="0" 
+                            max="100" 
+                            step="0.1"
+                            value="${cat.weight || 0}"
+                            onchange="updateCategory('${position}', ${index})"
+                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                        />
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateCategoryCount(position) {
+            const numCategories = parseInt(document.getElementById(`numCategories-${position}`).value) || 5;
+            if (!scoutConfig[position]) {
+                scoutConfig[position] = { categories: [], numCategories: numCategories };
+            }
+            
+            const oldNumCategories = scoutConfig[position].categories.length;
+            scoutConfig[position].numCategories = numCategories;
+            
+            // Auto-fill weights evenly when number of categories changes
+            if (numCategories > 0) {
+                // Ensure we have the right number of categories
+                while (scoutConfig[position].categories.length < numCategories) {
+                    scoutConfig[position].categories.push({ name: '', weight: 0 });
+                }
+                while (scoutConfig[position].categories.length > numCategories) {
+                    scoutConfig[position].categories.pop();
+                }
+                
+                // Auto-fill weights evenly (only if weights weren't already set or if count changed)
+                if (oldNumCategories !== numCategories) {
+                    // Distribute weights evenly, ensuring total is exactly 100%
+                    const evenWeight = 100 / numCategories;
+                    let totalAssigned = 0;
+                    
+                    // Assign rounded weights to all but the last category
+                    for (let i = 0; i < numCategories - 1; i++) {
+                        // Round to 2 decimal places
+                        const roundedWeight = Math.round(evenWeight * 100) / 100;
+                        scoutConfig[position].categories[i].weight = roundedWeight;
+                        totalAssigned += roundedWeight;
+                    }
+                    
+                    // Last category gets the remainder to ensure exactly 100.00%
+                    const remainder = 100 - totalAssigned;
+                    // Round to 2 decimal places
+                    scoutConfig[position].categories[numCategories - 1].weight = Math.round(remainder * 100) / 100;
+                    
+                    // Final check: ensure total is exactly 100.00 (handle floating point precision)
+                    const finalTotal = scoutConfig[position].categories.reduce((sum, cat) => sum + (parseFloat(cat.weight) || 0), 0);
+                    const difference = 100 - finalTotal;
+                    // If there's a rounding difference, adjust the last category
+                    if (Math.abs(difference) > 0.0001) {
+                        scoutConfig[position].categories[numCategories - 1].weight = Math.round((scoutConfig[position].categories[numCategories - 1].weight + difference) * 100) / 100;
+                    }
+                }
+            }
+            
+            renderScoutModeConfig();
+        }
+        
+        function updateCategory(position, index) {
+            if (!scoutConfig[position]) {
+                scoutConfig[position] = { categories: [], numCategories: 5 };
+            }
+            if (!scoutConfig[position].categories[index]) {
+                scoutConfig[position].categories[index] = { name: '', weight: 0 };
+            }
+            
+            const nameInput = document.getElementById(`catName-${position}-${index}`);
+            const weightInput = document.getElementById(`catWeight-${position}-${index}`);
+            
+            scoutConfig[position].categories[index].name = nameInput.value.trim();
+            scoutConfig[position].categories[index].weight = parseFloat(weightInput.value) || 0;
+            
+            // Update total weight display
+            const totalWeight = getTotalWeight(position);
+            const totalWeightEl = document.getElementById(`totalWeight-${position}`);
+            if (totalWeightEl) {
+                // Check if total is effectively 100% (within 0.01% tolerance for floating point precision)
+                const isExactly100 = Math.abs(totalWeight - 100) < 0.01;
+                totalWeightEl.textContent = totalWeight.toFixed(2) + '%';
+                totalWeightEl.className = `text-sm font-semibold ${isExactly100 ? 'text-green-400' : 'text-red-400'}`;
+            }
+            
+            // Update save button state
+            const saveBtn = document.querySelector('[onclick="saveScoutModeConfig()"]');
+            if (saveBtn) {
+                const isExactly100 = Math.abs(totalWeight - 100) < 0.01;
+                if (isExactly100) {
+                    saveBtn.disabled = false;
+                    saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    saveBtn.disabled = true;
+                    saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+        
+        function getTotalWeight(position) {
+            if (!scoutConfig[position] || !scoutConfig[position].categories) {
+                return 0;
+            }
+            const total = scoutConfig[position].categories.reduce((sum, cat) => sum + (parseFloat(cat.weight) || 0), 0);
+            // Round to 2 decimal places to handle floating point precision issues
+            return Math.round(total * 100) / 100;
+        }
+        
+        function navigateScoutPosition(direction) {
+            // Fixed order for scout mode configuration
+            const positions = ['QB', 'RB', 'WR', 'TE', 'T', 'G', 'C', 'DI', 'ED', 'LB', 'CB', 'S'];
+            currentPositionIndex = Math.max(0, Math.min(positions.length - 1, currentPositionIndex + direction));
+            renderScoutModeConfig();
+        }
+        
+        function saveScoutModeConfig() {
+            // Fixed order for scout mode configuration
+            const positions = ['QB', 'RB', 'WR', 'TE', 'T', 'G', 'C', 'DI', 'ED', 'LB', 'CB', 'S'];
+            const currentPosition = positions[currentPositionIndex];
+            
+            // Validate current position has valid config (within 0.01% tolerance for floating point precision)
+            const currentTotalWeight = getTotalWeight(currentPosition);
+            const currentValid = scoutConfig[currentPosition] && Math.abs(currentTotalWeight - 100) < 0.01;
+            
+            if (currentValid) {
+                saveToStorage();
+                // Check if we're on the last position
+                if (currentPositionIndex === positions.length - 1) {
+                    closeScoutModeModal();
+                    renderBigBoard();
+                    announceToScreenReader('Scout mode configuration saved');
+                } else {
+                    // Move to next position
+                    navigateScoutPosition(1);
+                }
+            } else {
+                alert(`Please ensure ${currentPosition} has categories with weights totaling exactly 100%`);
+            }
+        }
+        
+        // Position mapping: map actual data positions to scout mode config positions
+        function mapPositionToScoutConfig(position) {
+            const positionMap = {
+                'OT': 'T',
+                'OG': 'G',
+                'IDL': 'DI',
+                'EDGE': 'ED',
+                'DT': 'DI',
+                'DE': 'ED',
+                'NT': 'DI'
+            };
+            return positionMap[position] || position;
+        }
+        
+        // Scoring Functions
+        function calculatePlayerScore(pffId, position) {
+            // Map position to scout config position
+            const configPosition = mapPositionToScoutConfig(position);
+            if (!scoutConfig[configPosition] || !scoutConfig[configPosition].categories || !playerScores[pffId]) {
+                return null;
+            }
+            
+            const categories = scoutConfig[configPosition].categories;
+            const scores = playerScores[pffId];
+            let totalScore = 0;
+            let hasAnyScore = false;
+            
+            for (let cat of categories) {
+                const score = parseFloat(scores[cat.name]);
+                if (!isNaN(score) && score >= 0 && score <= 10) {
+                    const weight = parseFloat(cat.weight) || 0;
+                    totalScore += (score * weight) / 100;
+                    hasAnyScore = true;
+                }
+            }
+            
+            return hasAnyScore ? Math.round(totalScore * 100) / 100 : null;
+        }
+        
+        function getScoreColor(score) {
+            if (score === null || score === undefined) return '#6B7280'; // gray
+            if (score >= 9.0) return '#0087A4'; // rare/elite
+            if (score >= 8.0) return '#009B47'; // high-end starter
+            if (score >= 7.0) return '#76C101'; // solid starter
+            if (score >= 6.0) return '#FFD002'; // role player
+            if (score >= 5.0) return '#FC6900'; // replacement-level
+            return '#C61A2A'; // below replacement - red
+        }
+        
+        function getScoreLabel(score) {
+            if (score === null || score === undefined) return 'Not Scored';
+            if (score >= 9.0) return 'Rare/Elite';
+            if (score >= 8.0) return 'High-End Starter';
+            if (score >= 7.0) return 'Solid Starter';
+            if (score >= 6.0) return 'Role Player';
+            if (score >= 5.0) return 'Replacement-Level';
+            return 'Below Replacement';
+        }
+        
+        function getScoreAcronym(score) {
+            if (score === null || score === undefined) return '';
+            if (score >= 9.0) return 'Elite';
+            if (score >= 8.0) return 'HES';
+            if (score >= 7.0) return 'SS';
+            if (score >= 6.0) return 'RP';
+            if (score >= 5.0) return 'RL';
+            return 'BRL';
+        }
+        
+        function openScoringModal(pffId) {
+            const player = allPlayers.find(p => p.pff_id === pffId);
+            if (!player || !scoutModeEnabled) return;
+            
+            const position = player.Position || '';
+            const configPosition = mapPositionToScoutConfig(position);
+            const positionConfig = scoutConfig[configPosition] || { categories: [] };
+            const scores = playerScores[pffId] || {};
+            
+            const modal = document.getElementById('scoringModal');
+            const content = document.getElementById('scoringModalContent');
+            
+            let html = `
+                <div class="mb-4">
+                    <h4 class="text-lg font-semibold text-white mb-1">${player.name || ''}</h4>
+                    <p class="text-sm text-gray-400">${position} • ${player.School || ''}</p>
+                </div>
+                
+                <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    ${positionConfig.categories.map((cat, index) => {
+                        const currentScore = scores[cat.name] !== undefined ? parseFloat(scores[cat.name]) : null;
+                        const displayValue = currentScore !== null && !isNaN(currentScore) ? currentScore.toFixed(2) : '';
+                        return `
+                            <div class="p-3 bg-gray-800 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="text-sm font-medium text-gray-300">${cat.name || `Category ${index + 1}`}</label>
+                                    <span class="text-xs text-gray-500">Weight: ${cat.weight}%</span>
+                                </div>
+                                <input 
+                                    type="number" 
+                                    id="score-${pffId}-${index}"
+                                    min="0" 
+                                    max="10" 
+                                    step="0.01"
+                                    value="${displayValue}"
+                                    placeholder="0.00 - 10.00"
+                                    onchange="updatePlayerScore('${pffId}', '${configPosition}', '${cat.name}', ${index})"
+                                    oninput="const val = parseFloat(this.value); if (!isNaN(val)) { if (val > 10.0) { this.value = '10.00'; } else if (val < 0) { this.value = '0.00'; } }"
+                                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                />
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-gray-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-gray-300">Overall Score:</span>
+                        <div class="flex items-center gap-3">
+                            <span id="overallScore-${pffId}" class="text-2xl font-bold" style="color: ${getScoreColor(calculatePlayerScore(pffId, position))}">
+                                ${calculatePlayerScore(pffId, position) !== null ? calculatePlayerScore(pffId, position).toFixed(2) : 'N/A'}
+                            </span>
+                            <span id="scoreLabel-${pffId}" class="text-sm text-gray-400">
+                                ${getScoreLabel(calculatePlayerScore(pffId, position))}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p><span style="color: #0087A4">9.0+</span> = Rare/Elite</p>
+                        <p><span style="color: #009B47">8.0</span> = High-End Starter</p>
+                        <p><span style="color: #76C101">7.0</span> = Solid Starter</p>
+                        <p><span style="color: #FFD002">6.0</span> = Role Player</p>
+                        <p><span style="color: #FC6900">5.0</span> = Replacement-Level</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-700">
+                    <button 
+                        onclick="clearAllScores('${pffId}', '${configPosition}')"
+                        class="px-4 py-2 text-sm font-semibold bg-red-600/20 hover:bg-red-600/30 border border-red-500/50 text-red-400 rounded-lg transition-colors"
+                    >
+                        Clear All Scores
+                    </button>
+                    <button 
+                        onclick="closeScoringModal()"
+                        class="px-4 py-2 text-sm font-semibold bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                    >
+                        Close
+                    </button>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeScoringModal() {
+            const modal = document.getElementById('scoringModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        function clearAllScores(pffId, position) {
+            if (confirm('Are you sure you want to clear all scores for this player?')) {
+                // Clear all scores for this player
+                if (playerScores[pffId]) {
+                    delete playerScores[pffId];
+                }
+                
+                saveToStorage();
+                
+                // Re-render the scoring modal with cleared scores
+                openScoringModal(pffId);
+                
+                // Update Big Board display
+                renderBigBoard();
+                
+                announceToScreenReader('All scores cleared for player');
+            }
+        }
+        
+        function updatePlayerScore(pffId, position, categoryName, index) {
+            const input = document.getElementById(`score-${pffId}-${index}`);
+            let score = parseFloat(input.value);
+            
+            if (!playerScores[pffId]) {
+                playerScores[pffId] = {};
+            }
+            
+            // Cap score at 10.0 and ensure it's between 0 and 10
+            if (!isNaN(score)) {
+                score = Math.min(10.0, Math.max(0, score));
+                // Round to 2 decimal places and update the input value
+                score = Math.round(score * 100) / 100;
+                input.value = score.toFixed(2);
+            }
+            
+            if (!isNaN(score) && score >= 0 && score <= 10.0) {
+                playerScores[pffId][categoryName] = score;
+            } else if (input.value === '' || input.value === null) {
+                delete playerScores[pffId][categoryName];
+            } else {
+                return; // Invalid input, don't update
+            }
+            
+            saveToStorage();
+            
+            // Update overall score display
+            const overallScore = calculatePlayerScore(pffId, position);
+            const overallScoreEl = document.getElementById(`overallScore-${pffId}`);
+            const scoreLabelEl = document.getElementById(`scoreLabel-${pffId}`);
+            
+            if (overallScoreEl) {
+                overallScoreEl.textContent = overallScore !== null ? overallScore.toFixed(2) : 'N/A';
+                overallScoreEl.style.color = getScoreColor(overallScore);
+            }
+            
+            if (scoreLabelEl) {
+                scoreLabelEl.textContent = getScoreLabel(overallScore);
+            }
+            
+            // Update Big Board display
+            renderBigBoard();
+        }
+
+        // Parse CSV
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim());
+            if (lines.length === 0) return [];
+
+            const headers = parseCSVLine(lines[0]);
+            const players = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length === 0 || !values[0]) continue; // Skip empty rows
+                
+                const player = {};
+                headers.forEach((header, index) => {
+                    player[header] = values[index] || '';
+                });
+                players.push(player);
+            }
+
+            return players;
+        }
+
+        function parseCSVLine(line) {
+            const values = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    values.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            values.push(current.trim());
+            return values;
+        }
+
+        // Parse JSON from Google Sheets
+        function parseJSON(jsonText) {
+            try {
+                // Google Sheets JSON format: {table: {rows: [...]}}
+                const data = JSON.parse(jsonText);
+                if (!data.table || !data.table.rows) {
+                    throw new Error('Unexpected JSON format');
+                }
+
+                const rows = data.table.rows;
+                if (rows.length === 0) return [];
+
+                // First row is headers
+                const headers = rows[0].c.map(cell => cell ? cell.v : '');
+                const players = [];
+
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i].c;
+                    if (!row || row.length === 0 || !row[0] || !row[0].v) continue; // Skip empty rows
+                    
+                    const player = {};
+                    headers.forEach((header, index) => {
+                        player[header] = row[index] ? (row[index].v || '') : '';
+                    });
+                    players.push(player);
+                }
+
+                return players;
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+                throw error;
+            }
+        }
+
+        // Fetch from Google Sheet
+        async function fetchPlayersFromGoogleSheet() {
+            // Try multiple methods to handle CORS issues
+            const methods = [
+                // Method 1: JSON endpoint (sometimes has better CORS support)
+                async () => {
+                    const response = await fetch(PUBLISHED_JSON_URL, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const jsonText = await response.text();
+                    return { type: 'json', data: jsonText };
+                },
+                // Method 2: Direct CSV fetch
+                async () => {
+                    const response = await fetch(PUBLISHED_CSV_URL, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const csvText = await response.text();
+                    return { type: 'csv', data: csvText };
+                },
+                // Method 3: CORS proxy with CSV
+                async () => {
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(PUBLISHED_CSV_URL)}`;
+                    const response = await fetch(proxyUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const csvText = await response.text();
+                    return { type: 'csv', data: csvText };
+                },
+                // Method 4: Alternative CORS proxy
+                async () => {
+                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(PUBLISHED_CSV_URL)}`;
+                    const response = await fetch(proxyUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const csvText = await response.text();
+                    return { type: 'csv', data: csvText };
+                },
+            ];
+
+            let lastError = null;
+
+            // Try methods silently - only log success
+            for (let i = 0; i < methods.length; i++) {
+                try {
+                    const result = await methods[i]();
+                    
+                    // Check if we got actual data (not an error page)
+                    if (result.data.includes('<!DOCTYPE') || result.data.includes('<html') || result.data.includes('Access Denied')) {
+                        throw new Error('Received HTML instead of data');
+                    }
+                    
+                    if (result.data.trim().length === 0) {
+                        throw new Error('Empty response');
+                    }
+                    
+                    let players;
+                    if (result.type === 'json') {
+                        players = parseJSON(result.data);
+                    } else {
+                        // Check if it looks like CSV
+                        if (!result.data.includes(',') || !result.data.includes('\n')) {
+                            throw new Error('Response does not appear to be CSV');
+                        }
+                        players = parseCSV(result.data);
+                    }
+                    
+                    if (players.length === 0) {
+                        throw new Error('No players parsed');
+                    }
+                    
+                    // Only log success
+                    console.log(`✓ Successfully loaded ${players.length} players`);
+                    return players;
+                } catch (error) {
+                    // Silently try next method - CORS errors are expected when running from file://
+                    lastError = error;
+                    continue;
+                }
+            }
+
+            // If all methods failed
+            throw new Error(
+                'Unable to fetch sheet data. All methods failed.\n\n' +
+                'This is likely a CORS (Cross-Origin) issue. Solutions:\n' +
+                '1. Make sure the sheet is published to web (File > Share > Publish to web)\n' +
+                '2. Host this HTML file on a web server (not file://)\n' +
+                '3. Use a local web server: python -m http.server 8000\n' +
+                '4. Last error: ' + (lastError?.message || 'Unknown')
+            );
+        }
+
+        // Fullscreen functionality
+        function toggleFullscreen() {
+            const container = document.querySelector('.container');
+            const btn = document.getElementById('fullscreen-btn');
+            const isMobile = window.innerWidth < 800 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Check if we're currently in fullscreen
+            const isFullscreen = container.classList.contains('mobile-fullscreen-active') || 
+                                 document.fullscreenElement || 
+                                 document.webkitFullscreenElement || 
+                                 document.mozFullScreenElement || 
+                                 document.msFullscreenElement;
+            
+            // Reset the maintain flag when user manually toggles fullscreen
+            shouldMaintainFullscreen = false;
+            
+            if (isFullscreen) {
+                // Exit fullscreen
+                if (container.classList.contains('mobile-fullscreen-active')) {
+                    // Mobile fallback - remove class
+                    container.classList.remove('mobile-fullscreen-active');
+                    document.body.style.overflow = '';
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                } else {
+                    // Standard fullscreen API
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                    
+                    // Unlock orientation on mobile
+                    if (isMobile && screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                }
+            } else {
+                // Enter fullscreen
+                const enterFullscreen = () => {
+                    if (container.requestFullscreen) {
+                        container.requestFullscreen().catch(() => {
+                            // If fullscreen API fails, use mobile fallback
+                            if (isMobile) {
+                                useMobileFullscreenFallback();
+                            }
+                        });
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen().catch(() => {
+                            if (isMobile) {
+                                useMobileFullscreenFallback();
+                            }
+                        });
+                    } else if (container.mozRequestFullScreen) {
+                        container.mozRequestFullScreen().catch(() => {
+                            if (isMobile) {
+                                useMobileFullscreenFallback();
+                            }
+                        });
+                    } else if (container.msRequestFullscreen) {
+                        container.msRequestFullscreen().catch(() => {
+                            if (isMobile) {
+                                useMobileFullscreenFallback();
+                            }
+                        });
+                    } else if (isMobile) {
+                        // No fullscreen API support, use fallback
+                        useMobileFullscreenFallback();
+                    }
+                };
+                
+                // On mobile, try to lock to landscape orientation first
+                if (isMobile && screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').then(() => {
+                        enterFullscreen();
+                    }).catch(() => {
+                        // If orientation lock fails, still try fullscreen
+                        enterFullscreen();
+                    });
+                } else {
+                    enterFullscreen();
+                }
+            }
+        }
+        
+        // Mobile fullscreen fallback using CSS positioning
+        function useMobileFullscreenFallback() {
+            const container = document.querySelector('.container');
+            container.classList.add('mobile-fullscreen-active');
+            document.body.style.overflow = 'hidden';
+            window.scrollTo(0, 0);
+        }
+        
+        // Track if we should maintain fullscreen (set when opening player profile)
+        let shouldMaintainFullscreen = false;
+        
+        // Update button text when fullscreen changes
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        
+        function handleFullscreenChange() {
+            updateFullscreenButton();
+            
+            // If we should maintain fullscreen but it was lost, try to restore it
+            if (shouldMaintainFullscreen && !isInFullscreen()) {
+                // Use a small delay to avoid conflicts
+                setTimeout(() => {
+                    if (shouldMaintainFullscreen && !isInFullscreen()) {
+                        restoreFullscreen();
+                    }
+                }, 50);
+            }
+        }
+        
+        function updateFullscreenButton() {
+            const btn = document.getElementById('fullscreen-btn');
+            const btnText = document.getElementById('fullscreen-btn-text');
+            const container = document.querySelector('.container');
+            const isFullscreen = container.classList.contains('mobile-fullscreen-active') ||
+                                 document.fullscreenElement || 
+                                 document.webkitFullscreenElement || 
+                                 document.mozFullScreenElement || 
+                                 document.msFullscreenElement;
+            
+            if (isFullscreen) {
+                btnText.textContent = 'Minimize';
+                // Add class to container for mobile landscape styling
+                if (window.innerWidth < 800) {
+                    container.classList.add('mobile-fullscreen-landscape');
+                }
+            } else {
+                btnText.textContent = 'View Full Screen';
+                container.classList.remove('mobile-fullscreen-landscape');
+                // Reset the flag when fullscreen is intentionally exited
+                if (!shouldMaintainFullscreen) {
+                    shouldMaintainFullscreen = false;
+                }
+            }
+        }
+        
+        // Auto-load on page load
+        async function loadPlayers() {
+            const loadingState = document.getElementById('loadingState');
+            const mainContent = document.getElementById('mainContent');
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                const players = await fetchPlayersFromGoogleSheet();
+                allPlayers = players;
+                populateFilters();
+                loadFromStorage();
+                // Initialize sort button states
+                updateSortButtonStates();
+                filterAndRender();
+                loadingState.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+            } catch (error) {
+                loadingState.classList.add('hidden');
+                // Always show main content structure even on error
+                mainContent.classList.remove('hidden');
+                errorMessage.textContent = 'Error: ' + error.message + '. Please make sure the Google Sheet is publicly viewable. If you\'re opening this file directly (file://), you need to host it on a web server or use a local server like: python -m http.server 8000';
+                errorMessage.classList.remove('hidden');
+                // Initialize empty state so UI is visible
+                document.getElementById('bigBoardCount').textContent = '0';
+                document.getElementById('poolCount').textContent = '0';
+            }
+        }
+
+        // Show/hide error
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = 'Error: ' + message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            // Get unique schools and positions
+            const schools = new Set();
+            const positions = new Set();
+            
+            allPlayers.forEach(player => {
+                if (player.School) schools.add(player.School);
+                if (player.Position) positions.add(player.Position);
+            });
+            
+            uniqueSchools = Array.from(schools).sort();
+            uniquePositions = Array.from(positions).sort();
+            
+            // Populate school dropdown
+            const schoolSelect = document.getElementById('filterSchool');
+            uniqueSchools.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school;
+                option.textContent = school;
+                schoolSelect.appendChild(option);
+            });
+            
+            // Populate position dropdown
+            const positionSelect = document.getElementById('filterPosition');
+            uniquePositions.forEach(position => {
+                const option = document.createElement('option');
+                option.value = position;
+                option.textContent = position;
+                positionSelect.appendChild(option);
+            });
+        }
+
+        // Filter players
+        function filterPlayers() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const filterSchool = document.getElementById('filterSchool').value;
+            const filterPosition = document.getElementById('filterPosition').value;
+            const gradeMin = parseFloat(document.getElementById('filterGradeMin').value) || null;
+            const gradeMax = parseFloat(document.getElementById('filterGradeMax').value) || null;
+            const waaMin = parseFloat(document.getElementById('filterWAAMin').value) || null;
+            const waaMax = parseFloat(document.getElementById('filterWAAMax').value) || null;
+            
+            const bigBoardIds = new Set(bigBoard.map(p => p.pff_id));
+
+            filteredPlayers = allPlayers.filter(player => {
+                // Exclude players already in Big Board
+                if (bigBoardIds.has(player.pff_id)) return false;
+                
+                // Text search filter - only search Name, School, and Position
+                if (searchQuery) {
+                    const matchesSearch = (
+                        (player.name || '').toLowerCase().includes(searchQuery) ||
+                        (player.School || '').toLowerCase().includes(searchQuery) ||
+                        (player.Position || '').toLowerCase().includes(searchQuery)
+                    );
+                    if (!matchesSearch) return false;
+                }
+                
+                // School filter
+                if (filterSchool && player.School !== filterSchool) return false;
+                
+                // Position filter
+                if (filterPosition && player.Position !== filterPosition) return false;
+                
+                // Grade range filter
+                const grade = parseFloat(player['2025 PFF Grade']) || null;
+                if (grade !== null) {
+                    if (gradeMin !== null && grade < gradeMin) return false;
+                    if (gradeMax !== null && grade > gradeMax) return false;
+                } else if (gradeMin !== null || gradeMax !== null) {
+                    // If we're filtering by grade but player has no grade, exclude them
+                    return false;
+                }
+                
+                // WAA range filter
+                const waa = parseFloat(player['2025 PFF WAA']) || null;
+                if (waa !== null) {
+                    if (waaMin !== null && waa < waaMin) return false;
+                    if (waaMax !== null && waa > waaMax) return false;
+                } else if (waaMin !== null || waaMax !== null) {
+                    // If we're filtering by WAA but player has no WAA, exclude them
+                    return false;
+                }
+                
+                return true;
+            });
+
+            // Sort
+            if (sortField && sortDirection) {
+                filteredPlayers.sort((a, b) => {
+                    // Handle numeric fields (PFF Rank, PFF Grade, and WAA)
+                    if (sortField === 'big_board_rank' || sortField === '2025 PFF Grade' || sortField === '2025 PFF WAA') {
+                        const aVal = parseFloat(a[sortField]) || 0;
+                        const bVal = parseFloat(b[sortField]) || 0;
+                        const comparison = aVal - bVal;
+                        return sortDirection === 'asc' ? comparison : -comparison;
+                    } else {
+                        // Handle text fields
+                        const aVal = a[sortField] || '';
+                        const bVal = b[sortField] || '';
+                        const comparison = String(aVal).localeCompare(String(bVal), undefined, { numeric: true });
+                        return sortDirection === 'asc' ? comparison : -comparison;
+                    }
+                });
+            }
+        }
+        
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterSchool').value = '';
+            document.getElementById('filterPosition').value = '';
+            document.getElementById('filterGradeMin').value = '';
+            document.getElementById('filterGradeMax').value = '';
+            document.getElementById('filterWAAMin').value = '';
+            document.getElementById('filterWAAMax').value = '';
+            document.getElementById('clearSearch').classList.add('hidden');
+            
+            // Clear sorting (reset to default)
+            sortField = 'big_board_rank';
+            sortDirection = 'asc';
+            
+            filterAndRender();
+            announceToScreenReader('All filters and sorting cleared');
+        }
+
+        // Reset Big Board and clear all filters
+        function resetBigBoard() {
+            // Preserve fullscreen state
+            const wasFullscreen = isInFullscreen();
+            
+            if (confirm('Are you sure you want to reset your Big Board? This will remove all players and clear all filters.')) {
+                bigBoard = [];
+                expandedPlayers.clear();
+                expandedNotes.clear();
+                // Optionally clear notes on reset, or keep them:
+                // playerNotes = {};
+                localStorage.setItem('bigBoard', JSON.stringify(bigBoard));
+                saveToStorage(); // Save notes state (even if empty)
+                clearFilters();
+                renderBigBoard();
+                
+                // Restore fullscreen if it was active
+                if (wasFullscreen && !isInFullscreen()) {
+                    // Small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        restoreFullscreen();
+                    }, 100);
+                }
+            }
+        }
+
+        // Sort
+        function sortBy(field) {
+            if (sortField === field) {
+                if (sortDirection === 'asc') {
+                    sortDirection = 'desc';
+                } else if (sortDirection === 'desc') {
+                    sortField = '';
+                    sortDirection = '';
+                } else {
+                    sortDirection = 'asc';
+                }
+            } else {
+                sortField = field;
+                sortDirection = 'asc';
+            }
+
+            filterAndRender();
+        }
+
+        // Render player card
+        function renderPlayerCard(player, isBigBoard = false, index = null) {
+            const imageUrl = player.Image || '';
+            const hasImage = imageUrl && imageUrl.trim() !== '';
+            const pffRank = player.big_board_rank || '';
+            const grade = player['2025 PFF Grade'] || '';
+            const waa = player['2025 PFF WAA'] || '';
+            const profileUrl = player['Player profile'] || '';
+            const rankNumber = isBigBoard ? (index !== null ? index + 1 : '') : '';
+            
+            // Big Board view - slim version with expandable analysis
+            if (isBigBoard) {
+                const isExpanded = expandedPlayers.has(player.pff_id);
+                const hasAnalysis = player.analysis && player.analysis.trim() !== '';
+                
+                return `
+                    <div 
+                        class="player-card bg-gray-800 rounded-xl p-3 mb-2 border border-gray-700 hover:border-cyan-400"
+                        draggable="true" 
+                        role="listitem"
+                        tabindex="0"
+                        aria-label="Player ${index + 1}: ${player.name || ''}, ${player.Position || ''} from ${player.School || ''}"
+                        data-index="${index}"
+                        data-pff-id="${player.pff_id}"
+                        ondragstart="handleDragStart(event, ${index})" 
+                        ondragend="handleDragEnd(event)" 
+                        ondragover="handleDragOver(event)" 
+                        ondrop="handleDrop(event, ${index})"
+                        onkeydown="handleBigBoardKeydown(event, ${index})"
+                    >
+                        <div class="flex items-center gap-3 mobile-player-card">
+                            <!-- Desktop: Left side with rank and player info -->
+                            <div class="hidden md:flex items-center gap-3 flex-1 min-w-0">
+                                <div class="player-image bg-cyan-400/20 border-2 border-cyan-400/50 flex items-center justify-center text-cyan-400 text-lg font-bold flex-shrink-0">
+                                    ${rankNumber}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    ${profileUrl && profileUrl !== '#N/A' ? `
+                                        <button 
+                                            onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openPlayerProfile('${profileUrl}');}"
+                                            aria-label="View profile for ${player.name || 'player'}"
+                                            class="flex items-center gap-2 text-white font-bold text-base md:text-lg mb-0.5 hover:text-cyan-400 transition-colors text-left"
+                                        >
+                                            ${player.name || ''}
+                                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </button>
+                                    ` : `
+                                        <h3 class="text-white font-bold text-base md:text-lg mb-0.5">${player.name || ''}</h3>
+                                    `}
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-gray-300 text-xs">${player.School || ''}</span>
+                                        <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                            ${player.Position || ''}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Desktop: Stats on the right -->
+                            <div class="hidden md:flex flex-col gap-2 flex-shrink-0">
+                                <div class="flex gap-2 items-center grade-boxes-container justify-end" id="stat-boxes-${player.pff_id}" style="flex-wrap: wrap;">
+                                    ${pffRank ? `
+                                        <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                            <div class="grade-box-value text-cyan-400 font-bold text-base">${pffRank}</div>
+                                            <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                        </div>
+                                    ` : ''}
+                                    ${grade ? `
+                                        <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                            <div class="grade-box-value text-cyan-400 font-bold text-base">${grade}</div>
+                                            <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                        </div>
+                                    ` : ''}
+                                    ${waa ? `
+                                        <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                            <div class="grade-box-value text-cyan-400 font-bold text-base">${waa}</div>
+                                            <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                        </div>
+                                    ` : ''}
+                                    ${scoutModeEnabled ? (() => {
+                                        const overallScore = calculatePlayerScore(player.pff_id, player.Position || '');
+                                        if (overallScore !== null) {
+                                            const scoreColor = getScoreColor(overallScore);
+                                            const scoreAcronym = getScoreAcronym(overallScore);
+                                            return `
+                                                <button 
+                                                    onclick="event.stopPropagation(); openScoringModal('${player.pff_id}')"
+                                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openScoringModal('${player.pff_id}');}"
+                                                    aria-label="Score ${player.name || 'player'}: ${overallScore.toFixed(2)} - ${getScoreLabel(overallScore)}"
+                                                    class="grade-box rounded-lg px-2.5 py-1.5 text-center min-w-[55px] cursor-pointer hover:opacity-80 transition-opacity"
+                                                    style="background-color: ${scoreColor}15; border: 1px solid ${scoreColor}40;"
+                                                >
+                                                    <div class="grade-box-value font-bold text-base" style="color: ${scoreColor}">${overallScore.toFixed(2)}</div>
+                                                    <div class="grade-box-label text-xs font-medium" style="color: ${scoreColor}CC">${scoreAcronym}</div>
+                                                </button>
+                                            `;
+                                        }
+                                        return '';
+                                    })() : ''}
+                                    ${hasAnalysis ? `
+                                        <button 
+                                            onclick="event.stopPropagation(); togglePlayerAnalysis('${player.pff_id}')"
+                                            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerAnalysis('${player.pff_id}');}"
+                                            aria-label="${isExpanded ? 'Collapse' : 'Expand'} analysis for ${player.name || 'player'}"
+                                            aria-expanded="${isExpanded}"
+                                            class="p-1.5 text-white hover:text-gray-300 transition-colors flex-shrink-0"
+                                        >
+                                            <svg class="w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </button>
+                                    ` : ''}
+                                    <button 
+                                        onclick="event.stopPropagation(); removeFromBigBoard('${player.pff_id}')"
+                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();removeFromBigBoard('${player.pff_id}');}"
+                                        aria-label="Remove ${player.name || 'player'} from Big Board"
+                                        class="p-1 text-gray-400 hover:text-red-400 transition-colors flex-shrink-0"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                ${scoutModeEnabled ? (() => {
+                                    const overallScore = calculatePlayerScore(player.pff_id, player.Position || '');
+                                    if (overallScore === null) {
+                                        // When not scored, show a clean button below, matching stat boxes width
+                                        // Count stat boxes to calculate width
+                                        const statBoxCount = (pffRank ? 1 : 0) + (grade ? 1 : 0) + (waa ? 1 : 0);
+                                        const buttonWidth = statBoxCount > 0 ? `calc(${statBoxCount * 55}px + ${(statBoxCount - 1) * 8}px)` : 'auto';
+                                        return `
+                                            <button 
+                                                onclick="event.stopPropagation(); openScoringModal('${player.pff_id}')"
+                                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openScoringModal('${player.pff_id}');}"
+                                                aria-label="Score ${player.name || 'player'}"
+                                                class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5 bg-cyan-400/10 hover:bg-cyan-400/20 border border-cyan-400/30 text-cyan-400"
+                                                data-stat-boxes-width="stat-boxes-${player.pff_id}"
+                                            >
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                                <span>Score Player</span>
+                                            </button>
+                                        `;
+                                    }
+                                    return '';
+                                })() : ''}
+                            </div>
+                            
+                            <!-- Mobile: Compact layout with expandable section -->
+                            <div class="md:hidden w-full">
+                                <div class="flex items-center gap-3">
+                                    <div class="player-image bg-cyan-400/20 border-2 border-cyan-400/50 flex items-center justify-center text-cyan-400 text-lg font-bold flex-shrink-0">
+                                        ${rankNumber}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            ${profileUrl && profileUrl !== '#N/A' ? `
+                                                <button 
+                                                    onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openPlayerProfile('${profileUrl}');}"
+                                                    aria-label="View profile for ${player.name || 'player'}"
+                                                    class="flex items-center gap-1.5 text-white font-bold text-base hover:text-cyan-400 transition-colors text-left flex-1 min-w-0"
+                                                >
+                                                    <span class="truncate">${player.name || ''}</span>
+                                                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                    </svg>
+                                                </button>
+                                            ` : `
+                                                <h3 class="text-white font-bold text-base flex-1 min-w-0 truncate">${player.name || ''}</h3>
+                                            `}
+                                            ${scoutModeEnabled ? (() => {
+                                                const overallScore = calculatePlayerScore(player.pff_id, player.Position || '');
+                                                const scoreColor = getScoreColor(overallScore);
+                                                const scoreLabel = getScoreLabel(overallScore);
+                                                return `
+                                                    <button 
+                                                        onclick="event.stopPropagation(); openScoringModal('${player.pff_id}')"
+                                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openScoringModal('${player.pff_id}');}"
+                                                        aria-label="Score ${player.name || 'player'}"
+                                                        class="px-2 py-1 text-xs font-semibold rounded-lg transition-colors ${overallScore !== null ? 'bg-gray-700' : 'bg-cyan-400/20 border border-cyan-400/50'}"
+                                                        style="${overallScore !== null ? `color: ${scoreColor}; border: 1px solid ${scoreColor}40;` : 'color: #00FFFF;'}"
+                                                    >
+                                                        ${overallScore !== null ? overallScore.toFixed(2) : 'Score'}
+                                                    </button>
+                                                `;
+                                            })() : ''}
+                                            ${((pffRank || grade || waa) || hasAnalysis) ? `
+                                                <button 
+                                                    onclick="event.stopPropagation(); togglePlayerAnalysis('${player.pff_id}')"
+                                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerAnalysis('${player.pff_id}');}"
+                                                    aria-label="${isExpanded ? 'Collapse' : 'Expand'} analysis for ${player.name || 'player'}"
+                                                    aria-expanded="${isExpanded}"
+                                                    class="p-1 text-gray-500 hover:text-gray-400 transition-colors flex-shrink-0"
+                                                >
+                                                    <svg class="w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                    </svg>
+                                                </button>
+                                            ` : ''}
+                                            <button 
+                                                onclick="event.stopPropagation(); removeFromBigBoard('${player.pff_id}')"
+                                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();removeFromBigBoard('${player.pff_id}');}"
+                                                aria-label="Remove ${player.name || 'player'} from Big Board"
+                                                class="p-1 text-gray-400 hover:text-red-400 transition-colors flex-shrink-0"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                                ${player.Position || ''}
+                                            </span>
+                                            <span class="text-gray-300 text-xs">${player.School || ''}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mobile: Expandable stats and analysis -->
+                                ${isExpanded ? `
+                                    <div class="mt-3 pt-3 border-t border-gray-700">
+                                        ${((pffRank || grade || waa)) ? `
+                                            <div class="flex justify-center gap-2 mb-3">
+                                                ${pffRank ? `
+                                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                                        <div class="grade-box-value text-cyan-400 font-bold">${pffRank}</div>
+                                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                                    </div>
+                                                ` : ''}
+                                                ${grade ? `
+                                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                                        <div class="grade-box-value text-cyan-400 font-bold">${grade}</div>
+                                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                                    </div>
+                                                ` : ''}
+                                                ${waa ? `
+                                                    <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                                        <div class="grade-box-value text-cyan-400 font-bold">${waa}</div>
+                                                        <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        ` : ''}
+                                        ${hasAnalysis ? `
+                                            <div class="mt-2">
+                                                <p class="text-sm text-gray-300 leading-relaxed">${player.analysis}</p>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+                                <!-- Mobile: Notes section (always available) -->
+                                <div class="md:hidden mt-3 pt-3 border-t border-gray-700">
+                                    <div class="flex items-center gap-2">
+                                        <button 
+                                            onclick="event.stopPropagation(); togglePlayerNotes('${player.pff_id}')"
+                                            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerNotes('${player.pff_id}');}"
+                                            aria-label="${expandedNotes.has(player.pff_id) ? 'Collapse' : 'Expand'} notes for ${player.name || 'player'}"
+                                            aria-expanded="${expandedNotes.has(player.pff_id)}"
+                                            class="flex-1 flex items-center justify-between p-2 text-left text-gray-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-gray-700/50"
+                                        >
+                                            <span class="text-sm font-medium flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                                My Draft Notes
+                                                ${getPlayerNote(player.pff_id) ? `
+                                                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                ` : ''}
+                                            </span>
+                                            <svg class="w-4 h-4 transform transition-transform ${expandedNotes.has(player.pff_id) ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </button>
+                                        ${Object.keys(playerNotes).length > 0 ? `
+                                            <button 
+                                                onclick="event.stopPropagation(); clearAllNotes()"
+                                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();clearAllNotes();}"
+                                                aria-label="Clear all draft notes"
+                                                class="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-gray-700/50 flex-shrink-0"
+                                                title="Clear all notes"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                    ${expandedNotes.has(player.pff_id) ? `
+                                        <div class="mt-2">
+                                            <textarea 
+                                                id="notes-mobile-${player.pff_id}"
+                                                placeholder="Add your draft notes here..."
+                                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-y min-h-[100px]"
+                                                onblur="savePlayerNote('${player.pff_id}', this.value)"
+                                            >${getPlayerNote(player.pff_id)}</textarea>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Desktop: Collapsible analysis -->
+                        ${hasAnalysis && isExpanded ? `
+                            <div class="hidden md:block mt-3 pt-3 border-t border-gray-700">
+                                <p class="text-sm text-gray-300 leading-relaxed">${player.analysis}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Desktop: Collapsible notes section -->
+                        <div class="hidden md:block mt-3 pt-3 border-t border-gray-700">
+                            <div class="flex items-center gap-2">
+                                <button 
+                                    onclick="event.stopPropagation(); togglePlayerNotes('${player.pff_id}')"
+                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerNotes('${player.pff_id}');}"
+                                    aria-label="${expandedNotes.has(player.pff_id) ? 'Collapse' : 'Expand'} notes for ${player.name || 'player'}"
+                                    aria-expanded="${expandedNotes.has(player.pff_id)}"
+                                    class="flex-1 flex items-center justify-between p-2 text-left text-gray-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-gray-700/50"
+                                >
+                                    <span class="text-sm font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                        My Draft Notes
+                                        ${getPlayerNote(player.pff_id) ? `
+                                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        ` : ''}
+                                    </span>
+                                    <svg class="w-4 h-4 transform transition-transform ${expandedNotes.has(player.pff_id) ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                ${Object.keys(playerNotes).length > 0 ? `
+                                    <button 
+                                        onclick="event.stopPropagation(); clearAllNotes()"
+                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();clearAllNotes();}"
+                                        aria-label="Clear all draft notes"
+                                        class="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-gray-700/50 flex-shrink-0"
+                                        title="Clear all notes"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                            </div>
+                            ${expandedNotes.has(player.pff_id) ? `
+                                <div class="mt-2">
+                                    <textarea 
+                                        id="notes-${player.pff_id}"
+                                        placeholder="Add your draft notes here..."
+                                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-y min-h-[100px]"
+                                        onblur="savePlayerNote('${player.pff_id}', this.value)"
+                                    >${getPlayerNote(player.pff_id)}</textarea>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Player Pool view - full version
+            return `
+                <div 
+                    class="player-card bg-gray-800 rounded-xl p-4 mb-3 border border-gray-700 hover:border-cyan-400 cursor-pointer"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Add ${player.name || 'player'} to Big Board"
+                    onclick="addToBigBoard('${player.pff_id}')"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();addToBigBoard('${player.pff_id}');}"
+                >
+                    <div class="flex items-start gap-4 mobile-player-card">
+                        <!-- Desktop: Left side with image and player info -->
+                        <div class="hidden md:flex items-start gap-4 flex-1 min-w-0">
+                            ${hasImage ? `
+                                <img 
+                                    src="${imageUrl}" 
+                                    alt="${player.name || ''}"
+                                    class="player-image"
+                                    onerror="this.style.display='none'"
+                                />
+                            ` : `
+                                <div class="player-image bg-gray-700 flex items-center justify-center text-gray-500 text-sm font-semibold">
+                                    ${(player.name || '').charAt(0).toUpperCase()}
+                                </div>
+                            `}
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-white font-bold text-lg md:text-xl mb-1">${player.name || ''}</h3>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-gray-300 text-sm">${player.School || ''}</span>
+                                    <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                        ${player.Position || ''}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile: Reorganized layout -->
+                        <div class="md:hidden mobile-player-header">
+                            ${hasImage ? `
+                                <img 
+                                    src="${imageUrl}" 
+                                    alt="${player.name || ''}"
+                                    class="player-image"
+                                    onerror="this.style.display='none'"
+                                />
+                            ` : `
+                                <div class="player-image bg-gray-700 flex items-center justify-center text-gray-500 text-sm font-semibold">
+                                    ${(player.name || '').charAt(0).toUpperCase()}
+                                </div>
+                            `}
+                            <div class="mobile-player-info">
+                                <div class="mobile-player-name-row">
+                                    ${profileUrl && profileUrl !== '#N/A' ? `
+                                        <button 
+                                            onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                            class="flex items-center gap-2 text-white font-bold text-lg hover:text-cyan-400 transition-colors text-left"
+                                        >
+                                            ${player.name || ''}
+                                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </button>
+                                    ` : `
+                                        <h3 class="text-white font-bold text-lg">${player.name || ''}</h3>
+                                    `}
+                                </div>
+                                <div class="mobile-player-details-row">
+                                    <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
+                                        ${player.Position || ''}
+                                    </span>
+                                    <span class="text-gray-300 text-sm">${player.School || ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Desktop: Stats on the right -->
+                        <div class="hidden md:flex gap-2 flex-shrink-0 grade-boxes-container" style="flex-wrap: wrap;">
+                            ${pffRank ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-center min-w-[60px]">
+                                    <div class="grade-box-value text-cyan-400 font-bold text-lg">${pffRank}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                </div>
+                            ` : ''}
+                            ${grade ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-center min-w-[60px]">
+                                    <div class="grade-box-value text-cyan-400 font-bold text-lg">${grade}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                </div>
+                            ` : ''}
+                            ${waa ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-center min-w-[60px]">
+                                    <div class="grade-box-value text-cyan-400 font-bold text-lg">${waa}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <!-- Mobile: Stats row centered underneath -->
+                        <div class="mobile-stats-row md:hidden">
+                            ${pffRank ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                    <div class="grade-box-value text-cyan-400 font-bold">${pffRank}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                </div>
+                            ` : ''}
+                            ${grade ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                    <div class="grade-box-value text-cyan-400 font-bold">${grade}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                </div>
+                            ` : ''}
+                            ${waa ? `
+                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center">
+                                    <div class="grade-box-value text-cyan-400 font-bold">${waa}</div>
+                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Desktop: Analysis always visible -->
+                    ${player.analysis ? `
+                        <div class="hidden md:block mt-3 pt-3 border-t border-gray-700">
+                            <p class="text-sm text-gray-300 leading-relaxed mb-3">${player.analysis}</p>
+                            ${profileUrl && profileUrl !== '#N/A' ? `
+                                <div class="flex justify-center">
+                                    <button 
+                                        onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openPlayerProfile('${profileUrl}');}"
+                                        aria-label="View profile for ${player.name || 'player'}"
+                                        class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-400/20 hover:bg-cyan-400/30 border border-cyan-400/50 rounded-lg text-cyan-400 font-semibold text-sm transition-all hover:scale-105"
+                                    >
+                                        View Player Profile
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Mobile: Collapsible analysis -->
+                    ${(() => {
+                        if (!player.analysis) return '';
+                        const isExpanded = expandedPlayers.has(player.pff_id);
+                        return `
+                        <div class="md:hidden mt-3">
+                            <button 
+                                onclick="event.stopPropagation(); togglePlayerAnalysis('${player.pff_id}')"
+                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();togglePlayerAnalysis('${player.pff_id}');}"
+                                aria-label="${isExpanded ? 'Collapse' : 'Expand'} analysis for ${player.name || 'player'}"
+                                aria-expanded="${isExpanded}"
+                                class="w-full flex items-center justify-between p-2 text-left text-gray-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-gray-700/50 analysis-button-mobile"
+                            >
+                                <span class="text-sm font-medium">Analysis</span>
+                                <svg class="analysis-chevron transform transition-transform ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            ${isExpanded ? `
+                                <div class="mt-2 pt-2 border-t border-gray-700">
+                                    <p class="text-sm text-gray-300 leading-relaxed mb-3">${player.analysis}</p>
+                                    ${profileUrl && profileUrl !== '#N/A' ? `
+                                        <div class="flex justify-center">
+                                            <button 
+                                                onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                                                class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-400/20 hover:bg-cyan-400/30 border border-cyan-400/50 rounded-lg text-cyan-400 font-semibold text-sm transition-all hover:scale-105"
+                                            >
+                                                View Player Profile
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+                        `;
+                    })()}
+                </div>
+            `;
+        }
+
+        // Render Big Board
+        function renderBigBoard() {
+            const container = document.getElementById('bigBoard');
+            document.getElementById('bigBoardCount').textContent = bigBoard.length;
+            
+            // Set ARIA label for the Big Board container
+            container.setAttribute('role', 'list');
+            container.setAttribute('aria-label', `Big Board with ${bigBoard.length} player${bigBoard.length !== 1 ? 's' : ''}`);
+
+            if (bigBoard.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <p class="text-base">Your Big Board is empty</p>
+                        <p class="text-sm mt-2 text-gray-600">Tap players below to add them</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bigBoard.map((player, index) => 
+                renderPlayerCard(player, true, index)
+            ).join('');
+            
+            // Immediately apply initial state to newly added card if present
+            if (newlyAddedPlayerId) {
+                const newCard = container.querySelector(`[data-pff-id="${newlyAddedPlayerId}"]`);
+                if (newCard) {
+                    newCard.classList.add('player-card-initial');
+                }
+            }
+            
+            // Match score button width and position to stat boxes (after DOM renders) - only for unscored players
+            // Position button to start under first stat box and end at last stat box
+            requestAnimationFrame(() => {
+                bigBoard.forEach(player => {
+                    const scoreButton = document.querySelector(`[data-stat-boxes-width="stat-boxes-${player.pff_id}"]`);
+                    if (scoreButton) {
+                        const statBoxesContainer = document.getElementById(`stat-boxes-${player.pff_id}`);
+                        if (statBoxesContainer) {
+                            // Get all stat box elements (grade-box class divs only, not action buttons)
+                            const statBoxes = Array.from(statBoxesContainer.children).filter(child => {
+                                return child.classList.contains('grade-box') && child.tagName === 'DIV';
+                            });
+                            
+                            if (statBoxes.length > 0) {
+                                const firstBox = statBoxes[0];
+                                const lastBox = statBoxes[statBoxes.length - 1];
+                                
+                                // Get positions relative to the container
+                                const containerRect = statBoxesContainer.getBoundingClientRect();
+                                const firstBoxRect = firstBox.getBoundingClientRect();
+                                const lastBoxRect = lastBox.getBoundingClientRect();
+                                
+                                // Calculate the left offset and width
+                                const leftOffset = firstBoxRect.left - containerRect.left;
+                                const rightEdge = lastBoxRect.right - containerRect.left;
+                                const buttonWidth = rightEdge - leftOffset;
+                                
+                                // Set button width and align it
+                                scoreButton.style.width = buttonWidth + 'px';
+                                scoreButton.style.marginLeft = leftOffset + 'px';
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // Render Player Pool
+        function renderPlayerPool() {
+            const container = document.getElementById('playerPool');
+            document.getElementById('poolCount').textContent = filteredPlayers.length;
+            
+            // Set ARIA label for the Player Pool container
+            container.setAttribute('role', 'list');
+            container.setAttribute('aria-label', `Player Pool with ${filteredPlayers.length} player${filteredPlayers.length !== 1 ? 's' : ''}`);
+
+            if (filteredPlayers.length === 0) {
+                const searchQuery = document.getElementById('searchInput').value;
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <p class="text-base">No players found</p>
+                        <p class="text-sm mt-2 text-gray-600">${searchQuery ? 'Try adjusting your search' : ''}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredPlayers.map(player => 
+                renderPlayerCard(player, false)
+            ).join('');
+        }
+
+        // Filter and render
+        function filterAndRender() {
+            const prevCount = filteredPlayers.length;
+            filterPlayers();
+            renderPlayerPool();
+            
+            // Update sort button states
+            updateSortButtonStates();
+            
+            // Announce filter changes if count changed significantly
+            const newCount = filteredPlayers.length;
+            if (Math.abs(newCount - prevCount) > 5 || (prevCount === 0 && newCount > 0) || (prevCount > 0 && newCount === 0)) {
+                const filterPosition = document.getElementById('filterPosition').value;
+                const filterSchool = document.getElementById('filterSchool').value;
+                const searchQuery = document.getElementById('searchInput').value;
+                
+                let announcement = `Showing ${newCount} player${newCount !== 1 ? 's' : ''}`;
+                if (filterPosition) {
+                    announcement += `, position filter: ${filterPosition}`;
+                }
+                if (filterSchool) {
+                    announcement += `, school filter: ${filterSchool}`;
+                }
+                if (searchQuery) {
+                    announcement += `, search: ${searchQuery}`;
+                }
+                if (sortField && sortDirection) {
+                    announcement += `, sorted by ${sortField} ${sortDirection === 'asc' ? 'ascending' : 'descending'}`;
+                }
+                announceToScreenReader(announcement);
+            }
+        }
+        
+        // Update sort button visual states
+        function updateSortButtonStates() {
+            // Clear all sort icons
+            document.querySelectorAll('[id^="sort-icon-"]').forEach(el => {
+                el.textContent = '';
+            });
+            
+            // Reset all button styles
+            document.querySelectorAll('[id^="sort-"]').forEach(btn => {
+                if (btn.id.startsWith('sort-icon-')) return;
+                btn.classList.remove('bg-cyan-400/20', 'border-cyan-400/50', 'border');
+                btn.classList.add('bg-gray-700');
+            });
+            
+            // Update active sort button
+            if (sortField && sortDirection) {
+                const icon = document.getElementById(`sort-icon-${sortField}`);
+                const button = document.getElementById(`sort-${sortField}`);
+                if (icon) {
+                    icon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+                }
+                if (button) {
+                    button.classList.remove('bg-gray-700');
+                    button.classList.add('bg-cyan-400/20', 'border', 'border-cyan-400/50');
+                }
+            }
+        }
+
+        let newlyAddedPlayerId = null;
+
+        // ARIA announcement helper
+        function announceToScreenReader(message) {
+            const announceEl = document.getElementById('ariaAnnounce');
+            if (announceEl) {
+                announceEl.textContent = message;
+                // Clear after announcement to allow re-announcement
+                setTimeout(() => {
+                    announceEl.textContent = '';
+                }, 1000);
+            }
+        }
+
+        // Add to Big Board
+        function addToBigBoard(pffId) {
+            const player = allPlayers.find(p => p.pff_id === pffId);
+            if (player && !bigBoard.find(p => p.pff_id === pffId)) {
+                newlyAddedPlayerId = pffId;
+                bigBoard.push(player);
+                saveToStorage();
+                renderBigBoard();
+                filterAndRender();
+                
+                // ARIA announcement
+                announceToScreenReader(`Added ${player.name || 'player'} to Big Board`);
+                
+                // Trigger animation on newly added card
+                requestAnimationFrame(() => {
+                    const container = document.getElementById('bigBoard');
+                    const newCard = container.querySelector(`[data-pff-id="${pffId}"]`);
+                    if (newCard && newCard.classList.contains('player-card-initial')) {
+                        requestAnimationFrame(() => {
+                            newCard.classList.remove('player-card-initial');
+                            newCard.classList.add('player-card-enter');
+                            setTimeout(() => {
+                                newCard.classList.remove('player-card-enter');
+                                newlyAddedPlayerId = null;
+                            }, 300);
+                        });
+                    }
+                });
+            }
+        }
+
+        // Remove from Big Board
+        function removeFromBigBoard(pffId) {
+            const player = bigBoard.find(p => p.pff_id === pffId);
+            const container = document.getElementById('bigBoard');
+            const cardToRemove = container.querySelector(`[data-pff-id="${pffId}"]`);
+            
+            if (cardToRemove) {
+                cardToRemove.classList.add('player-card-exit');
+                setTimeout(() => {
+                    bigBoard = bigBoard.filter(p => p.pff_id !== pffId);
+                    expandedPlayers.delete(pffId);
+                    expandedNotes.delete(pffId);
+                    // Optionally keep notes even after removal, or delete them:
+                    // delete playerNotes[pffId];
+                    saveToStorage();
+                    renderBigBoard();
+                    filterAndRender();
+                    // ARIA announcement
+                    if (player) {
+                        announceToScreenReader(`Removed ${player.name || 'player'} from Big Board`);
+                    }
+                }, 300);
+            } else {
+                bigBoard = bigBoard.filter(p => p.pff_id !== pffId);
+                expandedPlayers.delete(pffId);
+                expandedNotes.delete(pffId);
+                // Optionally keep notes even after removal, or delete them:
+                // delete playerNotes[pffId];
+                saveToStorage();
+                renderBigBoard();
+                filterAndRender();
+                // ARIA announcement
+                if (player) {
+                    announceToScreenReader(`Removed ${player.name || 'player'} from Big Board`);
+                }
+            }
+        }
+
+        // Drag and Drop
+        let draggedElement = null;
+        let draggedIndex = null;
+
+        function handleDragStart(e, index) {
+            draggedElement = bigBoard[index];
+            draggedIndex = index;
+            e.currentTarget.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.currentTarget.outerHTML);
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            const container = document.getElementById('bigBoard');
+            const cards = container.querySelectorAll('.player-card');
+            cards.forEach(card => card.classList.remove('drag-over'));
+            draggedElement = null;
+            draggedIndex = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const card = e.currentTarget;
+            if (!card.classList.contains('dragging')) {
+                const container = document.getElementById('bigBoard');
+                const cards = container.querySelectorAll('.player-card');
+                cards.forEach(c => c.classList.remove('drag-over'));
+                card.classList.add('drag-over');
+            }
+        }
+
+        function handleDrop(e, dropIndex) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+            const newBigBoard = [...bigBoard];
+            const [removed] = newBigBoard.splice(draggedIndex, 1);
+            newBigBoard.splice(dropIndex, 0, removed);
+
+            bigBoard = newBigBoard;
+            saveToStorage();
+            renderBigBoard();
+            
+            // ARIA announcement
+            const player = removed;
+            if (player) {
+                announceToScreenReader(`Moved ${player.name || 'player'} to position ${dropIndex + 1}`);
+            }
+        }
+        
+        // Keyboard navigation for Big Board
+        function handleBigBoardKeydown(e, index) {
+            const container = document.getElementById('bigBoard');
+            const cards = Array.from(container.querySelectorAll('.player-card[tabindex="0"]'));
+            const currentIndex = cards.findIndex(card => card === e.currentTarget);
+            
+            switch(e.key) {
+                case 'ArrowUp':
+                    e.preventDefault();
+                    if (currentIndex > 0) {
+                        const prevCard = cards[currentIndex - 1];
+                        prevCard.focus();
+                        prevCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    if (currentIndex < cards.length - 1) {
+                        const nextCard = cards[currentIndex + 1];
+                        nextCard.focus();
+                        nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    if (index > 0) {
+                        movePlayerInBigBoard(index, index - 1);
+                    }
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    if (index < bigBoard.length - 1) {
+                        movePlayerInBigBoard(index, index + 1);
+                    }
+                    break;
+            }
+        }
+        
+        // Move player in Big Board (for keyboard navigation)
+        function movePlayerInBigBoard(fromIndex, toIndex) {
+            if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= bigBoard.length || toIndex >= bigBoard.length) {
+                return;
+            }
+            
+            const newBigBoard = [...bigBoard];
+            const [removed] = newBigBoard.splice(fromIndex, 1);
+            newBigBoard.splice(toIndex, 0, removed);
+            
+            bigBoard = newBigBoard;
+            saveToStorage();
+            renderBigBoard();
+            
+            // Focus the moved card
+            requestAnimationFrame(() => {
+                const container = document.getElementById('bigBoard');
+                const movedCard = container.querySelector(`[data-index="${toIndex}"]`);
+                if (movedCard) {
+                    movedCard.focus();
+                }
+            });
+            
+            // ARIA announcement
+            const player = removed;
+            if (player) {
+                announceToScreenReader(`Moved ${player.name || 'player'} to position ${toIndex + 1}`);
+            }
+        }
+
+        // Clear search
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            document.getElementById('clearSearch').classList.add('hidden');
+            filterAndRender();
+        }
+
+        // Toggle player analysis expansion
+        function togglePlayerAnalysis(pffId) {
+            const player = allPlayers.find(p => p.pff_id === pffId) || bigBoard.find(p => p.pff_id === pffId);
+            const wasExpanded = expandedPlayers.has(pffId);
+            
+            if (wasExpanded) {
+                expandedPlayers.delete(pffId);
+            } else {
+                expandedPlayers.add(pffId);
+            }
+            renderBigBoard();
+            renderPlayerPool(); // Also update Player Pool to show/hide analysis
+            
+            // ARIA announcement
+            if (player) {
+                announceToScreenReader(`Analysis ${wasExpanded ? 'collapsed' : 'expanded'} for ${player.name || 'player'}`);
+            }
+        }
+
+        // Helper function to check if we're in fullscreen
+        function isInFullscreen() {
+            const container = document.querySelector('.container');
+            return container.classList.contains('mobile-fullscreen-active') || 
+                   document.fullscreenElement || 
+                   document.webkitFullscreenElement || 
+                   document.mozFullScreenElement || 
+                   document.msFullscreenElement;
+        }
+        
+        // Helper function to restore fullscreen
+        function restoreFullscreen() {
+            const container = document.querySelector('.container');
+            const isMobile = window.innerWidth < 800 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Check if we should restore native fullscreen
+            if (!document.fullscreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.mozFullScreenElement && 
+                !document.msFullscreenElement) {
+                
+                // Try to restore native fullscreen
+                if (container.requestFullscreen) {
+                    container.requestFullscreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen().catch((err) => {
+                        console.log('Fullscreen restore attempt failed:', err);
+                        if (isMobile) {
+                            useMobileFullscreenFallback();
+                        }
+                    });
+                } else if (isMobile) {
+                    // Restore mobile fallback
+                    useMobileFullscreenFallback();
+                }
+            } else {
+                // Already in fullscreen, but check mobile fallback
+                if (isMobile && !container.classList.contains('mobile-fullscreen-active')) {
+                    useMobileFullscreenFallback();
+                }
+            }
+        }
+        
+        // Store the current profile URL for fallback
+        let currentProfileUrl = '';
+        
+        // Try to proxy URL through CORS proxy (may not work due to X-Frame-Options)
+        function tryProxyUrl(url) {
+            // Try using a CORS proxy - but note: X-Frame-Options is still enforced by browser
+            // This might help with CORS but won't bypass X-Frame-Options
+            const proxyServices = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+            ];
+            return proxyServices[0]; // Try first one
+        }
+        
+        // Open player profile in modal overlay (iframe) - preserves fullscreen
+        function openPlayerProfile(url) {
+            currentProfileUrl = url;
+            
+            // Check if it's a PFF.com URL - these always block iframe embedding
+            if (url.includes('pff.com') || url.includes('profootballfocus.com')) {
+                // PFF.com blocks iframes, so open in popup window
+                // But preserve fullscreen state
+                const wasFullscreen = isInFullscreen();
+                if (wasFullscreen) {
+                    shouldMaintainFullscreen = true;
+                }
+                
+                // Open in popup window
+                const width = 1200;
+                const height = 800;
+                const left = (screen.width - width) / 2;
+                const top = (screen.height - height) / 2;
+                
+                const popup = window.open(
+                    url,
+                    'PlayerProfile',
+                    `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no`
+                );
+                
+                // Try to restore fullscreen when user returns
+                if (wasFullscreen && popup) {
+                    // Listen for when window regains focus
+                    window.addEventListener('focus', () => {
+                        if (shouldMaintainFullscreen && !isInFullscreen()) {
+                            setTimeout(() => {
+                                restoreFullscreen();
+                            }, 100);
+                        }
+                    }, { once: true });
+                    
+                    // Also check when popup closes
+                    const checkPopupClosed = setInterval(() => {
+                        if (popup.closed) {
+                            clearInterval(checkPopupClosed);
+                            // Restore fullscreen when popup closes
+                            setTimeout(() => {
+                                if (shouldMaintainFullscreen && !isInFullscreen()) {
+                                    restoreFullscreen();
+                                }
+                                shouldMaintainFullscreen = false;
+                            }, 100);
+                        }
+                    }, 500);
+                }
+                return;
+            }
+            
+            // For non-PFF sites, try iframe
+            const modal = document.getElementById('playerProfileModal');
+            const frame = document.getElementById('playerProfileFrame');
+            const errorDiv = document.getElementById('iframeError');
+            
+            // Hide error message
+            errorDiv.classList.add('hidden');
+            
+            // Show the modal first
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            
+            // Focus the close button for accessibility
+            document.getElementById('closeProfileModal').focus();
+            
+            // Try direct URL first
+            let attemptDirect = true;
+            frame.src = url;
+            
+            // Set up error detection - check if iframe loads successfully
+            let errorShown = false;
+            let loadTimeout = setTimeout(() => {
+                // If iframe hasn't loaded after 3 seconds, try proxy or show error
+                if (!errorShown) {
+                    if (attemptDirect) {
+                        // Try proxy as fallback
+                        attemptDirect = false;
+                        console.log('Direct load failed, trying proxy...');
+                        frame.src = tryProxyUrl(url);
+                        // Reset timeout for proxy attempt
+                        loadTimeout = setTimeout(() => {
+                            if (!errorShown) {
+                                showIframeError();
+                                errorShown = true;
+                            }
+                        }, 5000);
+                    } else {
+                        // Both attempts failed
+                        showIframeError();
+                        errorShown = true;
+                    }
+                }
+            }, 3000);
+            
+            // Clear timeout if iframe loads successfully
+            frame.onload = () => {
+                clearTimeout(loadTimeout);
+                // Give it a moment, then check if we can see content
+                setTimeout(() => {
+                    try {
+                        const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+                        if (iframeDoc && iframeDoc.body) {
+                            const bodyText = iframeDoc.body.innerText || iframeDoc.body.textContent || '';
+                            // Check for common error messages
+                            if (bodyText.includes('refused to connect') || 
+                                bodyText.includes('X-Frame-Options') ||
+                                bodyText.includes('cannot be displayed in a frame') ||
+                                bodyText.includes('This page cannot be displayed in a frame') ||
+                                bodyText.includes('403') ||
+                                bodyText.includes('Forbidden')) {
+                                if (!errorShown) {
+                                    if (attemptDirect) {
+                                        // Try proxy
+                                        attemptDirect = false;
+                                        frame.src = tryProxyUrl(url);
+                                    } else {
+                                        showIframeError();
+                                        errorShown = true;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // Cross-origin - this is normal and means the iframe loaded
+                        // Don't show error for cross-origin (means it's working!)
+                    }
+                }, 1500);
+            };
+            
+            // Listen for errors
+            frame.onerror = () => {
+                if (!errorShown) {
+                    if (attemptDirect) {
+                        // Try proxy
+                        attemptDirect = false;
+                        clearTimeout(loadTimeout);
+                        frame.src = tryProxyUrl(url);
+                        loadTimeout = setTimeout(() => {
+                            if (!errorShown) {
+                                showIframeError();
+                                errorShown = true;
+                            }
+                        }, 5000);
+                    } else {
+                        clearTimeout(loadTimeout);
+                        showIframeError();
+                        errorShown = true;
+                    }
+                }
+            };
+        }
+        
+        // Show error message in iframe
+        function showIframeError() {
+            const errorDiv = document.getElementById('iframeError');
+            errorDiv.classList.remove('hidden');
+            
+            // Auto-open in new tab after 2 seconds if user doesn't click
+            setTimeout(() => {
+                if (!errorDiv.classList.contains('hidden')) {
+                    // User hasn't closed it, auto-open in new tab
+                    openProfileInNewTab();
+                }
+            }, 2000);
+        }
+        
+        // Open profile in new tab (fallback)
+        function openProfileInNewTab() {
+            if (currentProfileUrl) {
+                window.open(currentProfileUrl, '_blank');
+                closePlayerProfile();
+            }
+        }
+        
+        // Close player profile modal
+        function closePlayerProfile() {
+            const modal = document.getElementById('playerProfileModal');
+            const frame = document.getElementById('playerProfileFrame');
+            const errorDiv = document.getElementById('iframeError');
+            
+            // Hide the modal
+            modal.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+            
+            // Clear the iframe source to stop loading
+            frame.src = 'about:blank';
+            currentProfileUrl = '';
+        }
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Close scout mode modals
+                const scoutModal = document.getElementById('scoutModeModal');
+                const scoringModal = document.getElementById('scoringModal');
+                if (scoutModal && !scoutModal.classList.contains('hidden')) {
+                    closeScoutModeModal();
+                    return;
+                }
+                if (scoringModal && !scoringModal.classList.contains('hidden')) {
+                    closeScoringModal();
+                    return;
+                }
+                const modal = document.getElementById('playerProfileModal');
+                if (!modal.classList.contains('hidden')) {
+                    closePlayerProfile();
+                }
+            }
+        });
+        
+        // Close modal when clicking outside the iframe
+        document.getElementById('playerProfileModal').addEventListener('click', (e) => {
+            if (e.target.id === 'playerProfileModal') {
+                closePlayerProfile();
+            }
+        });
+        
+        // Close scout mode modals when clicking outside
+        document.getElementById('scoutModeModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'scoutModeModal') {
+                closeScoutModeModal();
+            }
+        });
+        
+        document.getElementById('scoringModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'scoringModal') {
+                closeScoringModal();
+            }
+        });
+
+        // Export Big Board to CSV
+        function exportToCSV() {
+            if (bigBoard.length === 0) {
+                alert('Your Big Board is empty. Add some players first!');
+                return;
+            }
+
+            let headers = ['Rank', 'Pos', 'Player', 'School', 'PFF Grade', 'PFF WAA', 'Notes'];
+            
+            // If scout mode is enabled, add score columns
+            if (scoutModeEnabled) {
+                // Collect all unique categories across all positions in the big board
+                const allCategories = new Set();
+                bigBoard.forEach(player => {
+                    const position = player.Position || '';
+                    const configPosition = mapPositionToScoutConfig(position);
+                    const positionConfig = scoutConfig[configPosition];
+                    if (positionConfig && positionConfig.categories) {
+                        positionConfig.categories.forEach(cat => {
+                            if (cat.name) {
+                                allCategories.add(cat.name);
+                            }
+                        });
+                    }
+                });
+                
+                // Add overall score column and individual category columns
+                headers.push('Overall Score', 'Score Label');
+                const sortedCategories = Array.from(allCategories).sort();
+                sortedCategories.forEach(catName => {
+                    headers.push(`Score: ${catName}`);
+                });
+            }
+            
+            const rows = bigBoard.map((player, index) => {
+                const row = [
+                    index + 1,
+                    player.Position || '',
+                    player.name || '',
+                    player.School || '',
+                    player['2025 PFF Grade'] || '',
+                    player['2025 PFF WAA'] || '',
+                    getPlayerNote(player.pff_id) || ''
+                ];
+                
+                // If scout mode is enabled, add score data
+                if (scoutModeEnabled) {
+                    const position = player.Position || '';
+                    const configPosition = mapPositionToScoutConfig(position);
+                    const overallScore = calculatePlayerScore(player.pff_id, position);
+                    const scoreLabel = getScoreLabel(overallScore);
+                    
+                    // Add overall score and label
+                    row.push(overallScore !== null ? overallScore.toFixed(2) : '');
+                    row.push(scoreLabel);
+                    
+                    // Add individual category scores
+                    const allCategories = new Set();
+                    bigBoard.forEach(p => {
+                        const pos = p.Position || '';
+                        const configPos = mapPositionToScoutConfig(pos);
+                        const posConfig = scoutConfig[configPos];
+                        if (posConfig && posConfig.categories) {
+                            posConfig.categories.forEach(cat => {
+                                if (cat.name) {
+                                    allCategories.add(cat.name);
+                                }
+                            });
+                        }
+                    });
+                    
+                    const sortedCategories = Array.from(allCategories).sort();
+                    const playerScoresData = playerScores[player.pff_id] || {};
+                    
+                    sortedCategories.forEach(catName => {
+                        const categoryScore = playerScoresData[catName];
+                        if (categoryScore !== undefined && categoryScore !== null) {
+                            row.push(categoryScore.toFixed(2));
+                        } else {
+                            row.push('');
+                        }
+                    });
+                }
+                
+                return row;
+            });
+
+            // Create CSV content
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+            ].join('\n');
+
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            const filename = scoutModeEnabled 
+                ? `nfl-draft-bigboard-scout-mode-${new Date().toISOString().split('T')[0]}.csv`
+                : `nfl-draft-bigboard-${new Date().toISOString().split('T')[0]}.csv`;
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Export Top 10 to Image
+        async function exportToImage() {
+            if (bigBoard.length === 0) {
+                alert('Your Big Board is empty. Add some players first!');
+                return;
+            }
+
+            const top10 = bigBoard.slice(0, 10);
+            
+            // Create a temporary container for the image (Social media size: 1200x630px - Facebook/LinkedIn standard)
+            // Use 2x resolution for sharp rendering
+            const scale = 2;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1200 * scale;
+            canvas.height = 630 * scale;
+            
+            // Scale context for high DPI
+            ctx.scale(scale, scale);
+            
+            // Enable better text rendering
+            ctx.textBaseline = 'top';
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            const displayWidth = 1200;
+            const displayHeight = 630;
+            
+            // Background
+            ctx.fillStyle = '#0B1533';
+            ctx.fillRect(0, 0, displayWidth, displayHeight);
+
+            // Logo (we'll need to load it first)
+            let logoLoaded = false;
+            const logo = new Image();
+            logo.crossOrigin = 'anonymous';
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => reject(new Error('Timeout')), 5000);
+                    logo.onload = () => {
+                        clearTimeout(timeout);
+                        logoLoaded = true;
+                        resolve();
+                    };
+                    logo.onerror = () => {
+                        clearTimeout(timeout);
+                        logoLoaded = false;
+                        resolve(); // Continue even if logo fails
+                    };
+                    logo.src = 'https://media.pff.com/2025/07/PFF_PoweredBy_White.png';
+                });
+            } catch (e) {
+                logoLoaded = false;
+            }
+            
+            // Draw logo at top if loaded (centered)
+            if (logoLoaded && logo.complete) {
+                const logoHeight = 50;
+                const logoWidth = (logo.width / logo.height) * logoHeight;
+                const logoX = (displayWidth - logoWidth) / 2;
+                ctx.drawImage(logo, logoX, 20, logoWidth, logoHeight);
+            } else {
+                // Draw text fallback if logo doesn't load
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 32px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('PFF', displayWidth / 2, 45);
+                ctx.textAlign = 'left';
+            }
+
+            // Subtitle (moved up 2.5cm = ~94px at 2x scale, ~47px at 1x)
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 36px Archivo, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('2026 NFL Draft: My Top 10', displayWidth / 2, 75);
+            ctx.textAlign = 'left';
+
+            // Draw players: 1-5 on left, 6-10 on right
+            const cardWidth = 520;
+            const cardHeight = 85;
+            const cardPadding = 10;
+            const leftMargin = 50;
+            const topMargin = 120; // Adjusted to give more space after title
+            const gapX = 60;
+            const gapY = 15;
+            const boxGap = 10; // Gap between Grade and WAA boxes
+
+            top10.forEach((player, index) => {
+                const rank = index + 1;
+                const grade = player['2025 PFF Grade'] || 'N/A';
+                const waa = player['2025 PFF WAA'] || 'N/A';
+                
+                // Calculate position: 1-5 on left column, 6-10 on right column
+                let col, row;
+                if (rank <= 5) {
+                    // Left column: ranks 1-5
+                    col = 0;
+                    row = rank - 1;
+                } else {
+                    // Right column: ranks 6-10
+                    col = 1;
+                    row = rank - 6;
+                }
+                
+                const x = leftMargin + col * (cardWidth + gapX);
+                const y = topMargin + row * (cardHeight + gapY);
+                
+                // Card background
+                ctx.fillStyle = '#1F2937';
+                ctx.fillRect(x, y, cardWidth, cardHeight);
+                
+                // Border
+                ctx.strokeStyle = '#374151';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, cardWidth, cardHeight);
+
+                // Rank badge
+                const badgeSize = 50;
+                const badgeX = x + cardPadding;
+                const badgeY = y + cardPadding;
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+                ctx.fillRect(badgeX, badgeY, badgeSize, badgeSize);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(badgeX, badgeY, badgeSize, badgeSize);
+                
+                // Rank number - perfectly centered
+                ctx.fillStyle = '#00FFFF';
+                ctx.font = 'bold 28px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(rank.toString(), badgeX + badgeSize / 2, badgeY + badgeSize / 2);
+
+                // Player name and info - centered vertically in card
+                const nameX = x + cardPadding + badgeSize + 15;
+                const cardCenterY = y + cardHeight / 2;
+                
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 22px Archivo, sans-serif';
+                // Position name slightly above center
+                ctx.fillText(player.name || '', nameX, cardCenterY - 12);
+                
+                // School and Position - slightly below center
+                ctx.fillStyle = '#D1D5DB';
+                ctx.font = '16px Archivo, sans-serif';
+                ctx.fillText(`${player.School || ''} • ${player.Position || ''}`, nameX, cardCenterY + 12);
+
+                // Grade and WAA boxes
+                const boxWidth = 60;
+                const boxHeight = 50;
+                const boxY = y + cardPadding + 5;
+                let boxX = x + cardWidth - cardPadding - (boxWidth * 2) - boxGap;
+
+                // Grade box
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+                ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+                
+                // Grade number - centered horizontally, positioned higher to avoid border
+                ctx.fillStyle = '#00FFFF';
+                ctx.font = 'bold 20px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // Position number higher in the box (about 1/3 from top instead of center)
+                ctx.fillText(grade, boxX + boxWidth / 2, boxY + boxHeight / 3 + 2);
+                
+                // Grade label
+                ctx.font = '12px Archivo, sans-serif';
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.7)';
+                ctx.textBaseline = 'top';
+                ctx.fillText('Grade', boxX + boxWidth / 2, boxY + 38);
+
+                // WAA box
+                boxX += boxWidth + boxGap;
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+                ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+                
+                // WAA number - centered horizontally, positioned higher to avoid border
+                ctx.fillStyle = '#00FFFF';
+                ctx.font = 'bold 20px Archivo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // Position number higher in the box (about 1/3 from top instead of center)
+                ctx.fillText(waa, boxX + boxWidth / 2, boxY + boxHeight / 3 + 2);
+                
+                // WAA label
+                ctx.font = '12px Archivo, sans-serif';
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.7)';
+                ctx.textBaseline = 'top';
+                ctx.fillText('WAA', boxX + boxWidth / 2, boxY + 38);
+            });
+
+            // Convert to image and download (high quality)
+            canvas.toBlob((blob) => {
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `nfl-draft-bigboard-top10-${new Date().toISOString().split('T')[0]}.png`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 'image/png', 1.0); // Maximum quality
+        }
+
+        // Event listeners
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value.length > 0) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+            filterAndRender();
+        });
+        
+        // Filter event listeners
+        document.getElementById('filterSchool').addEventListener('change', filterAndRender);
+        document.getElementById('filterPosition').addEventListener('change', filterAndRender);
+        document.getElementById('filterGradeMin').addEventListener('input', filterAndRender);
+        document.getElementById('filterGradeMax').addEventListener('input', filterAndRender);
+        document.getElementById('filterWAAMin').addEventListener('input', filterAndRender);
+        document.getElementById('filterWAAMax').addEventListener('input', filterAndRender);
+
+        // Initialize on page load
+        loadPlayers();
+    </script>
+</body>
+</html>
