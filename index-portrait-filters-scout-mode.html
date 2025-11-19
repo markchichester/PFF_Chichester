@@ -2190,6 +2190,14 @@
                                         <h3 class="text-white font-bold text-base md:text-lg mb-0.5">${player.name || ''}</h3>
                                     `}
                                     <div class="flex items-center gap-2 flex-wrap">
+                                        ${hasImage ? `
+                                            <img 
+                                                src="${imageUrl}" 
+                                                alt="${player.name || 'Player'}"
+                                                onerror="this.style.display='none';"
+                                                class="w-5 h-5 rounded object-cover flex-shrink-0 border border-gray-600"
+                                            />
+                                        ` : ''}
                                         <span class="text-gray-300 text-xs">${player.School || ''}</span>
                                         <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
                                             ${player.Position || ''}
@@ -2356,6 +2364,14 @@
                                             <span class="px-2 py-0.5 bg-cyan-400/20 text-cyan-400 rounded text-xs font-semibold whitespace-nowrap">
                                                 ${player.Position || ''}
                                             </span>
+                                            ${hasImage ? `
+                                                <img 
+                                                    src="${imageUrl}" 
+                                                    alt="${player.name || 'Player'}"
+                                                    onerror="this.style.display='none';"
+                                                    class="w-4 h-4 rounded object-cover flex-shrink-0 border border-gray-600"
+                                                />
+                                            ` : ''}
                                             <span class="text-gray-300 text-xs">${player.School || ''}</span>
                                         </div>
                                     </div>
