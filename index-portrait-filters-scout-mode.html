@@ -387,6 +387,27 @@
                 gap: 0.5rem;
             }
             
+            /* Score Player button alignment - match stat boxes width using CSS */
+            /* The wrapper container ensures the button matches the stat boxes container width */
+            .score-player-button {
+                width: 100%;
+            }
+            
+            /* Stat boxes wrapper - flex column to stack stat boxes and button */
+            [id^="stat-boxes-wrapper-"] {
+                display: inline-flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+            
+            /* Stat boxes container - align boxes to the right, size to content */
+            [id^="stat-boxes-"] {
+                display: flex;
+                justify-content: flex-end;
+                width: fit-content;
+            }
+            
             .grade-box {
                 min-width: 50px !important;
                 padding: 0.5rem 0.75rem !important;
@@ -1004,14 +1025,40 @@
         
         // Update notes indicator after saving
         function savePlayerNote(pffId, note) {
-            if (note && note.trim()) {
-                playerNotes[pffId] = note.trim();
+            // Enforce 5000 character limit
+            const trimmedNote = note ? note.trim().substring(0, 5000) : '';
+            if (trimmedNote) {
+                playerNotes[pffId] = trimmedNote;
             } else {
                 delete playerNotes[pffId];
             }
             saveToStorage();
-            // Re-render to update checkmark indicator
+            // Re-render to update checkmark indicator and character counter
             renderBigBoard();
+        }
+        
+        function updateNoteCharCount(pffId, textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const counter = document.getElementById(`char-count-${pffId}`);
+            if (textarea && counter) {
+                const currentLength = textarea.value.length;
+                const remaining = 5000 - currentLength;
+                counter.textContent = `${currentLength.toLocaleString()} / 5,000 characters`;
+                counter.className = `text-xs mt-1 ${remaining < 100 ? 'text-red-400' : remaining < 500 ? 'text-yellow-400' : 'text-gray-500'}`;
+            }
+        }
+        
+        // Clear notes for a specific player
+        function clearPlayerNotes(pffId) {
+            if (playerNotes[pffId]) {
+                if (confirm(`Are you sure you want to clear draft notes for this player?`)) {
+                    delete playerNotes[pffId];
+                    expandedNotes.delete(pffId);
+                    saveToStorage();
+                    renderBigBoard();
+                    announceToScreenReader('Draft notes cleared for player');
+                }
+            }
         }
         
         // Clear all notes
@@ -1156,10 +1203,10 @@
                 
                 <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-700">
                     <button 
-                        onclick="closeScoutModeModal()"
+                        onclick="resetScoutPositionConfig()"
                         class="px-4 py-2 text-sm font-semibold bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
                     >
-                        Cancel
+                        Reset
                     </button>
                     <button 
                         onclick="saveScoutModeConfig()"
@@ -1349,6 +1396,21 @@
             renderScoutModeConfig();
         }
         
+        function resetScoutPositionConfig() {
+            // Fixed order for scout mode configuration
+            const positions = ['QB', 'RB', 'WR', 'TE', 'T', 'G', 'C', 'DI', 'ED', 'LB', 'CB', 'S'];
+            const currentPosition = positions[currentPositionIndex];
+            
+            if (confirm(`Are you sure you want to reset the configuration for ${currentPosition}? This will clear all categories and weights for this position.`)) {
+                // Reset the current position's configuration
+                if (scoutConfig[currentPosition]) {
+                    delete scoutConfig[currentPosition];
+                }
+                // Re-render to show empty/default state
+                renderScoutModeConfig();
+            }
+        }
+        
         function saveScoutModeConfig() {
             // Fixed order for scout mode configuration
             const positions = ['QB', 'RB', 'WR', 'TE', 'T', 'G', 'C', 'DI', 'ED', 'LB', 'CB', 'S'];
@@ -1443,12 +1505,60 @@
             return 'BRL';
         }
         
+        function hasValidPositionConfig(position) {
+            const configPosition = mapPositionToScoutConfig(position);
+            const positionConfig = scoutConfig[configPosition];
+            
+            // Check if config exists and has categories
+            if (!positionConfig || !positionConfig.categories || positionConfig.categories.length === 0) {
+                return false;
+            }
+            
+            // Check if all categories have names
+            const allCategoriesNamed = positionConfig.categories.every(cat => cat.name && cat.name.trim() !== '');
+            if (!allCategoriesNamed) {
+                return false;
+            }
+            
+            // Check if weights total 100%
+            const totalWeight = positionConfig.categories.reduce((sum, cat) => sum + (parseFloat(cat.weight) || 0), 0);
+            return Math.abs(totalWeight - 100) < 0.01;
+        }
+        
+        function openScoutModeModalForPosition(position) {
+            const configPosition = mapPositionToScoutConfig(position);
+            const positions = ['QB', 'RB', 'WR', 'TE', 'T', 'G', 'C', 'DI', 'ED', 'LB', 'CB', 'S'];
+            const positionIndex = positions.indexOf(configPosition);
+            
+            if (positionIndex === -1) {
+                // Position not found, just open at first position
+                openScoutModeModal();
+                return;
+            }
+            
+            // Open modal and navigate to the specific position
+            const modal = document.getElementById('scoutModeModal');
+            currentPositionIndex = positionIndex;
+            renderScoutModeConfig();
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
         function openScoringModal(pffId) {
             const player = allPlayers.find(p => p.pff_id === pffId);
             if (!player || !scoutModeEnabled) return;
             
             const position = player.Position || '';
             const configPosition = mapPositionToScoutConfig(position);
+            
+            // Check if position has valid categories configured
+            if (!hasValidPositionConfig(position)) {
+                // Open config modal for this position instead
+                alert(`Please configure evaluation categories for ${position} before scoring players.`);
+                openScoutModeModalForPosition(position);
+                return;
+            }
+            
             const positionConfig = scoutConfig[configPosition] || { categories: [] };
             const scores = playerScores[pffId] || {};
             
@@ -2097,6 +2207,23 @@
             // Preserve fullscreen state
             const wasFullscreen = isInFullscreen();
             
+            // If Big Board is already empty, just clear filters without confirmation
+            if (bigBoard.length === 0) {
+                clearFilters();
+                renderBigBoard();
+                announceToScreenReader('Filters cleared');
+                
+                // Restore fullscreen if it was active
+                if (wasFullscreen && !isInFullscreen()) {
+                    // Small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        restoreFullscreen();
+                    }, 100);
+                }
+                return;
+            }
+            
+            // If Big Board has players, show confirmation
             if (confirm('Are you sure you want to reset your Big Board? This will remove all players and clear all filters.')) {
                 bigBoard = [];
                 expandedPlayers.clear();
@@ -2207,46 +2334,70 @@
                             </div>
                             
                             <!-- Desktop: Stats on the right -->
-                            <div class="hidden md:flex flex-col gap-2 flex-shrink-0">
-                                <div class="flex gap-2 items-center grade-boxes-container justify-end" id="stat-boxes-${player.pff_id}" style="flex-wrap: wrap;">
-                                    ${pffRank ? `
-                                        <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
-                                            <div class="grade-box-value text-cyan-400 font-bold text-base">${pffRank}</div>
-                                            <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                            <div class="hidden md:flex flex-col gap-2 flex-shrink-0 items-end">
+                                <div class="flex gap-2 items-center">
+                                    <div class="flex flex-col gap-2" id="stat-boxes-wrapper-${player.pff_id}">
+                                        <div class="flex gap-2 items-center grade-boxes-container" id="stat-boxes-${player.pff_id}" style="flex-wrap: wrap;">
+                                            ${pffRank ? `
+                                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                                    <div class="grade-box-value text-cyan-400 font-bold text-base">${pffRank}</div>
+                                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Rank</div>
+                                                </div>
+                                            ` : ''}
+                                            ${grade ? `
+                                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                                    <div class="grade-box-value text-cyan-400 font-bold text-base">${grade}</div>
+                                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
+                                                </div>
+                                            ` : ''}
+                                            ${waa ? `
+                                                <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
+                                                    <div class="grade-box-value text-cyan-400 font-bold text-base">${waa}</div>
+                                                    <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
+                                                </div>
+                                            ` : ''}
+                                            ${scoutModeEnabled ? (() => {
+                                                const overallScore = calculatePlayerScore(player.pff_id, player.Position || '');
+                                                if (overallScore !== null) {
+                                                    const scoreColor = getScoreColor(overallScore);
+                                                    const scoreAcronym = getScoreAcronym(overallScore);
+                                                    return `
+                                                        <button 
+                                                            onclick="event.stopPropagation(); openScoringModal('${player.pff_id}')"
+                                                            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openScoringModal('${player.pff_id}');}"
+                                                            aria-label="Score ${player.name || 'player'}: ${overallScore.toFixed(2)} - ${getScoreLabel(overallScore)}"
+                                                            class="grade-box rounded-lg px-2.5 py-1.5 text-center min-w-[55px] cursor-pointer hover:opacity-80 transition-opacity"
+                                                            style="background-color: ${scoreColor}15; border: 1px solid ${scoreColor}40;"
+                                                        >
+                                                            <div class="grade-box-value font-bold text-base" style="color: ${scoreColor}">${overallScore.toFixed(2)}</div>
+                                                            <div class="grade-box-label text-xs font-medium" style="color: ${scoreColor}CC">${scoreAcronym}</div>
+                                                        </button>
+                                                    `;
+                                                }
+                                                return '';
+                                            })() : ''}
                                         </div>
-                                    ` : ''}
-                                    ${grade ? `
-                                        <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
-                                            <div class="grade-box-value text-cyan-400 font-bold text-base">${grade}</div>
-                                            <div class="grade-box-label text-cyan-400/70 text-xs font-medium">PFF Grade</div>
-                                        </div>
-                                    ` : ''}
-                                    ${waa ? `
-                                        <div class="grade-box bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2.5 py-1.5 text-center min-w-[55px]">
-                                            <div class="grade-box-value text-cyan-400 font-bold text-base">${waa}</div>
-                                            <div class="grade-box-label text-cyan-400/70 text-xs font-medium">WAA</div>
-                                        </div>
-                                    ` : ''}
-                                    ${scoutModeEnabled ? (() => {
-                                        const overallScore = calculatePlayerScore(player.pff_id, player.Position || '');
-                                        if (overallScore !== null) {
-                                            const scoreColor = getScoreColor(overallScore);
-                                            const scoreAcronym = getScoreAcronym(overallScore);
-                                            return `
-                                                <button 
-                                                    onclick="event.stopPropagation(); openScoringModal('${player.pff_id}')"
-                                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openScoringModal('${player.pff_id}');}"
-                                                    aria-label="Score ${player.name || 'player'}: ${overallScore.toFixed(2)} - ${getScoreLabel(overallScore)}"
-                                                    class="grade-box rounded-lg px-2.5 py-1.5 text-center min-w-[55px] cursor-pointer hover:opacity-80 transition-opacity"
-                                                    style="background-color: ${scoreColor}15; border: 1px solid ${scoreColor}40;"
-                                                >
-                                                    <div class="grade-box-value font-bold text-base" style="color: ${scoreColor}">${overallScore.toFixed(2)}</div>
-                                                    <div class="grade-box-label text-xs font-medium" style="color: ${scoreColor}CC">${scoreAcronym}</div>
-                                                </button>
-                                            `;
-                                        }
-                                        return '';
-                                    })() : ''}
+                                        ${scoutModeEnabled ? (() => {
+                                            const overallScore = calculatePlayerScore(player.pff_id, player.Position || '');
+                                            if (overallScore === null) {
+                                                // When not scored, show a clean button below, matching stat boxes width using CSS
+                                                return `
+                                                    <button 
+                                                        onclick="event.stopPropagation(); openScoringModal('${player.pff_id}')"
+                                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openScoringModal('${player.pff_id}');}"
+                                                        aria-label="Score ${player.name || 'player'}"
+                                                        class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5 bg-cyan-400/10 hover:bg-cyan-400/20 border border-cyan-400/30 text-cyan-400 score-player-button"
+                                                    >
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                        </svg>
+                                                        <span>Score Player</span>
+                                                    </button>
+                                                `;
+                                            }
+                                            return '';
+                                        })() : ''}
+                                    </div>
                                     ${hasAnalysis ? `
                                         <button 
                                             onclick="event.stopPropagation(); togglePlayerAnalysis('${player.pff_id}')"
@@ -2271,30 +2422,6 @@
                                         </svg>
                                     </button>
                                 </div>
-                                ${scoutModeEnabled ? (() => {
-                                    const overallScore = calculatePlayerScore(player.pff_id, player.Position || '');
-                                    if (overallScore === null) {
-                                        // When not scored, show a clean button below, matching stat boxes width
-                                        // Count stat boxes to calculate width
-                                        const statBoxCount = (pffRank ? 1 : 0) + (grade ? 1 : 0) + (waa ? 1 : 0);
-                                        const buttonWidth = statBoxCount > 0 ? `calc(${statBoxCount * 55}px + ${(statBoxCount - 1) * 8}px)` : 'auto';
-                                        return `
-                                            <button 
-                                                onclick="event.stopPropagation(); openScoringModal('${player.pff_id}')"
-                                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openScoringModal('${player.pff_id}');}"
-                                                aria-label="Score ${player.name || 'player'}"
-                                                class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5 bg-cyan-400/10 hover:bg-cyan-400/20 border border-cyan-400/30 text-cyan-400"
-                                                data-stat-boxes-width="stat-boxes-${player.pff_id}"
-                                            >
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                                <span>Score Player</span>
-                                            </button>
-                                        `;
-                                    }
-                                    return '';
-                                })() : ''}
                             </div>
                             
                             <!-- Mobile: Compact layout with expandable section -->
@@ -2434,13 +2561,13 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                             </svg>
                                         </button>
-                                        ${Object.keys(playerNotes).length > 0 ? `
+                                        ${getPlayerNote(player.pff_id) ? `
                                             <button 
-                                                onclick="event.stopPropagation(); clearAllNotes()"
-                                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();clearAllNotes();}"
-                                                aria-label="Clear all draft notes"
+                                                onclick="event.stopPropagation(); clearPlayerNotes('${player.pff_id}')"
+                                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();clearPlayerNotes('${player.pff_id}');}"
+                                                aria-label="Clear draft notes for ${player.name || 'this player'}"
                                                 class="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-gray-700/50 flex-shrink-0"
-                                                title="Clear all notes"
+                                                title="Clear notes for this player"
                                             >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -2453,9 +2580,14 @@
                                             <textarea 
                                                 id="notes-mobile-${player.pff_id}"
                                                 placeholder="Add your draft notes here..."
+                                                maxlength="5000"
                                                 class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-y min-h-[100px]"
+                                                oninput="updateNoteCharCount('${player.pff_id}', 'notes-mobile-${player.pff_id}')"
                                                 onblur="savePlayerNote('${player.pff_id}', this.value)"
                                             >${getPlayerNote(player.pff_id)}</textarea>
+                                            <div id="char-count-${player.pff_id}" class="text-xs mt-1 text-gray-500">
+                                                ${(getPlayerNote(player.pff_id) || '').length.toLocaleString()} / 5,000 characters
+                                            </div>
                                         </div>
                                     ` : ''}
                                 </div>
@@ -2494,13 +2626,13 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                     </svg>
                                 </button>
-                                ${Object.keys(playerNotes).length > 0 ? `
+                                ${getPlayerNote(player.pff_id) ? `
                                     <button 
-                                        onclick="event.stopPropagation(); clearAllNotes()"
-                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();clearAllNotes();}"
-                                        aria-label="Clear all draft notes"
+                                        onclick="event.stopPropagation(); clearPlayerNotes('${player.pff_id}')"
+                                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();clearPlayerNotes('${player.pff_id}');}"
+                                        aria-label="Clear draft notes for ${player.name || 'this player'}"
                                         class="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-gray-700/50 flex-shrink-0"
-                                        title="Clear all notes"
+                                        title="Clear notes for this player"
                                     >
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -2513,9 +2645,14 @@
                                     <textarea 
                                         id="notes-${player.pff_id}"
                                         placeholder="Add your draft notes here..."
+                                        maxlength="5000"
                                         class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-y min-h-[100px]"
+                                        oninput="updateNoteCharCount('${player.pff_id}', 'notes-${player.pff_id}')"
                                         onblur="savePlayerNote('${player.pff_id}', this.value)"
                                     >${getPlayerNote(player.pff_id)}</textarea>
+                                    <div id="char-count-${player.pff_id}" class="text-xs mt-1 text-gray-500">
+                                        ${(getPlayerNote(player.pff_id) || '').length.toLocaleString()} / 5,000 characters
+                                    </div>
                                 </div>
                             ` : ''}
                         </div>
@@ -2739,41 +2876,8 @@
                 }
             }
             
-            // Match score button width and position to stat boxes (after DOM renders) - only for unscored players
-            // Position button to start under first stat box and end at last stat box
-            requestAnimationFrame(() => {
-                bigBoard.forEach(player => {
-                    const scoreButton = document.querySelector(`[data-stat-boxes-width="stat-boxes-${player.pff_id}"]`);
-                    if (scoreButton) {
-                        const statBoxesContainer = document.getElementById(`stat-boxes-${player.pff_id}`);
-                        if (statBoxesContainer) {
-                            // Get all stat box elements (grade-box class divs only, not action buttons)
-                            const statBoxes = Array.from(statBoxesContainer.children).filter(child => {
-                                return child.classList.contains('grade-box') && child.tagName === 'DIV';
-                            });
-                            
-                            if (statBoxes.length > 0) {
-                                const firstBox = statBoxes[0];
-                                const lastBox = statBoxes[statBoxes.length - 1];
-                                
-                                // Get positions relative to the container
-                                const containerRect = statBoxesContainer.getBoundingClientRect();
-                                const firstBoxRect = firstBox.getBoundingClientRect();
-                                const lastBoxRect = lastBox.getBoundingClientRect();
-                                
-                                // Calculate the left offset and width
-                                const leftOffset = firstBoxRect.left - containerRect.left;
-                                const rightEdge = lastBoxRect.right - containerRect.left;
-                                const buttonWidth = rightEdge - leftOffset;
-                                
-                                // Set button width and align it
-                                scoreButton.style.width = buttonWidth + 'px';
-                                scoreButton.style.marginLeft = leftOffset + 'px';
-                            }
-                        }
-                    }
-                });
-            });
+            // Score Player button now uses CSS-based alignment (no JavaScript measurements needed)
+            // The button is aligned using flexbox (items-end) to match the stat boxes container
         }
 
         // Render Player Pool
