@@ -72,6 +72,20 @@
             border: 1px solid rgba(11, 21, 51, 0.08);
         }
 
+        .content-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: calc(100vh - 64px);
+        }
+
+        .cards-scroll {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
         .filters-header {
             display: flex;
             justify-content: space-between;
@@ -384,7 +398,8 @@
             display: flex;
             gap: 10px;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            justify-content: center;
         }
 
         .info-badge {
@@ -409,6 +424,7 @@
             font-weight: 700;
             color: #0B1533;
             margin-top: 4px;
+            text-align: center;
         }
 
         .new-school-badge {
@@ -426,6 +442,7 @@
 
         .new-school-badge .badge-value {
             color: #ffffff;
+            text-align: center;
         }
 
         .player-body {
@@ -587,7 +604,19 @@
 
             .position-filters,
             .status-filters {
-                justify-content: flex-start;
+                justify-content: center;
+            }
+
+            .badge-group {
+                flex-wrap: wrap;
+            }
+
+            .content-layout {
+                height: auto;
+            }
+
+            .cards-scroll {
+                overflow: visible;
             }
         }
 
@@ -599,38 +628,42 @@
         <div id="error" class="error" style="display: none;"></div>
 
         <div id="content" style="display: none;">
-            <div class="filters-container">
-                <div class="filters-header">
-                    <div>
-                        <div class="filters-title">Filters</div>
-                        <div id="filterCount" class="filter-count" style="display: none; margin-top: 4px;"></div>
+            <div class="content-layout">
+                <div class="filters-container">
+                    <div class="filters-header">
+                        <div>
+                            <div class="filters-title">Filters</div>
+                            <div id="filterCount" class="filter-count" style="display: none; margin-top: 4px;"></div>
+                        </div>
+                        <button class="clear-filters" onclick="clearFilters()">Clear All</button>
                     </div>
-                    <button class="clear-filters" onclick="clearFilters()">Clear All</button>
+                    <div class="filters">
+                        <input type="text" id="searchPlayer" class="filter-input" placeholder="Search player name...">
+                        <select id="filterFromSchool" class="filter-select" aria-label="Filter by transferring from">
+                            <option value="">All transferring from</option>
+                        </select>
+                        <select id="filterNewSchool" class="filter-select" aria-label="Filter by new school">
+                            <option value="">All new schools</option>
+                        </select>
+                    </div>
+                    <div class="position-filters" id="positionFilters">
+                        <!-- Position buttons injected here -->
+                    </div>
+                    <div class="status-filters" id="statusFilters">
+                        <button type="button" class="status-button active" data-status="signed">Signed</button>
+                        <button type="button" class="status-button active" data-status="unsigned">Unsigned</button>
+                    </div>
                 </div>
-                <div class="filters">
-                    <input type="text" id="searchPlayer" class="filter-input" placeholder="Search player name...">
-                <select id="filterFromSchool" class="filter-select" aria-label="Filter by transferring from">
-                    <option value="">All transferring from</option>
-                </select>
-                <select id="filterNewSchool" class="filter-select" aria-label="Filter by new school">
-                    <option value="">All new schools</option>
-                </select>
-                </div>
-                <div class="position-filters" id="positionFilters">
-                    <!-- Position buttons injected here -->
-                </div>
-                <div class="status-filters" id="statusFilters">
-                    <button type="button" class="status-button active" data-status="signed">Signed</button>
-                    <button type="button" class="status-button active" data-status="unsigned">Unsigned</button>
-                </div>
-            </div>
 
-            <div class="cards-container" id="cardsContainer">
-                <!-- Cards will be rendered here -->
-            </div>
+                <div class="cards-scroll">
+                    <div class="cards-container" id="cardsContainer">
+                        <!-- Cards will be rendered here -->
+                    </div>
 
-            <div id="noResults" class="no-results" style="display: none;">
-                No players found matching your filters.
+                    <div id="noResults" class="no-results" style="display: none;">
+                        No players found matching your filters.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
