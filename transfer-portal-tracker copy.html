@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Portal Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            color: #0B1533;
+            padding: 32px 24px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header removed */
+
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+            color: #0B1533;
+            font-size: 18px;
+            font-weight: 500;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(11, 21, 51, 0.08);
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        .error {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            border: 2px solid #feb2b2;
+            color: #c53030;
+            padding: 20px 24px;
+            border-radius: 16px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(197, 48, 48, 0.1);
+        }
+
+        .filters-container {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(11, 21, 51, 0.08);
+            margin-bottom: 24px;
+            border: 1px solid rgba(11, 21, 51, 0.08);
+        }
+
+        .content-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: calc(100vh - 64px);
+        }
+
+        .cards-scroll {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding-right: 4px;
+            max-height: 70vh;
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .filters-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0B1533;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-count {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-count strong {
+            color: #0B1533;
+            font-weight: 700;
+        }
+
+        .clear-filters {
+            background: rgba(11, 21, 51, 0.05);
+            border: 1px solid rgba(11, 21, 51, 0.1);
+            color: #0B1533;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Archivo', sans-serif;
+        }
+
+        .clear-filters:hover {
+            background: rgba(11, 21, 51, 0.1);
+            border-color: #0B1533;
+        }
+
+        .clear-filters:active {
+            transform: scale(0.98);
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .status-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .position-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            justify-content: center;
+        }
+
+        .position-button {
+            background: #f1f3f5;
+            border: 1px solid rgba(11, 21, 51, 0.12);
+            color: #0B1533;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Archivo', sans-serif;
+        }
+
+        .position-button:hover {
+            background: rgba(11, 21, 51, 0.08);
+            border-color: rgba(11, 21, 51, 0.3);
+        }
+
+        .position-button.active {
+            background: #0B1533;
+            color: #ffffff;
+            border-color: #0B1533;
+            box-shadow: 0 4px 12px rgba(11, 21, 51, 0.2);
+        }
+
+        .status-button {
+            background: #f1f3f5;
+            border: 1px solid rgba(11, 21, 51, 0.12);
+            color: #0B1533;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Archivo', sans-serif;
+        }
+
+        .status-button:hover {
+            background: rgba(11, 21, 51, 0.08);
+            border-color: rgba(11, 21, 51, 0.3);
+        }
+
+        .status-button.active {
+            background: #0B1533;
+            color: #ffffff;
+            border-color: #0B1533;
+            box-shadow: 0 4px 12px rgba(11, 21, 51, 0.2);
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 150px;
+            padding: 14px 18px;
+            border: 2px solid rgba(11, 21, 51, 0.1);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Archivo', sans-serif;
+            font-weight: 500;
+            color: #0B1533;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #0B1533;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(11, 21, 51, 0.1), 0 4px 12px rgba(11, 21, 51, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .filter-input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .filter-select {
+            flex: 1;
+            min-width: 180px;
+            padding: 14px 18px;
+            border: 2px solid rgba(11, 21, 51, 0.1);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Archivo', sans-serif;
+            font-weight: 600;
+            color: #0B1533;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #0B1533;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(11, 21, 51, 0.1), 0 4px 12px rgba(11, 21, 51, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 100%;
+        }
+
+        /* Header row removed */
+
+        .player-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(11, 21, 51, 0.08);
+            border: 1px solid rgba(11, 21, 51, 0.1);
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(11, 21, 51, 0.15);
+            border-color: rgba(11, 21, 51, 0.2);
+        }
+
+        .card-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        .card-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .card-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #666;
+            margin-bottom: 0;
+            font-family: 'Archivo', sans-serif;
+            min-width: 0;
+        }
+
+        .card-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0B1533;
+            font-family: 'Archivo', sans-serif;
+            text-align: left;
+            min-width: 0;
+            word-break: break-word;
+        }
+
+        .card-rank {
+            display: inline-block;
+            background: transparent;
+            color: #0B1533;
+            border: 2px solid #0B1533;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .card-player-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0B1533;
+        }
+
+        .card-position {
+            font-size: 16px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .card-school {
+            font-size: 16px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .card-new-school {
+            font-size: 16px;
+            color: #0B1533;
+            font-weight: 700;
+        }
+
+        .player-header {
+            display: grid;
+            grid-template-columns: 120px minmax(220px, 1fr) minmax(420px, 1fr);
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            background: #eef0f3;
+            border-bottom: 1px solid rgba(11, 21, 51, 0.08);
+        }
+
+        .mobile-name-row {
+            display: contents;
+        }
+
+        .rank-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: flex-start;
+        }
+
+        .rank-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #666;
+        }
+
+        .player-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0B1533;
+        }
+
+        .badge-group {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(120px, 1fr));
+            gap: 10px;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .info-badge {
+            background: #ffffff;
+            border: 1px solid rgba(11, 21, 51, 0.15);
+            border-radius: 9px;
+            padding: 5px 10px;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .info-badge .badge-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            color: #666;
+            line-height: 1.1;
+        }
+
+        .info-badge .badge-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0B1533;
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .new-school-badge {
+            background: #0B1533;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 6px 10px;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .new-school-badge .badge-label {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .new-school-badge .badge-value {
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .player-body {
+            display: block;
+            padding: 20px 24px 24px;
+        }
+
+        .grades-card {
+            background: #f7f9fc;
+            border: 2px solid rgba(11, 21, 51, 0.2);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 24px rgba(11, 21, 51, 0.15);
+            transform: translateY(-4px);
+            width: 100%;
+        }
+
+        .grades-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #e3e7ef;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: #666;
+            text-align: center;
+        }
+
+        .grades-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr;
+            gap: 8px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(11, 21, 51, 0.08);
+            align-items: center;
+        }
+
+        .grades-row > div {
+            text-align: center;
+        }
+
+        .grades-row .season {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0B1533;
+        }
+
+        .waa-positive {
+            color: #28a745;
+            font-weight: 700;
+        }
+
+        .waa-negative {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 40px;
+            color: #999;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(11, 21, 51, 0.08);
+            margin-top: 24px;
+        }
+
+
+        @media (max-width: 650px) {
+            body {
+                padding: 16px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .cards-container {
+                gap: 12px;
+            }
+
+            .player-card {
+                border-radius: 14px;
+            }
+
+            .player-header {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 14px 16px;
+                justify-items: start;
+            }
+
+            .player-body {
+                padding: 14px 16px 18px;
+            }
+
+            .player-name {
+                font-size: 18px;
+            }
+
+            .rank-block {
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .rank-label {
+                display: none;
+            }
+            .player-name {
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .mobile-name-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .card-rank {
+                padding: 8px 12px;
+                font-size: 18px;
+            }
+
+            .info-badge {
+                min-width: 0;
+                padding: 6px 8px;
+            }
+
+            .new-school-badge {
+                min-width: 0;
+            }
+
+            .badge-group {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 6px;
+                width: 100%;
+            }
+
+            .info-badge .badge-label {
+                font-size: 8px;
+                letter-spacing: 0.2px;
+            }
+
+            .info-badge .badge-value {
+                font-size: 12px;
+            }
+
+            .new-school-badge {
+                grid-column: 1 / -1;
+            }
+
+            .grades-header,
+            .grades-row {
+                grid-template-columns: 60px 1fr 1fr;
+                padding: 10px 10px;
+            }
+
+            .grades-card {
+                transform: none;
+                box-shadow: 0 6px 16px rgba(11, 21, 51, 0.15);
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-input,
+            .filter-select {
+                min-width: 100%;
+            }
+
+            .position-filters,
+            .status-filters {
+                justify-content: center;
+            }
+
+            .cards-scroll {
+                max-height: 60vh;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading" class="loading">Loading transfer data</div>
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="content" style="display: none;">
+            <div class="content-layout">
+                <div class="filters-container">
+                    <div class="filters-header">
+                        <div>
+                            <div class="filters-title">Filters</div>
+                            <div id="filterCount" class="filter-count" style="display: none; margin-top: 4px;"></div>
+                        </div>
+                        <button class="clear-filters" onclick="clearFilters()">Clear All</button>
+                    </div>
+                    <div class="filters">
+                        <input type="text" id="searchPlayer" class="filter-input" placeholder="Search player name...">
+                        <select id="filterFromSchool" class="filter-select" aria-label="Filter by transferring from">
+                            <option value="">All transferring from</option>
+                        </select>
+                        <select id="filterNewSchool" class="filter-select" aria-label="Filter by new school">
+                            <option value="">All new schools</option>
+                        </select>
+                    </div>
+                    <div class="position-filters" id="positionFilters">
+                        <!-- Position buttons injected here -->
+                    </div>
+                    <div class="status-filters" id="statusFilters">
+                        <button type="button" class="status-button active" data-status="signed">Signed</button>
+                        <button type="button" class="status-button active" data-status="unsigned">Unsigned</button>
+                    </div>
+                </div>
+
+                <div class="cards-scroll">
+                    <div class="cards-container" id="cardsContainer">
+                        <!-- Cards will be rendered here -->
+                    </div>
+
+                    <div id="noResults" class="no-results" style="display: none;">
+                        No players found matching your filters.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SHEET_ID = '1-CAedYYO-E9nFQCZTYsjzUirKM4DQqhLKDlY6V1mckk';
+        const GID = '794507789';
+        
+        // Try multiple URL formats
+        const CSV_URLS = [
+            'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + GID,
+            'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&gid=' + GID,
+            'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + GID + '&single=true',
+        ];
+        
+        let allPlayers = [];
+        let filteredPlayers = [];
+        const selectedPositions = new Set();
+        const selectedStatuses = new Set(['signed', 'unsigned']);
+        const POSITION_ORDER = [
+            'QB','RB','WR','TE','OT','IOL','EDGE','DL','LB','CB','S','K','P'
+        ];
+
+        // Parse CSV text
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+
+                for (let j = 0; j < lines[i].length; j++) {
+                    const char = lines[i][j];
+                    
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                values.push(current.trim());
+
+                if (values.length === headers.length && values[0]) {
+                    const player = {};
+                    headers.forEach((header, index) => {
+                        player[header] = values[index] || '';
+                    });
+                    data.push(player);
+                }
+            }
+
+            return data;
+        }
+
+        // Format grade with color
+        function formatGrade(grade) {
+            if (!grade || grade === 'N/A' || grade === '') return '<span>-</span>';
+            const num = parseFloat(grade);
+            if (isNaN(num)) return '<span>' + grade + '</span>';
+            
+            let bgColor = '#C61A2A'; // default (lowest)
+            if (num >= 90) bgColor = '#0087A4';
+            else if (num >= 80) bgColor = '#009B47';
+            else if (num >= 70) bgColor = '#76C101';
+            else if (num >= 60) bgColor = '#FFD002';
+            else if (num >= 50) bgColor = '#FE9D00';
+            else if (num >= 40) bgColor = '#FC6900';
+            else if (num >= 30) bgColor = '#E04215';
+            
+            return '<span style="background-color: ' + bgColor + '; color: #ffffff; display: inline-block; padding: 8px 14px; border-radius: 12px; min-width: 68px; font-weight: 700; font-size: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center;">' + num.toFixed(1) + '</span>';
+        }
+
+        // Format WAA
+        function formatWAA(waa) {
+            if (!waa || waa === 'N/A' || waa === '') return '<span style="display: inline-block; padding: 8px 14px; border-radius: 12px; min-width: 68px; font-weight: 700; font-size: 16px; text-align: center;">-</span>';
+            const num = parseFloat(waa);
+            if (isNaN(num)) return '<span style="display: inline-block; padding: 8px 14px; border-radius: 12px; min-width: 68px; font-weight: 700; font-size: 16px; text-align: center;">' + waa + '</span>';
+            const formatted = num > 0 ? '+' + num.toFixed(2) : num.toFixed(2);
+            const color = num > 0 ? '#28a745' : num < 0 ? '#dc3545' : '#666';
+            return '<span style="background-color: rgba(11, 21, 51, 0.05); color: ' + color + '; display: inline-block; padding: 8px 14px; border-radius: 12px; min-width: 68px; font-weight: 700; font-size: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); border: 1px solid rgba(11, 21, 51, 0.1); text-align: center;">' + formatted + '</span>';
+        }
+
+        // Render cards
+        function renderTable(players) {
+            const container = document.getElementById('cardsContainer');
+            
+            if (players.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                container.innerHTML = '';
+                return;
+            }
+
+            document.getElementById('noResults').style.display = 'none';
+            
+            container.innerHTML = players.map(player => (
+                '<div class="player-card">' +
+                    '<div class="player-header">' +
+                        '<div class="mobile-name-row">' +
+                            '<div class="rank-block">' +
+                                '<div class="rank-label">PFF Rank</div>' +
+                                '<div class="card-value">' +
+                                    '<span class="card-rank">' + (player.Rank || '-') + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="player-name">' + (player.Player || '-') + '</div>' +
+                        '</div>' +
+                        '<div class="badge-group">' +
+                            '<div class="info-badge">' +
+                                '<div class="badge-label">Position</div>' +
+                                '<div class="badge-value">' + (player.Position || '-') + '</div>' +
+                            '</div>' +
+                            '<div class="info-badge">' +
+                                '<div class="badge-label">Transferring From</div>' +
+                                '<div class="badge-value">' + (player.School || '-') + '</div>' +
+                            '</div>' +
+                            '<div class="info-badge new-school-badge">' +
+                                '<div class="badge-label">New School</div>' +
+                                '<div class="badge-value">' + (player['New School'] || 'Uncommitted') + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="player-body">' +
+                        '<div class="grades-card">' +
+                            '<div class="grades-header">' +
+                                '<div>Season</div>' +
+                                '<div>Grade</div>' +
+                                '<div>WAA</div>' +
+                            '</div>' +
+                            '<div class="grades-row">' +
+                                '<div class="season">2025</div>' +
+                                '<div>' + formatGrade(player['PFF Grade'] || player['2025 PFF Grade']) + '</div>' +
+                                '<div>' + formatWAA(player.WAA || player['2025 WAA']) + '</div>' +
+                            '</div>' +
+                            '<div class="grades-row">' +
+                                '<div class="season">2024</div>' +
+                                '<div>' + formatGrade(player['2024 Grade']) + '</div>' +
+                                '<div>' + formatWAA(player['2024 WAA']) + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
+            )).join('');
+        }
+
+        // Filter players
+        function filterPlayers() {
+            const playerFilter = (document.getElementById('searchPlayer').value || '').trim().toLowerCase();
+            const fromSchoolFilter = (document.getElementById('filterFromSchool').value || '').trim().toLowerCase();
+            const newSchoolFilter = (document.getElementById('filterNewSchool').value || '').trim().toLowerCase();
+            const showSigned = selectedStatuses.has('signed');
+            const showUnsigned = selectedStatuses.has('unsigned');
+
+            filteredPlayers = allPlayers.filter(player => {
+                const playerName = (player.Player || '').toLowerCase();
+                const positionRaw = (player.Position || '').trim();
+                const position = positionRaw.toLowerCase();
+                const school = (player.School || '').toLowerCase();
+                const newSchoolRaw = (player['New School'] || '').trim();
+                const newSchool = newSchoolRaw.toLowerCase();
+
+                const playerMatch = !playerFilter || playerName.includes(playerFilter);
+                const positionMatch = selectedPositions.size === 0 ||
+                    selectedPositions.has(positionRaw) ||
+                    selectedPositions.has(positionRaw.toUpperCase());
+                const fromSchoolMatch = !fromSchoolFilter || school === fromSchoolFilter;
+                const newSchoolMatch = !newSchoolFilter ||
+                    (newSchoolFilter === '__uncommitted__' && !newSchoolRaw) ||
+                    newSchool === newSchoolFilter;
+                
+                // Check signed/unsigned status
+                const isSigned = newSchoolRaw !== '';
+                const signedMatch = (showSigned && isSigned) || (showUnsigned && !isSigned);
+                
+                return playerMatch && positionMatch && fromSchoolMatch && newSchoolMatch && signedMatch;
+            });
+
+            // Update filter count
+            updateFilterCount();
+            
+            // Render filtered results
+            renderTable(filteredPlayers);
+        }
+
+        // Update filter count display
+        function updateFilterCount() {
+            const countEl = document.getElementById('filterCount');
+            if (countEl) {
+                const total = allPlayers.length;
+                const filtered = filteredPlayers.length;
+                if (filtered < total) {
+                    countEl.innerHTML = 'Showing <strong>' + filtered + '</strong> of <strong>' + total + '</strong> players';
+                    countEl.style.display = 'block';
+                } else {
+                    countEl.style.display = 'none';
+                }
+            }
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('searchPlayer').value = '';
+            document.getElementById('filterFromSchool').value = '';
+            document.getElementById('filterNewSchool').value = '';
+            selectedStatuses.clear();
+            selectedStatuses.add('signed');
+            selectedStatuses.add('unsigned');
+            renderStatusButtons();
+            selectedPositions.clear();
+            renderPositionButtons();
+            filterPlayers();
+        }
+
+        function getUniqueValues(players, key) {
+            const values = new Set();
+            players.forEach(player => {
+                const value = (player[key] || '').trim();
+                if (value) values.add(value);
+            });
+            return Array.from(values).sort();
+        }
+
+        function buildSelectOptions(placeholder, values, includeUncommitted) {
+            const options = ['<option value="">' + placeholder + '</option>'];
+            if (includeUncommitted) {
+                options.push('<option value="__uncommitted__">Uncommitted</option>');
+            }
+            values.forEach(value => {
+                options.push('<option value="' + value.toLowerCase() + '">' + value + '</option>');
+            });
+            return options.join('');
+        }
+
+        function renderSchoolFilters() {
+            const fromSelect = document.getElementById('filterFromSchool');
+            const newSelect = document.getElementById('filterNewSchool');
+            if (!fromSelect || !newSelect) return;
+
+            const fromSchools = getUniqueValues(allPlayers, 'School');
+            const newSchools = getUniqueValues(allPlayers, 'New School');
+            const hasUncommitted = allPlayers.some(player => !(player['New School'] || '').trim());
+
+            fromSelect.innerHTML = buildSelectOptions('All transferring from', fromSchools, false);
+            newSelect.innerHTML = buildSelectOptions('All new schools', newSchools, hasUncommitted);
+        }
+
+        function renderStatusButtons() {
+            const container = document.getElementById('statusFilters');
+            if (!container) return;
+            const buttons = container.querySelectorAll('button[data-status]');
+            buttons.forEach(button => {
+                const status = button.getAttribute('data-status');
+                if (!status) return;
+                button.classList.toggle('active', selectedStatuses.has(status));
+            });
+        }
+
+        function getPositionsFromData(players) {
+            const positions = new Set();
+            players.forEach(player => {
+                const pos = (player.Position || '').trim();
+                if (pos) positions.add(pos);
+            });
+            const ordered = [];
+            POSITION_ORDER.forEach(pos => {
+                if (positions.has(pos)) ordered.push(pos);
+            });
+            const remaining = Array.from(positions).filter(pos => !POSITION_ORDER.includes(pos));
+            remaining.sort();
+            return ordered.concat(remaining);
+        }
+
+        function renderPositionButtons() {
+            const container = document.getElementById('positionFilters');
+            if (!container) return;
+            const positions = getPositionsFromData(allPlayers);
+            container.innerHTML = positions.map(pos => {
+                const isActive = selectedPositions.has(pos);
+                return '<button type="button" class="position-button' + (isActive ? ' active' : '') + '" data-position="' + pos + '">' + pos + '</button>';
+            }).join('');
+        }
+
+        // Fetch with CORS proxy fallback
+        async function fetchWithProxy(url) {
+            try {
+                // Try direct fetch first
+                const response = await fetch(url, {
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                
+                if (response.ok) {
+                    return await response.text();
+                }
+                throw new Error('Direct fetch failed');
+            } catch (error) {
+                // Try with CORS proxy
+                const proxyUrls = [
+                    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+                    'https://corsproxy.io/?' + encodeURIComponent(url),
+                    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
+                ];
+                
+                for (const proxyUrl of proxyUrls) {
+                    try {
+                        const proxyResponse = await fetch(proxyUrl, {
+                            mode: 'cors',
+                            cache: 'no-cache'
+                        });
+                        if (proxyResponse.ok) {
+                            return await proxyResponse.text();
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+                throw new Error('All fetch methods failed');
+            }
+        }
+
+        // Fetch and load data
+        async function loadData() {
+            let lastError = null;
+            
+            // Try each URL format
+            for (const url of CSV_URLS) {
+                try {
+                    document.getElementById('loading').textContent = 'Loading transfer data...';
+                    
+                    const text = await fetchWithProxy(url);
+                    
+                    if (!text || text.trim().length === 0) {
+                        throw new Error('Empty response');
+                    }
+                    
+                    allPlayers = parseCSV(text);
+                    
+                    if (allPlayers.length === 0) {
+                        throw new Error('No data found in CSV');
+                    }
+                    
+                    filteredPlayers = allPlayers;
+
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('error').style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+
+                    renderTable(allPlayers);
+                    updateFilterCount();
+                    renderPositionButtons();
+                    renderSchoolFilters();
+                    renderStatusButtons();
+
+                    // Add event listeners for filters with debounce
+                    let filterTimeout;
+                    const debounceFilter = () => {
+                        clearTimeout(filterTimeout);
+                        filterTimeout = setTimeout(filterPlayers, 150);
+                    };
+
+                    document.getElementById('searchPlayer').addEventListener('input', debounceFilter);
+                    document.getElementById('filterFromSchool').addEventListener('change', filterPlayers);
+                    document.getElementById('filterNewSchool').addEventListener('change', filterPlayers);
+                    document.getElementById('statusFilters').addEventListener('click', (event) => {
+                        const button = event.target.closest('button[data-status]');
+                        if (!button) return;
+                        const status = button.getAttribute('data-status');
+                        if (!status) return;
+                        if (selectedStatuses.has(status)) {
+                            selectedStatuses.delete(status);
+                        } else {
+                            selectedStatuses.add(status);
+                        }
+                        renderStatusButtons();
+                        filterPlayers();
+                    });
+                    document.getElementById('positionFilters').addEventListener('click', (event) => {
+                        const button = event.target.closest('button[data-position]');
+                        if (!button) return;
+                        const position = button.getAttribute('data-position');
+                        if (!position) return;
+                        if (selectedPositions.has(position)) {
+                            selectedPositions.delete(position);
+                        } else {
+                            selectedPositions.add(position);
+                        }
+                        renderPositionButtons();
+                        filterPlayers();
+                    });
+                    
+                    return; // Success!
+                } catch (error) {
+                    lastError = error;
+                    continue; // Try next URL
+                }
+            }
+            
+            // All URLs failed
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            const errorMessage = (lastError && lastError.message) ? lastError.message : 'Failed to fetch data';
+            document.getElementById('error').innerHTML =
+                '<strong>Error loading data:</strong> ' + errorMessage + '<br><br>' +
+                '<strong>Please ensure:</strong><br>' +
+                '1. The Google Sheet is published to the web (File -> Publish to the web -> CSV format)<br>' +
+                '2. The sharing settings allow "Anyone with the link" to view<br>' +
+                '3. Your internet connection is working<br><br>' +
+                '<small>If the issue persists, you may need to download the CSV manually and update the code to use a local file.</small>';
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>
