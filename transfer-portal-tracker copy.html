@@ -662,8 +662,8 @@
                         <!-- Position buttons injected here -->
                     </div>
                     <div class="status-filters" id="statusFilters">
-                        <button type="button" class="status-button active" data-status="signed">Signed</button>
-                        <button type="button" class="status-button active" data-status="unsigned">Unsigned</button>
+                        <button type="button" class="status-button" data-status="signed">Signed</button>
+                        <button type="button" class="status-button" data-status="unsigned">Unsigned</button>
                     </div>
                 </div>
 
@@ -694,7 +694,7 @@
         let allPlayers = [];
         let filteredPlayers = [];
         const selectedPositions = new Set();
-        const selectedStatuses = new Set(['signed', 'unsigned']);
+        const selectedStatuses = new Set();
         const POSITION_ORDER = [
             'QB','RB','WR','TE','OT','IOL','EDGE','DL','LB','CB','S','K','P'
         ];
@@ -853,7 +853,9 @@
                 
                 // Check signed/unsigned status
                 const isSigned = newSchoolRaw !== '';
-                const signedMatch = (showSigned && isSigned) || (showUnsigned && !isSigned);
+                const signedMatch = selectedStatuses.size === 0 ||
+                    (showSigned && isSigned) ||
+                    (showUnsigned && !isSigned);
                 
                 return playerMatch && positionMatch && fromSchoolMatch && newSchoolMatch && signedMatch;
             });
@@ -886,8 +888,6 @@
             document.getElementById('filterFromSchool').value = '';
             document.getElementById('filterNewSchool').value = '';
             selectedStatuses.clear();
-            selectedStatuses.add('signed');
-            selectedStatuses.add('unsigned');
             renderStatusButtons();
             selectedPositions.clear();
             renderPositionButtons();
@@ -921,10 +921,8 @@
 
             const fromSchools = getUniqueValues(allPlayers, 'School');
             const newSchools = getUniqueValues(allPlayers, 'New School');
-            const hasUncommitted = allPlayers.some(player => !(player['New School'] || '').trim());
-
             fromSelect.innerHTML = buildSelectOptions('All transferring from', fromSchools, false);
-            newSelect.innerHTML = buildSelectOptions('All new schools', newSchools, hasUncommitted);
+            newSelect.innerHTML = buildSelectOptions('All new schools', newSchools, false);
         }
 
         function renderStatusButtons() {
