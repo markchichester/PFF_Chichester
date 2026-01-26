@@ -31,7 +31,7 @@
       .sb-container {
         max-width: 650px;
         margin: 0 auto;
-        padding: 16px 16px 90px;
+        padding: 16px;
       }
 
       .sb-logo-loading {
@@ -157,11 +157,6 @@
         outline-offset: 2px;
       }
 
-      .sb-result-count {
-        font-size: 12px;
-        text-align: center;
-        opacity: 0.7;
-      }
 
       .sb-filter-button {
         border: 1px solid var(--sb-black);
@@ -416,24 +411,25 @@
       }
 
       .sb-compare-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
         background: var(--sb-black);
         color: var(--sb-white);
-        padding: 12px 0 14px;
-        z-index: 4;
-        box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.15);
-        border-top: 2px solid var(--sb-yellow);
+        padding: 10px 0 12px;
+        border-radius: 12px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+        border: 1px solid var(--sb-yellow);
+        width: 100%;
+        grid-column: 1 / -1;
+        justify-self: stretch;
       }
 
       .sb-compare-inner {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         gap: 10px;
         flex-wrap: wrap;
+        width: 100%;
+        padding: 0 12px;
       }
 
       .sb-compare-count {
@@ -447,7 +443,7 @@
         position: fixed;
         left: 0;
         right: 0;
-        bottom: 72px;
+        top: 140px;
         z-index: 9;
         display: none;
         padding: 0 16px;
@@ -639,6 +635,20 @@
         .sb-compare-card {
           max-height: 60vh;
         }
+
+        .sb-compare-inner {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+        }
+
+        .sb-compare-count {
+          text-align: center;
+        }
+
+        .sb-compare-inner .sb-action {
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -681,7 +691,17 @@
             Clear Filters
           </button>
         </div>
-        <div id="resultCount" class="sb-result-count" aria-live="polite"></div>
+        <div id="compareBar" class="sb-compare-bar" style="display: none;">
+          <div class="sb-compare-inner">
+            <span id="compareCount" class="sb-compare-count">0 Selected</span>
+            <button id="compareOpen" class="sb-action" type="button" disabled>
+              Compare
+            </button>
+            <button id="compareClear" class="sb-action" type="button">
+              Clear
+            </button>
+          </div>
+        </div>
         </div>
       </div>
 
@@ -695,17 +715,6 @@
 
       <div id="trackerGrid" class="sb-grid"></div>
 
-      <div id="compareBar" class="sb-compare-bar" style="display: none;">
-        <div class="sb-compare-inner">
-          <span id="compareCount" class="sb-compare-count">0 Selected</span>
-          <button id="compareOpen" class="sb-action" type="button" disabled>
-            Compare
-          </button>
-          <button id="compareClear" class="sb-action" type="button">
-            Clear
-          </button>
-        </div>
-      </div>
     </div>
     <div id="comparePanel" class="sb-compare-panel">
       <div class="sb-compare-card">
@@ -756,7 +765,6 @@
       const sortFilter = document.getElementById("sortFilter");
       const squadButtons = document.getElementById("squadButtons");
       const clearFiltersButton = document.getElementById("clearFilters");
-      const resultCount = document.getElementById("resultCount");
       const compareBar = document.getElementById("compareBar");
       const compareCount = document.getElementById("compareCount");
       const compareOpen = document.getElementById("compareOpen");
@@ -1285,9 +1293,6 @@
           }
         });
 
-        if (resultCount) {
-          resultCount.textContent = `Showing ${state.filtered.length} of ${state.players.length} players`;
-        }
         renderGrid();
         updateCompareBar();
       };
