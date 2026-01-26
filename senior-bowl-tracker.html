@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Senior Bowl Tracker</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sb-black: #000000;
+        --sb-yellow: #fdf600;
+        --sb-white: #ffffff;
+        --sb-soft: #f7f7f7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Archivo", system-ui, -apple-system, sans-serif;
+        background: var(--sb-white);
+        color: var(--sb-black);
+      }
+
+      .sb-container {
+        max-width: 650px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      .sb-logo-loading {
+        width: 160px;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        display: block;
+      }
+
+      .sb-logo-loading.is-animating {
+        animation: sbPulse 1.6s ease-in-out infinite;
+      }
+
+      @keyframes sbPulse {
+        0% {
+          opacity: 0.25;
+          transform: scale(0.98);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0.25;
+          transform: scale(0.98);
+        }
+      }
+
+      .sb-controls {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .sb-controls-wrap {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--sb-white);
+        padding: 8px 0 12px;
+      }
+
+      .sb-input {
+        border: 1px solid var(--sb-black);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+        width: 100%;
+      }
+
+      .sb-filters {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+      }
+
+      .sb-select {
+        border: 1px solid var(--sb-black);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 13px;
+        background: var(--sb-white);
+        width: 100%;
+        min-width: 0;
+      }
+
+      .sb-filter-group {
+        display: grid;
+        gap: 6px;
+      }
+
+      .sb-filter-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        text-align: center;
+        opacity: 0.7;
+      }
+
+      .sb-button-group {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .sb-filter-actions {
+        display: flex;
+        justify-content: center;
+      }
+
+      .sb-clear-button {
+        border: 1px solid var(--sb-black);
+        background: var(--sb-white);
+        color: var(--sb-black);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: "Archivo", system-ui, -apple-system, sans-serif;
+      }
+
+      .sb-clear-button:hover {
+        background: var(--sb-black);
+        color: var(--sb-white);
+      }
+
+      .sb-filter-button:focus-visible,
+      .sb-action:focus-visible,
+      .sb-clear-button:focus-visible,
+      .sb-select:focus-visible,
+      .sb-input:focus-visible {
+        outline: 2px solid var(--sb-yellow);
+        outline-offset: 2px;
+      }
+
+      .sb-result-count {
+        font-size: 12px;
+        text-align: center;
+        opacity: 0.7;
+      }
+
+      .sb-filter-button {
+        border: 1px solid var(--sb-black);
+        background: var(--sb-white);
+        color: var(--sb-black);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: "Archivo", system-ui, -apple-system, sans-serif;
+      }
+
+      .sb-filter-button.is-active {
+        background: var(--sb-black);
+        color: var(--sb-white);
+      }
+
+      .sb-grid {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .sb-card {
+        border: 1px solid var(--sb-black);
+        border-radius: 12px;
+        background: var(--sb-white);
+        padding: 12px;
+        display: grid;
+        gap: 10px;
+        position: relative;
+      }
+
+      .sb-card-head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .sb-identity {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .sb-logo-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        border: 1px solid #e6e6e6;
+        background: var(--sb-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+      }
+
+      .sb-logo-box img {
+        width: 34px;
+        height: 34px;
+        object-fit: contain;
+      }
+
+      .sb-player {
+        font-weight: 700;
+        font-size: 16px;
+      }
+
+      .sb-pos {
+        background: var(--sb-yellow);
+        color: var(--sb-black);
+        font-weight: 700;
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 4px 10px;
+      }
+
+      .sb-school {
+        font-size: 13px;
+        opacity: 0.8;
+      }
+
+      .sb-topline {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .sb-squad {
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid var(--sb-black);
+        border-radius: 999px;
+        padding: 3px 8px;
+        justify-self: start;
+      }
+
+      .sb-meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      .sb-meta-item {
+        background: var(--sb-soft);
+        border-radius: 10px;
+        padding: 8px;
+        border: 1px solid #e6e6e6;
+        text-align: center;
+      }
+
+      .sb-meta-label {
+        display: block;
+        font-size: 10px;
+        opacity: 0.6;
+        margin-bottom: 3px;
+      }
+
+      .sb-team {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      .sb-team-logo {
+        width: 26px;
+        height: 26px;
+        object-fit: contain;
+        flex: 0 0 auto;
+      }
+
+      .sb-pill {
+        border: 1px solid var(--sb-black);
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .sb-grade-box {
+        border: 1px solid #e6e6e6;
+        border-radius: 12px;
+        padding: 8px 12px;
+        background: var(--sb-soft);
+        display: grid;
+        gap: 4px;
+        text-align: center;
+      }
+
+      .sb-grade-group {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .sb-grade {
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .sb-grade-label {
+        font-size: 10px;
+        opacity: 0.6;
+      }
+
+      .sb-measurements {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .sb-meta-item.is-high {
+        border-color: #1b7f4b;
+        background: #f1fbf4;
+      }
+
+      .sb-meta-item.is-low {
+        border-color: #b42318;
+        background: #fff4f2;
+      }
+
+      .sb-percentile {
+        display: block;
+        font-size: 10px;
+        margin-top: 4px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+
+      .sb-percentile.high {
+        color: #1b7f4b;
+      }
+
+      .sb-percentile.low {
+        color: #b42318;
+      }
+
+      .sb-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .sb-action {
+        border: 1px solid var(--sb-black);
+        background: var(--sb-white);
+        color: var(--sb-black);
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-family: "Archivo", system-ui, -apple-system, sans-serif;
+        min-width: 140px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .sb-action:hover {
+        background: var(--sb-black);
+        color: var(--sb-white);
+        transform: translateY(-1px);
+      }
+
+      .sb-action.is-disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .sb-action.is-active {
+        background: var(--sb-black);
+        color: var(--sb-white);
+      }
+
+      .sb-compare-bar {
+        position: sticky;
+        bottom: 0;
+        background: var(--sb-black);
+        color: var(--sb-white);
+        padding: 12px 0 14px;
+        z-index: 4;
+        box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.15);
+        border-top: 2px solid var(--sb-yellow);
+      }
+
+      .sb-compare-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sb-compare-count {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .sb-compare-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        padding: 16px;
+      }
+
+      .sb-compare-overlay.is-open {
+        display: flex;
+      }
+
+      .sb-compare-card {
+        background: var(--sb-white);
+        color: var(--sb-black);
+        border-radius: 12px;
+        padding: 16px;
+        width: 100%;
+        max-width: 900px;
+        max-height: 85vh;
+        overflow: auto;
+        position: relative;
+      }
+
+      .sb-compare-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      .sb-compare-table {
+        display: grid;
+        gap: 6px;
+        font-size: 12px;
+      }
+
+      .sb-compare-row {
+        display: grid;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .sb-compare-cell {
+        background: var(--sb-soft);
+        border: 1px solid #e6e6e6;
+        border-radius: 8px;
+        padding: 8px;
+        text-align: center;
+      }
+
+      .sb-compare-cell.is-best {
+        border-color: var(--sb-yellow);
+        box-shadow: inset 0 0 0 1px var(--sb-yellow);
+        background: #fffde6;
+      }
+
+      .sb-compare-label {
+        text-align: left;
+        font-weight: 700;
+        background: transparent;
+        border: none;
+        padding-left: 0;
+      }
+
+      .sb-summary-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+      }
+
+      .sb-summary-overlay.is-open {
+        display: flex;
+      }
+
+      .sb-summary-card {
+        background: var(--sb-white);
+        color: var(--sb-black);
+        border-radius: 12px;
+        padding: 14px 16px;
+        width: 100%;
+        max-height: 85%;
+        overflow: auto;
+        position: relative;
+      }
+
+      .sb-summary-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      .sb-summary-list {
+        margin: 0;
+        padding-left: 16px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .sb-summary-close {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        border: none;
+        background: transparent;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .sb-empty {
+        padding: 20px;
+        border: 1px dashed #d0d0d0;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 13px;
+      }
+
+      .sb-loading {
+        display: flex;
+        justify-content: center;
+        padding: 16px 0 8px;
+      }
+
+      .sb-footer {
+        margin-top: 18px;
+        font-size: 11px;
+        opacity: 0.6;
+        text-align: center;
+      }
+
+      @media (min-width: 520px) {
+        .sb-controls {
+          grid-template-columns: 1fr 1fr;
+          align-items: center;
+        }
+
+        .sb-filters {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 520px) {
+        .sb-card-head {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .sb-grade-box {
+          text-align: center;
+          width: 100%;
+        }
+
+        .sb-player {
+          font-weight: 800;
+        }
+
+        .sb-school {
+          opacity: 0.6;
+        }
+
+        .sb-compare-card {
+          max-height: 75vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sb-container">
+      <div class="sb-controls-wrap">
+        <div class="sb-controls">
+        <input
+          id="searchInput"
+          class="sb-input"
+          type="search"
+          placeholder="Search by player"
+          aria-label="Search"
+        />
+        <div class="sb-filters">
+          <select id="posFilter" class="sb-select" aria-label="Position filter">
+            <option value="">Pos.</option>
+          </select>
+          <select
+            id="schoolFilter"
+            class="sb-select"
+            aria-label="School filter"
+          >
+            <option value="">Schools</option>
+          </select>
+          <select id="sortFilter" class="sb-select" aria-label="Sort filter">
+            <option value="name">Sort by</option>
+            <option value="school">School</option>
+            <option value="grade">Grade</option>
+            <option value="waa">WAA</option>
+            <option value="pos">Position</option>
+          </select>
+        </div>
+        <div class="sb-filter-group">
+          <div class="sb-filter-title">Squad</div>
+          <div id="squadButtons" class="sb-button-group"></div>
+        </div>
+        <div class="sb-filter-actions">
+          <button id="clearFilters" class="sb-clear-button" type="button">
+            Clear Filters
+          </button>
+        </div>
+        <div id="resultCount" class="sb-result-count" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="trackerLoading" class="sb-loading">
+        <img
+          class="sb-logo-loading is-animating"
+          src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png"
+          alt="PFF Powered By"
+        />
+      </div>
+
+      <div id="trackerGrid" class="sb-grid"></div>
+
+      <div id="compareBar" class="sb-compare-bar" style="display: none;">
+        <div class="sb-compare-inner">
+          <span id="compareCount" class="sb-compare-count">0 Selected</span>
+          <button id="compareOpen" class="sb-action" type="button" disabled>
+            Compare
+          </button>
+          <button id="compareClear" class="sb-action" type="button">
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="compareOverlay" class="sb-compare-overlay">
+      <div class="sb-compare-card">
+        <button id="compareClose" class="sb-summary-close" type="button">×</button>
+        <div class="sb-compare-title">Player Comparison</div>
+        <div id="compareContent"></div>
+      </div>
+    </div>
+
+    <script>
+      const SHEET_ID = "1zdha0mZU8Ps7EAFQBpaL1kPTrq_GQdEI7FHnZa73Qz8";
+      const PUBLISHED_ID = "2PACX-1vTRuWBrTlPaYZx2LaVTJKZkD3-5-JcHOIF6WVYMBKkfTyQFaYWUxYqYjsCqGzcu9WmbVSpnmxfZDw-q";
+      const PUBLISHED_SHEET_IDS = {
+        Squad:
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTRuWBrTlPaYZx2LaVTJKZkD3-5-JcHOIF6WVYMBKkfTyQFaYWUxYqYjsCqGzcu9WmbVSpnmxfZDw-q/pub?gid=0&single=true&output=csv",
+        Grades:
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTRuWBrTlPaYZx2LaVTJKZkD3-5-JcHOIF6WVYMBKkfTyQFaYWUxYqYjsCqGzcu9WmbVSpnmxfZDw-q/pub?gid=81830910&single=true&output=csv",
+        WAA: "",
+        Logos: "",
+      };
+      const MAIN_SHEET = "Squad";
+      const GRADE_SHEET = "Grades";
+      const WAA_SHEET = "WAA";
+      const LOGO_SHEET = "Logos";
+      const SHEET_GIDS = {
+        Squad: "0",
+        Grades: "81830910",
+        WAA: "1507594329",
+        Logos: "1233940787",
+      };
+
+      const state = {
+        players: [],
+        filtered: [],
+        gradesById: new Map(),
+        logosBySchool: new Map(),
+        positions: [],
+        squads: [],
+        statsByPos: {},
+      };
+
+      const grid = document.getElementById("trackerGrid");
+      const loadingEl = document.getElementById("trackerLoading");
+      const searchInput = document.getElementById("searchInput");
+      const posFilter = document.getElementById("posFilter");
+      const schoolFilter = document.getElementById("schoolFilter");
+      const sortFilter = document.getElementById("sortFilter");
+      const squadButtons = document.getElementById("squadButtons");
+      const clearFiltersButton = document.getElementById("clearFilters");
+      const resultCount = document.getElementById("resultCount");
+      const compareBar = document.getElementById("compareBar");
+      const compareCount = document.getElementById("compareCount");
+      const compareOpen = document.getElementById("compareOpen");
+      const compareClear = document.getElementById("compareClear");
+      const compareOverlay = document.getElementById("compareOverlay");
+      const compareClose = document.getElementById("compareClose");
+      const compareContent = document.getElementById("compareContent");
+
+      const selectedSquads = new Set();
+      const compareIds = new Set();
+
+      const normalize = (value) =>
+        String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "");
+
+      const formatHeight = (raw) => {
+        const value = String(raw || "").trim();
+        if (!/^\d{4}$/.test(value)) return raw || "--";
+        const feet = Number(value[0]);
+        const inches = Number(value.slice(1, 3));
+        const eighths = Number(value[3]);
+        if (Number.isNaN(feet) || Number.isNaN(inches) || Number.isNaN(eighths)) {
+          return raw || "--";
+        }
+        const fractions = {
+          1: "1/8",
+          2: "1/4",
+          3: "3/8",
+          4: "1/2",
+          5: "5/8",
+          6: "3/4",
+          7: "7/8",
+        };
+        const fraction = fractions[eighths] ? ` ${fractions[eighths]}` : "";
+        return `${feet}'${inches}${fraction}"`;
+      };
+
+      const parseNumberWithFraction = (raw) => {
+        const value = String(raw || "").trim();
+        if (!value) return null;
+        const match = value.match(/(\d+(?:\.\d+)?)(?:\s+(\d+)\/(\d+))?/);
+        if (!match) return null;
+        const base = Number(match[1]);
+        if (!Number.isFinite(base)) return null;
+        if (match[2] && match[3]) {
+          const numerator = Number(match[2]);
+          const denominator = Number(match[3]);
+          if (Number.isFinite(numerator) && Number.isFinite(denominator) && denominator) {
+            return base + numerator / denominator;
+          }
+        }
+        return base;
+      };
+
+      const parseHeightToInches = (raw) => {
+        const value = String(raw || "").trim();
+        if (!value) return null;
+        if (/^\d{4}$/.test(value)) {
+          const feet = Number(value[0]);
+          const inches = Number(value.slice(1, 3));
+          const eighths = Number(value[3]);
+          if ([feet, inches, eighths].some((num) => Number.isNaN(num))) return null;
+          return feet * 12 + inches + eighths / 8;
+        }
+        const match = value.match(/(\d+)\D+(\d{1,2})(?:\D+(\d)\/8)?/);
+        if (match) {
+          const feet = Number(match[1]);
+          const inches = Number(match[2]);
+          const eighths = match[3] ? Number(match[3]) : 0;
+          if ([feet, inches, eighths].some((num) => Number.isNaN(num))) return null;
+          return feet * 12 + inches + eighths / 8;
+        }
+        return null;
+      };
+
+      const getGradeValue = (player) => {
+        const entry = state.gradesById.get(String(player.pff_id)) || {};
+        const value = Number(entry.grade);
+        return Number.isFinite(value) ? value : null;
+      };
+
+      const getWaaValue = (player) => {
+        const entry = state.gradesById.get(String(player.pff_id)) || {};
+        const value = Number(entry.waa);
+        return Number.isFinite(value) ? value : null;
+      };
+
+      const percentileForValue = (values, value) => {
+        const n = values.length;
+        if (!n || value == null) return null;
+        let below = 0;
+        let equal = 0;
+        values.forEach((v) => {
+          if (v < value) below += 1;
+          else if (v === value) equal += 1;
+        });
+        const pct = ((below + equal * 0.5) / n) * 100;
+        return Math.round(pct);
+      };
+
+      const rankForValueDesc = (values, value) => {
+        if (!values.length || value == null) return null;
+        const index = values.findIndex((v) => v === value);
+        if (index === -1) return null;
+        return index + 1;
+      };
+
+      const ordinal = (value) => {
+        if (value == null) return "N/A";
+        const num = Number(value);
+        if (!Number.isFinite(num)) return "N/A";
+        const mod10 = num % 10;
+        const mod100 = num % 100;
+        if (mod10 === 1 && mod100 !== 11) return `${num}st`;
+        if (mod10 === 2 && mod100 !== 12) return `${num}nd`;
+        if (mod10 === 3 && mod100 !== 13) return `${num}rd`;
+        return `${num}th`;
+      };
+
+      const buildPositionStats = () => {
+        const stats = {};
+        const ensure = (pos) => {
+          if (!stats[pos]) {
+            stats[pos] = {
+              measures: { height: [], weight: [], hand: [], arm: [], wingspan: [] },
+              grades: [],
+              waa: [],
+            };
+          }
+          return stats[pos];
+        };
+
+        state.players.forEach((player) => {
+          const pos = player.pos || "Unknown";
+          const entry = ensure(pos);
+
+          const height = parseHeightToInches(player.height);
+          const weight = parseNumberWithFraction(player.weight);
+          const hand = parseNumberWithFraction(player.hand);
+          const arm = parseNumberWithFraction(player.arm);
+          const wingspan = parseNumberWithFraction(player.wingspan);
+
+          if (Number.isFinite(height)) entry.measures.height.push(height);
+          if (Number.isFinite(weight)) entry.measures.weight.push(weight);
+          if (Number.isFinite(hand)) entry.measures.hand.push(hand);
+          if (Number.isFinite(arm)) entry.measures.arm.push(arm);
+          if (Number.isFinite(wingspan)) entry.measures.wingspan.push(wingspan);
+
+          const grade = getGradeValue(player);
+          if (Number.isFinite(grade)) entry.grades.push(grade);
+          const waa = getWaaValue(player);
+          if (Number.isFinite(waa)) entry.waa.push(waa);
+        });
+
+        Object.values(stats).forEach((entry) => {
+          Object.values(entry.measures).forEach((list) => list.sort((a, b) => a - b));
+          entry.grades.sort((a, b) => b - a);
+          entry.waa.sort((a, b) => b - a);
+        });
+
+        state.statsByPos = stats;
+      };
+
+      const getCompareId = (player) =>
+        String(player.pff_id || player.player || "").trim();
+
+      const getMeasurementValue = (player, key) => {
+        switch (key) {
+          case "height":
+            return parseHeightToInches(player.height);
+          case "weight":
+            return parseNumberWithFraction(player.weight);
+          case "hand":
+            return parseNumberWithFraction(player.hand);
+          case "arm":
+            return parseNumberWithFraction(player.arm);
+          case "wingspan":
+            return parseNumberWithFraction(player.wingspan);
+          default:
+            return null;
+        }
+      };
+
+      const getMeasurementPercentile = (player, key) => {
+        const stats = state.statsByPos[player.pos || "Unknown"];
+        if (!stats) return null;
+        const value = getMeasurementValue(player, key);
+        return percentileForValue(stats.measures[key] || [], value);
+      };
+
+      const updateCompareBar = () => {
+        if (!compareBar || !compareCount || !compareOpen || !compareClear) return;
+        const count = compareIds.size;
+        compareCount.textContent = `${count} Selected`;
+        compareBar.style.display = count ? "block" : "none";
+        compareOpen.disabled = count < 2;
+      };
+
+
+      const parseCsv = (text) => {
+        const rows = [];
+        let row = [];
+        let value = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i += 1) {
+          const char = text[i];
+          const next = text[i + 1];
+
+          if (char === '"' && next === '"') {
+            value += '"';
+            i += 1;
+            continue;
+          }
+
+          if (char === '"') {
+            inQuotes = !inQuotes;
+            continue;
+          }
+
+          if (char === "," && !inQuotes) {
+            row.push(value);
+            value = "";
+            continue;
+          }
+
+          if ((char === "\n" || char === "\r") && !inQuotes) {
+            if (char === "\r" && next === "\n") i += 1;
+            row.push(value);
+            rows.push(row);
+            row = [];
+            value = "";
+            continue;
+          }
+
+          value += char;
+        }
+
+        if (value.length || row.length) {
+          row.push(value);
+          rows.push(row);
+        }
+
+        return rows.filter((cells) => cells.some((cell) => String(cell).trim() !== ""));
+      };
+
+      const csvToObjects = (text) => {
+        const rows = parseCsv(text);
+        if (!rows.length) return [];
+        const headers = rows[0].map((header) => normalize(header));
+        return rows.slice(1).map((cells) => {
+          const obj = {};
+          headers.forEach((header, index) => {
+            obj[header] = cells[index] || "";
+          });
+          return obj;
+        });
+      };
+
+      const getCsvUrls = (gid, sheetName) => {
+        const urls = [];
+        const publishedSheetId = PUBLISHED_SHEET_IDS[sheetName] || "";
+        if (publishedSheetId) {
+          if (publishedSheetId.startsWith("http")) {
+            urls.push(publishedSheetId);
+          } else {
+            urls.push(
+              `https://docs.google.com/spreadsheets/d/e/${publishedSheetId}/pub?output=csv`
+            );
+          }
+        }
+        if (PUBLISHED_ID) {
+          urls.push(
+            `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pub?output=csv&gid=${gid}&single=true`
+          );
+        }
+        urls.push(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`);
+        urls.push(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}`);
+        return urls;
+      };
+
+      const fetchTextWithTimeout = async (url, timeoutMs) => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const response = await fetch(url, {
+            mode: "cors",
+            cache: "no-cache",
+            signal: controller.signal,
+          });
+          if (!response.ok) {
+            throw new Error(`Fetch failed (${response.status})`);
+          }
+          return await response.text();
+        } finally {
+          clearTimeout(timer);
+        }
+      };
+
+      const FETCH_TIMEOUT_MS = 8000;
+
+      const fetchWithProxy = async (url) => {
+        try {
+          return await fetchTextWithTimeout(url, FETCH_TIMEOUT_MS);
+        } catch (error) {
+          const proxyUrls = [
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+          ];
+          for (const proxyUrl of proxyUrls) {
+            try {
+              return await fetchTextWithTimeout(proxyUrl, FETCH_TIMEOUT_MS);
+            } catch (proxyError) {
+              continue;
+            }
+          }
+          throw error;
+        }
+      };
+
+      const fetchCsv = async (gid, sheetName) => {
+        const urls = getCsvUrls(gid, sheetName);
+        let lastError = null;
+        for (const url of urls) {
+          try {
+            const text = await fetchWithProxy(url);
+            if (!text || !text.trim()) {
+              throw new Error("Empty CSV response");
+            }
+            const lowerText = text.toLowerCase();
+            if (lowerText.includes("signin") || lowerText.includes("<html")) {
+              throw new Error("CSV request blocked by permissions");
+            }
+            return csvToObjects(text);
+          } catch (error) {
+            lastError = error;
+          }
+        }
+        throw lastError || new Error("CSV request failed");
+      };
+
+      const loadSheet = async (sheetName, gid) => {
+        if (!gid) return [];
+        try {
+          return await fetchCsv(gid, sheetName);
+        } catch (csvError) {
+          return [];
+        }
+      };
+
+      const loadMainSheet = async () => {
+        const rows = await loadSheet(MAIN_SHEET, SHEET_GIDS[MAIN_SHEET]);
+        if (!rows.length) {
+          const urls = getCsvUrls(SHEET_GIDS[MAIN_SHEET], MAIN_SHEET);
+          throw new Error(`No rows returned from ${urls.join(", ")}`);
+        }
+        state.players = rows
+          .filter((row) => row.player)
+          .map((row) => ({
+            pff_id: row.pff_id || row.pffid,
+            player: row.player,
+            school: row.school,
+            pos: row.pos,
+            squad: row.squad,
+            weight: row.weight,
+            height: row.height,
+            hand: row.handsize || row.hand,
+            arm: row.armlength || row.arm,
+            wingspan: row.wingspan,
+            draft_profile: row.draftprofile,
+          }));
+      };
+
+      const loadGrades = async () => {
+        const gradeRows = await loadSheet(GRADE_SHEET, SHEET_GIDS[GRADE_SHEET]);
+        gradeRows.forEach((row) => {
+          const playerId = row.playerid || row.pff_id;
+          if (!playerId) return;
+          state.gradesById.set(String(playerId), {
+            grade:
+              row.pffgrade ||
+              row["pff_grade"] ||
+              row["pff grade"] ||
+              row.grade ||
+              row["pffgrade"],
+            waa: "",
+          });
+        });
+
+        const waaRows = await loadSheet(WAA_SHEET, SHEET_GIDS[WAA_SHEET]);
+        waaRows.forEach((row) => {
+          const playerId = row.playerid || row.pff_id;
+          if (!playerId) return;
+          const entry = state.gradesById.get(String(playerId)) || {};
+          state.gradesById.set(String(playerId), {
+            grade: entry.grade || "",
+            waa: row.waa || row.war || row.value,
+          });
+        });
+      };
+
+      const loadLogos = async () => {
+        const rows = await loadSheet(LOGO_SHEET, SHEET_GIDS[LOGO_SHEET]);
+        rows.forEach((row) => {
+          const school = row.teamname || row.school || row.team;
+          const logo = row.teamlogoespn || row.logo || row["logo url"];
+          if (school && logo) {
+            state.logosBySchool.set(normalize(school), logo);
+          }
+        });
+      };
+
+      const hydrateFilters = () => {
+        const posSet = new Set();
+        const squadSet = new Set();
+        const schoolSet = new Set();
+
+        state.players.forEach((player) => {
+          if (player.pos) posSet.add(player.pos);
+          if (player.squad) squadSet.add(player.squad);
+          if (player.school) schoolSet.add(player.school);
+        });
+
+        state.positions = Array.from(posSet).sort((a, b) =>
+          String(a).localeCompare(String(b))
+        );
+        state.squads = Array.from(squadSet).sort((a, b) => String(a).localeCompare(String(b)));
+
+        if (posFilter) {
+          posFilter.innerHTML = '<option value="">Pos.</option>';
+          state.positions.forEach((value) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            posFilter.appendChild(option);
+          });
+        }
+
+        if (schoolFilter) {
+          schoolFilter.innerHTML = '<option value="">Schools</option>';
+          Array.from(schoolSet)
+            .sort((a, b) => String(a).localeCompare(String(b)))
+            .forEach((value) => {
+              const option = document.createElement("option");
+              option.value = value;
+              option.textContent = value;
+              schoolFilter.appendChild(option);
+            });
+        }
+
+        renderSquadButtons();
+      };
+
+      const renderButtonGroup = (container, values, selectedSet, allLabel) => {
+        if (!container) return;
+        container.innerHTML = "";
+
+        const addButton = (label, value, isActive) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `sb-filter-button${isActive ? " is-active" : ""}`;
+          button.setAttribute("data-value", value);
+          button.textContent = label;
+          container.appendChild(button);
+        };
+
+        addButton(allLabel, "__all__", selectedSet.size === 0);
+        values.forEach((value) => {
+          addButton(value, value, selectedSet.has(value));
+        });
+      };
+
+      const renderSquadButtons = () => {
+        renderButtonGroup(squadButtons, state.squads, selectedSquads, "All Squads");
+      };
+
+      const applyFilters = () => {
+        const term = normalize(searchInput.value);
+        const posValue = posFilter ? posFilter.value : "";
+        const schoolValue = schoolFilter.value;
+        const sortValue = sortFilter ? sortFilter.value : "name";
+
+        state.filtered = state.players.filter((player) => {
+          const matchesTerm =
+            !term ||
+            normalize(player.player).includes(term);
+          const matchesPos = !posValue || player.pos === posValue;
+          const matchesSquad =
+            selectedSquads.size === 0 || selectedSquads.has(player.squad);
+          const matchesSchool = !schoolValue || player.school === schoolValue;
+          return matchesTerm && matchesPos && matchesSquad && matchesSchool;
+        });
+
+        const lastNameKey = (name) => {
+          const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+          return parts.length ? parts[parts.length - 1] : "";
+        };
+
+        const compareNullableDesc = (a, b) => {
+          if (a == null && b == null) return 0;
+          if (a == null) return 1;
+          if (b == null) return -1;
+          return b - a;
+        };
+
+        state.filtered.sort((a, b) => {
+          switch (sortValue) {
+            case "school":
+              return String(a.school || "").localeCompare(String(b.school || ""));
+            case "grade":
+              return compareNullableDesc(getGradeValue(a), getGradeValue(b));
+            case "waa":
+              return compareNullableDesc(getWaaValue(a), getWaaValue(b));
+            case "pos":
+              return String(a.pos || "").localeCompare(String(b.pos || ""));
+            case "name":
+            default:
+              return (
+                lastNameKey(a.player).localeCompare(lastNameKey(b.player)) ||
+                String(a.player || "").localeCompare(String(b.player || ""))
+              );
+          }
+        });
+
+        if (resultCount) {
+          resultCount.textContent = `Showing ${state.filtered.length} of ${state.players.length} players`;
+        }
+        renderGrid();
+        updateCompareBar();
+      };
+
+      const getLogo = (school) => {
+        if (!school) return "";
+        return state.logosBySchool.get(normalize(school)) || "";
+      };
+
+      const renderGrid = () => {
+        grid.innerHTML = "";
+
+        if (!state.players.length) {
+          const empty = document.createElement("div");
+          empty.className = "sb-empty";
+          empty.textContent = "Unable to load tracker data.";
+          grid.appendChild(empty);
+          return;
+        }
+
+        if (!state.filtered.length) {
+          const empty = document.createElement("div");
+          empty.className = "sb-empty";
+          empty.textContent = "No players match your filters.";
+          grid.appendChild(empty);
+          return;
+        }
+
+        state.filtered.forEach((player) => {
+          const grades = state.gradesById.get(String(player.pff_id)) || {};
+          const logoUrl = getLogo(player.school);
+          const compareId = getCompareId(player);
+          const isCompared = compareIds.has(compareId);
+          const stats = state.statsByPos[player.pos || "Unknown"] || {
+            measures: { height: [], weight: [], hand: [], arm: [], wingspan: [] },
+            grades: [],
+            waa: [],
+          };
+          const heightValue = parseHeightToInches(player.height);
+          const weightValue = parseNumberWithFraction(player.weight);
+          const handValue = parseNumberWithFraction(player.hand);
+          const armValue = parseNumberWithFraction(player.arm);
+          const wingspanValue = parseNumberWithFraction(player.wingspan);
+
+          const percentile = {
+            height: percentileForValue(stats.measures.height, heightValue),
+            weight: percentileForValue(stats.measures.weight, weightValue),
+            hand: percentileForValue(stats.measures.hand, handValue),
+            arm: percentileForValue(stats.measures.arm, armValue),
+            wingspan: percentileForValue(stats.measures.wingspan, wingspanValue),
+          };
+
+          const gradeRank = rankForValueDesc(stats.grades, getGradeValue(player));
+          const waaRank = rankForValueDesc(stats.waa, getWaaValue(player));
+
+          const posLabel = player.pos
+            ? `${player.pos}${String(player.pos).endsWith("s") ? "" : "s"}`
+            : "players";
+
+          const summaryItems = [
+            `${player.player || "Player"} ranks ${ordinal(gradeRank)} among Senior Bowl ${posLabel} in 2025 PFF Grade.`,
+            `${player.player || "Player"} ranks ${ordinal(waaRank)} among Senior Bowl ${posLabel} in 2025 PFF WAA.`,
+            `Percentile ranks among Senior Bowl ${posLabel}:`,
+            `Height: ${percentile.height != null ? `${percentile.height}th` : "N/A"} percentile.`,
+            `Weight: ${percentile.weight != null ? `${percentile.weight}th` : "N/A"} percentile.`,
+            `Hand: ${percentile.hand != null ? `${percentile.hand}th` : "N/A"} percentile.`,
+            `Arm: ${percentile.arm != null ? `${percentile.arm}th` : "N/A"} percentile.`,
+            `Wingspan: ${percentile.wingspan != null ? `${percentile.wingspan}th` : "N/A"} percentile.`,
+          ];
+
+          const card = document.createElement("div");
+          card.className = "sb-card";
+
+          const measurementTile = (label, value, pct) => {
+            let className = "sb-meta-item";
+            let badge = "";
+            if (pct != null && pct >= 75) {
+              className += " is-high";
+              badge = '<span class="sb-percentile high">Top 25%</span>';
+            } else if (pct != null && pct <= 25) {
+              className += " is-low";
+              badge = '<span class="sb-percentile low">Bottom 25%</span>';
+            }
+            return `
+              <div class="${className}">
+                <span class="sb-meta-label">${label}</span>
+                ${value || "--"}
+                ${badge}
+              </div>
+            `;
+          };
+
+          card.innerHTML = `
+            <div class="sb-card-head">
+              <div class="sb-identity">
+                <div class="sb-logo-box">
+                  ${logoUrl ? `<img src="${logoUrl}" alt="${player.school} logo" />` : ""}
+                </div>
+                <div>
+                  <div class="sb-topline">
+                    <div class="sb-player">${player.player || "Unknown"}</div>
+                    <div class="sb-pos">${player.pos || "--"}</div>
+                  </div>
+                  <div class="sb-school">${player.school || "School TBD"}</div>
+                </div>
+              </div>
+              <div class="sb-grade-group">
+                <div class="sb-grade-box">
+                  <div class="sb-grade-label">2025 Grade</div>
+                  <div class="sb-grade">${grades.grade ?? "--"}</div>
+                </div>
+                <div class="sb-grade-box">
+                  <div class="sb-grade-label">WAA</div>
+                  <div class="sb-grade">${grades.waa ?? "--"}</div>
+                </div>
+              </div>
+            </div>
+            <div class="sb-measurements">
+              ${measurementTile("Squad", player.squad || "TBD", null)}
+              ${measurementTile("Weight", player.weight || "--", percentile.weight)}
+              ${measurementTile("Height", formatHeight(player.height), percentile.height)}
+              ${measurementTile("Hand", player.hand || "--", percentile.hand)}
+              ${measurementTile("Arm", player.arm || "--", percentile.arm)}
+              ${measurementTile("Wingspan", player.wingspan || "--", percentile.wingspan)}
+            </div>
+            <div class="sb-actions">
+              <a
+                class="sb-action${player.draft_profile ? "" : " is-disabled"}"
+                href="${player.draft_profile || "#"}"
+                target="_blank"
+                rel="noopener"
+              >
+                Draft Profile
+              </a>
+              <button class="sb-action" type="button" data-summary="open">
+                Summary
+              </button>
+              <button
+                class="sb-action${isCompared ? " is-active" : ""}"
+                type="button"
+                data-compare-toggle
+                data-compare-id="${compareId}"
+              >
+                ${isCompared ? "Selected" : "Add to Compare"}
+              </button>
+            </div>
+            <div class="sb-summary-overlay" data-summary="overlay">
+              <div class="sb-summary-card">
+                <button class="sb-summary-close" type="button" data-summary="close">
+                  ×
+                </button>
+                <div class="sb-summary-title">Summary</div>
+                <ul class="sb-summary-list">
+                  ${summaryItems.map((item) => `<li>${item}</li>`).join("")}
+                </ul>
+              </div>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+
+        updateCompareBar();
+      };
+
+      const wireEvents = () => {
+        [searchInput, posFilter, schoolFilter].forEach((el) => {
+          if (!el) return;
+          el.addEventListener("input", applyFilters);
+          el.addEventListener("change", applyFilters);
+        });
+
+        if (sortFilter) {
+          sortFilter.addEventListener("change", applyFilters);
+        }
+
+        if (squadButtons) {
+          squadButtons.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-value]");
+            if (!button) return;
+            const value = button.getAttribute("data-value");
+            if (!value) return;
+            if (value === "__all__") {
+              selectedSquads.clear();
+            } else if (selectedSquads.has(value)) {
+              selectedSquads.delete(value);
+            } else {
+              selectedSquads.add(value);
+            }
+            renderSquadButtons();
+            applyFilters();
+          });
+        }
+
+        if (clearFiltersButton) {
+          clearFiltersButton.addEventListener("click", () => {
+            if (searchInput) searchInput.value = "";
+            if (posFilter) posFilter.value = "";
+            if (schoolFilter) schoolFilter.value = "";
+            if (sortFilter) sortFilter.value = "name";
+            selectedSquads.clear();
+            renderSquadButtons();
+            applyFilters();
+          });
+        }
+
+        if (grid) {
+          grid.addEventListener("click", (event) => {
+            const openButton = event.target.closest('[data-summary="open"]');
+            if (openButton) {
+              const card = openButton.closest(".sb-card");
+              const overlay = card ? card.querySelector(".sb-summary-overlay") : null;
+              if (overlay) overlay.classList.add("is-open");
+              return;
+            }
+
+            const closeButton = event.target.closest('[data-summary="close"]');
+            if (closeButton) {
+              const overlay = closeButton.closest(".sb-summary-overlay");
+              if (overlay) overlay.classList.remove("is-open");
+              return;
+            }
+
+            const overlayClick = event.target.closest('[data-summary="overlay"]');
+            if (overlayClick && event.target === overlayClick) {
+              overlayClick.classList.remove("is-open");
+              return;
+            }
+
+            const compareToggle = event.target.closest("[data-compare-toggle]");
+            if (compareToggle) {
+              const id = compareToggle.getAttribute("data-compare-id");
+              if (!id) return;
+              if (compareIds.has(id)) {
+                compareIds.delete(id);
+              } else {
+                compareIds.add(id);
+              }
+              renderGrid();
+            }
+          });
+        }
+
+        if (compareOpen) {
+          compareOpen.addEventListener("click", () => {
+            if (compareIds.size < 2) return;
+            const selected = state.players.filter((player) =>
+              compareIds.has(getCompareId(player))
+            );
+            if (!compareContent || !compareOverlay) return;
+
+            const columns = selected.length + 1;
+            const gridTemplate = `140px repeat(${selected.length}, minmax(120px, 1fr))`;
+            const rows = [
+              {
+                label: "Player",
+                value: (p) => p.player || "--",
+              },
+              {
+                label: "School",
+                value: (p) => p.school || "--",
+              },
+              {
+                label: "Position",
+                value: (p) => p.pos || "--",
+              },
+              {
+                label: "Squad",
+                value: (p) => p.squad || "--",
+              },
+              {
+                label: "2025 Grade",
+                value: (p) =>
+                  (state.gradesById.get(String(p.pff_id)) || {}).grade ?? "--",
+                numeric: (p) => getGradeValue(p),
+              },
+              {
+                label: "WAA",
+                value: (p) =>
+                  (state.gradesById.get(String(p.pff_id)) || {}).waa ?? "--",
+                numeric: (p) => getWaaValue(p),
+              },
+              {
+                label: "Height",
+                value: (p) => formatHeight(p.height),
+                numeric: (p) => parseHeightToInches(p.height),
+              },
+              {
+                label: "Height %ile",
+                value: (p) => `${getMeasurementPercentile(p, "height") ?? "N/A"}%`,
+                numeric: (p) => getMeasurementPercentile(p, "height"),
+              },
+              {
+                label: "Weight",
+                value: (p) => p.weight || "--",
+                numeric: (p) => parseNumberWithFraction(p.weight),
+              },
+              {
+                label: "Weight %ile",
+                value: (p) => `${getMeasurementPercentile(p, "weight") ?? "N/A"}%`,
+                numeric: (p) => getMeasurementPercentile(p, "weight"),
+              },
+              {
+                label: "Hand",
+                value: (p) => p.hand || "--",
+                numeric: (p) => parseNumberWithFraction(p.hand),
+              },
+              {
+                label: "Hand %ile",
+                value: (p) => `${getMeasurementPercentile(p, "hand") ?? "N/A"}%`,
+                numeric: (p) => getMeasurementPercentile(p, "hand"),
+              },
+              {
+                label: "Arm",
+                value: (p) => p.arm || "--",
+                numeric: (p) => parseNumberWithFraction(p.arm),
+              },
+              {
+                label: "Arm %ile",
+                value: (p) => `${getMeasurementPercentile(p, "arm") ?? "N/A"}%`,
+                numeric: (p) => getMeasurementPercentile(p, "arm"),
+              },
+              {
+                label: "Wingspan",
+                value: (p) => p.wingspan || "--",
+                numeric: (p) => parseNumberWithFraction(p.wingspan),
+              },
+              {
+                label: "Wingspan %ile",
+                value: (p) =>
+                  `${getMeasurementPercentile(p, "wingspan") ?? "N/A"}%`,
+                numeric: (p) => getMeasurementPercentile(p, "wingspan"),
+              },
+            ];
+
+            compareContent.innerHTML = `
+              <div class="sb-compare-table">
+                ${rows
+                  .map((row) => {
+                    const values = selected.map((player) =>
+                      row.numeric ? row.numeric(player) : null
+                    );
+                    const maxValue = row.numeric
+                      ? values.reduce((max, val) =>
+                          val == null ? max : max == null || val > max ? val : max
+                        , null)
+                      : null;
+                    return `
+                      <div class="sb-compare-row" style="grid-template-columns: ${gridTemplate};">
+                        <div class="sb-compare-cell sb-compare-label">${row.label}</div>
+                        ${selected
+                          .map((player, index) => {
+                            const isBest =
+                              row.numeric &&
+                              values[index] != null &&
+                              maxValue != null &&
+                              values[index] === maxValue;
+                            return `<div class="sb-compare-cell${
+                              isBest ? " is-best" : ""
+                            }">${row.value(player)}</div>`;
+                          })
+                          .join("")}
+                      </div>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            `;
+
+            compareOverlay.classList.add("is-open");
+          });
+        }
+
+        if (compareClear) {
+          compareClear.addEventListener("click", () => {
+            compareIds.clear();
+            renderGrid();
+            updateCompareBar();
+          });
+        }
+
+        if (compareClose) {
+          compareClose.addEventListener("click", () => {
+            if (compareOverlay) compareOverlay.classList.remove("is-open");
+          });
+        }
+
+        if (compareOverlay) {
+          compareOverlay.addEventListener("click", (event) => {
+            if (event.target === compareOverlay) {
+              compareOverlay.classList.remove("is-open");
+            }
+          });
+        }
+      };
+
+      const init = async () => {
+        try {
+          if (loadingEl) loadingEl.style.display = "flex";
+          await loadMainSheet();
+          await Promise.allSettled([loadGrades(), loadLogos()]);
+          buildPositionStats();
+          hydrateFilters();
+          applyFilters();
+          wireEvents();
+          if (loadingEl) loadingEl.style.display = "none";
+        } catch (error) {
+          grid.innerHTML = `
+            <div class="sb-empty">
+              Unable to load tracker data.
+            </div>
+          `;
+          if (loadingEl) loadingEl.style.display = "none";
+        }
+      };
+
+      init();
+    </script>
+  </body>
+</html>
