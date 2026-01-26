@@ -31,7 +31,7 @@
       .sb-container {
         max-width: 650px;
         margin: 0 auto;
-        padding: 16px;
+        padding: 16px 16px 90px;
       }
 
       .sb-logo-loading {
@@ -416,8 +416,10 @@
       }
 
       .sb-compare-bar {
-        position: sticky;
+        position: fixed;
         bottom: 0;
+        left: 0;
+        right: 0;
         background: var(--sb-black);
         color: var(--sb-white);
         padding: 12px 0 14px;
@@ -441,19 +443,20 @@
         letter-spacing: 0.3px;
       }
 
-      .sb-compare-overlay {
+      .sb-compare-panel {
         position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.7);
+        left: 0;
+        right: 0;
+        bottom: 72px;
+        z-index: 9;
         display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        padding: 16px;
+        padding: 0 16px;
+        pointer-events: none;
       }
 
-      .sb-compare-overlay.is-open {
-        display: flex;
+      .sb-compare-panel.is-open {
+        display: block;
+        pointer-events: auto;
       }
 
       .sb-compare-card {
@@ -462,10 +465,30 @@
         border-radius: 12px;
         padding: 16px;
         width: 100%;
-        max-width: 900px;
-        max-height: 85vh;
+        max-width: 650px;
+        max-height: 70vh;
         overflow: auto;
         position: relative;
+        margin: 0 auto;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+        border: 1px solid #e6e6e6;
+      }
+
+      .sb-compare-card.is-compact {
+        max-height: 48vh;
+        padding: 12px 12px 14px;
+      }
+
+      .sb-compare-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: none;
+        z-index: 8;
+      }
+
+      .sb-compare-backdrop.is-open {
+        display: block;
       }
 
       .sb-compare-title {
@@ -551,10 +574,15 @@
         position: absolute;
         top: 8px;
         right: 10px;
-        border: none;
-        background: transparent;
-        font-size: 18px;
+        border: 1px solid var(--sb-black);
+        background: var(--sb-white);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 999px;
         cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
       }
 
       .sb-empty {
@@ -609,7 +637,7 @@
         }
 
         .sb-compare-card {
-          max-height: 75vh;
+          max-height: 60vh;
         }
       }
     </style>
@@ -679,14 +707,14 @@
         </div>
       </div>
     </div>
-
-    <div id="compareOverlay" class="sb-compare-overlay">
+    <div id="comparePanel" class="sb-compare-panel">
       <div class="sb-compare-card">
-        <button id="compareClose" class="sb-summary-close" type="button">×</button>
+        <button id="compareClose" class="sb-summary-close" type="button">Close</button>
         <div class="sb-compare-title">Player Comparison</div>
         <div id="compareContent"></div>
       </div>
     </div>
+    <div id="compareBackdrop" class="sb-compare-backdrop"></div>
 
     <script>
       const SHEET_ID = "1zdha0mZU8Ps7EAFQBpaL1kPTrq_GQdEI7FHnZa73Qz8";
@@ -733,9 +761,10 @@
       const compareCount = document.getElementById("compareCount");
       const compareOpen = document.getElementById("compareOpen");
       const compareClear = document.getElementById("compareClear");
-      const compareOverlay = document.getElementById("compareOverlay");
+      const comparePanel = document.getElementById("comparePanel");
       const compareClose = document.getElementById("compareClose");
       const compareContent = document.getElementById("compareContent");
+      const compareBackdrop = document.getElementById("compareBackdrop");
 
       const selectedSquads = new Set();
       const compareIds = new Set();
@@ -1508,7 +1537,12 @@
             const selected = state.players.filter((player) =>
               compareIds.has(getCompareId(player))
             );
-            if (!compareContent || !compareOverlay) return;
+            if (!compareContent || !comparePanel) return;
+            const compareCard = comparePanel.querySelector(".sb-compare-card");
+            if (compareCard) {
+              const compact = window.innerWidth <= 520 && selected.length <= 2;
+              compareCard.classList.toggle("is-compact", compact);
+            }
 
             const columns = selected.length + 1;
             const gridTemplate = `140px repeat(${selected.length}, minmax(120px, 1fr))`;
@@ -1628,7 +1662,8 @@
               </div>
             `;
 
-            compareOverlay.classList.add("is-open");
+            comparePanel.classList.add("is-open");
+            if (compareBackdrop) compareBackdrop.classList.add("is-open");
           });
         }
 
@@ -1642,15 +1677,15 @@
 
         if (compareClose) {
           compareClose.addEventListener("click", () => {
-            if (compareOverlay) compareOverlay.classList.remove("is-open");
+            if (comparePanel) comparePanel.classList.remove("is-open");
+            if (compareBackdrop) compareBackdrop.classList.remove("is-open");
           });
         }
 
-        if (compareOverlay) {
-          compareOverlay.addEventListener("click", (event) => {
-            if (event.target === compareOverlay) {
-              compareOverlay.classList.remove("is-open");
-            }
+        if (compareBackdrop) {
+          compareBackdrop.addEventListener("click", () => {
+            if (comparePanel) comparePanel.classList.remove("is-open");
+            compareBackdrop.classList.remove("is-open");
           });
         }
       };
