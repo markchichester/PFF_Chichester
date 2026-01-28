@@ -822,6 +822,63 @@
         return base;
       };
 
+      const parseInchesEighths = (raw) => {
+        const value = String(raw || "").trim();
+        if (!value) return null;
+        if (value.includes("/") || value.includes(".") || value.includes(" ")) {
+          const parsed = parseNumberWithFraction(value);
+          return Number.isFinite(parsed) ? parsed : null;
+        }
+        const digits = value.replace(/\D/g, "");
+        if (digits.length < 2) return null;
+        let inches = digits.slice(0, -2);
+        let numerator = digits.slice(-2, -1);
+        if (!inches) {
+          inches = digits.slice(0, -1);
+          numerator = digits.slice(-1);
+        }
+        const inchValue = Number(inches);
+        const numValue = Number(numerator);
+        if (!Number.isFinite(inchValue) || !Number.isFinite(numValue)) return null;
+        if (numValue > 7) return null;
+        return inchValue + numValue / 8;
+      };
+
+      const formatInchesFromDecimal = (value) => {
+        if (!Number.isFinite(value)) return "--";
+        const whole = Math.floor(value);
+        let eighths = Math.round((value - whole) * 8);
+        let inches = whole;
+        if (eighths === 8) {
+          inches += 1;
+          eighths = 0;
+        }
+        if (!eighths) return `${inches}"`;
+        return `${inches} ${eighths}/8"`;
+      };
+
+      const formatInchesEighths = (raw) => {
+        const value = String(raw || "").trim();
+        if (!value) return "--";
+        if (value.includes("/") || value.includes(".") || value.includes(" ")) {
+          const parsed = parseNumberWithFraction(value);
+          return Number.isFinite(parsed) ? formatInchesFromDecimal(parsed) : raw || "--";
+        }
+        const digits = value.replace(/\D/g, "");
+        if (digits.length < 2) return raw || "--";
+        let inches = digits.slice(0, -2);
+        let numerator = digits.slice(-2, -1);
+        if (!inches) {
+          inches = digits.slice(0, -1);
+          numerator = digits.slice(-1);
+        }
+        const inchValue = Number(inches);
+        const numValue = Number(numerator);
+        if (!Number.isFinite(inchValue) || !Number.isFinite(numValue)) return raw || "--";
+        if (numValue > 7) return raw || "--";
+        return formatInchesFromDecimal(inchValue + numValue / 8);
+      };
+
       const parseHeightToInches = (raw) => {
         const value = String(raw || "").trim();
         if (!value) return null;
@@ -855,9 +912,9 @@
         return Number.isFinite(value) ? value : null;
       };
 
-      const percentileForValue = (values, value) => {
+      const percentileForValue = (values, value, minSamples = 4) => {
         const n = values.length;
-        if (!n || value == null) return null;
+        if (!n || value == null || n < minSamples) return null;
         let below = 0;
         let equal = 0;
         values.forEach((v) => {
@@ -866,6 +923,17 @@
         });
         const pct = ((below + equal * 0.5) / n) * 100;
         return Math.round(pct);
+      };
+
+      const quantile = (values, q) => {
+        const n = values.length;
+        if (!n) return null;
+        if (n === 1) return values[0];
+        const pos = (n - 1) * q;
+        const base = Math.floor(pos);
+        const rest = pos - base;
+        if (values[base + 1] === undefined) return values[base];
+        return values[base] + rest * (values[base + 1] - values[base]);
       };
 
       const rankForValueDesc = (values, value) => {
@@ -893,6 +961,13 @@
           if (!stats[pos]) {
             stats[pos] = {
               measures: { height: [], weight: [], hand: [], arm: [], wingspan: [] },
+              thresholds: {
+                height: { p25: null, p75: null },
+                weight: { p25: null, p75: null },
+                hand: { p25: null, p75: null },
+                arm: { p25: null, p75: null },
+                wingspan: { p25: null, p75: null },
+              },
               grades: [],
               waa: [],
             };
@@ -906,9 +981,9 @@
 
           const height = parseHeightToInches(player.height);
           const weight = parseNumberWithFraction(player.weight);
-          const hand = parseNumberWithFraction(player.hand);
-          const arm = parseNumberWithFraction(player.arm);
-          const wingspan = parseNumberWithFraction(player.wingspan);
+          const hand = parseInchesEighths(player.hand);
+          const arm = parseInchesEighths(player.arm);
+          const wingspan = parseInchesEighths(player.wingspan);
 
           if (Number.isFinite(height)) entry.measures.height.push(height);
           if (Number.isFinite(weight)) entry.measures.weight.push(weight);
@@ -923,7 +998,13 @@
         });
 
         Object.values(stats).forEach((entry) => {
-          Object.values(entry.measures).forEach((list) => list.sort((a, b) => a - b));
+          Object.entries(entry.measures).forEach(([key, list]) => {
+            list.sort((a, b) => a - b);
+            if (list.length >= 4) {
+              entry.thresholds[key].p25 = quantile(list, 0.25);
+              entry.thresholds[key].p75 = quantile(list, 0.75);
+            }
+          });
           entry.grades.sort((a, b) => b - a);
           entry.waa.sort((a, b) => b - a);
         });
@@ -941,11 +1022,11 @@
           case "weight":
             return parseNumberWithFraction(player.weight);
           case "hand":
-            return parseNumberWithFraction(player.hand);
+            return parseInchesEighths(player.hand);
           case "arm":
-            return parseNumberWithFraction(player.arm);
+            return parseInchesEighths(player.arm);
           case "wingspan":
-            return parseNumberWithFraction(player.wingspan);
+            return parseInchesEighths(player.wingspan);
           default:
             return null;
         }
@@ -1328,14 +1409,21 @@
           const isCompared = compareIds.has(compareId);
           const stats = state.statsByPos[player.pos || "Unknown"] || {
             measures: { height: [], weight: [], hand: [], arm: [], wingspan: [] },
+            thresholds: {
+              height: { p25: null, p75: null },
+              weight: { p25: null, p75: null },
+              hand: { p25: null, p75: null },
+              arm: { p25: null, p75: null },
+              wingspan: { p25: null, p75: null },
+            },
             grades: [],
             waa: [],
           };
           const heightValue = parseHeightToInches(player.height);
           const weightValue = parseNumberWithFraction(player.weight);
-          const handValue = parseNumberWithFraction(player.hand);
-          const armValue = parseNumberWithFraction(player.arm);
-          const wingspanValue = parseNumberWithFraction(player.wingspan);
+          const handValue = parseInchesEighths(player.hand);
+          const armValue = parseInchesEighths(player.arm);
+          const wingspanValue = parseInchesEighths(player.wingspan);
 
           const percentile = {
             height: percentileForValue(stats.measures.height, heightValue),
@@ -1366,13 +1454,23 @@
           const card = document.createElement("div");
           card.className = "sb-card";
 
-          const measurementTile = (label, value, pct) => {
+          const measurementTile = (label, value, numericValue, threshold) => {
             let className = "sb-meta-item";
             let badge = "";
-            if (pct != null && pct >= 75) {
+            if (
+              threshold &&
+              numericValue != null &&
+              threshold.p75 != null &&
+              numericValue >= threshold.p75
+            ) {
               className += " is-high";
               badge = '<span class="sb-percentile high">Top 25%</span>';
-            } else if (pct != null && pct <= 25) {
+            } else if (
+              threshold &&
+              numericValue != null &&
+              threshold.p25 != null &&
+              numericValue <= threshold.p25
+            ) {
               className += " is-low";
               badge = '<span class="sb-percentile low">Bottom 25%</span>';
             }
@@ -1411,12 +1509,37 @@
               </div>
             </div>
             <div class="sb-measurements">
-              ${measurementTile("Squad", player.squad || "TBD", null)}
-              ${measurementTile("Weight", player.weight || "--", percentile.weight)}
-              ${measurementTile("Height", formatHeight(player.height), percentile.height)}
-              ${measurementTile("Hand", player.hand || "--", percentile.hand)}
-              ${measurementTile("Arm", player.arm || "--", percentile.arm)}
-              ${measurementTile("Wingspan", player.wingspan || "--", percentile.wingspan)}
+              ${measurementTile("Squad", player.squad || "TBD", null, null)}
+              ${measurementTile(
+                "Weight",
+                player.weight || "--",
+                weightValue,
+                stats.thresholds.weight
+              )}
+              ${measurementTile(
+                "Height",
+                formatHeight(player.height),
+                heightValue,
+                stats.thresholds.height
+              )}
+              ${measurementTile(
+                "Hand",
+                formatInchesEighths(player.hand),
+                handValue,
+                stats.thresholds.hand
+              )}
+              ${measurementTile(
+                "Arm",
+                formatInchesEighths(player.arm),
+                armValue,
+                stats.thresholds.arm
+              )}
+              ${measurementTile(
+                "Wingspan",
+                formatInchesEighths(player.wingspan),
+                wingspanValue,
+                stats.thresholds.wingspan
+              )}
             </div>
             <div class="sb-actions">
               <a
