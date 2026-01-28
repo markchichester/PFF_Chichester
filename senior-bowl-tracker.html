@@ -1725,7 +1725,7 @@
               },
               {
                 label: "Hand",
-                value: (p) => p.hand || "--",
+                value: (p) => formatInchesEighths(p.hand),
                 numeric: (p) => parseNumberWithFraction(p.hand),
               },
               {
@@ -1735,7 +1735,7 @@
               },
               {
                 label: "Arm",
-                value: (p) => p.arm || "--",
+                value: (p) => formatInchesEighths(p.arm),
                 numeric: (p) => parseNumberWithFraction(p.arm),
               },
               {
@@ -1745,7 +1745,7 @@
               },
               {
                 label: "Wingspan",
-                value: (p) => p.wingspan || "--",
+                value: (p) => formatInchesEighths(p.wingspan),
                 numeric: (p) => parseNumberWithFraction(p.wingspan),
               },
               {
