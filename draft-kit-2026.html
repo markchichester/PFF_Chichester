@@ -20,6 +20,9 @@
       background-color: var(--warm-white);
       margin: 0;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
     }
 
     /* WordPress embed: max 659px; self-contained, no horizontal scroll */
@@ -33,6 +36,8 @@
       box-sizing: border-box;
       width: 100%;
       overflow-x: hidden;
+      flex: 0 0 auto;
+      align-self: flex-start;
     }
 
     #draft-kit-widget * {
@@ -884,6 +889,13 @@
       padding: 0 24px 24px 24px;
       text-align: center;
     }
+    /* Keep loading at very top when in iframe */
+    #draft-kit-widget:has(#draft-kit-loading) {
+      padding-top: 0;
+    }
+    #draft-kit-widget:has(#draft-kit-loading) .dk-loading {
+      padding-top: 0;
+    }
 
     .dk-logo-loading {
       width: 160px;
@@ -1179,7 +1191,8 @@
         .replace(/>/g, '&gt;');
     }
 
-    function playCopyConfetti() {
+    function playCopyConfetti(root) {
+      root = root || document.body;
       var colors = ['#FB6616', '#FFC900', '#FBEAE0', '#ffffff', '#e55a0d'];
       var container = document.createElement('div');
       container.className = 'confetti-burst';
@@ -1197,7 +1210,7 @@
         piece.style.background = colors[Math.floor(Math.random() * colors.length)];
         container.appendChild(piece);
       }
-      document.body.appendChild(container);
+      root.appendChild(container);
       setTimeout(function() {
         if (container.parentNode) container.parentNode.removeChild(container);
       }, 1800);
@@ -1783,14 +1796,19 @@
                 var copyBtn = bubble.querySelector('.trevor-btn-copy');
                 if (copyBtn) {
                   copyBtn.addEventListener('click', function() {
+                    var overlay = copyBtn.closest('#trevor-modal-overlay');
+                    playCopyConfetti(overlay || document.body);
                     navigator.clipboard.writeText(discountCode).then(function() {
                       copyBtn.textContent = 'Copied!';
                       copyBtn.classList.add('copied');
-                      playCopyConfetti();
                       setTimeout(function() {
                         copyBtn.textContent = 'Copy code';
                         copyBtn.classList.remove('copied');
                       }, 2000);
+                    }).catch(function() {
+                      copyBtn.textContent = 'Copied!';
+                      copyBtn.classList.add('copied');
+                      setTimeout(function() { copyBtn.textContent = 'Copy code'; copyBtn.classList.remove('copied'); }, 2000);
                     });
                   });
                 }
