@@ -1077,15 +1077,15 @@
     </div>
     <div class="combine-controls-row">
       <select id="combine-position" class="combine-filter-select" aria-label="Filter by position">
-        <option value="">Pos.</option>
+        <option value="">All positions</option>
       </select>
       <select id="combine-school" class="combine-filter-select" aria-label="Filter by school">
-        <option value="">Schools</option>
+        <option value="">All schools</option>
       </select>
       <select id="combine-sort" class="combine-sort-select" aria-label="Sort by">
-        <option value="name">Name</option>
-        <option value="big_board_rank">BB Rank</option>
-        <option value="2025_grade">Grade</option>
+        <option value="name">Name A–Z</option>
+        <option value="big_board_rank">Big Board Rank</option>
+        <option value="2025_grade">Grade (high first)</option>
         <option value="college">School</option>
       </select>
       <button type="button" id="combine-clear-filters" class="combine-clear-filters" aria-label="Clear all filters">Clear all</button>
@@ -1205,6 +1205,19 @@
   var historicalRows = [];
   var useFeetInches = false;
   var currentRecapPlayer = null;
+
+  function isMobileViewport() {
+    return typeof window !== 'undefined' && (window.innerWidth < 640 || ('ontouchstart' in window));
+  }
+  function throttle(fn, ms) {
+    var last = 0, timer = null;
+    return function() {
+      var now = Date.now();
+      var elapsed = now - last;
+      if (elapsed >= ms) { last = now; fn(); return; }
+      if (!timer) timer = setTimeout(function() { timer = null; last = Date.now(); fn(); }, ms - elapsed);
+    };
+  }
 
   function getCsvUrls() {
     var urls = [];
@@ -1774,27 +1787,32 @@
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.classList.add('combine-modal-open');
-    if (anchorCard && modal) {
-      var rect = anchorCard.getBoundingClientRect();
-      var vw = window.innerWidth;
-      var vh = window.innerHeight;
-      var centerX = rect.left + rect.width / 2;
-      var centerY = rect.top + rect.height / 2;
-      modal.classList.add('combine-modal-anchored');
-      modal.style.top = centerY + 'px';
-      modal.style.left = centerX + 'px';
-      requestAnimationFrame(function() {
-        var mr = modal.getBoundingClientRect();
-        var pad = 12;
-        var top = centerY;
-        var left = centerX;
-        if (top - mr.height / 2 < pad) top = pad + mr.height / 2;
-        if (top + mr.height / 2 > vh - pad) top = vh - pad - mr.height / 2;
-        if (left - mr.width / 2 < pad) left = pad + mr.width / 2;
-        if (left + mr.width / 2 > vw - pad) left = vw - pad - mr.width / 2;
-        modal.style.top = top + 'px';
-        modal.style.left = left + 'px';
-      });
+    if (anchorCard && modal && !isMobileViewport()) {
+      try {
+        var rect = anchorCard.getBoundingClientRect();
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        var centerX = rect.left + rect.width / 2;
+        var centerY = rect.top + rect.height / 2;
+        modal.classList.add('combine-modal-anchored');
+        modal.style.top = centerY + 'px';
+        modal.style.left = centerX + 'px';
+        requestAnimationFrame(function() {
+          try {
+            if (!modal.parentNode) return;
+            var mr = modal.getBoundingClientRect();
+            var pad = 12;
+            var top = centerY;
+            var left = centerX;
+            if (top - mr.height / 2 < pad) top = pad + mr.height / 2;
+            if (top + mr.height / 2 > vh - pad) top = vh - pad - mr.height / 2;
+            if (left - mr.width / 2 < pad) left = pad + mr.width / 2;
+            if (left + mr.width / 2 > vw - pad) left = vw - pad - mr.width / 2;
+            modal.style.top = top + 'px';
+            modal.style.left = left + 'px';
+          } catch (err) {}
+        });
+      } catch (err) {}
     }
   }
   function getSheetComp(player, statKey) {
@@ -1989,13 +2007,19 @@
     chartsWrap.appendChild(chartContainer);
     renderCompareRadarChart(chartContainer, series);
   }
-  function openCompareModal() {
+  function openCompareModal(anchorEl) {
     var overlay = document.getElementById('combine-compare-overlay');
+    var modal = overlay ? overlay.querySelector('.combine-recap-modal') : null;
     var row = document.getElementById('combine-compare-row');
     var wrap3 = document.getElementById('combine-compare-wrap-3');
     var addThirdWrap = document.getElementById('combine-compare-add-third-wrap');
     var addThirdBtn = document.getElementById('combine-compare-add-third-btn');
     if (!overlay) return;
+    if (modal) {
+      modal.classList.remove('combine-modal-anchored');
+      modal.style.top = '';
+      modal.style.left = '';
+    }
     [1, 2, 3].forEach(function(slot) {
       var box = document.getElementById('combine-compare-combobox-' + slot);
       if (!box) return;
@@ -2011,17 +2035,48 @@
     document.getElementById('combine-compare-overview').classList.add('combine-recap-panel-active');
     document.getElementById('combine-compare-chart').classList.remove('combine-recap-panel-active');
     renderCompareContent();
-    overlay.classList.add('combine-overlay-top');
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.classList.add('combine-modal-open');
+    if (anchorEl && modal && !isMobileViewport()) {
+      try {
+        var rect = anchorEl.getBoundingClientRect();
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        var centerX = rect.left + rect.width / 2;
+        var centerY = rect.top + rect.height / 2;
+        modal.classList.add('combine-modal-anchored');
+        modal.style.top = centerY + 'px';
+        modal.style.left = centerX + 'px';
+        requestAnimationFrame(function() {
+          try {
+            if (!modal.parentNode) return;
+            var mr = modal.getBoundingClientRect();
+            var pad = 12;
+            var top = centerY;
+            var left = centerX;
+            if (top - mr.height / 2 < pad) top = pad + mr.height / 2;
+            if (top + mr.height / 2 > vh - pad) top = vh - pad - mr.height / 2;
+            if (left - mr.width / 2 < pad) left = pad + mr.width / 2;
+            if (left + mr.width / 2 > vw - pad) left = vw - pad - mr.width / 2;
+            modal.style.top = top + 'px';
+            modal.style.left = left + 'px';
+          } catch (err) {}
+        });
+      } catch (err) {}
+    }
   }
   function closeCompareModal() {
     var overlay = document.getElementById('combine-compare-overlay');
     if (overlay) {
-      overlay.classList.remove('combine-overlay-top');
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
+      var modal = overlay.querySelector('.combine-recap-modal');
+      if (modal) {
+        modal.classList.remove('combine-modal-anchored');
+        modal.style.top = '';
+        modal.style.left = '';
+      }
     }
     if (!document.querySelector('.combine-recap-overlay.is-open')) document.body.classList.remove('combine-modal-open');
   }
@@ -2039,7 +2094,7 @@
   function initCompareModal() {
     var btn = document.getElementById('combine-compare-btn');
     var overlay = document.getElementById('combine-compare-overlay');
-    if (btn) btn.addEventListener('click', openCompareModal);
+    if (btn) btn.addEventListener('click', function() { openCompareModal(btn); });
     if (overlay) {
       overlay.addEventListener('click', function(e) {
         if (e.target === overlay || e.target.closest('.combine-compare-close')) closeCompareModal();
@@ -2145,11 +2200,13 @@
         swipe.scrollTo({ left: w * index, behavior: 'smooth' });
         setActive(index);
       }
-      swipe.addEventListener('scroll', function() {
+      var onScroll = throttle(function() {
         var w = swipe.clientWidth;
+        if (!w) return;
         var index = Math.round(swipe.scrollLeft / w);
         setActive(index);
-      });
+      }, 80);
+      swipe.addEventListener('scroll', onScroll, { passive: true });
       dots.forEach(function(dot, i) {
         dot.addEventListener('click', function() {
           goTo(i);
@@ -2175,7 +2232,8 @@
     el.style.display = 'block';
   }
   function hideError() {
-    document.getElementById('combine-error').style.display = 'none';
+    var el = document.getElementById('combine-error');
+    if (el) el.style.display = 'none';
   }
 
   var LOADING_MESSAGES = [
@@ -2285,23 +2343,45 @@
         if (retryBtn) retryBtn.addEventListener('click', function() { hideError(); index = 0; loadingMessageWrap.style.display = ''; loadingMessageTimer = setInterval(cycleMessage, 2200); tryNext(); });
         return;
       }
-      fetchWithProxy(urls[index++]).then(processCSV).catch(tryNext);
+      fetchWithProxy(urls[index++]).then(function(text) {
+        try { processCSV(text); } catch (e) {
+          clearInterval(loadingMessageTimer);
+          loadingMessageTimer = null;
+          if (loadingMessageWrap) loadingMessageWrap.style.display = 'none';
+          showError('Could not process the data. Try refreshing. <button type="button" id="combine-retry-load" class="combine-retry-btn">Retry</button>');
+          var retryBtn = document.getElementById('combine-retry-load');
+          if (retryBtn) retryBtn.addEventListener('click', function() { hideError(); index = 0; if (loadingMessageWrap) loadingMessageWrap.style.display = ''; loadingMessageTimer = setInterval(cycleMessage, 2200); tryNext(); });
+        }
+      }).catch(tryNext);
     }
     tryNext();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
+  function boot() {
+    try {
       initPffBanner();
       initCompareModal();
       initRecapModal();
       run();
-    });
+    } catch (err) {
+      var errEl = document.getElementById('combine-error');
+      if (errEl) {
+        errEl.style.display = 'block';
+        errEl.innerHTML = 'Something went wrong loading the tracker. Try refreshing the page.';
+      }
+    }
+  }
+  window.addEventListener('error', function(e) {
+    var errEl = document.getElementById('combine-error');
+    if (errEl && errEl.style.display !== 'block') {
+      errEl.style.display = 'block';
+      errEl.innerHTML = 'Something went wrong. <button type="button" class="combine-retry-btn" onclick="location.reload()">Reload</button>';
+    }
+  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    initPffBanner();
-    initCompareModal();
-    initRecapModal();
-    run();
+    boot();
   }
 })();
 </script>
