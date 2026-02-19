@@ -20,7 +20,7 @@
       color: var(--text);
       padding: 14px;
       border-radius: 12px;
-      max-width: 650px;
+      max-width: 620px;
       width: 100%;
       margin: 0 auto;
       overflow-x: hidden;
@@ -364,11 +364,24 @@
       transform: scale(0.95);
       transition: transform 0.25s;
     }
+    .combine-recap-modal.combine-modal-anchored {
+      position: absolute;
+      margin: 0;
+      transform: translate(-50%, -50%);
+    }
     @media (min-width: 640px) {
-      .combine-recap-modal { max-width: 660px; }
+      .combine-recap-modal { max-width: 580px; }
     }
     .combine-recap-overlay.is-open .combine-recap-modal {
       transform: scale(1);
+    }
+    .combine-recap-overlay.is-open .combine-recap-modal.combine-modal-anchored {
+      transform: translate(-50%, -50%);
+    }
+    .combine-recap-overlay.combine-overlay-top {
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 20px;
     }
     body.combine-modal-open { overflow: hidden; }
     .combine-recap-header {
@@ -1717,7 +1730,7 @@
     containerEl.innerHTML = '<div class="combine-compare-radar-single"><svg viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
       axisLines.join('') + polygons.join('') + labels.join('') + '</svg><div class="combine-compare-radar-legend">' + legendHtml + '</div></div>';
   }
-  function openRecapModal(player) {
+  function openRecapModal(player, anchorCard) {
     var overlay = document.getElementById('combine-recap-overlay');
     var titleEl = document.getElementById('combine-recap-title');
     var subtitleEl = overlay ? overlay.querySelector('.combine-recap-subtitle') : null;
@@ -1726,6 +1739,13 @@
     var chartPanel = document.getElementById('combine-recap-chart');
     var chartWrap = document.getElementById('combine-recap-radar-wrap');
     var tabs = overlay ? overlay.querySelectorAll('.combine-recap-tab') : [];
+    var modal = overlay ? overlay.querySelector('.combine-recap-modal') : null;
+    if (modal) {
+      modal.classList.remove('combine-modal-anchored');
+      modal.style.top = '';
+      modal.style.left = '';
+    }
+    overlay.classList.remove('combine-overlay-top');
     if (!overlay || !titleEl || !gridEl) return;
     titleEl.textContent = player.name || '';
     var playerPos = (player.T2 || player.t2 || player.projected_position || player.position || '').trim();
@@ -1754,6 +1774,28 @@
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.classList.add('combine-modal-open');
+    if (anchorCard && modal) {
+      var rect = anchorCard.getBoundingClientRect();
+      var vw = window.innerWidth;
+      var vh = window.innerHeight;
+      var centerX = rect.left + rect.width / 2;
+      var centerY = rect.top + rect.height / 2;
+      modal.classList.add('combine-modal-anchored');
+      modal.style.top = centerY + 'px';
+      modal.style.left = centerX + 'px';
+      requestAnimationFrame(function() {
+        var mr = modal.getBoundingClientRect();
+        var pad = 12;
+        var top = centerY;
+        var left = centerX;
+        if (top - mr.height / 2 < pad) top = pad + mr.height / 2;
+        if (top + mr.height / 2 > vh - pad) top = vh - pad - mr.height / 2;
+        if (left - mr.width / 2 < pad) left = pad + mr.width / 2;
+        if (left + mr.width / 2 > vw - pad) left = vw - pad - mr.width / 2;
+        modal.style.top = top + 'px';
+        modal.style.left = left + 'px';
+      });
+    }
   }
   function getSheetComp(player, statKey) {
     var raw = getStat(player, statKey + '_comp');
@@ -1789,6 +1831,12 @@
     if (overlay) {
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
+      var modal = overlay.querySelector('.combine-recap-modal');
+      if (modal) {
+        modal.classList.remove('combine-modal-anchored');
+        modal.style.top = '';
+        modal.style.left = '';
+      }
     }
     if (!document.querySelector('.combine-recap-overlay.is-open')) document.body.classList.remove('combine-modal-open');
   }
@@ -1963,6 +2011,7 @@
     document.getElementById('combine-compare-overview').classList.add('combine-recap-panel-active');
     document.getElementById('combine-compare-chart').classList.remove('combine-recap-panel-active');
     renderCompareContent();
+    overlay.classList.add('combine-overlay-top');
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.classList.add('combine-modal-open');
@@ -1970,6 +2019,7 @@
   function closeCompareModal() {
     var overlay = document.getElementById('combine-compare-overlay');
     if (overlay) {
+      overlay.classList.remove('combine-overlay-top');
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
     }
@@ -2043,7 +2093,7 @@
       var idx = card.getAttribute('data-card-index');
       if (idx === null || idx === '') return;
       var player = currentFilteredPlayers[parseInt(idx, 10)];
-      if (player) openRecapModal(player);
+      if (player) openRecapModal(player, card);
     });
     var overlay = document.getElementById('combine-recap-overlay');
     if (overlay) {
