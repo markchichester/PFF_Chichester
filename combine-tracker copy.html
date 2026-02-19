@@ -1,0 +1,2257 @@
+<!-- 2026 NFL Draft Combine Results Tracker - Paste this entire block into WordPress Gutenberg Custom HTML block -->
+<div id="combine-tracker-app">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <style>
+    #combine-tracker-app {
+      --primary: #FB6616;
+      --primary-dark: #e55a0f;
+      --secondary: #FFC900;
+      --white: #ffffff;
+      --bg: #ffffff;
+      --card-bg: #f8f8f8;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --border: rgba(0,0,0,0.1);
+      font-family: 'Archivo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 14px;
+      border-radius: 12px;
+      max-width: 650px;
+      width: 100%;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+    #combine-tracker-app * { box-sizing: border-box; }
+    .combine-header {
+      text-align: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+    }
+    .combine-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 0.2rem 0;
+      color: var(--primary);
+    }
+    .combine-header p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin: 0;
+    }
+    .combine-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .combine-controls-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .combine-search-wrap {
+      width: 100%;
+      position: relative;
+    }
+    .combine-search-wrap svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      opacity: 0.5;
+    }
+    .combine-search-wrap input {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .combine-search-wrap input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(251,102,22,0.2);
+    }
+    .combine-search-wrap input::placeholder { color: var(--text-muted); }
+    .combine-filter-select {
+      flex: 1;
+      min-width: 0;
+      padding: 0.75rem 1.75rem 0.75rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .combine-filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .combine-sort-select {
+      flex: 1;
+      min-width: 0;
+      padding: 0.75rem 1.75rem 0.75rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .combine-clear-filters {
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .combine-clear-filters:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(251,102,22,0.06);
+    }
+    .combine-results-count {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .combine-height-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .combine-height-toggle input { cursor: pointer; }
+    .combine-height-toggle-label { user-select: none; }
+    .combine-pff-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.6rem 2.5rem 0.6rem 1rem;
+      margin-bottom: 1rem;
+      background: #ff331f;
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .combine-pff-banner:hover {
+      background: #e62e1c;
+      box-shadow: 0 4px 12px rgba(255,51,31,0.4);
+      transform: translateY(-1px);
+    }
+    .combine-pff-banner.combine-pff-banner-dismissed {
+      display: none;
+    }
+    .combine-pff-banner-link {
+      color: var(--white);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .combine-pff-banner-link:hover {
+      opacity: 0.95;
+    }
+    .combine-pff-banner-close {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.2);
+      color: var(--white);
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .combine-pff-banner-close:hover {
+      background: rgba(255,255,255,0.35);
+    }
+    .combine-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .combine-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .combine-card:hover {
+      border-color: rgba(251,102,22,0.4);
+      box-shadow: 0 4px 16px rgba(251,102,22,0.12);
+    }
+    .combine-card.combine-card-standout {
+      border-color: #FFA800;
+      box-shadow: 0 0 0 2px rgba(255,168,0,0.25);
+    }
+    .combine-card.combine-card-standout:hover {
+      border-color: #FFA800;
+      box-shadow: 0 0 0 2px rgba(255,168,0,0.35), 0 4px 16px rgba(255,168,0,0.12);
+    }
+    .combine-card-standout-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #996600;
+      background: rgba(255,168,0,0.2);
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+    .combine-card-standout-badge i {
+      font-size: 0.6rem;
+    }
+    .combine-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .combine-college-logo {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      object-fit: contain;
+      background: var(--white);
+      padding: 4px;
+    }
+    .combine-card-title {
+      flex: 1;
+      min-width: 0;
+    }
+    .combine-card-name {
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 0 0 0.15rem 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .combine-card-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .combine-card-banner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      padding: 10px 14px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .combine-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--primary);
+      background: rgba(251,102,22,0.1);
+      border: 1px solid rgba(251,102,22,0.25);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      font-family: inherit;
+    }
+    .combine-pill:hover {
+      background: rgba(251,102,22,0.18);
+      border-color: rgba(251,102,22,0.4);
+      transform: translateY(-1px);
+    }
+    .combine-pill:active {
+      transform: translateY(0);
+      background: rgba(251,102,22,0.25);
+    }
+    .combine-pill-go {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+    .combine-pill-recap {
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+    }
+    .combine-pill-recap:hover {
+      border-color: var(--primary);
+      background: rgba(251,102,22,0.08);
+      color: var(--primary);
+    }
+    .combine-recap-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      min-width: 100vw;
+      min-height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      overflow: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+    .combine-recap-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .combine-recap-modal {
+      background: var(--white);
+      border-radius: 14px;
+      max-width: 560px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      transform: scale(0.95);
+      transition: transform 0.25s;
+    }
+    @media (min-width: 640px) {
+      .combine-recap-modal { max-width: 660px; }
+    }
+    .combine-recap-overlay.is-open .combine-recap-modal {
+      transform: scale(1);
+    }
+    body.combine-modal-open { overflow: hidden; }
+    .combine-recap-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .combine-recap-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text);
+    }
+    .combine-recap-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0.25rem 0 0 0;
+    }
+    .combine-recap-close {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, color 0.2s;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    .combine-recap-close:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+    .combine-recap-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .combine-recap-tab {
+      padding: 0.6rem 1rem;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-bottom: -1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .combine-recap-tab:hover {
+      color: var(--text);
+    }
+    .combine-recap-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .combine-recap-body {
+      padding: 1rem 1.25rem 1.25rem;
+    }
+    .combine-recap-panel {
+      display: none;
+    }
+    .combine-recap-panel.combine-recap-panel-active {
+      display: block;
+    }
+    #combine-recap-radar-wrap {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) {
+      #combine-recap-radar-wrap { max-width: 500px; }
+    }
+    #combine-recap-radar-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .combine-recap-chart-empty {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin: 2rem 0;
+    }
+    .combine-recap-radar-axis {
+      stroke: var(--border);
+      stroke-width: 1;
+    }
+    .combine-recap-radar-polygon {
+      fill: rgba(251,102,22,0.25);
+      stroke: var(--primary);
+      stroke-width: 2;
+    }
+    .combine-recap-radar-label {
+      font-size: 0.6rem;
+      fill: var(--text-muted);
+      text-anchor: middle;
+      font-family: inherit;
+    }
+    .combine-recap-radar-datalabel {
+      font-size: 0.7rem;
+      font-weight: 700;
+      fill: var(--primary);
+      text-anchor: middle;
+      dominant-baseline: middle;
+      font-family: inherit;
+    }
+    .combine-recap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 1rem;
+    }
+    .combine-recap-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .combine-recap-item-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+    }
+    .combine-recap-item-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .combine-recap-item-value.empty {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .combine-recap-percentile {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: rgba(251,102,22,0.12);
+      padding: 2px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+    }
+    .combine-recap-comp-meta {
+      font-size: 0.75em;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .combine-compare-bar {
+      margin-bottom: 0.75rem;
+      width: 100%;
+    }
+    .combine-compare-btn {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--primary);
+      background: rgba(251,102,22,0.08);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .combine-compare-btn:hover {
+      background: rgba(251,102,22,0.15);
+    }
+    .combine-compare-modal .combine-recap-body { padding-top: 0.5rem; }
+    .combine-compare-selectors {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0 1.25rem 1rem;
+    }
+    .combine-compare-selectors-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .combine-compare-selectors-row.has-three { grid-template-columns: 1fr 1fr 1fr; }
+    .combine-compare-add-third {
+      margin-top: 0.25rem;
+    }
+    .combine-compare-add-third-btn {
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-family: inherit;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .combine-compare-add-third-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .combine-compare-select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .combine-compare-select-wrap.combine-compare-slot-three { display: none; }
+    .combine-compare-select-wrap.combine-compare-slot-three.is-visible { display: flex; }
+    .combine-compare-select-label { font-weight: 600; }
+    .combine-compare-combobox {
+      position: relative;
+    }
+    .combine-compare-combobox input {
+      width: 100%;
+      padding: 0.65rem 1.75rem 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+    }
+    .combine-compare-combobox input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .combine-compare-combobox input::placeholder { color: var(--text-muted); }
+    .combine-compare-combobox .combine-compare-combobox-chevron {
+      position: absolute;
+      right: 0.65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+    .combine-compare-dropdown {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      margin-top: 2px;
+      max-height: 200px;
+      overflow-y: auto;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 10;
+      list-style: none;
+      padding: 4px 0;
+      margin-bottom: 0;
+      display: none;
+    }
+    .combine-compare-combobox.is-open .combine-compare-dropdown { display: block; }
+    .combine-compare-dropdown li {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .combine-compare-dropdown li:hover,
+    .combine-compare-dropdown li[aria-selected="true"] {
+      background: rgba(251,102,22,0.1);
+      color: var(--primary);
+    }
+    .combine-compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .combine-compare-table th,
+    .combine-compare-table td {
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .combine-compare-table th {
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+    .combine-compare-table td:first-child { color: var(--text-muted); }
+    .combine-compare-table td.combine-compare-best {
+      font-weight: 600;
+      background: rgba(251,102,22,0.08);
+    }
+    .combine-compare-charts-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .combine-compare-radar-single {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) {
+      .combine-compare-radar-single { max-width: 500px; }
+    }
+    .combine-compare-radar-single svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .combine-compare-radar-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+    .combine-compare-radar-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .combine-compare-radar-legend-swatch {
+      width: 1rem;
+      height: 4px;
+      border-radius: 2px;
+    }
+    .combine-card-swipe {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .combine-card-swipe::-webkit-scrollbar { display: none; }
+    .combine-card-swipe-inner {
+      display: flex;
+      width: 500%;
+      min-height: 1px;
+    }
+    .combine-card-pane {
+      flex: 0 0 auto;
+      width: 20%;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      padding: 12px 14px 14px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .combine-card-pane:last-child { border-bottom: none; }
+    .combine-card-pane-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      margin: 0 0 10px 0;
+      line-height: 1.2;
+    }
+    .combine-card-pane-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .combine-measurement-box {
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-height: 0;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .combine-percentile-pill {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: rgba(251,102,22,0.12);
+      padding: 2px 5px;
+      border-radius: 999px;
+      line-height: 1.2;
+    }
+    .combine-measurement-box:hover {
+      border-color: rgba(251,102,22,0.35);
+      box-shadow: 0 2px 8px rgba(251,102,22,0.08);
+    }
+    .combine-measurement-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      opacity: 0.9;
+    }
+    .combine-stat-icon {
+      font-size: 1.25rem;
+    }
+    .combine-measurement-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.2;
+    }
+    .combine-card-pane-sublabel {
+      font-size: 0.55rem;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+      margin-top: 1px;
+      display: block;
+    }
+    .combine-measurement-value {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+    .combine-measurement-value.empty {
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+    .combine-card-pane-stats .combine-measurement-box:only-child {
+      grid-column: 1 / -1;
+    }
+    .combine-measurement-box.combine-measurement-box-full {
+      grid-column: 1 / -1;
+    }
+    .combine-card-notes-wrap {
+      flex-shrink: 0;
+      position: relative;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+    .combine-card-notes-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(251,102,22,0.15);
+      color: var(--primary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-style: italic;
+      font-family: Georgia, serif;
+      cursor: help;
+      border: none;
+      line-height: 1;
+      padding: 0;
+    }
+    .combine-card-notes-trigger:hover {
+      background: rgba(251,102,22,0.25);
+    }
+    .combine-card-notes-popover {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 6px;
+      min-width: 160px;
+      max-width: 240px;
+      padding: 10px 12px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: var(--text);
+      text-align: left;
+      white-space: normal;
+      word-break: break-word;
+      z-index: 5;
+    }
+    .combine-card-notes-wrap:hover .combine-card-notes-popover {
+      display: block;
+    }
+    .combine-card-swipe-footer {
+      padding: 10px 14px 12px;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .combine-card-swipe-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .combine-card-swipe-prev,
+    .combine-card-swipe-next {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--primary);
+      cursor: pointer;
+      padding: 0;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+    .combine-card-swipe-prev:hover,
+    .combine-card-swipe-next:hover {
+      border-color: var(--primary);
+      background: rgba(251,102,22,0.08);
+    }
+    .combine-card-swipe-prev:disabled,
+    .combine-card-swipe-next:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .combine-card-swipe-prev .fa-chevron-left,
+    .combine-card-swipe-next .fa-chevron-right {
+      font-size: 0.85rem;
+    }
+    .combine-card-swipe-prompt {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .combine-card-pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .combine-card-pagination-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border);
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .combine-card-pagination-dot:hover {
+      background: rgba(251,102,22,0.4);
+    }
+    .combine-card-pagination-dot.active {
+      background: var(--primary);
+      transform: scale(1.2);
+    }
+    .combine-card-swipe-hint {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .combine-empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+    .combine-empty-state svg {
+      width: 64px;
+      height: 64px;
+      opacity: 0.4;
+      margin-bottom: 1rem;
+    }
+    .combine-logo-above-filters {
+      text-align: center;
+      padding: 1rem 1rem 1.25rem;
+    }
+    .combine-logo-above-filters .combine-loading-image-wrap {
+      margin: 0 auto;
+    }
+    .combine-loading-image-wrap {
+      width: 200px;
+      max-width: 100%;
+    }
+    .combine-loading-image-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+    .combine-loading-message-under {
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+    .combine-loading-logo-wrap {
+      margin: 0 auto 1rem;
+      width: 200px;
+      max-width: 100%;
+      animation: combine-logo-pulse 2.2s ease-in-out infinite;
+    }
+    .combine-loading-logo-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+    @keyframes combine-logo-pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    .combine-loading-message {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      min-height: 1.5em;
+      transition: opacity 0.3s ease;
+      margin: 0;
+    }
+    .combine-loading-message.fade {
+      opacity: 0.4;
+    }
+    .combine-loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+    .combine-loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: combine-spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes combine-spin { to { transform: rotate(360deg); } }
+    .combine-error {
+      background: rgba(220,53,69,0.08);
+      border: 1px solid rgba(220,53,69,0.3);
+      color: #b91c1c;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    .combine-error a { color: var(--primary); }
+    .combine-error code { font-family: ui-monospace, monospace; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .combine-retry-btn {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid currentColor;
+      background: transparent;
+      color: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .combine-retry-btn:hover { background: rgba(0,0,0,0.06); }
+  </style>
+
+  <div id="combine-logo-above-filters" class="combine-logo-above-filters" style="display:none;" aria-hidden="true">
+    <div class="combine-loading-image-wrap">
+      <img src="https://media.pff.com/2026/02/Combine-logo.jpg" alt="PFF Combine" width="200" height="auto">
+    </div>
+  </div>
+
+  <div class="combine-header">
+    <h1>2026 Combine Results Tracker</h1>
+    <p>Search and explore prospect combine data</p>
+  </div>
+
+  <div id="combine-error" class="combine-error" style="display:none;"></div>
+
+  <div class="combine-controls">
+    <div class="combine-search-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="text" id="combine-search" placeholder="Search by name..." autocomplete="off">
+    </div>
+    <div class="combine-controls-row">
+      <select id="combine-position" class="combine-filter-select" aria-label="Filter by position">
+        <option value="">All positions</option>
+      </select>
+      <select id="combine-school" class="combine-filter-select" aria-label="Filter by school">
+        <option value="">All schools</option>
+      </select>
+      <select id="combine-sort" class="combine-sort-select" aria-label="Sort by">
+        <option value="name">Name A–Z</option>
+        <option value="big_board_rank">Big Board Rank</option>
+        <option value="2025_grade">Grade (high first)</option>
+        <option value="college">School</option>
+      </select>
+      <button type="button" id="combine-clear-filters" class="combine-clear-filters" aria-label="Clear all filters">Clear all</button>
+      <span id="combine-count" class="combine-results-count">— players</span>
+      <label class="combine-height-toggle">
+        <input type="checkbox" id="combine-height-ft-in" aria-label="Show height in feet and inches">
+        <span class="combine-height-toggle-label">Height: ft'in"</span>
+      </label>
+    </div>
+  </div>
+
+  <div id="combine-pff-banner" class="combine-pff-banner">
+    <a href="https://subscribe.pff.com/?promoCode=draft" target="_blank" rel="noopener noreferrer" class="combine-pff-banner-link">Subscribe to PFF+ For Full Access</a>
+    <button type="button" class="combine-pff-banner-close" aria-label="Dismiss banner">×</button>
+  </div>
+
+  <div class="combine-compare-bar">
+    <button type="button" id="combine-compare-btn" class="combine-compare-btn">Compare players</button>
+  </div>
+
+  <div id="combine-content">
+    <div id="combine-loading-message-wrap" class="combine-loading-message-under" aria-live="polite">
+      <div class="combine-loading-logo-wrap">
+        <img src="https://media.pff.com/2026/02/Combine-logo.jpg" alt="" width="200" height="auto">
+      </div>
+      <p id="combine-loading-message" class="combine-loading-message">Loading combine data…</p>
+    </div>
+    <div id="combine-grid" class="combine-grid" style="display:none;"></div>
+  </div>
+
+  <div id="combine-recap-overlay" class="combine-recap-overlay" aria-hidden="true" role="dialog" aria-labelledby="combine-recap-title">
+    <div class="combine-recap-modal">
+      <div class="combine-recap-header">
+        <div>
+          <h2 id="combine-recap-title" class="combine-recap-title"></h2>
+          <p class="combine-recap-subtitle"></p>
+        </div>
+        <button type="button" class="combine-recap-close" aria-label="Close">×</button>
+      </div>
+      <div class="combine-recap-tabs">
+        <button type="button" class="combine-recap-tab active" data-recap-tab="overview">Overview</button>
+        <button type="button" class="combine-recap-tab" data-recap-tab="chart">Chart view</button>
+        <button type="button" class="combine-recap-tab" data-recap-tab="comps">Comps</button>
+      </div>
+      <div class="combine-recap-body">
+        <div id="combine-recap-overview" class="combine-recap-panel combine-recap-panel-active">
+          <div id="combine-recap-grid" class="combine-recap-grid"></div>
+        </div>
+        <div id="combine-recap-chart" class="combine-recap-panel">
+          <div id="combine-recap-radar-wrap"></div>
+        </div>
+        <div id="combine-recap-comps" class="combine-recap-panel">
+          <div id="combine-recap-comps-grid" class="combine-recap-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="combine-compare-overlay" class="combine-recap-overlay" aria-hidden="true" role="dialog" aria-labelledby="combine-compare-title">
+    <div class="combine-recap-modal combine-compare-modal">
+      <div class="combine-recap-header">
+        <h2 id="combine-compare-title" class="combine-recap-title">Compare players</h2>
+        <button type="button" class="combine-recap-close combine-compare-close" aria-label="Close">×</button>
+      </div>
+      <div class="combine-compare-selectors">
+        <div class="combine-compare-selectors-row" id="combine-compare-row">
+          <label class="combine-compare-select-wrap">
+            <span class="combine-compare-select-label">Player 1</span>
+            <div class="combine-compare-combobox" id="combine-compare-combobox-1" data-slot="1">
+              <input type="text" class="combine-compare-input" placeholder="Search or select player..." autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox">
+              <span class="combine-compare-combobox-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
+              <ul class="combine-compare-dropdown" role="listbox"></ul>
+            </div>
+          </label>
+          <label class="combine-compare-select-wrap">
+            <span class="combine-compare-select-label">Player 2</span>
+            <div class="combine-compare-combobox" id="combine-compare-combobox-2" data-slot="2">
+              <input type="text" class="combine-compare-input" placeholder="Search or select player..." autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox">
+              <span class="combine-compare-combobox-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
+              <ul class="combine-compare-dropdown" role="listbox"></ul>
+            </div>
+          </label>
+          <label class="combine-compare-select-wrap combine-compare-slot-three" id="combine-compare-wrap-3">
+            <span class="combine-compare-select-label">Player 3</span>
+            <div class="combine-compare-combobox" id="combine-compare-combobox-3" data-slot="3">
+              <input type="text" class="combine-compare-input" placeholder="Search or select player..." autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox">
+              <span class="combine-compare-combobox-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
+              <ul class="combine-compare-dropdown" role="listbox"></ul>
+            </div>
+          </label>
+        </div>
+        <div class="combine-compare-add-third" id="combine-compare-add-third-wrap">
+          <button type="button" class="combine-compare-add-third-btn" id="combine-compare-add-third-btn">Add player 3</button>
+        </div>
+      </div>
+      <div class="combine-recap-tabs">
+        <button type="button" class="combine-recap-tab active" data-compare-tab="overview">Overview</button>
+        <button type="button" class="combine-recap-tab" data-compare-tab="chart">Chart view</button>
+      </div>
+      <div class="combine-recap-body">
+        <div id="combine-compare-overview" class="combine-recap-panel combine-recap-panel-active">
+          <div id="combine-compare-table-wrap"></div>
+        </div>
+        <div id="combine-compare-chart" class="combine-recap-panel">
+          <div id="combine-compare-charts-wrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8ZCyVoWhxIZrfaRBuHSeRU0066dE-KmDC1CITcNXIOKCa3CUTHz35ioSJvAJHB6PdYxyynZ7xmrFw/pub?output=csv';
+  var HISTORICAL_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8ZCyVoWhxIZrfaRBuHSeRU0066dE-KmDC1CITcNXIOKCa3CUTHz35ioSJvAJHB6PdYxyynZ7xmrFw/pub?output=csv&gid=1';
+  var FETCH_TIMEOUT_MS = 8000;
+  var historicalRows = [];
+  var useFeetInches = false;
+  var currentRecapPlayer = null;
+
+  function getCsvUrls() {
+    var urls = [];
+    var isLocal = !window.location.origin || window.location.origin === 'null' || window.location.protocol === 'file:' || /^https?:\/\/localhost(\b|:)/i.test(window.location.origin);
+    if (isLocal) {
+      urls.push(window.location.origin + '/api/combine-sheet');
+    }
+    urls.push(SHEET_URL);
+    urls.push('https://api.allorigins.win/raw?url=' + encodeURIComponent(SHEET_URL));
+    urls.push('https://corsproxy.io/?' + encodeURIComponent(SHEET_URL));
+    if (!isLocal) {
+      urls = [ urls[2], urls[3], urls[1] ];
+    }
+    return urls;
+  }
+
+  function fetchTextWithTimeout(url, timeoutMs) {
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, timeoutMs);
+    return fetch(url, { mode: 'cors', cache: 'no-cache', signal: controller.signal })
+      .then(function(r) {
+        clearTimeout(timer);
+        if (!r.ok) throw new Error('Fetch failed (' + r.status + ')');
+        return r.text();
+      })
+      .catch(function(err) {
+        clearTimeout(timer);
+        throw err;
+      });
+  }
+
+  function fetchWithProxy(url) {
+    return fetchTextWithTimeout(url, FETCH_TIMEOUT_MS).catch(function() {
+      var proxyUrls = [
+        'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+        'https://corsproxy.io/?' + encodeURIComponent(url),
+        'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
+      ];
+      var i = 0;
+      function tryNext() {
+        if (i >= proxyUrls.length) return Promise.reject(new Error('All proxies failed'));
+        return fetchTextWithTimeout(proxyUrls[i++], FETCH_TIMEOUT_MS).catch(tryNext);
+      }
+      return tryNext();
+    });
+  }
+
+  function parseCSV(text) {
+    var rows = [];
+    text = (text || '').replace(/^\uFEFF/, '');
+    var lines = text.split(/\r?\n/);
+    if (lines.length < 2) return rows;
+    var headers = parseCSVLine(lines[0]);
+    for (var i = 1; i < lines.length; i++) {
+      var vals = parseCSVLine(lines[i]);
+      if (vals.length < 2) continue;
+      var row = {};
+      for (var j = 0; j < headers.length; j++) row[headers[j]] = vals[j] || '';
+      if (row.name) rows.push(row);
+    }
+    return rows;
+  }
+  function parseCSVRaw(text) {
+    var rows = [];
+    text = (text || '').replace(/^\uFEFF/, '');
+    var lines = text.split(/\r?\n/);
+    if (lines.length < 2) return rows;
+    var headers = parseCSVLine(lines[0]);
+    for (var i = 1; i < lines.length; i++) {
+      var vals = parseCSVLine(lines[i]);
+      if (vals.length < 2) continue;
+      var row = {};
+      for (var j = 0; j < headers.length; j++) row[headers[j]] = vals[j] || '';
+      rows.push(row);
+    }
+    return rows;
+  }
+  function normalizeHeader(h) {
+    return (h || '').trim().toLowerCase().replace(/\s+/g, '_');
+  }
+  function parseLineByDelim(line, delim) {
+    var parts = [];
+    var cur = '';
+    var inQ = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (c === '"') { inQ = !inQ; continue; }
+      if (!inQ && c === delim) { parts.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    parts.push(cur.trim());
+    return parts;
+  }
+  function parseCSVHistorical(text) {
+    var rows = [];
+    text = (text || '').replace(/^\uFEFF/, '');
+    var lines = text.split(/\r?\n/);
+    if (lines.length < 2) return rows;
+    var delim = lines[0].indexOf('\t') >= 0 ? '\t' : ',';
+    var rawHeaders = parseLineByDelim(lines[0], delim);
+    var headers = rawHeaders.map(function(h) { return normalizeHeader(h); });
+    for (var i = 1; i < lines.length; i++) {
+      var vals = parseLineByDelim(lines[i], delim);
+      if (vals.length < 2) continue;
+      var row = {};
+      for (var j = 0; j < headers.length; j++) {
+        var key = headers[j];
+        if (!key) continue;
+        row[key] = (vals[j] || '').trim();
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
+  function parseCSVLine(line) {
+    var out = [], cur = '', inQ = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (c === '"') { inQ = !inQ; continue; }
+      if (!inQ && c === ',') { out.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    out.push(cur.trim());
+    return out;
+  }
+
+  function inchesToFeetInches(v) {
+    if (v === undefined || v === null || v === '') return '—';
+    var n = parseFloat(String(v).trim());
+    if (isNaN(n)) return '—';
+    var ft = Math.floor(n / 12);
+    var inch = Math.round(n % 12);
+    return ft + "'" + inch + '"';
+  }
+  function fmtInch(v) { return v ? v + '"' : '—'; }
+  function fmtHeight(v) { return useFeetInches ? inchesToFeetInches(v) : (v ? v + '"' : '—'); }
+  function fmtSec(v) { return v ? v + 's' : '—'; }
+  function fmtLb(v) { return v ? v + ' lb' : '—'; }
+  function fmtReps(v) { return v ? v + ' reps' : '—'; }
+  function formatStatValue(p, stat) {
+    var v = getStat(p, stat.key);
+    var fmt = stat.key === 'height_in_inches' ? fmtHeight : stat.fmt;
+    return fmt(v);
+  }
+
+  var statIcons = {
+    height_in_inches: 'fa-solid fa-ruler-vertical',
+    weight_in_pounds: 'fa-solid fa-weight-scale',
+    arm_length_in_inches: 'fa-solid fa-ruler',
+    right_hand_size_in_inches: 'fa-solid fa-hand',
+    wingspan_in_inches: 'fa-solid fa-arrows-left-right',
+    fourty_time_in_seconds: 'fa-solid fa-person-running',
+    twenty_time_in_seconds: 'fa-solid fa-gauge-high',
+    ten_time_in_seconds: 'fa-solid fa-bolt',
+    vertical_jump_in_inches: 'fa-solid fa-arrow-up',
+    broad_jump_in_inches: 'fa-solid fa-arrow-right',
+    twenty_shuttle_in_seconds: 'fa-solid fa-shuffle',
+    three_cone_in_seconds: 'fa-solid fa-route',
+    bench_press_in_reps: 'fa-solid fa-dumbbell'
+  };
+
+  var slideCategories = [
+    {
+      title: 'Size',
+      stats: [
+        { key: 'height_in_inches', label: 'Height', fmt: fmtHeight },
+        { key: 'weight_in_pounds', label: 'Weight', fmt: fmtLb },
+        { key: 'arm_length_in_inches', label: 'Arm length', fmt: fmtInch },
+        { key: 'right_hand_size_in_inches', label: 'Hand size', fmt: fmtInch },
+        { key: 'wingspan_in_inches', label: 'Wingspan', fmt: fmtInch }
+      ],
+      layout: [ ['height_in_inches'], ['weight_in_pounds', 'arm_length_in_inches'], ['right_hand_size_in_inches', 'wingspan_in_inches'] ]
+    },
+    {
+      title: 'Linear Speed / Acceleration',
+      stats: [
+        { key: 'fourty_time_in_seconds', label: '40-yd', sublabel: 'Top-end speed', fmt: fmtSec },
+        { key: 'twenty_time_in_seconds', label: '20-yd', sublabel: 'Mid-phase acceleration', fmt: fmtSec },
+        { key: 'ten_time_in_seconds', label: '10-yd', sublabel: 'Initial burst', fmt: fmtSec }
+      ],
+      layout: [ ['fourty_time_in_seconds'], ['twenty_time_in_seconds', 'ten_time_in_seconds'] ]
+    },
+    {
+      title: 'Explosiveness / Lower-Body Power',
+      stats: [
+        { key: 'vertical_jump_in_inches', label: 'Vertical jump', fmt: fmtInch },
+        { key: 'broad_jump_in_inches', label: 'Broad jump', fmt: fmtInch }
+      ],
+      layout: [ ['vertical_jump_in_inches'], ['broad_jump_in_inches'] ]
+    },
+    {
+      title: 'Agility / Change of Direction',
+      stats: [
+        { key: 'twenty_shuttle_in_seconds', label: '20-yd shuttle', fmt: fmtSec },
+        { key: 'three_cone_in_seconds', label: '3-Cone', fmt: fmtSec }
+      ],
+      layout: [ ['twenty_shuttle_in_seconds'], ['three_cone_in_seconds'] ]
+    },
+    {
+      title: 'Strength',
+      stats: [
+        { key: 'bench_press_in_reps', label: 'Bench press', fmt: fmtReps }
+      ],
+      layout: [ ['bench_press_in_reps'] ]
+    }
+  ];
+  var allRecapStats = [];
+  slideCategories.forEach(function(cat) {
+    cat.stats.forEach(function(s) { allRecapStats.push(s); });
+  });
+  var PFF_GRADE_URL = 'https://premium.pff.com/ncaa/positions/2025/REGPO';
+  var BIG_BOARD_URL = 'https://www.pff.com/draft/big-board';
+  var goIconSvg = '<svg class="combine-pill-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>';
+  var currentFilteredPlayers = [];
+
+  function getStat(p, key) { return p[key]; }
+  function getPlayerPosition(player) {
+    var v = player.position || player.Position || player.pos || player.Pos || '';
+    if (v) return String(v).trim().toUpperCase();
+    for (var k in player) {
+      if (player.hasOwnProperty(k) && (k.toLowerCase() === 'position' || k.toLowerCase() === 'pos')) return String(player[k] || '').trim().toUpperCase();
+    }
+    return '';
+  }
+  function getRowPos(row) {
+    var v = row.position || '';
+    return String(v).trim().toUpperCase();
+  }
+  function getRowName(row) {
+    var n = row.name || '';
+    if (n) return String(n).trim().toLowerCase();
+    return ((row.first_name || '') + ' ' + (row.last_name || '')).trim().toLowerCase();
+  }
+  function getHistRowVal(row, statKey) {
+    var v = row[statKey];
+    if (v !== undefined && v !== null && v !== '') return v;
+    return null;
+  }
+  function numericMatch(a, b) {
+    if (isNaN(a) || isNaN(b)) return false;
+    return Math.abs(a - b) < 1e-6 || Math.round(a * 1000) === Math.round(b * 1000);
+  }
+  function getHistComp(player, statKey) {
+    if (!historicalRows || historicalRows.length === 0) return null;
+    var playerPos = getPlayerPosition(player);
+    if (!playerPos) return null;
+    var playerVal = getStat(player, statKey);
+    if (playerVal === undefined || playerVal === null || playerVal === '') return null;
+    var playerNum = parseFloat(String(playerVal).trim());
+    if (isNaN(playerNum)) return null;
+    var playerName = (player.name || '').toLowerCase();
+    var candidates = [];
+    for (var i = 0; i < historicalRows.length; i++) {
+      var row = historicalRows[i];
+      var rowPos = getRowPos(row);
+      if (rowPos !== playerPos) continue;
+      var rowVal = getHistRowVal(row, statKey);
+      if (rowVal === null) continue;
+      var rowNum = parseFloat(String(rowVal).trim());
+      if (!numericMatch(playerNum, rowNum)) continue;
+      var rowName = getRowName(row);
+      if (rowName && rowName === playerName) continue;
+      var year = parseInt(row.year || '', 10);
+      candidates.push({
+        first_name: row.first_name || '',
+        last_name: row.last_name || '',
+        name: (row.name || '').trim(),
+        college: (row.college || '').trim(),
+        year: isNaN(year) ? '' : year
+      });
+    }
+    if (candidates.length === 0) return null;
+    candidates.sort(function(a, b) { return (b.year || 0) - (a.year || 0); });
+    var c = candidates[0];
+    var name = (c.name || ((c.first_name || '') + ' ' + (c.last_name || '')).trim()).trim() || '—';
+    return { name: name, college: c.college || '', year: c.year || '' };
+  }
+  function getPercentileFromSheet(p, statKey) {
+    var raw = getStat(p, statKey + '_percentile');
+    if (raw === undefined || raw === null || raw === '') return null;
+    var num = parseFloat(String(raw).trim());
+    if (isNaN(num)) return null;
+    return Math.round(num);
+  }
+  function ordinalSuffix(n) {
+    var num = Math.abs(parseInt(n, 10) || 0);
+    var mod100 = num % 100;
+    if (mod100 >= 11 && mod100 <= 13) return 'th';
+    switch (num % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  }
+  function escapeHtml(s) {
+    if (!s) return '';
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function renderCard(p, cardIndex) {
+    var pos = (p.T2 || p.t2 || p.projected_position || p.position || '').trim();
+    var grade = p['2025_grade'];
+    var rank = p.big_board_rank;
+    var draftUrl = (p.draft_profile || '').trim();
+    var gradeText = (grade && grade !== '#N/A' ? escapeHtml(grade) : '—');
+    var rankText = (rank && rank !== '#N/A' ? '#' + escapeHtml(String(rank)) : '—');
+    var logo = p.college_logo ? '<img class="combine-college-logo" src="' + escapeHtml(p.college_logo) + '" alt="" loading="lazy">' : '<div class="combine-college-logo" style="background:var(--border)"></div>';
+    var bannerHtml = '<a class="combine-pill" href="' + escapeHtml(PFF_GRADE_URL) + '" target="_blank" rel="noopener noreferrer">PFF Grade: ' + gradeText + '</a>';
+    bannerHtml += '<a class="combine-pill" href="' + escapeHtml(BIG_BOARD_URL) + '" target="_blank" rel="noopener noreferrer">Big Board Rank: ' + rankText + '</a>';
+    if (draftUrl) {
+      bannerHtml += '<a class="combine-pill combine-pill-draft" href="' + escapeHtml(draftUrl) + '" target="_blank" rel="noopener noreferrer">Draft profile ' + goIconSvg + '</a>';
+    }
+    bannerHtml += '<button type="button" class="combine-pill combine-pill-recap">Combine recap</button>';
+    var posKey = (p.T2 || p.t2 || p.projected_position || p.position || '').trim();
+    function findStat(cat, key) {
+      for (var i = 0; i < cat.stats.length; i++) { if (cat.stats[i].key === key) return cat.stats[i]; }
+      return null;
+    }
+    function renderMeasurementBox(p, s, fullWidth) {
+      var v = getStat(p, s.key);
+      var display = s.key === 'height_in_inches' ? fmtHeight(v) : s.fmt(v);
+      var sub = s.sublabel ? '<div class="combine-card-pane-sublabel">' + escapeHtml(s.sublabel) + '</div>' : '';
+      var iconClass = statIcons[s.key] || 'fa-solid fa-circle';
+      var pct = getPercentileFromSheet(p, s.key);
+      var pillHtml = (pct !== null && pct !== undefined) ? '<span class="combine-percentile-pill" title="Position percentile">' + escapeHtml(String(pct)) + ordinalSuffix(pct) + '</span>' : '';
+      var fullClass = fullWidth ? ' combine-measurement-box-full' : '';
+      return '<div class="combine-measurement-box' + fullClass + '">' +
+        pillHtml +
+        '<div class="combine-measurement-icon"><i class="combine-stat-icon ' + escapeHtml(iconClass) + '" aria-hidden="true"></i></div>' +
+        '<div class="combine-measurement-label">' + escapeHtml(s.label) + sub + '</div>' +
+        '<div class="combine-measurement-value' + (v ? '' : ' empty') + '">' + escapeHtml(display) + '</div>' +
+        '</div>';
+    }
+    var panesHtml = slideCategories.map(function(cat) {
+      var layout = cat.layout || cat.stats.map(function(s) { return [s.key]; });
+      var boxes = [];
+      layout.forEach(function(row) {
+        var fullWidth = row.length === 1;
+        row.forEach(function(key) {
+          var s = findStat(cat, key);
+          if (s) boxes.push(renderMeasurementBox(p, s, fullWidth));
+        });
+      });
+      return '<div class="combine-card-pane"><h4 class="combine-card-pane-title">' + escapeHtml(cat.title) + '</h4><div class="combine-card-pane-stats">' + boxes.join('') + '</div></div>';
+    }).join('');
+    var dotsHtml = slideCategories.map(function(_, i) {
+      return '<button type="button" class="combine-card-pagination-dot' + (i === 0 ? ' active' : '') + '" aria-label="Slide ' + (i + 1) + ' of 5" aria-current="' + (i === 0 ? 'true' : 'false') + '"></button>';
+    }).join('');
+    var notes = (getStat(p, 'notes') || getStat(p, 'Notes') || '').trim();
+    var notesHtml = notes ? '<span class="combine-card-notes-wrap"><span class="combine-card-notes-trigger" aria-label="Notes">i</span><span class="combine-card-notes-popover">' + escapeHtml(notes) + '</span></span>' : '';
+    var standout = (getStat(p, 'standout') || getStat(p, 'Standout') || '').trim().toUpperCase() === 'Y';
+    var standoutClass = standout ? ' combine-card-standout' : '';
+    var standoutBadge = standout ? '<span class="combine-card-standout-badge" aria-label="Standout"><i class="fa-solid fa-star" aria-hidden="true"></i> Standout</span>' : '';
+    var dataIndex = typeof cardIndex === 'number' ? ' data-card-index="' + cardIndex + '"' : '';
+    return '<article class="combine-card' + standoutClass + '"' + dataIndex + ' data-name="' + escapeHtml((p.name || '').toLowerCase()) + '" data-college="' + escapeHtml((p.college_name || '').toLowerCase()) + '" data-position="' + escapeHtml(pos) + '">' +
+      '<div class="combine-card-header">' + logo + '<div class="combine-card-title"><h3 class="combine-card-name">' + escapeHtml(p.name || '') + standoutBadge + '</h3><p class="combine-card-meta">' + escapeHtml(p.college_name || '') + (pos ? ' · ' + escapeHtml(pos) : '') + '</p></div>' + notesHtml + '</div>' +
+      '<div class="combine-card-banner">' + bannerHtml + '</div>' +
+      '<div class="combine-card-swipe" aria-label="Swipe for combine categories"><div class="combine-card-swipe-inner">' + panesHtml + '</div></div>' +
+      '<div class="combine-card-swipe-footer">' +
+      '<div class="combine-card-swipe-nav">' +
+      '<button type="button" class="combine-card-swipe-prev" aria-label="Previous category"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>' +
+      '<div class="combine-card-pagination" role="tablist" aria-label="Combine categories">' + dotsHtml + '</div>' +
+      '<button type="button" class="combine-card-swipe-next" aria-label="Next category"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>' +
+      '</div>' +
+      '<div class="combine-card-swipe-prompt" aria-hidden="true">Swipe for testing numbers</div>' +
+      '<div class="combine-card-swipe-hint">1 of 5</div></div></article>';
+  }
+
+  function fillPositions(players) {
+    var set = {};
+    players.forEach(function(p) {
+      var pos = (p.T2 || p.t2 || p.projected_position || p.position || '').trim();
+      if (pos) set[pos] = true;
+    });
+    var opts = Object.keys(set).sort();
+    var sel = document.getElementById('combine-position');
+    sel.innerHTML = '<option value="">All positions</option>' + opts.map(function(o) { return '<option value="' + escapeHtml(o) + '">' + escapeHtml(o) + '</option>'; }).join('');
+  }
+
+  function fillSchools(players) {
+    var set = {};
+    players.forEach(function(p) {
+      var school = (p.college_name || p.college || '').trim();
+      if (school) set[school] = true;
+    });
+    var opts = Object.keys(set).sort();
+    var sel = document.getElementById('combine-school');
+    sel.innerHTML = '<option value="">All schools</option>' + opts.map(function(o) { return '<option value="' + escapeHtml(o) + '">' + escapeHtml(o) + '</option>'; }).join('');
+  }
+
+  function filterSortRender(players, search, position, school, sortBy) {
+    var s = (search || '').toLowerCase().trim();
+    var filtered = players.filter(function(p) {
+      var nameMatch = !s || (p.name || '').toLowerCase().indexOf(s) !== -1;
+      var pos = (p.T2 || p.t2 || p.projected_position || p.position || '').trim();
+      var posMatch = !position || pos === position;
+      var schoolName = (p.college_name || p.college || '').trim();
+      var schoolMatch = !school || schoolName === school;
+      return nameMatch && posMatch && schoolMatch;
+    });
+    filtered.sort(function(a, b) {
+      if (sortBy === 'name') return (a.name || '').localeCompare(b.name || '');
+      if (sortBy === 'college') return (a.college_name || '').localeCompare(b.college_name || '');
+      if (sortBy === 'big_board_rank') {
+        var ra = parseInt(a.big_board_rank, 10), rb = parseInt(b.big_board_rank, 10);
+        if (isNaN(ra)) return 1; if (isNaN(rb)) return -1;
+        return ra - rb;
+      }
+      if (sortBy === '2025_grade') {
+        var ga = parseFloat(a['2025_grade']), gb = parseFloat(b['2025_grade']);
+        if (isNaN(ga)) return 1; if (isNaN(gb)) return -1;
+        return gb - ga;
+      }
+      return 0;
+    });
+    var grid = document.getElementById('combine-grid');
+    var countEl = document.getElementById('combine-count');
+    currentFilteredPlayers = filtered;
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="combine-empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>No players match your filters. Try a different search, school, or position.</p></div>';
+    } else {
+      grid.innerHTML = filtered.map(function(p, i) { return renderCard(p, i); }).join('');
+      initCardPagination();
+    }
+    countEl.textContent = filtered.length + ' player' + (filtered.length !== 1 ? 's' : '');
+  }
+
+  function renderRadarChart(containerEl, statsWithPct) {
+    if (!containerEl || !statsWithPct || statsWithPct.length < 3) {
+      containerEl.innerHTML = '<p class="combine-recap-chart-empty">Need at least 3 measurements with percentile data for the chart.</p>';
+      return;
+    }
+    var n = statsWithPct.length;
+    var size = 460;
+    var cx = size / 2;
+    var cy = size / 2;
+    var maxR = (size / 2) - 72;
+    var angle0 = -Math.PI / 2;
+    var dataLabelOffset = 18;
+    var axisLabelR = maxR + 52;
+    var points = [];
+    var axisLines = [];
+    var labels = [];
+    var dataLabels = [];
+    for (var i = 0; i < n; i++) {
+      var angle = angle0 + (2 * Math.PI * i / n);
+      var pct = Math.min(100, Math.max(0, statsWithPct[i].percentile));
+      var r = (pct / 100) * maxR;
+      var px = cx + r * Math.cos(angle);
+      var py = cy + r * Math.sin(angle);
+      points.push(px.toFixed(2) + ',' + py.toFixed(2));
+      var endX = cx + maxR * Math.cos(angle);
+      var endY = cy + maxR * Math.sin(angle);
+      axisLines.push('<line x1="' + cx + '" y1="' + cy + '" x2="' + endX + '" y2="' + endY + '" class="combine-recap-radar-axis"/>');
+      var lx = cx + axisLabelR * Math.cos(angle);
+      var ly = cy + axisLabelR * Math.sin(angle);
+      labels.push('<text x="' + lx + '" y="' + ly + '" class="combine-recap-radar-label">' + escapeHtml(statsWithPct[i].label) + '</text>');
+      var dataR = Math.min(r + dataLabelOffset, maxR + dataLabelOffset - 4);
+      var dx = cx + dataR * Math.cos(angle);
+      var dy = cy + dataR * Math.sin(angle);
+      dataLabels.push('<text x="' + dx.toFixed(2) + '" y="' + dy.toFixed(2) + '" class="combine-recap-radar-datalabel" text-anchor="middle" dominant-baseline="middle">' + escapeHtml(String(statsWithPct[i].percentile)) + '</text>');
+    }
+    var polygonPoints = points.join(' ');
+    var svg = '<svg viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      axisLines.join('') +
+      '<polygon points="' + polygonPoints + '" class="combine-recap-radar-polygon"/>' +
+      dataLabels.join('') +
+      labels.join('') +
+      '</svg>';
+    containerEl.innerHTML = svg;
+  }
+  var COMPARE_CHART_COLORS = ['#FB6616', '#000000', '#FFA800'];
+  function renderCompareRadarChart(containerEl, series) {
+    if (!containerEl || !series || series.length === 0) {
+      containerEl.innerHTML = '<p class="combine-recap-chart-empty">Select at least one player to compare.</p>';
+      return;
+    }
+    var first = series[0];
+    if (!first.statsWithPct || first.statsWithPct.length < 3) {
+      containerEl.innerHTML = '<p class="combine-recap-chart-empty">Need at least 3 measurements with percentile data for the chart.</p>';
+      return;
+    }
+    var statsWithPct = first.statsWithPct;
+    var n = statsWithPct.length;
+    var size = 460;
+    var cx = size / 2;
+    var cy = size / 2;
+    var maxR = (size / 2) - 72;
+    var angle0 = -Math.PI / 2;
+    var axisLabelR = maxR + 52;
+    var axisLines = [];
+    var labels = [];
+    for (var i = 0; i < n; i++) {
+      var angle = angle0 + (2 * Math.PI * i / n);
+      var endX = cx + maxR * Math.cos(angle);
+      var endY = cy + maxR * Math.sin(angle);
+      axisLines.push('<line x1="' + cx + '" y1="' + cy + '" x2="' + endX + '" y2="' + endY + '" class="combine-recap-radar-axis"/>');
+      var lx = cx + axisLabelR * Math.cos(angle);
+      var ly = cy + axisLabelR * Math.sin(angle);
+      labels.push('<text x="' + lx + '" y="' + ly + '" class="combine-recap-radar-label">' + escapeHtml(statsWithPct[i].label) + '</text>');
+    }
+    var polygons = [];
+    for (var s = series.length - 1; s >= 0; s--) {
+      var data = series[s];
+      var color = data.color || COMPARE_CHART_COLORS[s] || '#666';
+      var points = [];
+      for (var j = 0; j < n; j++) {
+        var pct = Math.min(100, Math.max(0, data.statsWithPct[j].percentile));
+        var r = (pct / 100) * maxR;
+        var angle = angle0 + (2 * Math.PI * j / n);
+        points.push((cx + r * Math.cos(angle)).toFixed(2) + ',' + (cy + r * Math.sin(angle)).toFixed(2));
+      }
+      var fillOpacity = 0.22;
+      polygons.push('<polygon points="' + points.join(' ') + '" fill="' + color + '" fill-opacity="' + fillOpacity + '" stroke="' + color + '" stroke-width="2"/>');
+    }
+    var legendHtml = series.map(function(data, idx) {
+      var color = data.color || COMPARE_CHART_COLORS[idx] || '#666';
+      return '<span class="combine-compare-radar-legend-item"><span class="combine-compare-radar-legend-swatch" style="background:' + color + '"></span><span style="color:' + color + '">' + escapeHtml(data.label) + '</span></span>';
+    }).join('');
+    containerEl.innerHTML = '<div class="combine-compare-radar-single"><svg viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      axisLines.join('') + polygons.join('') + labels.join('') + '</svg><div class="combine-compare-radar-legend">' + legendHtml + '</div></div>';
+  }
+  function openRecapModal(player) {
+    var overlay = document.getElementById('combine-recap-overlay');
+    var titleEl = document.getElementById('combine-recap-title');
+    var subtitleEl = overlay ? overlay.querySelector('.combine-recap-subtitle') : null;
+    var gridEl = document.getElementById('combine-recap-grid');
+    var overviewPanel = document.getElementById('combine-recap-overview');
+    var chartPanel = document.getElementById('combine-recap-chart');
+    var chartWrap = document.getElementById('combine-recap-radar-wrap');
+    var tabs = overlay ? overlay.querySelectorAll('.combine-recap-tab') : [];
+    if (!overlay || !titleEl || !gridEl) return;
+    titleEl.textContent = player.name || '';
+    var playerPos = (player.T2 || player.t2 || player.projected_position || player.position || '').trim();
+    if (subtitleEl) subtitleEl.textContent = (player.college_name || '') + (playerPos ? ' · ' + playerPos : '');
+    var overviewHtml = '';
+    var statsWithPct = [];
+    allRecapStats.forEach(function(s) {
+      var v = getStat(player, s.key);
+      var display = s.key === 'height_in_inches' ? fmtHeight(v) : s.fmt(v);
+      var pct = getPercentileFromSheet(player, s.key);
+      var pctHtml = (pct !== null && pct !== undefined) ? ' <span class="combine-recap-percentile">' + escapeHtml(String(pct)) + ordinalSuffix(pct) + ' %</span>' : '';
+      overviewHtml += '<div class="combine-recap-item"><span class="combine-recap-item-label">' + escapeHtml(s.label) + '</span><span class="combine-recap-item-value' + (v ? '' : ' empty') + '">' + escapeHtml(display) + pctHtml + '</span></div>';
+      if (pct !== null && pct !== undefined) statsWithPct.push({ label: s.label, percentile: pct });
+    });
+    gridEl.innerHTML = overviewHtml;
+    overviewPanel.classList.add('combine-recap-panel-active');
+    chartPanel.classList.remove('combine-recap-panel-active');
+    tabs.forEach(function(t) {
+      t.classList.toggle('active', t.getAttribute('data-recap-tab') === 'overview');
+    });
+    renderRadarChart(chartWrap, statsWithPct);
+    currentRecapPlayer = player;
+    renderRecapComps(player);
+    var compsPanel = document.getElementById('combine-recap-comps');
+    if (compsPanel) compsPanel.classList.remove('combine-recap-panel-active');
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('combine-modal-open');
+  }
+  function getSheetComp(player, statKey) {
+    var raw = getStat(player, statKey + '_comp');
+    if (raw === undefined || raw === null) raw = getStat(player, statKey + ' comp');
+    var s = (raw || '').trim();
+    return s || null;
+  }
+  function renderRecapComps(player) {
+    var compsGrid = document.getElementById('combine-recap-comps-grid');
+    if (!compsGrid || !player) return;
+    var useSheetComps = allRecapStats.some(function(s) { return getSheetComp(player, s.key); });
+    if (!useSheetComps && (!historicalRows || historicalRows.length === 0)) {
+      compsGrid.innerHTML = '<p class="combine-recap-chart-empty">Add columns named <strong>[stat]_comp</strong> (e.g. height_in_inches_comp) with formulas that look up the Historical sheet, or wait for historical data to load.</p>';
+      return;
+    }
+    var compsHtml = '';
+    allRecapStats.forEach(function(s) {
+      var v = getStat(player, s.key);
+      var measBlank = v === undefined || v === null || v === '';
+      if (measBlank) {
+        compsHtml += '<div class="combine-recap-item"><span class="combine-recap-item-label">' + escapeHtml(s.label) + '</span><span class="combine-recap-item-value empty">—</span></div>';
+        return;
+      }
+      var sheetComp = getSheetComp(player, s.key);
+      var compText = sheetComp ? escapeHtml(sheetComp) : '—';
+      compsHtml += '<div class="combine-recap-item"><span class="combine-recap-item-label">' + escapeHtml(s.label) + '</span><span class="combine-recap-item-value' + (sheetComp ? '' : ' empty') + '">' + compText + '</span></div>';
+    });
+    compsGrid.innerHTML = compsHtml;
+  }
+  function closeRecapModal() {
+    var overlay = document.getElementById('combine-recap-overlay');
+    currentRecapPlayer = null;
+    if (overlay) {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+    if (!document.querySelector('.combine-recap-overlay.is-open')) document.body.classList.remove('combine-modal-open');
+  }
+  function getSelectedComparePlayers() {
+    var list = [];
+    var slots = [1, 2];
+    var wrap3 = document.getElementById('combine-compare-wrap-3');
+    if (wrap3 && wrap3.classList.contains('is-visible')) slots.push(3);
+    slots.forEach(function(slot) {
+      var box = document.getElementById('combine-compare-combobox-' + slot);
+      if (!box) return;
+      var idxStr = box.getAttribute('data-selected-index');
+      if (idxStr === null || idxStr === '') return;
+      var idx = parseInt(idxStr, 10);
+      if (!isNaN(idx) && currentFilteredPlayers[idx] !== undefined) list.push(currentFilteredPlayers[idx]);
+    });
+    return list;
+  }
+  function getCompareComboboxPlayerList(query) {
+    var q = (query || '').trim().toLowerCase();
+    return currentFilteredPlayers.map(function(p, i) {
+      var label = (p.name || '') + (p.college_name ? ' · ' + p.college_name : '');
+      return { index: i, label: label, player: p };
+    }).filter(function(x) {
+      if (!q) return true;
+      return x.label.toLowerCase().indexOf(q) >= 0;
+    });
+  }
+  function renderCompareDropdown(combobox, query) {
+    var list = getCompareComboboxPlayerList(query);
+    var ul = combobox.querySelector('.combine-compare-dropdown');
+    if (!ul) return;
+    ul.innerHTML = list.map(function(x, i) {
+      var sel = i === 0 ? ' aria-selected="true"' : '';
+      return '<li role="option" data-index="' + x.index + '" tabindex="-1"' + sel + '>' + escapeHtml(x.label) + '</li>';
+    }).join('');
+  }
+  function openCompareCombobox(combobox) {
+    combobox.classList.add('is-open');
+    var input = combobox.querySelector('.combine-compare-input');
+    if (input) input.setAttribute('aria-expanded', 'true');
+    renderCompareDropdown(combobox, (input && input.value) || '');
+  }
+  function closeCompareCombobox(combobox) {
+    combobox.classList.remove('is-open');
+    var input = combobox.querySelector('.combine-compare-input');
+    if (input) input.setAttribute('aria-expanded', 'false');
+  }
+  function selectCompareComboboxPlayer(combobox, index) {
+    var player = currentFilteredPlayers[index];
+    if (!player) return;
+    var label = (player.name || '') + (player.college_name ? ' · ' + player.college_name : '');
+    combobox.setAttribute('data-selected-index', String(index));
+    var input = combobox.querySelector('.combine-compare-input');
+    if (input) input.value = label;
+    closeCompareCombobox(combobox);
+    renderCompareContent();
+  }
+  function initCompareCombobox(slot) {
+    var combobox = document.getElementById('combine-compare-combobox-' + slot);
+    if (!combobox) return;
+    var input = combobox.querySelector('.combine-compare-input');
+    var ul = combobox.querySelector('.combine-compare-dropdown');
+    if (!input || !ul) return;
+    input.addEventListener('focus', function() { openCompareCombobox(combobox); });
+    input.addEventListener('input', function() {
+      openCompareCombobox(combobox);
+      renderCompareDropdown(combobox, input.value);
+    });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { closeCompareCombobox(combobox); return; }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        var items = ul.querySelectorAll('li[role="option"]');
+        if (items.length === 0) return;
+        var current = ul.querySelector('li[aria-selected="true"]');
+        var idx = current ? Array.prototype.indexOf.call(items, current) : -1;
+        if (e.key === 'ArrowDown') idx = (idx + 1) % items.length;
+        else idx = idx <= 0 ? items.length - 1 : idx - 1;
+        items.forEach(function(el, i) { el.setAttribute('aria-selected', i === idx); });
+        items[idx].focus();
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var selected = ul.querySelector('li[aria-selected="true"]');
+        if (selected) selectCompareComboboxPlayer(combobox, parseInt(selected.getAttribute('data-index'), 10));
+      }
+    });
+    ul.addEventListener('click', function(e) {
+      var li = e.target.closest('li[data-index]');
+      if (!li) return;
+      selectCompareComboboxPlayer(combobox, parseInt(li.getAttribute('data-index'), 10));
+    });
+    input.addEventListener('blur', function() {
+      setTimeout(function() { closeCompareCombobox(combobox); }, 150);
+    });
+  }
+  function renderCompareContent() {
+    var players = getSelectedComparePlayers();
+    var tableWrap = document.getElementById('combine-compare-table-wrap');
+    var chartsWrap = document.getElementById('combine-compare-charts-wrap');
+    if (!tableWrap || !chartsWrap) return;
+    if (players.length === 0) {
+      tableWrap.innerHTML = '<p class="combine-recap-chart-empty">Select at least one player to compare.</p>';
+      chartsWrap.innerHTML = '<p class="combine-recap-chart-empty">Select at least one player to compare.</p>';
+      return;
+    }
+    var lowerIsBetterKeys = { fourty_time_in_seconds: 1, twenty_time_in_seconds: 1, ten_time_in_seconds: 1, twenty_shuttle_in_seconds: 1, three_cone_in_seconds: 1 };
+    var headerCells = '<th>Measurement</th>' + players.map(function(p) { return '<th>' + escapeHtml(p.name || '') + '</th>'; }).join('');
+    var rows = allRecapStats.map(function(s) {
+      var labelCell = '<td>' + escapeHtml(s.label) + '</td>';
+      var rawValues = players.map(function(p) {
+        var v = getStat(p, s.key);
+        var num = v !== undefined && v !== null && v !== '' ? parseFloat(String(v).trim()) : NaN;
+        return isNaN(num) ? NaN : num;
+      });
+      var bestIdx = -1;
+      var bestVal = NaN;
+      if (lowerIsBetterKeys[s.key]) {
+        for (var i = 0; i < rawValues.length; i++) { if (!isNaN(rawValues[i]) && (isNaN(bestVal) || rawValues[i] < bestVal)) { bestVal = rawValues[i]; bestIdx = i; } }
+      } else {
+        for (var j = 0; j < rawValues.length; j++) { if (!isNaN(rawValues[j]) && (isNaN(bestVal) || rawValues[j] > bestVal)) { bestVal = rawValues[j]; bestIdx = j; } }
+      }
+      var bestIndices = [];
+      if (!isNaN(bestVal)) { for (var k = 0; k < rawValues.length; k++) { if (rawValues[k] === bestVal) bestIndices.push(k); } }
+      var valueCells = players.map(function(p, idx) {
+        var v = getStat(p, s.key);
+        var display = s.key === 'height_in_inches' ? fmtHeight(v) : s.fmt(v);
+        var bestClass = bestIndices.indexOf(idx) >= 0 ? ' combine-compare-best' : '';
+        return '<td' + (bestClass ? ' class="combine-compare-best"' : '') + '>' + escapeHtml(display) + '</td>';
+      }).join('');
+      return '<tr>' + labelCell + valueCells + '</tr>';
+    }).join('');
+    tableWrap.innerHTML = '<table class="combine-compare-table"><thead><tr>' + headerCells + '</tr></thead><tbody>' + rows + '</tbody></table>';
+    chartsWrap.innerHTML = '';
+    var series = players.map(function(p, idx) {
+      var statsWithPct = allRecapStats.map(function(s) {
+        var pct = getPercentileFromSheet(p, s.key);
+        return { label: s.label, percentile: (pct !== null && pct !== undefined) ? pct : 0 };
+      });
+      return {
+        statsWithPct: statsWithPct,
+        color: COMPARE_CHART_COLORS[idx],
+        label: (p.name || '') + (p.college_name ? ' · ' + p.college_name : '')
+      };
+    });
+    var chartContainer = document.createElement('div');
+    chartContainer.className = 'combine-compare-chart-item';
+    chartsWrap.appendChild(chartContainer);
+    renderCompareRadarChart(chartContainer, series);
+  }
+  function openCompareModal() {
+    var overlay = document.getElementById('combine-compare-overlay');
+    var row = document.getElementById('combine-compare-row');
+    var wrap3 = document.getElementById('combine-compare-wrap-3');
+    var addThirdWrap = document.getElementById('combine-compare-add-third-wrap');
+    var addThirdBtn = document.getElementById('combine-compare-add-third-btn');
+    if (!overlay) return;
+    [1, 2, 3].forEach(function(slot) {
+      var box = document.getElementById('combine-compare-combobox-' + slot);
+      if (!box) return;
+      box.removeAttribute('data-selected-index');
+      var input = box.querySelector('.combine-compare-input');
+      if (input) input.value = '';
+    });
+    if (row) row.classList.remove('has-three');
+    if (wrap3) wrap3.classList.remove('is-visible');
+    if (addThirdBtn) addThirdBtn.textContent = 'Add player 3';
+    if (addThirdWrap) addThirdWrap.style.display = '';
+    overlay.querySelectorAll('.combine-recap-tab').forEach(function(t) { t.classList.toggle('active', t.getAttribute('data-compare-tab') === 'overview'); });
+    document.getElementById('combine-compare-overview').classList.add('combine-recap-panel-active');
+    document.getElementById('combine-compare-chart').classList.remove('combine-recap-panel-active');
+    renderCompareContent();
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('combine-modal-open');
+  }
+  function closeCompareModal() {
+    var overlay = document.getElementById('combine-compare-overlay');
+    if (overlay) {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+    if (!document.querySelector('.combine-recap-overlay.is-open')) document.body.classList.remove('combine-modal-open');
+  }
+  function initPffBanner() {
+    var banner = document.getElementById('combine-pff-banner');
+    var closeBtn = banner ? banner.querySelector('.combine-pff-banner-close') : null;
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (banner) banner.classList.add('combine-pff-banner-dismissed');
+      });
+    }
+  }
+  function initCompareModal() {
+    var btn = document.getElementById('combine-compare-btn');
+    var overlay = document.getElementById('combine-compare-overlay');
+    if (btn) btn.addEventListener('click', openCompareModal);
+    if (overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay || e.target.closest('.combine-compare-close')) closeCompareModal();
+        var tab = e.target.closest('.combine-recap-tab[data-compare-tab]');
+        if (tab) {
+          var tabName = tab.getAttribute('data-compare-tab');
+          var overviewPanel = document.getElementById('combine-compare-overview');
+          var chartPanel = document.getElementById('combine-compare-chart');
+          overlay.querySelectorAll('.combine-recap-tab[data-compare-tab]').forEach(function(t) {
+            t.classList.toggle('active', t.getAttribute('data-compare-tab') === tabName);
+          });
+          if (overviewPanel) overviewPanel.classList.toggle('combine-recap-panel-active', tabName === 'overview');
+          if (chartPanel) chartPanel.classList.toggle('combine-recap-panel-active', tabName === 'chart');
+        }
+      });
+      var closeBtn = overlay.querySelector('.combine-compare-close');
+      if (closeBtn) closeBtn.addEventListener('click', closeCompareModal);
+    }
+    initCompareCombobox(1);
+    initCompareCombobox(2);
+    initCompareCombobox(3);
+    var addThirdBtn = document.getElementById('combine-compare-add-third-btn');
+    var wrap3 = document.getElementById('combine-compare-wrap-3');
+    var row = document.getElementById('combine-compare-row');
+    if (addThirdBtn && wrap3 && row) {
+      addThirdBtn.addEventListener('click', function() {
+        if (wrap3.classList.contains('is-visible')) {
+          wrap3.classList.remove('is-visible');
+          row.classList.remove('has-three');
+          addThirdBtn.textContent = 'Add player 3';
+          var box3 = document.getElementById('combine-compare-combobox-3');
+          if (box3) { box3.removeAttribute('data-selected-index'); var inp = box3.querySelector('.combine-compare-input'); if (inp) inp.value = ''; }
+        } else {
+          wrap3.classList.add('is-visible');
+          row.classList.add('has-three');
+          addThirdBtn.textContent = 'Remove player 3';
+        }
+        renderCompareContent();
+      });
+    }
+  }
+  function initRecapModal() {
+    var app = document.getElementById('combine-tracker-app');
+    if (!app) return;
+    app.addEventListener('click', function(e) {
+      var recapBtn = e.target.closest('.combine-pill-recap');
+      if (!recapBtn) return;
+      e.preventDefault();
+      var card = recapBtn.closest('.combine-card');
+      if (!card) return;
+      var idx = card.getAttribute('data-card-index');
+      if (idx === null || idx === '') return;
+      var player = currentFilteredPlayers[parseInt(idx, 10)];
+      if (player) openRecapModal(player);
+    });
+    var overlay = document.getElementById('combine-recap-overlay');
+    if (overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay || e.target.closest('.combine-recap-close')) closeRecapModal();
+        var tab = e.target.closest('.combine-recap-tab');
+        if (tab) {
+          var tabName = tab.getAttribute('data-recap-tab');
+          var overviewPanel = document.getElementById('combine-recap-overview');
+          var chartPanel = document.getElementById('combine-recap-chart');
+          var compsPanel = document.getElementById('combine-recap-comps');
+          overlay.querySelectorAll('.combine-recap-tab').forEach(function(t) {
+            t.classList.toggle('active', t.getAttribute('data-recap-tab') === tabName);
+          });
+          if (overviewPanel) overviewPanel.classList.toggle('combine-recap-panel-active', tabName === 'overview');
+          if (chartPanel) chartPanel.classList.toggle('combine-recap-panel-active', tabName === 'chart');
+          if (compsPanel) compsPanel.classList.toggle('combine-recap-panel-active', tabName === 'comps');
+          if (tabName === 'comps' && currentRecapPlayer) renderRecapComps(currentRecapPlayer);
+        }
+      });
+      var closeBtn = overlay.querySelector('.combine-recap-close');
+      if (closeBtn) closeBtn.addEventListener('click', closeRecapModal);
+    }
+  }
+
+  function initCardPagination() {
+    var grid = document.getElementById('combine-grid');
+    var cards = grid.querySelectorAll('.combine-card');
+    cards.forEach(function(card) {
+      var swipe = card.querySelector('.combine-card-swipe');
+      var dots = card.querySelectorAll('.combine-card-pagination-dot');
+      var hint = card.querySelector('.combine-card-swipe-hint');
+      var prevBtn = card.querySelector('.combine-card-swipe-prev');
+      var nextBtn = card.querySelector('.combine-card-swipe-next');
+      if (!swipe || !dots.length) return;
+      var total = dots.length;
+      function setActive(index) {
+        index = Math.max(0, Math.min(index, total - 1));
+        dots.forEach(function(d, i) {
+          d.classList.toggle('active', i === index);
+          d.setAttribute('aria-current', i === index ? 'true' : 'false');
+        });
+        if (hint) hint.textContent = (index + 1) + ' of ' + total;
+        if (prevBtn) prevBtn.disabled = index <= 0;
+        if (nextBtn) nextBtn.disabled = index >= total - 1;
+      }
+      function goTo(index) {
+        var w = swipe.clientWidth;
+        swipe.scrollTo({ left: w * index, behavior: 'smooth' });
+        setActive(index);
+      }
+      swipe.addEventListener('scroll', function() {
+        var w = swipe.clientWidth;
+        var index = Math.round(swipe.scrollLeft / w);
+        setActive(index);
+      });
+      dots.forEach(function(dot, i) {
+        dot.addEventListener('click', function() {
+          goTo(i);
+        });
+      });
+      if (prevBtn) prevBtn.addEventListener('click', function() {
+        var w = swipe.clientWidth;
+        var index = Math.round(swipe.scrollLeft / w);
+        if (index > 0) goTo(index - 1);
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function() {
+        var w = swipe.clientWidth;
+        var index = Math.round(swipe.scrollLeft / w);
+        if (index < total - 1) goTo(index + 1);
+      });
+      setActive(0);
+    });
+  }
+
+  function showError(msg) {
+    var el = document.getElementById('combine-error');
+    el.innerHTML = msg;
+    el.style.display = 'block';
+  }
+  function hideError() {
+    document.getElementById('combine-error').style.display = 'none';
+  }
+
+  var LOADING_MESSAGES = [
+    'Loading combine data…',
+    'Scouting prospects…',
+    'Crunching the numbers…',
+    'Pulling combine results…',
+    'Almost there…'
+  ];
+  var loadingMessageIndex = 0;
+  var loadingMessageTimer = null;
+
+  function run() {
+    var messageEl = document.getElementById('combine-loading-message');
+    var loadingMessageWrap = document.getElementById('combine-loading-message-wrap');
+    var logoAboveFilters = document.getElementById('combine-logo-above-filters');
+    var grid = document.getElementById('combine-grid');
+    grid.style.display = 'none';
+    if (loadingMessageWrap) loadingMessageWrap.style.display = '';
+    if (logoAboveFilters) logoAboveFilters.style.display = 'none';
+    hideError();
+    function cycleMessage() {
+      if (!messageEl) return;
+      messageEl.classList.add('fade');
+      setTimeout(function() {
+        loadingMessageIndex = (loadingMessageIndex + 1) % LOADING_MESSAGES.length;
+        messageEl.textContent = LOADING_MESSAGES[loadingMessageIndex];
+        messageEl.classList.remove('fade');
+      }, 300);
+    }
+    loadingMessageTimer = setInterval(cycleMessage, 2200);
+
+    function processCSV(text) {
+      var lower = (text || '').toLowerCase();
+      if (lower.indexOf('signin') !== -1 || lower.indexOf('<html') !== -1) {
+        throw new Error('Sheet may be private or blocked');
+      }
+      var players = parseCSV(text);
+      if (!players.length) throw new Error('No player data found in the sheet.');
+      clearInterval(loadingMessageTimer);
+      loadingMessageTimer = null;
+      if (loadingMessageWrap) loadingMessageWrap.style.display = 'none';
+      if (logoAboveFilters) {
+        logoAboveFilters.style.display = 'block';
+        logoAboveFilters.setAttribute('aria-hidden', 'false');
+      }
+      document.getElementById('combine-grid').style.display = 'grid';
+      fillPositions(players);
+      fillSchools(players);
+      var state = { players: players, search: '', position: '', school: '', sort: 'big_board_rank' };
+      document.getElementById('combine-sort').value = state.sort;
+      function update() {
+        filterSortRender(state.players, state.search, state.position, state.school, state.sort);
+      }
+      document.getElementById('combine-search').addEventListener('input', function() {
+        state.search = this.value;
+        update();
+      });
+      document.getElementById('combine-position').addEventListener('change', function() {
+        state.position = this.value;
+        update();
+      });
+      document.getElementById('combine-school').addEventListener('change', function() {
+        state.school = this.value;
+        update();
+      });
+      document.getElementById('combine-sort').addEventListener('change', function() {
+        state.sort = this.value;
+        update();
+      });
+      document.getElementById('combine-clear-filters').addEventListener('click', function() {
+        state.search = '';
+        state.position = '';
+        state.school = '';
+        state.sort = 'big_board_rank';
+        document.getElementById('combine-search').value = '';
+        document.getElementById('combine-position').value = '';
+        document.getElementById('combine-school').value = '';
+        document.getElementById('combine-sort').value = state.sort;
+        update();
+      });
+      var heightToggle = document.getElementById('combine-height-ft-in');
+      if (heightToggle) {
+        heightToggle.checked = useFeetInches;
+        heightToggle.addEventListener('change', function() {
+          useFeetInches = this.checked;
+          update();
+        });
+      }
+      update();
+      fetchWithProxy(HISTORICAL_SHEET_URL).then(function(historicalText) {
+        historicalRows = parseCSVHistorical(historicalText);
+        update();
+        if (currentRecapPlayer) renderRecapComps(currentRecapPlayer);
+      }).catch(function() {});
+    }
+
+    var urls = getCsvUrls();
+    var index = 0;
+    function tryNext() {
+      if (index >= urls.length) {
+        clearInterval(loadingMessageTimer);
+        loadingMessageTimer = null;
+        if (loadingMessageWrap) loadingMessageWrap.style.display = 'none';
+        showError('Unable to load combine data. The sheet may be private, or this page may be blocking external requests. <strong>If embedded in WordPress:</strong> try embedding via an iframe instead — upload this file to your site or a host, then embed it with an <code>&lt;iframe src=\"…\"&gt;</code>. <button type=\"button\" id=\"combine-retry-load\" class=\"combine-retry-btn\">Retry</button>');
+        var retryBtn = document.getElementById('combine-retry-load');
+        if (retryBtn) retryBtn.addEventListener('click', function() { hideError(); index = 0; loadingMessageWrap.style.display = ''; loadingMessageTimer = setInterval(cycleMessage, 2200); tryNext(); });
+        return;
+      }
+      fetchWithProxy(urls[index++]).then(processCSV).catch(tryNext);
+    }
+    tryNext();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      initPffBanner();
+      initCompareModal();
+      initRecapModal();
+      run();
+    });
+  } else {
+    initPffBanner();
+    initCompareModal();
+    initRecapModal();
+    run();
+  }
+})();
+</script>
