@@ -20,7 +20,7 @@
       color: var(--text);
       padding: 14px;
       border-radius: 12px;
-      max-width: 658px;
+      max-width: 650px;
       width: 100%;
       margin: 0 auto;
       overflow-x: hidden;
@@ -330,13 +330,21 @@
     }
     .combine-recap-overlay {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      min-width: 100vw;
+      min-height: 100vh;
       background: rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
       padding: 20px;
+      overflow: auto;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.25s, visibility 0.25s;
@@ -362,6 +370,7 @@
     .combine-recap-overlay.is-open .combine-recap-modal {
       transform: scale(1);
     }
+    body.combine-modal-open { overflow: hidden; }
     .combine-recap-header {
       padding: 1rem 1.25rem;
       border-bottom: 1px solid var(--border);
@@ -1019,6 +1028,20 @@
     }
     .combine-error a { color: var(--primary); }
     .combine-error code { font-family: ui-monospace, monospace; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .combine-retry-btn {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid currentColor;
+      background: transparent;
+      color: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .combine-retry-btn:hover { background: rgba(0,0,0,0.06); }
   </style>
 
   <div id="combine-logo-above-filters" class="combine-logo-above-filters" style="display:none;" aria-hidden="true">
@@ -1172,10 +1195,16 @@
 
   function getCsvUrls() {
     var urls = [];
-    if (window.location.origin && window.location.origin !== 'null' && window.location.protocol !== 'file:') {
+    var isLocal = !window.location.origin || window.location.origin === 'null' || window.location.protocol === 'file:' || /^https?:\/\/localhost(\b|:)/i.test(window.location.origin);
+    if (isLocal) {
       urls.push(window.location.origin + '/api/combine-sheet');
     }
     urls.push(SHEET_URL);
+    urls.push('https://api.allorigins.win/raw?url=' + encodeURIComponent(SHEET_URL));
+    urls.push('https://corsproxy.io/?' + encodeURIComponent(SHEET_URL));
+    if (!isLocal) {
+      urls = [ urls[2], urls[3], urls[1] ];
+    }
     return urls;
   }
 
@@ -1724,6 +1753,7 @@
     if (compsPanel) compsPanel.classList.remove('combine-recap-panel-active');
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('combine-modal-open');
   }
   function getSheetComp(player, statKey) {
     var raw = getStat(player, statKey + '_comp');
@@ -1760,6 +1790,7 @@
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
     }
+    if (!document.querySelector('.combine-recap-overlay.is-open')) document.body.classList.remove('combine-modal-open');
   }
   function getSelectedComparePlayers() {
     var list = [];
@@ -1934,6 +1965,7 @@
     renderCompareContent();
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('combine-modal-open');
   }
   function closeCompareModal() {
     var overlay = document.getElementById('combine-compare-overlay');
@@ -1941,6 +1973,7 @@
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
     }
+    if (!document.querySelector('.combine-recap-overlay.is-open')) document.body.classList.remove('combine-modal-open');
   }
   function initPffBanner() {
     var banner = document.getElementById('combine-pff-banner');
@@ -2197,7 +2230,9 @@
         clearInterval(loadingMessageTimer);
         loadingMessageTimer = null;
         if (loadingMessageWrap) loadingMessageWrap.style.display = 'none';
-        showError('Unable to load data. When testing locally, try running <code>python3 server.py</code> in this folder and opening <code>http://localhost:8765/combine-tracker.html</code>. Otherwise ensure the sheet is published to the web.');
+        showError('Unable to load combine data. The sheet may be private, or this page may be blocking external requests. <strong>If embedded in WordPress:</strong> try embedding via an iframe instead — upload this file to your site or a host, then embed it with an <code>&lt;iframe src=\"…\"&gt;</code>. <button type=\"button\" id=\"combine-retry-load\" class=\"combine-retry-btn\">Retry</button>');
+        var retryBtn = document.getElementById('combine-retry-load');
+        if (retryBtn) retryBtn.addEventListener('click', function() { hideError(); index = 0; loadingMessageWrap.style.display = ''; loadingMessageTimer = setInterval(cycleMessage, 2200); tryNext(); });
         return;
       }
       fetchWithProxy(urls[index++]).then(processCSV).catch(tryNext);
