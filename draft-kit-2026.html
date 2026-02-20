@@ -188,8 +188,47 @@
       border-color: var(--primary);
     }
 
+    .search-wrap {
+      position: relative;
+      width: 100%;
+    }
     #search {
       width: 100%;
+      padding-right: 28px;
+    }
+    /* Override .filters button so clear stays a small icon inside the search box */
+    .filters .search-clear {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      min-width: 18px;
+      height: 18px;
+      min-height: 18px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 14px;
+      line-height: 18px;
+      cursor: pointer;
+      z-index: 2;
+      border-radius: 0;
+      flex: none;
+    }
+    .filters .search-clear:hover {
+      color: #555;
+      background: transparent;
+    }
+    .no-articles-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 32px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--steel-black);
+      opacity: 0.85;
     }
 
     /* Trevor help banner */
@@ -982,6 +1021,10 @@
       .filters select, .filters input, .filters button {
         min-height: 48px;
       }
+      .filters .search-clear {
+        min-height: 18px;
+        height: 18px;
+      }
 
       .grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1383,6 +1426,10 @@
 
       function renderArticlesGrid(articles) {
         const grid = widget.querySelector('#article-grid');
+        if (!articles || articles.length === 0) {
+          grid.innerHTML = '<p class="no-articles-msg">No articles match this search</p>';
+          return;
+        }
         grid.innerHTML = articles.map(renderCard).join('');
         animateCards(grid);
 
@@ -1472,7 +1519,7 @@
             ${teams.map(t => `<option value="${escapeAttr(t)}">${escapeHtml(t)}</option>`).join('')}
           </select>
           <select id="filter-locked">
-            <option value="">Access</option>
+            <option value="">All Access types</option>
             <option value="Free">Free</option>
             <option value="Subscriber Only">Subscriber Only</option>
           </select>
@@ -1480,7 +1527,10 @@
             <option value="">All Authors</option>
             ${authors.map(a => `<option value="${escapeAttr(a)}">${escapeHtml(a)}</option>`).join('')}
           </select>
-          <input type="text" id="search" placeholder="Search headlines..." />
+          <div class="search-wrap">
+            <input type="text" id="search" placeholder="Search headlines..." />
+            <button type="button" class="search-clear" id="search-clear" aria-label="Clear search" title="Clear search">×</button>
+          </div>
           <button id="clear-filters">Clear All</button>
         `;
         widget.querySelector('.filters').innerHTML = filtersHTML;
@@ -1494,6 +1544,27 @@
         );
 
         document.getElementById('clear-filters').addEventListener('click', clearAllFilters);
+
+        var searchEl = widget.querySelector('#search');
+        var searchClear = widget.querySelector('#search-clear');
+        function updateSearchClearVisibility() {
+          if (searchClear) searchClear.style.display = (searchEl && searchEl.value.trim()) ? '' : 'none';
+        }
+        if (searchEl) {
+          searchEl.addEventListener('input', updateSearchClearVisibility);
+          searchEl.addEventListener('keyup', updateSearchClearVisibility);
+        }
+        if (searchClear) {
+          searchClear.style.display = 'none';
+          searchClear.addEventListener('click', function() {
+            if (searchEl) {
+              searchEl.value = '';
+              searchEl.focus();
+              updateSearchClearVisibility();
+              renderArticlesGrid(filterRegularArticles());
+            }
+          });
+        }
       }
 
       function clearAllFilters() {
@@ -1502,11 +1573,20 @@
           var el = document.getElementById(id);
           if (el) el.value = '';
         });
+        var searchClear = document.getElementById('search-clear');
+        if (searchClear) searchClear.style.display = 'none';
         renderArticlesGrid(regularArticles);
       }
 
       function norm(s) {
         return String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      }
+
+      function headlineMatchesSearch(headline, searchStr) {
+        if (!searchStr) return true;
+        var terms = searchStr.split(/\s+/).filter(Boolean);
+        var h = (headline || '').toLowerCase();
+        return terms.every(function(term) { return h.indexOf(term) !== -1; });
       }
 
       function filterRegularArticles() {
@@ -1523,7 +1603,7 @@
             (!team || norm(a.nflTeam) === norm(team)) &&
             (!locked || String(a.premium || '').trim() === locked) &&
             (!auth || norm(a.author) === norm(auth)) &&
-            (a.headline || '').toLowerCase().indexOf(search) !== -1;
+            headlineMatchesSearch(a.headline, search);
         });
       }
 
