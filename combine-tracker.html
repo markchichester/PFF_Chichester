@@ -69,7 +69,7 @@
     }
     .combine-search-wrap input {
       width: 100%;
-      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      padding: 0.85rem 3rem 0.85rem 2.75rem;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--white);
@@ -84,9 +84,32 @@
       box-shadow: 0 0 0 3px rgba(251,102,22,0.2);
     }
     .combine-search-wrap input::placeholder { color: var(--text-muted); }
+    .combine-search-clear {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: none;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.08);
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .combine-search-clear:hover { background: rgba(0,0,0,0.15); color: var(--text); }
+    .combine-search-clear:focus { outline: none; box-shadow: 0 0 0 2px var(--primary); }
+    .combine-search-wrap.has-text .combine-search-clear { display: flex; }
     .combine-filter-select {
       flex: 1;
-      min-width: 0;
+      min-width: 11rem;
+      max-width: 100%;
       padding: 0.75rem 1.75rem 0.75rem 0.75rem;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -100,18 +123,50 @@
       outline: none;
       border-color: var(--primary);
     }
-    .combine-sort-select {
+    .combine-filters-row { align-items: stretch; }
+    .combine-actions-row {
+      align-items: center;
+      padding-top: 2px;
+    }
+    .combine-sort-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
       flex: 1;
       min-width: 0;
-      padding: 0.75rem 1.75rem 0.75rem 0.75rem;
-      border: 1px solid var(--border);
+      padding: 0 0.75rem;
+      min-height: 2.75rem;
       border-radius: 10px;
+      border: 1px solid var(--border);
       background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .combine-sort-wrap:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(251,102,22,0.15);
+    }
+    .combine-sort-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+    .combine-sort-select {
+      flex: 1;
+      min-width: 9rem;
+      max-width: 100%;
+      padding: 0.75rem 1.5rem 0.75rem 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
       color: var(--text);
       font-family: inherit;
       font-size: 0.875rem;
       cursor: pointer;
+      outline: none;
     }
+    .combine-sort-select:hover { color: var(--primary); }
     .combine-clear-filters {
       padding: 0.5rem 0.75rem;
       border-radius: 8px;
@@ -564,14 +619,14 @@
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-      padding: 0 1.25rem 1rem;
+      padding: 1.25rem 1.25rem 1rem;
     }
     .combine-compare-selectors-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
     }
-    .combine-compare-selectors-row.has-three { grid-template-columns: 1fr 1fr 1fr; }
+    .combine-compare-selectors-row.has-three { grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) minmax(160px, 1fr); }
     .combine-compare-add-third {
       margin-top: 0.25rem;
     }
@@ -593,18 +648,22 @@
     .combine-compare-select-wrap {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      gap: 6px;
+      min-width: 0;
     }
     .combine-compare-select-wrap.combine-compare-slot-three { display: none; }
     .combine-compare-select-wrap.combine-compare-slot-three.is-visible { display: flex; }
-    .combine-compare-select-label { font-weight: 600; }
+    .combine-compare-select-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
     .combine-compare-combobox {
       position: relative;
     }
     .combine-compare-combobox input {
       width: 100%;
+      min-width: 0;
       padding: 0.65rem 1.75rem 0.65rem 0.75rem;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -612,6 +671,9 @@
       color: var(--text);
       font-family: inherit;
       font-size: 0.875rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .combine-compare-combobox input:focus {
       outline: none;
@@ -631,10 +693,12 @@
       position: absolute;
       left: 0;
       right: 0;
+      min-width: 100%;
       top: 100%;
       margin-top: 2px;
       max-height: 200px;
       overflow-y: auto;
+      overflow-x: auto;
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -650,6 +714,9 @@
       padding: 0.5rem 0.75rem;
       font-size: 0.875rem;
       cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .combine-compare-dropdown li:hover,
     .combine-compare-dropdown li[aria-selected="true"] {
@@ -1071,23 +1138,29 @@
   <div id="combine-error" class="combine-error" style="display:none;"></div>
 
   <div class="combine-controls">
-    <div class="combine-search-wrap">
+    <div class="combine-search-wrap" id="combine-search-wrap">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
       <input type="text" id="combine-search" placeholder="Search by name..." autocomplete="off">
+      <button type="button" id="combine-search-clear" class="combine-search-clear" aria-label="Clear search" title="Clear search">×</button>
     </div>
-    <div class="combine-controls-row">
+    <div class="combine-controls-row combine-filters-row">
       <select id="combine-position" class="combine-filter-select" aria-label="Filter by position">
-        <option value="">Pos.</option>
+        <option value="">All positions</option>
       </select>
       <select id="combine-school" class="combine-filter-select" aria-label="Filter by school">
-        <option value="">Schools</option>
+        <option value="">All schools</option>
       </select>
-      <select id="combine-sort" class="combine-sort-select" aria-label="Sort by">
-        <option value="name">Name A–Z</option>
-        <option value="big_board_rank">BB Rank</option>
-        <option value="2025_grade">Grade (high first)</option>
-        <option value="college">School</option>
-      </select>
+      <div class="combine-sort-wrap">
+        <span class="combine-sort-label">Sort by</span>
+        <select id="combine-sort" class="combine-sort-select" aria-label="Sort by">
+          <option value="name">Name A–Z</option>
+          <option value="big_board_rank">Big Board Rank</option>
+          <option value="2025_grade">Grade (high first)</option>
+          <option value="college">School</option>
+        </select>
+      </div>
+    </div>
+    <div class="combine-controls-row combine-actions-row">
       <button type="button" id="combine-clear-filters" class="combine-clear-filters" aria-label="Clear all filters">Clear all</button>
       <span id="combine-count" class="combine-results-count">— players</span>
       <label class="combine-height-toggle">
@@ -1432,6 +1505,7 @@
   var BIG_BOARD_URL = 'https://www.pff.com/draft/big-board';
   var goIconSvg = '<svg class="combine-pill-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>';
   var currentFilteredPlayers = [];
+  var fullPlayerListForCompare = []; // All players for Compare modal (ignores filters)
 
   function getStat(p, key) { return p[key]; }
   function getPlayerPosition(player) {
@@ -1612,6 +1686,7 @@
   }
 
   function filterSortRender(players, search, position, school, sortBy) {
+    fullPlayerListForCompare = players || [];
     var s = (search || '').toLowerCase().trim();
     var filtered = players.filter(function(p) {
       var nameMatch = !s || (p.name || '').toLowerCase().indexOf(s) !== -1;
@@ -1860,6 +1935,7 @@
   }
   function getSelectedComparePlayers() {
     var list = [];
+    var source = fullPlayerListForCompare.length ? fullPlayerListForCompare : currentFilteredPlayers;
     var slots = [1, 2];
     var wrap3 = document.getElementById('combine-compare-wrap-3');
     if (wrap3 && wrap3.classList.contains('is-visible')) slots.push(3);
@@ -1869,13 +1945,14 @@
       var idxStr = box.getAttribute('data-selected-index');
       if (idxStr === null || idxStr === '') return;
       var idx = parseInt(idxStr, 10);
-      if (!isNaN(idx) && currentFilteredPlayers[idx] !== undefined) list.push(currentFilteredPlayers[idx]);
+      if (!isNaN(idx) && source[idx] !== undefined) list.push(source[idx]);
     });
     return list;
   }
   function getCompareComboboxPlayerList(query) {
+    var source = fullPlayerListForCompare.length ? fullPlayerListForCompare : currentFilteredPlayers;
     var q = (query || '').trim().toLowerCase();
-    return currentFilteredPlayers.map(function(p, i) {
+    return source.map(function(p, i) {
       var label = (p.name || '') + (p.college_name ? ' · ' + p.college_name : '');
       return { index: i, label: label, player: p };
     }).filter(function(x) {
@@ -1896,7 +1973,8 @@
     combobox.classList.add('is-open');
     var input = combobox.querySelector('.combine-compare-input');
     if (input) input.setAttribute('aria-expanded', 'true');
-    renderCompareDropdown(combobox, (input && input.value) || '');
+    // Show full list when opening so user can change selection; filter only when typing
+    renderCompareDropdown(combobox, '');
   }
   function closeCompareCombobox(combobox) {
     combobox.classList.remove('is-open');
@@ -1904,7 +1982,8 @@
     if (input) input.setAttribute('aria-expanded', 'false');
   }
   function selectCompareComboboxPlayer(combobox, index) {
-    var player = currentFilteredPlayers[index];
+    var source = fullPlayerListForCompare.length ? fullPlayerListForCompare : currentFilteredPlayers;
+    var player = source[index];
     if (!player) return;
     var label = (player.name || '') + (player.college_name ? ' · ' + player.college_name : '');
     combobox.setAttribute('data-selected-index', String(index));
@@ -2287,11 +2366,24 @@
       document.getElementById('combine-sort').value = state.sort;
       function update() {
         filterSortRender(state.players, state.search, state.position, state.school, state.sort);
+        var wrap = document.getElementById('combine-search-wrap');
+        var searchEl = document.getElementById('combine-search');
+        if (wrap && searchEl) wrap.classList.toggle('has-text', (state.search || searchEl.value || '').length > 0);
       }
       document.getElementById('combine-search').addEventListener('input', function() {
         state.search = this.value;
         update();
       });
+      var searchClearBtn = document.getElementById('combine-search-clear');
+      if (searchClearBtn) {
+        searchClearBtn.addEventListener('click', function() {
+          state.search = '';
+          var searchEl = document.getElementById('combine-search');
+          if (searchEl) searchEl.value = '';
+          update();
+          searchEl.focus();
+        });
+      }
       document.getElementById('combine-position').addEventListener('change', function() {
         state.position = this.value;
         update();
