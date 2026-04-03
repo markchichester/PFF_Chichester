@@ -302,6 +302,17 @@
       object-fit: cover;
       border: 2px solid rgba(255, 255, 255, 0.6);
     }
+    /* Wide “Powered by PFF” lockup — not a square headshot */
+    #trevor-help-banner .trevor-avatar.pff-powered-logo {
+      width: auto;
+      height: 30px;
+      max-width: min(148px, 42vw);
+      min-width: 0;
+      border-radius: 4px;
+      object-fit: contain;
+      object-position: left center;
+      flex-shrink: 0;
+    }
     #trevor-help-banner .help-text {
       font-size: 16px;
       font-weight: 700;
@@ -366,6 +377,18 @@
       object-fit: cover;
       border: 2px solid var(--primary);
     }
+    #trevor-modal .chat-header .trevor-avatar.pff-powered-logo {
+      width: auto;
+      height: 26px;
+      max-width: min(132px, 38vw);
+      min-width: 0;
+      border-radius: 4px;
+      object-fit: contain;
+      object-position: left center;
+      border: none;
+      box-shadow: none;
+      flex-shrink: 0;
+    }
     #trevor-modal .chat-header .chat-title {
       font-size: 17px;
       font-weight: 700;
@@ -403,6 +426,17 @@
       object-fit: cover;
       flex-shrink: 0;
       border: 1px solid var(--border);
+    }
+    #trevor-modal .msg-avatar.pff-powered-logo {
+      width: auto;
+      height: 20px;
+      max-width: min(100px, 28vw);
+      min-width: 0;
+      border-radius: 3px;
+      object-fit: contain;
+      object-position: left center;
+      border: none;
+      align-self: center;
     }
     #trevor-modal .msg-user .msg-avatar {
       display: none;
@@ -1312,7 +1346,7 @@
       const tools = articles.filter(a => String(a.category).trim().toLowerCase() === 'tools');
       const regularArticles = articles.filter(a => String(a.category).trim().toLowerCase() !== 'tools');
 
-      const TREVOR_IMG = 'https://media.pff.com/2025/07/PFF-Logo-Black.png';
+      const TREVOR_IMG = 'https://media.pff.com/2025/09/PFF_PoweredBy_Black.png';
 
       function isPublishedToday(publishDate) {
         var d = new Date(publishDate);
@@ -1333,7 +1367,7 @@
         </div>
         <div class="trevor-banner-wrap">
           <div id="trevor-help-banner" role="button" tabindex="0" aria-label="Chat with a PFF Virtual Assistant to find content">
-            <img class="trevor-avatar" src="${TREVOR_IMG}" alt="Virtual Assistant">
+            <img class="trevor-avatar pff-powered-logo" src="${TREVOR_IMG}" alt="Powered by PFF">
             <span class="help-text">What can I help you find today?</span>
           </div>
           <div class="countdown-banner" id="countdown-banner" role="status" aria-live="polite">
@@ -1347,12 +1381,12 @@
           <p id="feed-freshness" class="feed-freshness"></p>
         </div>
         <div id="trevor-modal-overlay" aria-hidden="true">
-          <div id="trevor-modal" role="dialog" aria-label="Chat with Trevor" aria-modal="true">
+          <div id="trevor-modal" role="dialog" aria-label="Chat with Virtual Assistant" aria-modal="true">
             <div class="modal-wrapper">
               <button class="modal-close" type="button" aria-label="Close">&times;</button>
               <div class="chat-header">
-                <img class="trevor-avatar" src="${TREVOR_IMG}" alt="Trevor">
-                <h2 class="chat-title">Trevor</h2>
+                <img class="trevor-avatar pff-powered-logo" src="${TREVOR_IMG}" alt="Powered by PFF">
+                <h2 class="chat-title">Virtual Assistant</h2>
               </div>
               <div class="chat-messages" id="trevor-chat-messages"></div>
               <div class="chat-chips" id="trevor-chips"></div>
@@ -1715,7 +1749,7 @@
           const div = document.createElement('div');
           div.className = 'msg msg-bot';
           if (withTyping) {
-            div.innerHTML = '<img class="msg-avatar" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+            div.innerHTML = '<img class="msg-avatar pff-powered-logo" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             setTimeout(function() {
@@ -1727,7 +1761,7 @@
               playResponseSound();
             }, TYPING_DELAY_MS);
           } else {
-            div.innerHTML = '<img class="msg-avatar" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble">' + escapeHtml(text) + '</div>';
+            div.innerHTML = '<img class="msg-avatar pff-powered-logo" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble">' + escapeHtml(text) + '</div>';
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             playResponseSound();
@@ -1737,7 +1771,7 @@
         function addBotMessageDoneWithArticles(articles) {
           var div = document.createElement('div');
           div.className = 'msg msg-bot';
-          div.innerHTML = '<img class="msg-avatar" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+          div.innerHTML = '<img class="msg-avatar pff-powered-logo" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
           chatMessages.appendChild(div);
           chatMessages.scrollTop = chatMessages.scrollHeight;
           setTimeout(function() {
@@ -1854,7 +1888,7 @@
           if (branch === 'drafttools') {
             var div = document.createElement('div');
             div.className = 'msg msg-bot';
-            div.innerHTML = '<img class="msg-avatar" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+            div.innerHTML = '<img class="msg-avatar pff-powered-logo" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             setTimeout(function() {
@@ -1893,7 +1927,7 @@
             var discountUrl = 'https://subscribe.pff.com/?promoCode=draftkit25';
             var div = document.createElement('div');
             div.className = 'msg msg-bot';
-            div.innerHTML = '<img class="msg-avatar" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+            div.innerHTML = '<img class="msg-avatar pff-powered-logo" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             setTimeout(function() {
@@ -1999,7 +2033,7 @@
           setChips([]);
           var div = document.createElement('div');
           div.className = 'msg msg-bot';
-          div.innerHTML = '<img class="msg-avatar" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+          div.innerHTML = '<img class="msg-avatar pff-powered-logo" src="' + escapeAttr(TREVOR_IMG) + '" alt=""> <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
           chatMessages.appendChild(div);
           chatMessages.scrollTop = chatMessages.scrollHeight;
           setTimeout(function() {
