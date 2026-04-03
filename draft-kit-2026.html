@@ -1312,7 +1312,7 @@
       const tools = articles.filter(a => String(a.category).trim().toLowerCase() === 'tools');
       const regularArticles = articles.filter(a => String(a.category).trim().toLowerCase() !== 'tools');
 
-      const TREVOR_IMG = 'https://media.pff.com/2025/11/Trevor-Sikkeman-min.png';
+      const TREVOR_IMG = 'https://media.pff.com/2025/07/PFF-Logo-Black.png';
 
       function isPublishedToday(publishDate) {
         var d = new Date(publishDate);
@@ -1332,8 +1332,8 @@
           <div class="grid" id="tools-grid"></div>
         </div>
         <div class="trevor-banner-wrap">
-          <div id="trevor-help-banner" role="button" tabindex="0" aria-label="Chat with Trevor to find content">
-            <img class="trevor-avatar" src="${TREVOR_IMG}" alt="Trevor">
+          <div id="trevor-help-banner" role="button" tabindex="0" aria-label="Chat with a PFF Virtual Assistant to find content">
+            <img class="trevor-avatar" src="${TREVOR_IMG}" alt="Virtual Assistant">
             <span class="help-text">What can I help you find today?</span>
           </div>
           <div class="countdown-banner" id="countdown-banner" role="status" aria-live="polite">
