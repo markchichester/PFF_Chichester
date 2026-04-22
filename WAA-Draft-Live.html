@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Wins Above Average (WAA) draft board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0b1533;
+      --navy-soft: rgba(11, 21, 51, 0.08);
+      --white: #ffffff;
+      --muted: #8b95a8;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(11, 21, 51, 0.08);
+      --good: #0d7a4f;
+      --bad: #c41e1e;
+      --warn: #b8860b;
+    }
+
+    body {
+      margin: 0;
+      background: var(--white);
+    }
+
+    .pff-waa-live,
+    .pff-waa-live * {
+      box-sizing: border-box;
+    }
+
+    .pff-waa-live {
+      font-family: "Archivo", system-ui, -apple-system, sans-serif;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 12px 16px 56px;
+      color: var(--navy);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .pff-waa-live__masthead {
+      margin-bottom: 16px;
+    }
+
+    .pff-waa-live__hero {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(11, 21, 51, 0.09);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.7) inset,
+        0 24px 48px -28px rgba(11, 21, 51, 0.22),
+        0 8px 24px -12px rgba(30, 58, 138, 0.12);
+      text-align: center;
+    }
+
+    .pff-waa-live__hero-glow {
+      position: absolute;
+      inset: -45% -15% auto;
+      height: 85%;
+      background:
+        radial-gradient(ellipse 55% 48% at 50% -5%, rgba(30, 58, 138, 0.14), transparent 68%),
+        radial-gradient(ellipse 80% 50% at 80% 15%, rgba(11, 21, 51, 0.06), transparent 55%),
+        radial-gradient(ellipse 70% 45% at 18% 25%, rgba(59, 91, 219, 0.05), transparent 50%);
+      pointer-events: none;
+    }
+
+    .pff-waa-live__hero-bar {
+      position: relative;
+      height: 4px;
+      background: linear-gradient(
+        90deg,
+        #060d1f 0%,
+        #0b1533 12%,
+        #1e3a8a 38%,
+        #4f6ef7 50%,
+        #1e3a8a 62%,
+        #0b1533 88%,
+        #060d1f 100%
+      );
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset;
+    }
+
+    .pff-waa-live__hero-bar::after {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .pff-waa-live__hero-inner {
+      position: relative;
+      padding: 18px 18px 16px;
+      background: linear-gradient(168deg, #e8ecf6 0%, #f4f6fb 28%, #ffffff 58%, #ffffff 100%);
+    }
+
+    .pff-waa-live__logo-wrap {
+      position: relative;
+      display: inline-block;
+      margin: 0 auto 14px;
+      padding: 16px 22px;
+      border-radius: 20px;
+      background: linear-gradient(
+        155deg,
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(248, 250, 252, 0.72) 45%,
+        rgba(241, 245, 253, 0.85) 100%
+      );
+      border: 1px solid rgba(11, 21, 51, 0.07);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 12px 32px -14px rgba(11, 21, 51, 0.2),
+        0 4px 12px -6px rgba(30, 58, 138, 0.15);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    .pff-waa-live__logo-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -40% -50% -20%;
+      background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(79, 110, 247, 0.12), transparent 62%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pff-waa-live__logo {
+      position: relative;
+      z-index: 1;
+      display: block;
+      max-width: 100px;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      filter:
+        drop-shadow(0 2px 4px rgba(11, 21, 51, 0.06))
+        drop-shadow(0 8px 16px rgba(11, 21, 51, 0.08));
+    }
+
+    .pff-waa-live__title {
+      margin: 0 auto;
+      max-width: 22ch;
+      font-size: clamp(1.35rem, 4.8vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.12;
+      color: var(--navy);
+    }
+
+    .pff-waa-live__deck {
+      margin: 16px auto 0;
+      max-width: 36rem;
+      padding: 14px 16px;
+      font-size: 0.9375rem;
+      line-height: 1.55;
+      color: var(--navy);
+      font-weight: 600;
+      text-align: center;
+      background: rgba(11, 21, 51, 0.04);
+      border: 1px solid rgba(11, 21, 51, 0.12);
+      border-radius: 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .pff-waa-live__deck a {
+      color: #1e3a8a;
+      font-weight: 800;
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+    }
+
+    .pff-waa-live__deck strong {
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .pff-waa-live__hero-promo {
+      display: block;
+      margin: 12px auto 0;
+      max-width: 36rem;
+      padding: 12px 16px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--navy);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      line-height: 1.45;
+      background: linear-gradient(135deg, #fefce8 0%, #fef9c3 45%, #fde68a 100%);
+      border: 1px solid rgba(180, 83, 9, 0.35);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(180, 83, 9, 0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .pff-waa-live__hero-promo:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 18px rgba(180, 83, 9, 0.18);
+    }
+
+    .pff-waa-live__hero-promo:active {
+      transform: translateY(0);
+    }
+
+    .pff-waa-live__hero-promo__code {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.06em;
+      color: #78350f;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(180, 83, 9, 0.35);
+      border-radius: 6px;
+    }
+
+    .pff-waa-live__status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px 14px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(11, 21, 51, 0.08);
+    }
+
+    .pff-waa-live__live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--white);
+      background: var(--navy);
+      padding: 5px 11px;
+      border-radius: 999px;
+      box-shadow: 0 2px 10px rgba(11, 21, 51, 0.18);
+    }
+
+    .pff-waa-live__pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #5ee9a8;
+      box-shadow: 0 0 0 0 rgba(94, 233, 168, 0.45);
+      animation: pffWaaPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pffWaaPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.92); }
+    }
+
+    .pff-waa-live__meta {
+      font-size: 0.6875rem;
+      color: var(--navy);
+      font-weight: 600;
+      opacity: 0.75;
+    }
+
+    .pff-waa-live__toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .pff-waa-live__btn {
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--navy-soft);
+      background: var(--white);
+      color: var(--navy);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: border-color 0.18s, transform 0.15s;
+    }
+
+    .pff-waa-live__btn:hover {
+      border-color: var(--navy);
+    }
+
+    .pff-waa-live__btn:active {
+      transform: scale(0.98);
+    }
+
+    .pff-waa-live__stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 520px) {
+      .pff-waa-live__stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+      }
+    }
+
+    .pff-waa-live__stat {
+      position: relative;
+      padding: 8px 6px 7px;
+      border-radius: 10px;
+      border: 1px solid rgba(11, 21, 51, 0.1);
+      box-shadow:
+        0 2px 4px rgba(11, 21, 51, 0.04),
+        0 12px 28px -8px rgba(11, 21, 51, 0.1);
+      text-align: center;
+      background: linear-gradient(165deg, #ffffff 0%, #f8f9fd 100%);
+      overflow: hidden;
+    }
+
+    .pff-waa-live__stat::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0b1533, #2d4a8f 50%, #0b1533);
+      opacity: 0.9;
+    }
+
+    .pff-waa-live__stat-label {
+      font-size: 0.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 3px;
+      line-height: 1.2;
+    }
+
+    .pff-waa-live__stat-value {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .pff-waa-live__stat-value.is-tick {
+      animation: pffWaaTick 0.55s ease;
+    }
+
+    @keyframes pffWaaTick {
+      0% { transform: scale(1.04); color: var(--navy); }
+      100% { transform: scale(1); }
+    }
+
+    .pff-waa-live__detail-panel {
+      margin-top: 12px;
+      padding-top: 40px;
+      border-top: 2px solid rgba(11, 21, 51, 0.16);
+      box-shadow:
+        0 -1px 0 rgba(255, 255, 255, 0.9),
+        0 -20px 40px -28px rgba(11, 21, 51, 0.18);
+    }
+
+    .pff-waa-live__subhead {
+      margin: 0 0 14px;
+      font-size: 0.8125rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--navy);
+      text-align: center;
+    }
+
+    .pff-waa-live__subhead--board {
+      margin: 0 0 10px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(11, 21, 51, 0.1);
+      font-size: clamp(1.15rem, 3.4vw, 1.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      color: var(--navy);
+    }
+
+    .pff-waa-live__board-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px 20px;
+      margin: 0 0 16px;
+    }
+
+    .pff-waa-live__board-tool {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .pff-waa-live__board-tool-label {
+      font-size: 0.5625rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .pff-waa-live__board-select {
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--navy);
+      padding: 7px 28px 7px 10px;
+      max-width: min(240px, 88vw);
+      border-radius: 10px;
+      border: 1px solid rgba(11, 21, 51, 0.14);
+      background-color: #f6f8fc;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='none' stroke='%230b1533' stroke-width='1.4' stroke-linecap='round' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      box-shadow: 0 1px 3px rgba(11, 21, 51, 0.06);
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .pff-waa-live__board-select:focus-visible {
+      outline: 2px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    .pff-waa-live__board {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pff-waa-live__pick {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 9px 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(11, 21, 51, 0.1);
+      box-shadow:
+        0 1px 4px rgba(11, 21, 51, 0.04),
+        0 8px 20px -10px rgba(11, 21, 51, 0.1);
+      background: linear-gradient(165deg, #ffffff 0%, #f9fafc 100%);
+      animation: pffWaaCardIn 0.5s ease backwards;
+      border-left: 3px solid rgba(11, 21, 51, 0.12);
+    }
+
+    .pff-waa-live__pick.is-new {
+      animation: pffWaaNew 0.85s ease;
+      border-left-color: var(--navy);
+    }
+
+    @keyframes pffWaaCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pffWaaNew {
+      0% {
+        box-shadow: 0 0 0 0 rgba(11, 21, 51, 0.25);
+      }
+      100% {
+        box-shadow:
+          0 2px 6px rgba(11, 21, 51, 0.04),
+          0 14px 32px -12px rgba(11, 21, 51, 0.12);
+      }
+    }
+
+    .pff-waa-live__pick-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 12px;
+      text-align: left;
+    }
+
+    .pff-waa-live__pick-no-pill {
+      flex-shrink: 0;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      background: var(--navy);
+      color: var(--white);
+      box-shadow: 0 2px 8px rgba(11, 21, 51, 0.18);
+    }
+
+    .pff-waa-live__pick-logo-cell {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pff-waa-live__pick-team-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(11, 21, 51, 0.12));
+    }
+
+    .pff-waa-live__pick-team-fallback {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--navy-soft);
+      border: 1px dashed rgba(11, 21, 51, 0.15);
+    }
+
+    .pff-waa-live__pick-hero {
+      flex: 1 1 160px;
+      min-width: 0;
+      align-self: center;
+    }
+
+    .pff-waa-live__pick-hero-main {
+      font-size: clamp(0.9375rem, 2.4vw, 1.125rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      color: var(--navy);
+    }
+
+    .pff-waa-live__profile-btn {
+      flex-shrink: 0;
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.625rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      color: var(--white);
+      background: var(--navy);
+      border: 1px solid var(--navy);
+      box-shadow: 0 2px 10px rgba(11, 21, 51, 0.15);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pff-waa-live__profile-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .pff-waa-live__profile-btn:focus-visible {
+      outline: 2px solid var(--navy);
+      outline-offset: 3px;
+    }
+
+    .pff-waa-live__profile-btn--team:focus-visible {
+      outline-color: currentColor;
+    }
+
+    .pff-waa-live__profile-btn:active {
+      transform: translateY(0);
+    }
+
+    .pff-waa-live__pick-metrics {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 10px;
+      align-items: stretch;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 520px) {
+      .pff-waa-live__pick-metrics {
+        flex-wrap: wrap;
+      }
+    }
+
+    .pff-waa-live__metric-pill {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: none;
+      padding: 7px 8px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(11, 21, 51, 0.12);
+      background: linear-gradient(180deg, #ffffff 0%, #f4f6fa 100%);
+      text-align: center;
+      box-shadow: 0 1px 5px rgba(11, 21, 51, 0.05);
+    }
+
+    .pff-waa-live__metric-pill-label {
+      display: block;
+      font-size: 0.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .pff-waa-live__metric-pill-big {
+      display: block;
+      font-size: 0.9375rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--navy);
+    }
+
+    .pff-waa-live__metric-pill-rank {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.5625rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    .pff-waa-live__empty {
+      text-align: center;
+      padding: 36px 20px;
+      border-radius: var(--radius);
+      border: 1px dashed var(--navy-soft);
+      color: var(--muted);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .pff-waa-live__error {
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      background: rgba(196, 30, 30, 0.08);
+      border: 1px solid rgba(196, 30, 30, 0.25);
+      color: var(--bad);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    .pff-waa-live__error code {
+      font-size: 0.75rem;
+      word-break: break-all;
+      display: block;
+      margin-top: 8px;
+      color: var(--navy);
+      font-weight: 500;
+    }
+
+    .pff-waa-live__chart-section {
+      margin-bottom: 0;
+    }
+
+    .pff-waa-live__chart-section--hero {
+      margin-bottom: 0;
+    }
+
+    .pff-waa-live__chart-card {
+      border-radius: 20px;
+      border: 1px solid rgba(11, 21, 51, 0.12);
+      box-shadow:
+        0 4px 14px rgba(11, 21, 51, 0.06),
+        0 22px 48px -16px rgba(11, 21, 51, 0.14);
+      background: linear-gradient(165deg, #ffffff 0%, #f3f6fb 100%);
+      padding: 22px 22px 20px;
+      min-height: min(78vh, 880px);
+    }
+
+    .pff-waa-live__chart-card:has(.pff-waa-live__chart-empty) {
+      min-height: 220px;
+    }
+
+    .pff-waa-live__chart {
+      margin: 0;
+    }
+
+    .pff-waa-live__stack-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pff-waa-live__stack-row {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 3.75rem;
+      gap: 12px 16px;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .pff-waa-live__stack-logo-cell {
+      width: 44px;
+      height: 44px;
+      align-self: center;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(11, 21, 51, 0.1);
+      box-shadow: 0 2px 10px rgba(11, 21, 51, 0.08);
+    }
+
+    .pff-waa-live__chart-logo {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .pff-waa-live__chart-logo-fallback {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--navy-soft);
+      border: 1px dashed rgba(11, 21, 51, 0.15);
+    }
+
+    .pff-waa-live__stack-track {
+      position: relative;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(11, 21, 51, 0.045);
+      border: 1px solid rgba(11, 21, 51, 0.08);
+      overflow: hidden;
+    }
+
+    .pff-waa-live__stack-bar-layer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1;
+      display: flex;
+      align-items: stretch;
+      pointer-events: none;
+    }
+
+    .pff-waa-live__stack-composite {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      height: 100%;
+      min-width: 0;
+      max-width: 100%;
+      border-radius: 7px;
+      overflow: hidden;
+      box-shadow:
+        0 2px 8px rgba(11, 21, 51, 0.14),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      transition: width 0.45s ease;
+      pointer-events: auto;
+    }
+
+    .pff-waa-live__stack-seg {
+      position: relative;
+      flex: 1 0 0;
+      min-width: 0;
+      min-height: 100%;
+      display: block;
+      padding: 0;
+      box-sizing: border-box;
+      border: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.45);
+      transition:
+        flex-grow 0.45s ease,
+        filter 0.18s ease,
+        box-shadow 0.18s ease;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (hover: hover) {
+      .pff-waa-live__stack-seg:hover {
+        filter: brightness(1.28) saturate(1.18) contrast(1.06);
+        box-shadow:
+          inset 0 0 0 3px rgba(255, 255, 255, 0.75),
+          inset 0 0 0 1px rgba(0, 0, 0, 0.12),
+          inset 0 -6px 14px rgba(255, 255, 255, 0.2);
+        z-index: 4;
+      }
+    }
+
+    .pff-waa-live__stack-seg:active {
+      filter: brightness(0.88) saturate(0.95);
+      transition-duration: 0.08s;
+    }
+
+    .pff-waa-live__stack-seg:focus-visible {
+      outline: 2px solid var(--navy);
+      outline-offset: 2px;
+      z-index: 2;
+    }
+
+    .pff-waa-live__stack-seg:last-child {
+      border-right: none;
+    }
+
+    .pff-waa-live__stack-seg--darktext {
+      border-right-color: rgba(11, 21, 51, 0.22);
+    }
+
+    @media (hover: hover) {
+      .pff-waa-live__stack-seg--darktext:hover {
+        filter: brightness(1.12) saturate(1.12) contrast(1.04);
+        box-shadow:
+          inset 0 0 0 3px rgba(11, 21, 51, 0.45),
+          inset 0 0 0 5px rgba(255, 255, 255, 0.55),
+          inset 0 -5px 12px rgba(11, 21, 51, 0.08);
+      }
+    }
+
+    .pff-waa-live__stack-total {
+      font-size: 0.9375rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--navy);
+      text-align: right;
+      white-space: nowrap;
+      letter-spacing: -0.02em;
+      align-self: center;
+    }
+
+    .pff-waa-live__stack-axis-row {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 3.75rem;
+      gap: 12px 16px;
+      align-items: start;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(11, 21, 51, 0.12);
+    }
+
+    .pff-waa-live__stack-axis-ticks {
+      position: relative;
+      height: 40px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+    }
+
+    .pff-waa-live__stack-axis-tick-wrap {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .pff-waa-live__stack-axis-tick-wrap.is-edge {
+      transform: translateX(0);
+      align-items: flex-start;
+    }
+
+    .pff-waa-live__stack-axis-tick-wrap.is-end {
+      transform: translateX(-100%);
+      align-items: flex-end;
+    }
+
+    .pff-waa-live__stack-axis-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--navy);
+      opacity: 0.28;
+      flex-shrink: 0;
+    }
+
+    .pff-waa-live__stack-axis-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .pff-waa-live__seg-tip {
+      position: fixed;
+      z-index: 10050;
+      min-width: 220px;
+      max-width: min(300px, calc(100vw - 24px));
+      padding: 14px 40px 14px 16px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid rgba(11, 21, 51, 0.12);
+      box-shadow:
+        0 8px 28px rgba(11, 21, 51, 0.12),
+        0 20px 50px -20px rgba(11, 21, 51, 0.25);
+      pointer-events: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.12s ease, visibility 0.12s ease;
+      text-align: left;
+    }
+
+    .pff-waa-live__seg-tip.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .pff-waa-live__seg-tip__player {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--navy);
+      line-height: 1.25;
+      margin: 0 0 6px;
+    }
+
+    .pff-waa-live__seg-tip__meta {
+      margin: 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .pff-waa-live__seg-tip__close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: none;
+      border-radius: 8px;
+      background: rgba(11, 21, 51, 0.06);
+      color: var(--navy);
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      font-family: inherit;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pff-waa-live__seg-tip__close:hover {
+      background: rgba(11, 21, 51, 0.1);
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .pff-waa-live__seg-tip__close {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .pff-waa-live__seg-tip {
+        min-width: 0;
+        max-width: calc(100vw - 20px);
+        padding: 12px 38px 12px 14px;
+      }
+
+      .pff-waa-live__seg-tip__player {
+        font-size: 0.9375rem;
+      }
+
+      .pff-waa-live__chart-card {
+        min-height: min(72vh, 720px);
+        padding: 16px 14px 16px;
+      }
+
+      .pff-waa-live__stack-row,
+      .pff-waa-live__stack-axis-row {
+        grid-template-columns: 40px minmax(0, 1fr) 3.25rem;
+        gap: 8px 10px;
+      }
+
+      .pff-waa-live__stack-logo-cell {
+        width: 40px;
+        height: 40px;
+      }
+
+      .pff-waa-live__chart-logo,
+      .pff-waa-live__chart-logo-fallback {
+        width: 30px;
+        height: 30px;
+      }
+
+      .pff-waa-live__stack-track {
+        height: 34px;
+      }
+    }
+
+    .pff-waa-live__chart-empty {
+      text-align: center;
+      padding: 48px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+  </style>
+</head>
+<body>
+  <article class="pff-waa-live" id="pff-waa-root">
+    <header class="pff-waa-live__masthead">
+      <div class="pff-waa-live__hero">
+        <div class="pff-waa-live__hero-bar" aria-hidden="true"></div>
+        <div class="pff-waa-live__hero-glow" aria-hidden="true"></div>
+        <div class="pff-waa-live__hero-inner">
+          <div class="pff-waa-live__logo-wrap">
+            <img
+              class="pff-waa-live__logo"
+              src="https://media.pff.com/2025/09/PFF_PoweredBy_Black.png"
+              alt="Powered by PFF"
+              width="104"
+              height="auto"
+            />
+          </div>
+          <h1 class="pff-waa-live__title">Live Wins Above Average (WAA) draft board</h1>
+          <p class="pff-waa-live__deck">
+            Picks and <strong>2025 WAA</strong> added will update automatically. For live analysis of the draft visit
+            <a href="https://www.pff.com/draft/tracker" target="_blank" rel="noopener noreferrer">pff.com/draft/tracker</a>.
+          </p>
+          <a
+            class="pff-waa-live__hero-promo"
+            href="https://subscribe.pff.com/?promoCode=draft"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Save 25% on annual with code <span class="pff-waa-live__hero-promo__code">DRAFT</span>
+          </a>
+          <div class="pff-waa-live__status">
+            <span class="pff-waa-live__live-pill">
+              <span class="pff-waa-live__pulse" aria-hidden="true"></span>
+              Live sync
+            </span>
+            <span class="pff-waa-live__meta" id="pff-waa-updated">Last updated: —</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="pff-waa-live__toolbar">
+      <button type="button" class="pff-waa-live__btn" id="pff-waa-refresh">Refresh now</button>
+      <span class="pff-waa-live__meta" id="pff-waa-interval">Checking every 30s</span>
+    </div>
+
+    <div id="pff-waa-error" class="pff-waa-live__error" hidden></div>
+
+    <section aria-label="Summary statistics">
+      <div class="pff-waa-live__stats">
+        <div class="pff-waa-live__stat">
+          <div class="pff-waa-live__stat-label">2025 WAA added</div>
+          <div class="pff-waa-live__stat-value" id="pff-waa-sum">—</div>
+        </div>
+        <div class="pff-waa-live__stat">
+          <div class="pff-waa-live__stat-label">Picks logged</div>
+          <div class="pff-waa-live__stat-value" id="pff-waa-count">—</div>
+        </div>
+        <div class="pff-waa-live__stat">
+          <div class="pff-waa-live__stat-label">Avg. pick value</div>
+          <div class="pff-waa-live__stat-value" id="pff-waa-avg-value">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pff-waa-live__chart-section pff-waa-live__chart-section--hero">
+      <div class="pff-waa-live__chart-card" id="pff-waa-chart-card">
+        <div class="pff-waa-live__chart" id="pff-waa-chart" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <div class="pff-waa-live__detail-panel">
+      <h2 class="pff-waa-live__subhead pff-waa-live__subhead--board">Pick details</h2>
+      <div class="pff-waa-live__board-tools" role="toolbar" aria-label="Filter picks list">
+        <div class="pff-waa-live__board-tool">
+          <label class="pff-waa-live__board-tool-label" for="pff-waa-board-sort">Order</label>
+          <select id="pff-waa-board-sort" class="pff-waa-live__board-select" aria-label="Sort picks">
+            <option value="pick">Pick order (1, 2, 3…)</option>
+            <option value="recent">Most recent first</option>
+          </select>
+        </div>
+        <div class="pff-waa-live__board-tool">
+          <label class="pff-waa-live__board-tool-label" for="pff-waa-board-team">Team</label>
+          <select id="pff-waa-board-team" class="pff-waa-live__board-select" aria-label="Filter by team">
+            <option value="">All teams</option>
+          </select>
+        </div>
+      </div>
+      <ul class="pff-waa-live__board" id="pff-waa-board" aria-live="polite"></ul>
+    </div>
+
+    <div
+      id="pff-waa-seg-tooltip"
+      class="pff-waa-live__seg-tip"
+      role="tooltip"
+      hidden
+    >
+      <button type="button" class="pff-waa-live__seg-tip__close" aria-label="Close details">&times;</button>
+      <div class="pff-waa-live__seg-tip__player"></div>
+      <div class="pff-waa-live__seg-tip__meta"></div>
+    </div>
+  </article>
+
+  <!--
+    WordPress / strict CSP: browsers may block fetch() to Google Sheets from your page.
+    1) Upload pff-waa-sheet-proxy.php to your site (e.g. wp-content/).
+    2) Immediately BEFORE this script block, add:
+       <script>window.PFF_WAA_CONFIG = { sheetProxyUrl: "/wp-content/pff-waa-sheet-proxy.php" };</script>
+       (Use the real path to the PHP file on your domain.)
+    3) Use the “Custom HTML” block and paste the full board markup (including this script), or host the HTML as a static file.
+  -->
+
+  <script>
+    (function () {
+      var CONFIG = {
+        sheetCsvUrl:
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vRib0QPHO4WFSGni8yEdOMqjnxS2C3zSroKIaG0GJkd8gF72jTULRvNejs_Kw11WvTWvqUDJn3UKov-/pub?output=csv",
+        refreshMs: 30000,
+        /** Optional: same-origin URL that returns raw CSV (see pff-waa-sheet-proxy.php). */
+        sheetProxyUrl: "",
+      };
+
+      if (typeof window.PFF_WAA_CONFIG === "object" && window.PFF_WAA_CONFIG) {
+        for (var cfgK in window.PFF_WAA_CONFIG) {
+          if (Object.prototype.hasOwnProperty.call(window.PFF_WAA_CONFIG, cfgK)) {
+            CONFIG[cfgK] = window.PFF_WAA_CONFIG[cfgK];
+          }
+        }
+      }
+
+      var chartEl = document.getElementById("pff-waa-chart");
+      var boardEl = document.getElementById("pff-waa-board");
+      var errEl = document.getElementById("pff-waa-error");
+      var sumEl = document.getElementById("pff-waa-sum");
+      var countEl = document.getElementById("pff-waa-count");
+      var avgValEl = document.getElementById("pff-waa-avg-value");
+      var updatedEl = document.getElementById("pff-waa-updated");
+      var intervalEl = document.getElementById("pff-waa-interval");
+      var refreshBtn = document.getElementById("pff-waa-refresh");
+
+      var timer = null;
+      var firstPoll = true;
+      var priorPickKeys = Object.create(null);
+      var lastDrafted = [];
+      var boardSortMode = "pick";
+      var boardTeamFilter = "";
+
+      if (!chartEl || !boardEl) {
+        if (errEl) {
+          errEl.hidden = false;
+          errEl.textContent =
+            "Board markup is incomplete (missing #pff-waa-chart or #pff-waa-board). Paste the full HTML from WAA-Draft-Live.html into a Custom HTML block, or embed the whole page.";
+        }
+        if (typeof console !== "undefined" && console.error) {
+          console.error("PFF WAA: missing #pff-waa-chart or #pff-waa-board");
+        }
+        return;
+      }
+
+      function sheetUrlBusted() {
+        var u = CONFIG.sheetCsvUrl;
+        var sep = u.indexOf("?") >= 0 ? "&" : "?";
+        return u + sep + "t=" + String(Date.now());
+      }
+
+      /**
+       * Published Sheet CSV redirects to googleusercontent.com (often Access-Control-Allow-Origin: *),
+       * so direct fetch works in many browsers. If not, CodeTabs proxy is reliable; allorigins is last
+       * (often times out).
+       */
+      function fetchSheetText() {
+        var busted = sheetUrlBusted();
+        var enc = encodeURIComponent(busted);
+
+        function direct() {
+          return fetch(busted, {
+            cache: "no-store",
+            mode: "cors",
+            credentials: "omit",
+            redirect: "follow",
+          }).then(function (res) {
+            if (!res.ok) throw new Error("direct " + res.status);
+            return res.text();
+          });
+        }
+
+        function fetchSameOriginProxy(proxyBase) {
+          var sep = proxyBase.indexOf("?") >= 0 ? "&" : "?";
+          var url = proxyBase + sep + "t=" + String(Date.now());
+          var sameOrigin =
+            proxyBase.charAt(0) === "/" ||
+            (typeof location !== "undefined" &&
+              proxyBase.indexOf(location.origin + "/") === 0);
+          return fetch(url, {
+            cache: "no-store",
+            mode: "same-origin",
+            credentials: sameOrigin ? "same-origin" : "omit",
+            redirect: "follow",
+          }).then(function (res) {
+            if (!res.ok) throw new Error("proxy " + res.status);
+            return res.text();
+          });
+        }
+
+        function fetchCorsProxy(proxyBase) {
+          var sep = proxyBase.indexOf("?") >= 0 ? "&" : "?";
+          var url = proxyBase + sep + "t=" + String(Date.now());
+          return fetch(url, {
+            cache: "no-store",
+            mode: "cors",
+            credentials: "omit",
+            redirect: "follow",
+          }).then(function (res) {
+            if (!res.ok) throw new Error("proxy " + res.status);
+            return res.text();
+          });
+        }
+
+        function fetchProxy(proxyUrl) {
+          var absolute =
+            proxyUrl.indexOf("//") > 0 ||
+            proxyUrl.indexOf("http://") === 0 ||
+            proxyUrl.indexOf("https://") === 0;
+          var crossOrigin =
+            absolute &&
+            typeof location !== "undefined" &&
+            proxyUrl.indexOf(location.origin + "/") !== 0;
+          if (crossOrigin) {
+            return fetchCorsProxy(proxyUrl);
+          }
+          return fetchSameOriginProxy(proxyUrl);
+        }
+
+        function codeTabs() {
+          return fetch(
+            "https://api.codetabs.com/v1/proxy/?quest=" + enc,
+            { cache: "no-store", mode: "cors", credentials: "omit" }
+          ).then(function (res) {
+            if (!res.ok) throw new Error("codetabs " + res.status);
+            return res.text();
+          });
+        }
+
+        function corsProxyIo() {
+          return fetch("https://corsproxy.io/?" + enc, {
+            cache: "no-store",
+            mode: "cors",
+            credentials: "omit",
+          }).then(function (res) {
+            if (!res.ok) throw new Error("corsproxy " + res.status);
+            return res.text();
+          });
+        }
+
+        function allOriginsGet() {
+          return fetch("https://api.allorigins.win/get?url=" + enc, {
+            cache: "no-store",
+            mode: "cors",
+            credentials: "omit",
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error("ao-get " + res.status);
+              return res.json();
+            })
+            .then(function (data) {
+              if (!data || typeof data.contents !== "string") throw new Error("no contents");
+              return data.contents;
+            });
+        }
+
+        function allOriginsRaw() {
+          return fetch("https://api.allorigins.win/raw?url=" + enc, {
+            cache: "no-store",
+            mode: "cors",
+            credentials: "omit",
+          }).then(function (res) {
+            if (!res.ok) throw new Error("ao-raw " + res.status);
+            return res.text();
+          });
+        }
+
+        var proxyUrl =
+          CONFIG.sheetProxyUrl && String(CONFIG.sheetProxyUrl).replace(/^\s+|\s+$/g, "");
+        var chain = proxyUrl
+          ? fetchProxy(proxyUrl).catch(function () {
+              return direct();
+            })
+          : direct();
+
+        chain = chain
+          .catch(function () {
+            return codeTabs();
+          })
+          .catch(function () {
+            return corsProxyIo();
+          })
+          .catch(function () {
+            return allOriginsGet();
+          })
+          .catch(function () {
+            return allOriginsRaw();
+          });
+
+        return chain;
+      }
+
+      function parseCSV(text) {
+        var rows = [];
+        var i = 0;
+        var field = "";
+        var row = [];
+        var inQuotes = false;
+        while (i < text.length) {
+          var c = text[i];
+          if (inQuotes) {
+            if (c === '"') {
+              if (text[i + 1] === '"') {
+                field += '"';
+                i += 2;
+                continue;
+              }
+              inQuotes = false;
+              i++;
+              continue;
+            }
+            field += c;
+            i++;
+            continue;
+          }
+          if (c === '"') {
+            inQuotes = true;
+            i++;
+            continue;
+          }
+          if (c === ",") {
+            row.push(field);
+            field = "";
+            i++;
+            continue;
+          }
+          if (c === "\r") {
+            i++;
+            continue;
+          }
+          if (c === "\n") {
+            row.push(field);
+            rows.push(row);
+            field = "";
+            row = [];
+            i++;
+            continue;
+          }
+          field += c;
+          i++;
+        }
+        if (field.length || row.length) {
+          row.push(field);
+          rows.push(row);
+        }
+        return rows;
+      }
+
+      function rowsToObjects(table) {
+        if (!table.length) return [];
+        var headers = table[0].map(function (h) {
+          return String(h).trim();
+        });
+        var out = [];
+        for (var r = 1; r < table.length; r++) {
+          var cells = table[r];
+          if (!cells || !cells.length) continue;
+          var empty = true;
+          for (var k = 0; k < cells.length; k++) {
+            if (String(cells[k]).trim() !== "") {
+              empty = false;
+              break;
+            }
+          }
+          if (empty) continue;
+          var obj = {};
+          for (var j = 0; j < headers.length; j++) {
+            obj[headers[j]] = cells[j] != null ? String(cells[j]).trim() : "";
+          }
+          out.push(obj);
+        }
+        return out;
+      }
+
+      function getField(row, names) {
+        for (var i = 0; i < names.length; i++) {
+          if (row[names[i]] != null && row[names[i]] !== "") return row[names[i]];
+        }
+        return "";
+      }
+
+      function parseNum(s) {
+        if (s == null || s === "") return null;
+        var n = parseFloat(String(s).replace(/,/g, ""));
+        return isNaN(n) ? null : n;
+      }
+
+      function isDrafted(row) {
+        var ap = getField(row, ["actual_pick"]);
+        return String(ap).trim() !== "";
+      }
+
+      function pickSortKey(row) {
+        var n = parseNum(getField(row, ["actual_pick"]));
+        return n != null ? n : 1e9;
+      }
+
+      var TEAM_LOGO_BASE = "https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/";
+      var TEAM_LOGO_SVG = {
+        "Arizona Cardinals": TEAM_LOGO_BASE + "arizona-cardinals.svg",
+        "Atlanta Falcons": TEAM_LOGO_BASE + "atlanta-falcons.svg",
+        "Baltimore Ravens": TEAM_LOGO_BASE + "baltimore-ravens.svg",
+        "Buffalo Bills": TEAM_LOGO_BASE + "buffalo-bills.svg",
+        "Carolina Panthers": TEAM_LOGO_BASE + "carolina-panthers.svg",
+        "Chicago Bears": TEAM_LOGO_BASE + "chicago-bears.svg",
+        "Cincinnati Bengals": TEAM_LOGO_BASE + "cincinnati-bengals.svg",
+        "Cleveland Browns": TEAM_LOGO_BASE + "cleveland-browns.svg",
+        "Dallas Cowboys": TEAM_LOGO_BASE + "dallas-cowboys.svg",
+        "Denver Broncos": TEAM_LOGO_BASE + "denver-broncos.svg",
+        "Detroit Lions": TEAM_LOGO_BASE + "detroit-lions.svg",
+        "Green Bay Packers": TEAM_LOGO_BASE + "green-bay-packers.svg",
+        "Houston Texans": TEAM_LOGO_BASE + "houston-texans.svg",
+        "Indianapolis Colts": TEAM_LOGO_BASE + "indianapolis-colts.svg",
+        "Jacksonville Jaguars": TEAM_LOGO_BASE + "jacksonville-jaguars.svg",
+        "Kansas City Chiefs": TEAM_LOGO_BASE + "kansas-city-chiefs.svg",
+        "Las Vegas Raiders": TEAM_LOGO_BASE + "las-vegas-raiders.svg",
+        "Los Angeles Chargers": TEAM_LOGO_BASE + "los-angeles-chargers.svg",
+        "Los Angeles Rams": TEAM_LOGO_BASE + "los-angeles-rams.svg",
+        "Miami Dolphins": TEAM_LOGO_BASE + "miami-dolphins.svg",
+        "Minnesota Vikings": TEAM_LOGO_BASE + "minnesota-vikings.svg",
+        "New England Patriots": TEAM_LOGO_BASE + "new-england-patriots.svg",
+        "New Orleans Saints": TEAM_LOGO_BASE + "new-orleans-saints.svg",
+        "New York Giants": TEAM_LOGO_BASE + "new-york-giants.svg",
+        "New York Jets": TEAM_LOGO_BASE + "new-york-jets.svg",
+        "Philadelphia Eagles": TEAM_LOGO_BASE + "philadelphia-eagles.svg",
+        "Pittsburgh Steelers": TEAM_LOGO_BASE + "pittsburgh-steelers.svg",
+        "San Francisco 49ers": TEAM_LOGO_BASE + "san-francisco-49ers.svg",
+        "Seattle Seahawks": TEAM_LOGO_BASE + "seattle-seahawks.svg",
+        "Tampa Bay Buccaneers": TEAM_LOGO_BASE + "tampa-bay-buccaneers.svg",
+        "Tennessee Titans": TEAM_LOGO_BASE + "tennessee-titans.svg",
+        "Washington Commanders": TEAM_LOGO_BASE + "washington-commanders.svg",
+      };
+      var TEAM_LOGO_ALIASES = {
+        "LA Rams": "Los Angeles Rams",
+        "L.A. Rams": "Los Angeles Rams",
+        "LA Chargers": "Los Angeles Chargers",
+        "L.A. Chargers": "Los Angeles Chargers",
+        "Washington Football Team": "Washington Commanders",
+        "Washington Redskins": "Washington Commanders",
+      };
+
+      var TEAM_PRIMARY = {
+        "Arizona Cardinals": "#97233F",
+        "Atlanta Falcons": "#A71930",
+        "Baltimore Ravens": "#241773",
+        "Buffalo Bills": "#00338D",
+        "Carolina Panthers": "#0085CA",
+        "Chicago Bears": "#0B162A",
+        "Cincinnati Bengals": "#FB4F14",
+        "Cleveland Browns": "#311D00",
+        "Dallas Cowboys": "#003594",
+        "Denver Broncos": "#FB4F14",
+        "Detroit Lions": "#0076B6",
+        "Green Bay Packers": "#203731",
+        "Houston Texans": "#03202F",
+        "Indianapolis Colts": "#002C5F",
+        "Jacksonville Jaguars": "#006778",
+        "Kansas City Chiefs": "#E31837",
+        "Las Vegas Raiders": "#000000",
+        "Los Angeles Chargers": "#0080C6",
+        "Los Angeles Rams": "#003594",
+        "Miami Dolphins": "#008E97",
+        "Minnesota Vikings": "#4F2683",
+        "New England Patriots": "#002244",
+        "New Orleans Saints": "#D3BC8D",
+        "New York Giants": "#0B2265",
+        "New York Jets": "#125740",
+        "Philadelphia Eagles": "#004C54",
+        "Pittsburgh Steelers": "#FFB612",
+        "San Francisco 49ers": "#AA0000",
+        "Seattle Seahawks": "#002244",
+        "Tampa Bay Buccaneers": "#D50A0A",
+        "Tennessee Titans": "#0C2340",
+        "Washington Commanders": "#5A1414",
+      };
+
+      function resolveTeamKey(franchise) {
+        var f = String(franchise || "").trim();
+        if (!f) return "";
+        return TEAM_LOGO_ALIASES[f] || f;
+      }
+
+      function teamLogoUrl(franchise) {
+        var key = resolveTeamKey(franchise);
+        if (!key) return "";
+        return TEAM_LOGO_SVG[key] || "";
+      }
+
+      function teamPrimaryColor(franchise) {
+        var key = resolveTeamKey(franchise);
+        if (!key) return "#0b1533";
+        return TEAM_PRIMARY[key] || "#0b1533";
+      }
+
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function escAttr(s) {
+        return esc(s).replace(/'/g, "&#39;");
+      }
+
+      function formatWaaAxis(n) {
+        if (n == null || isNaN(n)) return "—";
+        var r = Math.round(Number(n) * 1000) / 1000;
+        return r.toFixed(3);
+      }
+
+      function rankShortLabel(raw) {
+        var s = String(raw || "").trim();
+        if (!s) return "—";
+        s = s
+          .replace(/^2025\s+WAA\s+rank:\s*/i, "")
+          .replace(/^2025\s+PFF\s+grade\s+rank:\s*/i, "")
+          .replace(/^2025\s+grade\s+rank:\s*/i, "")
+          .trim();
+        if (!s) return "—";
+        var frac = s.match(/(\d+)\s*\/\s*(\d+)/);
+        if (frac) return frac[1] + "/" + frac[2];
+        return s;
+      }
+
+      function teamGroupKey(row) {
+        var raw = getField(row, ["drafted_by"]);
+        var resolved = resolveTeamKey(raw);
+        if (resolved) return resolved;
+        var t = String(raw || "").trim();
+        if (t) return t;
+        return "__unknown__";
+      }
+
+      function teamChartLabel(groupKey, rawDraftedBy) {
+        if (groupKey === "__unknown__") return "Team TBD";
+        if (TEAM_LOGO_SVG[groupKey]) return groupKey;
+        var raw = String(rawDraftedBy || "").trim();
+        return raw || groupKey;
+      }
+
+      function teamDisplayLabel(row) {
+        return teamChartLabel(teamGroupKey(row), getField(row, ["drafted_by"]));
+      }
+
+      function niceChartMax(v) {
+        if (v <= 0 || !isFinite(v)) return 1;
+        var pow10 = Math.pow(10, Math.floor(Math.log10(v)));
+        var n = v / pow10;
+        var top = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+        return top * pow10;
+      }
+
+      function hexLuminance(hex) {
+        var h = String(hex).replace("#", "").trim();
+        if (h.length === 3) {
+          h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+        }
+        var num = parseInt(h, 16);
+        if (isNaN(num)) return 0.35;
+        var r = (num >> 16) & 255;
+        var g = (num >> 8) & 255;
+        var b = num & 255;
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      }
+
+      function stackSegTextClass(hex) {
+        return hexLuminance(hex) > 0.62 ? " pff-waa-live__stack-seg--darktext" : "";
+      }
+
+      function renderWaaChart(drafted) {
+        chartEl.className = "pff-waa-live__chart";
+        chartEl.innerHTML = "";
+
+        if (!drafted.length) {
+          chartEl.innerHTML =
+            '<p class="pff-waa-live__chart-empty">No picks yet. This chart will populate as selections are logged with 2025 WAA.</p>';
+          return;
+        }
+
+        var groups = Object.create(null);
+        for (var di = 0; di < drafted.length; di++) {
+          var drow = drafted[di];
+          var gkey = teamGroupKey(drow);
+          var rawBy = getField(drow, ["drafted_by"]);
+          if (!groups[gkey]) {
+            groups[gkey] = {
+              key: gkey,
+              rawBy: rawBy,
+              picks: [],
+              total: 0,
+            };
+          }
+          var pw = parseNum(getField(drow, ["2025 WAA"]));
+          groups[gkey].picks.push({
+            row: drow,
+            pick: getField(drow, ["actual_pick"]),
+            name: getField(drow, ["name_label"]),
+            pos: getField(drow, ["Pos", "pos", "Position"]),
+            waa: pw,
+          });
+          groups[gkey].total += pw != null ? pw : 0;
+        }
+
+        var teamRows = [];
+        for (var gk in groups) {
+          if (Object.prototype.hasOwnProperty.call(groups, gk)) {
+            teamRows.push(groups[gk]);
+          }
+        }
+
+        for (var si = 0; si < teamRows.length; si++) {
+          teamRows[si].picks.sort(function (a, b) {
+            return pickSortKey(a.row) - pickSortKey(b.row);
+          });
+        }
+
+        teamRows.sort(function (a, b) {
+          if (b.total !== a.total) return b.total - a.total;
+          var la = teamChartLabel(a.key, a.rawBy);
+          var lb = teamChartLabel(b.key, b.rawBy);
+          return la.localeCompare(lb);
+        });
+
+        /* Axis max scales with the largest team WAA total each refresh (draft grows → ticks e.g. 0–5 → 0–8 → 0–10). */
+        var maxTotal = 0;
+        for (var mi = 0; mi < teamRows.length; mi++) {
+          maxTotal = Math.max(maxTotal, Math.max(0, teamRows[mi].total));
+        }
+        var axisMax = niceChartMax(maxTotal);
+        if (axisMax < 1e-9) axisMax = 1;
+
+        var axisDivisions = 4;
+
+        var tickParts = [];
+        for (var ti = 0; ti <= axisDivisions; ti++) {
+          var tVal = (axisMax * ti) / axisDivisions;
+          var tPct = (ti / axisDivisions) * 100;
+          var tCls = "pff-waa-live__stack-axis-tick-wrap";
+          if (ti === 0) tCls += " is-edge";
+          if (ti === axisDivisions) tCls += " is-end";
+          tickParts.push(
+            '<span class="' +
+              tCls +
+              '" style="left:' +
+              tPct +
+              '%">' +
+              '<span class="pff-waa-live__stack-axis-dot" aria-hidden="true"></span>' +
+              '<span class="pff-waa-live__stack-axis-num">' +
+              esc(formatWaaAxis(tVal)) +
+              "</span></span>"
+          );
+        }
+
+        var rowParts = [];
+        for (var i = 0; i < teamRows.length; i++) {
+          var grp = teamRows[i];
+          var v = grp.total;
+          var label = teamChartLabel(grp.key, grp.rawBy);
+          var colorKey = grp.key === "__unknown__" ? grp.rawBy : grp.key;
+          var color = teamPrimaryColor(colorKey);
+          var textClass = stackSegTextClass(color);
+          var logoSrc = teamLogoUrl(colorKey);
+          var logoHtml = logoSrc
+            ? '<div class="pff-waa-live__stack-logo-cell"><img class="pff-waa-live__chart-logo" src="' +
+              escAttr(logoSrc) +
+              '" alt="" width="34" height="34" loading="lazy" /></div>'
+            : '<div class="pff-waa-live__stack-logo-cell"><span class="pff-waa-live__chart-logo-fallback" role="img" aria-label="' +
+              escAttr(label) +
+              '"></span></div>';
+
+          var vPos = Math.max(0, v);
+          var compPct =
+            vPos > 0
+              ? Math.min(100, (vPos / axisMax) * 100)
+              : grp.picks.length > 0
+              ? Math.min(22, 5 + grp.picks.length * 3.2)
+              : 0;
+
+          var weights = [];
+          var wsum = 0;
+          for (var pi = 0; pi < grp.picks.length; pi++) {
+            var pk0 = grp.picks[pi];
+            var ww = pk0.waa != null ? Math.max(pk0.waa, 0) : 0;
+            weights.push(ww);
+            wsum += ww;
+          }
+          if (wsum < 1e-9 && grp.picks.length > 0) {
+            wsum = grp.picks.length;
+            for (var wi = 0; wi < weights.length; wi++) {
+              weights[wi] = 1;
+            }
+          }
+
+          var segParts = [];
+          for (var pi = 0; pi < grp.picks.length; pi++) {
+            var pk = grp.picks[pi];
+            var wt = weights[pi];
+            var waaLbl = pk.waa != null ? formatWaaAxis(pk.waa) : "—";
+            var ariaParts = ["Pick " + String(pk.pick)];
+            if (pk.name) ariaParts.push(pk.name);
+            if (pk.pos) ariaParts.push(pk.pos);
+            ariaParts.push("Hover or press for WAA details");
+            var ariaLabel = ariaParts.join(", ");
+            segParts.push(
+              '<div role="button" tabindex="0" class="pff-waa-live__stack-seg' +
+                textClass +
+                '" style="flex:' +
+                String(wt) +
+                " 0 0px;background-color:" +
+                escAttr(color) +
+                '" aria-label="' +
+                escAttr(ariaLabel) +
+                '" data-seg-tip-id="' +
+                escAttr(String(i) + "-" + String(pi)) +
+                '" data-seg-pos="' +
+                escAttr(pk.pos) +
+                '" data-seg-name="' +
+                escAttr(pk.name) +
+                '" data-seg-pick="' +
+                escAttr(String(pk.pick)) +
+                '" data-seg-waa="' +
+                escAttr(waaLbl) +
+                '"></div>'
+            );
+          }
+
+          var compositeInner =
+            segParts.length > 0
+              ? segParts.join("")
+              : '<div class="pff-waa-live__stack-seg' +
+                textClass +
+                '" style="flex:1 0 0;background-color:' +
+                escAttr(color) +
+                '" tabindex="-1" aria-hidden="true"></div>';
+
+          rowParts.push(
+            '<div class="pff-waa-live__stack-row" title="' +
+              escAttr(label) +
+              '">' +
+              logoHtml +
+              '<div class="pff-waa-live__stack-track">' +
+              '<div class="pff-waa-live__stack-bar-layer">' +
+              '<div class="pff-waa-live__stack-composite" style="width:' +
+              compPct +
+              '%">' +
+              compositeInner +
+              "</div></div></div>" +
+              '<div class="pff-waa-live__stack-total">' +
+              esc(formatWaaAxis(v)) +
+              "</div></div>"
+          );
+        }
+
+        var axisPart =
+          '<div class="pff-waa-live__stack-axis-row" title="2025 WAA (team total)">' +
+          "<div></div>" +
+          '<div class="pff-waa-live__stack-axis-ticks">' +
+          tickParts.join("") +
+          "</div><div></div></div>";
+
+        chartEl.innerHTML =
+          '<div class="pff-waa-live__stack-rows">' +
+          rowParts.join("") +
+          "</div>" +
+          axisPart;
+      }
+
+      function syncBoardTeamOptions(drafted) {
+        var sel = document.getElementById("pff-waa-board-team");
+        if (!sel) return;
+        var cur = boardTeamFilter;
+        var seen = Object.create(null);
+        var labels = [];
+        for (var si = 0; si < drafted.length; si++) {
+          var lb = teamDisplayLabel(drafted[si]);
+          if (lb && !seen[lb]) {
+            seen[lb] = true;
+            labels.push(lb);
+          }
+        }
+        labels.sort(function (a, b) {
+          return a.localeCompare(b);
+        });
+        var opts = '<option value="">All teams</option>';
+        for (var sj = 0; sj < labels.length; sj++) {
+          opts += '<option value="' + escAttr(labels[sj]) + '">' + esc(labels[sj]) + "</option>";
+        }
+        sel.innerHTML = opts;
+        if (cur && seen[cur]) {
+          sel.value = cur;
+          boardTeamFilter = cur;
+        } else {
+          sel.value = "";
+          boardTeamFilter = "";
+        }
+      }
+
+      function renderBoard(drafted) {
+        boardEl.innerHTML = "";
+        var rows = drafted.slice();
+        if (boardTeamFilter) {
+          rows = rows.filter(function (r) {
+            return teamDisplayLabel(r) === boardTeamFilter;
+          });
+        }
+        rows.sort(function (a, b) {
+          var ka = pickSortKey(a);
+          var kb = pickSortKey(b);
+          if (boardSortMode === "recent") {
+            if (kb !== ka) return kb - ka;
+          } else {
+            if (ka !== kb) return ka - kb;
+          }
+          return 0;
+        });
+
+        if (!rows.length) {
+          var li0 = document.createElement("li");
+          li0.className = "pff-waa-live__empty";
+          if (!drafted.length) {
+            li0.textContent =
+              "No picks yet. When you enter an overall pick number in the actual_pick column, the player will show up here with WAA.";
+          } else if (boardTeamFilter) {
+            li0.textContent =
+              "No picks for this team. Try another team or choose All teams.";
+          } else {
+            li0.textContent = "No picks to show.";
+          }
+          boardEl.appendChild(li0);
+          return;
+        }
+
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i];
+          var pick = getField(row, ["actual_pick"]);
+          var name = getField(row, ["name_label"]);
+          var pos = getField(row, ["Pos"]);
+          var school = getField(row, ["School"]);
+          var team = getField(row, ["drafted_by"]);
+          var waa = getField(row, ["2025 WAA"]);
+          var waaRank = getField(row, ["2025 WAA Rank"]);
+          var grade = getField(row, ["2025 PFF Grade"]);
+          var gradeRank = getField(row, ["2025 PFF Grade Rank"]);
+          var pffRank = getField(row, ["pff_rank"]);
+          var profile = getField(row, ["player_profile"]);
+
+          var key = String(pick) + "|" + getField(row, ["pff_id"]);
+          var isNew = !firstPoll && key.length > 1 && !priorPickKeys[key];
+
+          var li = document.createElement("li");
+          li.className = "pff-waa-live__pick" + (isNew ? " is-new" : "");
+          li.style.animationDelay = Math.min(i * 0.04, 0.5) + "s";
+
+          var logoSrc = teamLogoUrl(team);
+          var logoInner = logoSrc
+            ? '<img class="pff-waa-live__pick-team-logo" src="' +
+              escAttr(logoSrc) +
+              '" alt="" width="48" height="48" loading="lazy" />'
+            : '<span class="pff-waa-live__pick-team-fallback" role="img" aria-label="' +
+              escAttr(team || "Team") +
+              '"></span>';
+          var logoHtml = '<div class="pff-waa-live__pick-logo-cell">' + logoInner + "</div>";
+
+          var heroBits = [];
+          if (pos) heroBits.push(esc(pos));
+          if (name) heroBits.push(esc(name));
+          if (school) heroBits.push(esc(school));
+          var heroMain = heroBits.length ? heroBits.join(", ") : esc(name || "—");
+
+          var teamHex = teamPrimaryColor(team);
+          var profileLight = hexLuminance(teamHex) > 0.62;
+          var profileFg = profileLight ? "#0b1533" : "#ffffff";
+          var profileBtn = profile
+            ? '<a class="pff-waa-live__profile-btn pff-waa-live__profile-btn--team" href="' +
+              escAttr(profile) +
+              '" target="_blank" rel="noopener noreferrer" style="background-color:' +
+              escAttr(teamHex) +
+              ";border-color:" +
+              escAttr(teamHex) +
+              ";color:" +
+              escAttr(profileFg) +
+              '">Player profile</a>'
+            : "";
+
+          var pffRankClean = String(pffRank || "").replace(/^#/, "").trim();
+          var pffRankNum = parseNum(pffRankClean);
+          var bbBig =
+            pffRankNum != null
+              ? "#" + esc(String(Math.round(pffRankNum)))
+              : pffRank
+              ? esc(pffRank)
+              : "—";
+
+          var waaNum = parseNum(waa);
+          var waaBig =
+            waaNum != null ? esc(formatWaaAxis(waaNum)) : waa ? esc(waa) : "—";
+          var waaRankShort = rankShortLabel(waaRank);
+          var waaRankLine =
+            '<span class="pff-waa-live__metric-pill-rank">' + esc(waaRankShort) + "</span>";
+
+          var gradeNum = parseNum(grade);
+          var gradeBig =
+            gradeNum != null
+              ? esc(String(Math.round(gradeNum * 10) / 10))
+              : grade
+              ? esc(grade)
+              : "—";
+          var gradeRankShort = rankShortLabel(gradeRank);
+          var gradeRankLine =
+            '<span class="pff-waa-live__metric-pill-rank">' + esc(gradeRankShort) + "</span>";
+
+          li.innerHTML =
+            '<div class="pff-waa-live__pick-top">' +
+            '<div class="pff-waa-live__pick-no-pill">Pick ' +
+            esc(String(pick)) +
+            "</div>" +
+            logoHtml +
+            '<div class="pff-waa-live__pick-hero">' +
+            '<div class="pff-waa-live__pick-hero-main">' +
+            heroMain +
+            "</div></div>" +
+            profileBtn +
+            "</div>" +
+            '<div class="pff-waa-live__pick-metrics">' +
+            '<div class="pff-waa-live__metric-pill">' +
+            '<span class="pff-waa-live__metric-pill-label">PFF big board</span>' +
+            '<span class="pff-waa-live__metric-pill-big">' +
+            bbBig +
+            "</span></div>" +
+            '<div class="pff-waa-live__metric-pill">' +
+            '<span class="pff-waa-live__metric-pill-label">2025 WAA</span>' +
+            '<span class="pff-waa-live__metric-pill-big">' +
+            waaBig +
+            "</span>" +
+            waaRankLine +
+            "</div>" +
+            '<div class="pff-waa-live__metric-pill">' +
+            '<span class="pff-waa-live__metric-pill-label">2025 PFF grade</span>' +
+            '<span class="pff-waa-live__metric-pill-big">' +
+            gradeBig +
+            "</span>" +
+            gradeRankLine +
+            "</div></div>";
+
+          boardEl.appendChild(li);
+        }
+      }
+
+      function computeStats(drafted) {
+        var sumWaa = 0;
+        var waaCount = 0;
+        var sumVal = 0;
+        var valCount = 0;
+        for (var i = 0; i < drafted.length; i++) {
+          var row = drafted[i];
+          var w = parseNum(getField(row, ["2025 WAA"]));
+          if (w != null) {
+            sumWaa += w;
+            waaCount++;
+          }
+          var v = parseNum(getField(row, ["Value"]));
+          if (v != null) {
+            sumVal += v;
+            valCount++;
+          }
+        }
+        return {
+          sumWaa: sumWaa,
+          picks: drafted.length,
+          avgValue: valCount ? sumVal / valCount : null,
+        };
+      }
+
+      function flashStat(el) {
+        el.classList.remove("is-tick");
+        void el.offsetWidth;
+        el.classList.add("is-tick");
+      }
+
+      function setError(msg, detail) {
+        if (!msg) {
+          errEl.hidden = true;
+          errEl.innerHTML = "";
+          return;
+        }
+        errEl.hidden = false;
+        errEl.innerHTML = esc(msg) + (detail ? "<code>" + esc(detail) + "</code>" : "");
+      }
+
+      function processRows(objects) {
+        var drafted = objects.filter(isDrafted).sort(function (a, b) {
+          return pickSortKey(a) - pickSortKey(b);
+        });
+        var stats = computeStats(drafted);
+
+        var hasAnyWaa = drafted.some(function (r) {
+          return parseNum(getField(r, ["2025 WAA"])) != null;
+        });
+        var sumStr = "0";
+        if (!stats.picks) sumStr = "0";
+        else if (!hasAnyWaa) sumStr = "—";
+        else sumStr = String(Math.round(stats.sumWaa * 100) / 100);
+
+        var prevSum = sumEl.textContent;
+        sumEl.textContent = sumStr;
+        if (!firstPoll && prevSum !== sumStr && prevSum !== "—") flashStat(sumEl);
+
+        countEl.textContent = String(stats.picks);
+        if (stats.avgValue != null) {
+          var av = Math.round(stats.avgValue * 100) / 100;
+          avgValEl.textContent = av >= 0 ? "+" + String(av) : String(av);
+        } else {
+          avgValEl.textContent = "—";
+        }
+
+        lastDrafted = drafted;
+        var sortEl = document.getElementById("pff-waa-board-sort");
+        if (sortEl) sortEl.value = boardSortMode;
+        syncBoardTeamOptions(drafted);
+        renderWaaChart(drafted);
+        renderBoard(drafted);
+
+        var nextKeys = Object.create(null);
+        for (var pi = 0; pi < drafted.length; pi++) {
+          var pr = drafted[pi];
+          nextKeys[String(getField(pr, ["actual_pick"])) + "|" + getField(pr, ["pff_id"])] = true;
+        }
+        priorPickKeys = nextKeys;
+        firstPoll = false;
+
+        var now = new Date();
+        updatedEl.textContent =
+          "Last updated: " +
+          now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", second: "2-digit" });
+      }
+
+      function load() {
+        setError(null);
+        return fetchSheetText()
+          .then(function (text) {
+            var t = text ? String(text).trim() : "";
+            if (!t) throw new Error("empty");
+            if (t.indexOf("<!DOCTYPE") === 0 || t.indexOf("<html") === 0) {
+              throw new Error("html");
+            }
+            var table = parseCSV(text);
+            var objects = rowsToObjects(table);
+            processRows(objects);
+          })
+          .catch(function (err) {
+            if (typeof console !== "undefined" && console.error) {
+              console.error("PFF WAA board: sheet fetch failed", err);
+            }
+            var wpHint =
+              typeof location !== "undefined" &&
+              /wordpress|wp-content|\/wp\//i.test(String(location.href || ""));
+            setError(
+              "Unable to load the latest picks. Check your connection, tap Refresh, or try again in a moment." +
+                (wpHint
+                  ? " On WordPress, your host may block requests to Google Sheets (CSP). Upload pff-waa-sheet-proxy.php to your site and set window.PFF_WAA_CONFIG.sheetProxyUrl to that file’s URL (see the HTML comment above the script)."
+                  : "")
+            );
+          });
+      }
+
+      intervalEl.textContent = "Checking every " + Math.round(CONFIG.refreshMs / 1000) + "s";
+
+      function initChartSegmentTooltips() {
+        var chart = document.getElementById("pff-waa-chart");
+        var tip = document.getElementById("pff-waa-seg-tooltip");
+        if (!chart || !tip) return;
+
+        var playerEl = tip.querySelector(".pff-waa-live__seg-tip__player");
+        var metaEl = tip.querySelector(".pff-waa-live__seg-tip__meta");
+        var closeBtn = tip.querySelector(".pff-waa-live__seg-tip__close");
+        var hideTimer = null;
+        var lastSeg = null;
+
+        function hideTip() {
+          clearTimeout(hideTimer);
+          lastSeg = null;
+          tip.classList.remove("is-visible");
+          tip.hidden = true;
+          tip.removeAttribute("data-active-id");
+          document.removeEventListener("keydown", onEsc, true);
+        }
+
+        function onEsc(e) {
+          if (e.key === "Escape") hideTip();
+        }
+
+        function viewportBox() {
+          var vv = window.visualViewport;
+          if (vv && typeof vv.width === "number") {
+            return {
+              left: vv.offsetLeft || 0,
+              top: vv.offsetTop || 0,
+              width: vv.width,
+              height: vv.height,
+            };
+          }
+          return { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+        }
+
+        function positionSegTip(seg) {
+          var rect = seg.getBoundingClientRect();
+          var vp = viewportBox();
+          var pad = Math.min(16, Math.max(8, vp.width * 0.03));
+          var tw = tip.offsetWidth || 1;
+          var th = tip.offsetHeight || 1;
+          var cx = rect.left + rect.width / 2;
+          var belowY = rect.bottom + 10;
+          var aboveY = rect.top - th - 10;
+          var y = belowY;
+          var vBottom = vp.top + vp.height;
+          if (belowY + th > vBottom - pad && aboveY >= vp.top + pad) {
+            y = aboveY;
+          }
+          var x = cx - tw / 2;
+          var minX = vp.left + pad;
+          var maxX = vp.left + vp.width - tw - pad;
+          var minY = vp.top + pad;
+          var maxY = vBottom - th - pad;
+          x = Math.max(minX, Math.min(x, maxX));
+          y = Math.max(minY, Math.min(y, maxY));
+          tip.style.left = x + "px";
+          tip.style.top = y + "px";
+        }
+
+        function showTip(seg) {
+          if (!seg.getAttribute("data-seg-pick")) return;
+          lastSeg = seg;
+          var pos = String(seg.getAttribute("data-seg-pos") || "").trim();
+          var name = String(seg.getAttribute("data-seg-name") || "").trim();
+          playerEl.textContent = pos ? pos + " " + name : name;
+          var waa = seg.getAttribute("data-seg-waa") || "—";
+          metaEl.textContent = waa === "—" ? "—" : waa + " WAA in 2025";
+          tip.hidden = false;
+          tip.classList.add("is-visible");
+          tip.setAttribute("data-active-id", seg.getAttribute("data-seg-tip-id") || "");
+          document.removeEventListener("keydown", onEsc, true);
+          document.addEventListener("keydown", onEsc, true);
+          requestAnimationFrame(function () {
+            positionSegTip(seg);
+            requestAnimationFrame(function () {
+              positionSegTip(seg);
+            });
+          });
+        }
+
+        function scheduleHide() {
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(hideTip, 130);
+        }
+
+        function cancelHide() {
+          clearTimeout(hideTimer);
+        }
+
+        chart.addEventListener("mouseover", function (e) {
+          if (!window.matchMedia("(hover: hover)").matches) return;
+          var seg = e.target.closest(".pff-waa-live__stack-seg");
+          if (!seg || !chart.contains(seg) || !seg.getAttribute("data-seg-pick")) return;
+          cancelHide();
+          showTip(seg);
+        });
+
+        chart.addEventListener("mouseout", function (e) {
+          if (!window.matchMedia("(hover: hover)").matches) return;
+          var seg = e.target.closest(".pff-waa-live__stack-seg");
+          if (!seg || !chart.contains(seg)) return;
+          var rel = e.relatedTarget;
+          if (rel) {
+            if (seg.contains(rel)) return;
+            var relSeg = rel.closest && rel.closest(".pff-waa-live__stack-seg");
+            if (relSeg && chart.contains(relSeg)) {
+              cancelHide();
+              showTip(relSeg);
+              return;
+            }
+            if (tip.contains(rel)) return;
+          }
+          scheduleHide();
+        });
+
+        tip.addEventListener("mouseenter", cancelHide);
+        tip.addEventListener("mouseleave", function () {
+          if (window.matchMedia("(hover: hover)").matches) scheduleHide();
+        });
+
+        chart.addEventListener(
+          "click",
+          function (e) {
+            var seg = e.target.closest(".pff-waa-live__stack-seg");
+            if (!seg || !chart.contains(seg) || !seg.getAttribute("data-seg-pick")) return;
+            var fineHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+            if (fineHover) return;
+            e.preventDefault();
+            var id = seg.getAttribute("data-seg-tip-id") || "";
+            if (tip.classList.contains("is-visible") && tip.getAttribute("data-active-id") === id) {
+              hideTip();
+            } else {
+              showTip(seg);
+            }
+          },
+          true
+        );
+
+        chart.addEventListener("focusin", function (e) {
+          var seg = e.target.closest(".pff-waa-live__stack-seg");
+          if (!seg || !chart.contains(seg) || !seg.getAttribute("data-seg-pick")) return;
+          showTip(seg);
+        });
+
+        chart.addEventListener("focusout", function () {
+          requestAnimationFrame(function () {
+            if (!tip.classList.contains("is-visible")) return;
+            var ae = document.activeElement;
+            if (ae && (chart.contains(ae) || tip.contains(ae))) return;
+            hideTip();
+          });
+        });
+
+        chart.addEventListener("keydown", function (e) {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          var seg = e.target.closest(".pff-waa-live__stack-seg");
+          if (!seg || !chart.contains(seg) || !seg.getAttribute("data-seg-pick")) return;
+          e.preventDefault();
+          showTip(seg);
+        });
+
+        if (closeBtn) {
+          closeBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            hideTip();
+          });
+        }
+
+        document.addEventListener(
+          "pointerdown",
+          function (e) {
+            if (!tip.classList.contains("is-visible")) return;
+            if (tip.contains(e.target) || chart.contains(e.target)) return;
+            hideTip();
+          },
+          true
+        );
+
+        window.addEventListener("resize", function () {
+          if (!tip.classList.contains("is-visible") || !lastSeg || !document.body.contains(lastSeg)) return;
+          positionSegTip(lastSeg);
+        });
+
+        function onViewportChange() {
+          if (!tip.classList.contains("is-visible") || !lastSeg || !document.body.contains(lastSeg)) return;
+          positionSegTip(lastSeg);
+        }
+
+        window.addEventListener("scroll", onViewportChange, { capture: true, passive: true });
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", onViewportChange);
+          window.visualViewport.addEventListener("scroll", onViewportChange);
+        }
+      }
+
+      if (refreshBtn) {
+        refreshBtn.addEventListener("click", function () {
+          load();
+        });
+      }
+
+      var boardSortEl = document.getElementById("pff-waa-board-sort");
+      if (boardSortEl) {
+        boardSortEl.addEventListener("change", function () {
+          boardSortMode = boardSortEl.value;
+          renderBoard(lastDrafted);
+        });
+      }
+      var boardTeamEl = document.getElementById("pff-waa-board-team");
+      if (boardTeamEl) {
+        boardTeamEl.addEventListener("change", function () {
+          boardTeamFilter = boardTeamEl.value;
+          renderBoard(lastDrafted);
+        });
+      }
+
+      initChartSegmentTooltips();
+
+      load();
+      timer = setInterval(load, CONFIG.refreshMs);
+    })();
+  </script>
+</body>
+</html>
