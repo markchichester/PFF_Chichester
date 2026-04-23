@@ -1596,12 +1596,31 @@
         return teamChartLabel(teamGroupKey(row), getField(row, ["drafted_by"]));
       }
 
-      function niceChartMax(v) {
+      /** Axis top: follows the largest team total with small headroom (no big jump to 10 when max is ~6). */
+      function chartAxisMax(v) {
         if (v <= 0 || !isFinite(v)) return 1;
-        var pow10 = Math.pow(10, Math.floor(Math.log10(v)));
-        var n = v / pow10;
-        var top = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
-        return top * pow10;
+        var target = Math.max(v * 1.02, v + 0.02);
+        if (target <= 0.2) {
+          return Math.max(0.05, Math.ceil(target * 200) / 200);
+        }
+        if (target < 1) {
+          return Math.ceil(target * 100) / 100;
+        }
+        if (target < 3) {
+          return Math.ceil(target * 20) / 20;
+        }
+        if (target < 10) {
+          return Math.ceil(target * 10) / 10;
+        }
+        if (target < 30) {
+          return Math.ceil(target * 2) / 2;
+        }
+        if (target < 100) {
+          return Math.ceil(target);
+        }
+        var p = Math.pow(10, Math.floor(Math.log10(target)));
+        var m = target / p;
+        return (Math.ceil(m * 10) / 10) * p;
       }
 
       function hexLuminance(hex) {
@@ -1675,12 +1694,12 @@
           return la.localeCompare(lb);
         });
 
-        /* Axis max scales with the largest team WAA total each refresh (draft grows → ticks e.g. 0–5 → 0–8 → 0–10). */
+        /* Axis max tracks the largest team total each refresh, with only ~2% headroom above the leader. */
         var maxTotal = 0;
         for (var mi = 0; mi < teamRows.length; mi++) {
           maxTotal = Math.max(maxTotal, Math.max(0, teamRows[mi].total));
         }
-        var axisMax = niceChartMax(maxTotal);
+        var axisMax = chartAxisMax(maxTotal);
         if (axisMax < 1e-9) axisMax = 1;
 
         var axisDivisions = 4;
