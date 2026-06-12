@@ -1,0 +1,838 @@
+﻿Player Id,Name,Team,Included in rank?,COV SCHEME,Passing grade,Att
+1725,Philip Rivers,Colts,0,Bracket,47.5,1
+1725,Philip Rivers,Colts,0,Cover-0,70.2,4
+1725,Philip Rivers,Colts,0,Cover-1,46.4,19
+1725,Philip Rivers,Colts,0,Cover-1 Double,54.9,1
+1725,Philip Rivers,Colts,0,Cover-2,58.7,6
+1725,Philip Rivers,Colts,0,Cover 2-Man,58.7,3
+1725,Philip Rivers,Colts,0,Cover-3,40.9,35
+1725,Philip Rivers,Colts,0,Cover-3 Seam,26,3
+1725,Philip Rivers,Colts,0,Cover-6,81.1,16
+1725,Philip Rivers,Colts,0,Prevent,60.5,1
+1725,Philip Rivers,Colts,0,Quarters,69.8,12
+1725,Philip Rivers,Colts,0,Red Zone,60.1,1
+2241,Aaron Rodgers,Steelers,1,Bracket,45.4,12
+2241,Aaron Rodgers,Steelers,1,Cover-0,67.5,19
+2241,Aaron Rodgers,Steelers,1,Cover-1,68.7,114
+2241,Aaron Rodgers,Steelers,1,Cover-1 Double,70.4,6
+2241,Aaron Rodgers,Steelers,1,Cover-2,71.8,83
+2241,Aaron Rodgers,Steelers,1,Cover 2-Man,57.9,22
+2241,Aaron Rodgers,Steelers,1,Cover-3,66.1,133
+2241,Aaron Rodgers,Steelers,1,Cover-3 Cloud,28.7,6
+2241,Aaron Rodgers,Steelers,1,Cover-3 Seam,39.1,18
+2241,Aaron Rodgers,Steelers,1,Cover-6,64,75
+2241,Aaron Rodgers,Steelers,1,Goal Line,,1
+2241,Aaron Rodgers,Steelers,1,Prevent,61.6,3
+2241,Aaron Rodgers,Steelers,1,Quarters,78.5,91
+2241,Aaron Rodgers,Steelers,1,Red Zone,59.8,27
+2241,Aaron Rodgers,Steelers,1,Unknown,56.1,2
+4332,Joe Flacco,Bengals,1,Bracket,66.2,19
+4332,Joe Flacco,Bengals,1,Cover-0,43.6,7
+4332,Joe Flacco,Bengals,1,Cover-1,74.8,118
+4332,Joe Flacco,Bengals,1,Cover-1 Double,94.5,3
+4332,Joe Flacco,Bengals,1,Cover-2,64,88
+4332,Joe Flacco,Bengals,1,Cover 2-Man,72.4,14
+4332,Joe Flacco,Bengals,1,Cover-3,51.4,94
+4332,Joe Flacco,Browns,1,Cover-3 Cloud,62,2
+4332,Joe Flacco,Bengals,1,Cover-3 Seam,80.6,13
+4332,Joe Flacco,Bengals,1,Cover-6,68.7,45
+4332,Joe Flacco,Browns,1,Goal Line,60,1
+4332,Joe Flacco,Bengals,1,Miscellaneous,60,1
+4332,Joe Flacco,Bengals,1,Prevent,42.6,4
+4332,Joe Flacco,Bengals,1,Quarters,45.4,45
+4332,Joe Flacco,Bengals,1,Red Zone,75.6,8
+4332,Joe Flacco,Bengals,1,Unknown,51.1,4
+4474,Josh Johnson,Commanders,0,Bracket,60,1
+4474,Josh Johnson,Commanders,0,Cover-0,71.9,2
+4474,Josh Johnson,Commanders,0,Cover-1,60.8,17
+4474,Josh Johnson,Commanders,0,Cover-2,60.4,7
+4474,Josh Johnson,Commanders,0,Cover-3,72.4,10
+4474,Josh Johnson,Commanders,0,Cover-3 Seam,69.7,4
+4474,Josh Johnson,Commanders,0,Cover-6,57.1,15
+4474,Josh Johnson,Commanders,0,Quarters,29.9,13
+4474,Josh Johnson,Commanders,0,Red Zone,,1
+4474,Josh Johnson,Commanders,0,Unknown,56,2
+4924,Matthew Stafford,Rams,1,Bracket,74.6,12
+4924,Matthew Stafford,Rams,1,Cover-0,78.8,46
+4924,Matthew Stafford,Rams,1,Cover-1,82.9,150
+4924,Matthew Stafford,Rams,1,Cover-1 Double,67.3,5
+4924,Matthew Stafford,Rams,1,Cover-2,59.3,71
+4924,Matthew Stafford,Rams,1,Cover 2-Man,56.7,8
+4924,Matthew Stafford,Rams,1,Cover-3,92,213
+4924,Matthew Stafford,Rams,1,Cover-3 Cloud,44.7,4
+4924,Matthew Stafford,Rams,1,Cover-3 Seam,76.6,46
+4924,Matthew Stafford,Rams,1,Cover-6,91.6,76
+4924,Matthew Stafford,Rams,1,Goal Line,58,1
+4924,Matthew Stafford,Rams,1,Prevent,51.2,3
+4924,Matthew Stafford,Rams,1,Quarters,81.8,136
+4924,Matthew Stafford,Rams,1,Red Zone,63.1,22
+4924,Matthew Stafford,Rams,1,Unknown,51.1,4
+6187,Andy Dalton,Panthers,0,Cover-0,60,1
+6187,Andy Dalton,Panthers,0,Cover-1,81.9,12
+6187,Andy Dalton,Panthers,0,Cover-1 Double,71.3,1
+6187,Andy Dalton,Panthers,0,Cover-2,34.3,7
+6187,Andy Dalton,Panthers,0,Cover 2-Man,74.6,4
+6187,Andy Dalton,Panthers,0,Cover-3,70.7,12
+6187,Andy Dalton,Panthers,0,Cover-3 Cloud,68.5,2
+6187,Andy Dalton,Panthers,0,Cover-6,25.9,4
+6187,Andy Dalton,Panthers,0,Quarters,59.8,4
+6187,Andy Dalton,Panthers,0,Red Zone,29,3
+6332,Tyrod Taylor,Jets,1,Cover-0,71.5,6
+6332,Tyrod Taylor,Jets,1,Cover-1,50.1,28
+6332,Tyrod Taylor,Jets,1,Cover-2,67.3,21
+6332,Tyrod Taylor,Jets,1,Cover-3,63.3,51
+6332,Tyrod Taylor,Jets,1,Cover-3 Cloud,56.1,2
+6332,Tyrod Taylor,Jets,1,Cover-3 Seam,54.3,14
+6332,Tyrod Taylor,Jets,1,Cover-6,62.1,18
+6332,Tyrod Taylor,Jets,1,Quarters,52.6,31
+6332,Tyrod Taylor,Jets,1,Red Zone,60.2,6
+6332,Tyrod Taylor,Jets,1,Unknown,60,1
+7077,Russell Wilson,Giants,0,Bracket,51.3,5
+7077,Russell Wilson,Giants,0,Cover-0,36.8,7
+7077,Russell Wilson,Giants,0,Cover-1,52.1,19
+7077,Russell Wilson,Giants,0,Cover-1 Double,51.5,2
+7077,Russell Wilson,Giants,0,Cover-2,77.3,40
+7077,Russell Wilson,Giants,0,Cover 2-Man,71.3,1
+7077,Russell Wilson,Giants,0,Cover-3,61.6,24
+7077,Russell Wilson,Giants,0,Cover-3 Seam,80.9,9
+7077,Russell Wilson,Giants,0,Cover-6,39,15
+7077,Russell Wilson,Giants,0,Goal Line,60,1
+7077,Russell Wilson,Giants,0,Quarters,86.7,18
+7077,Russell Wilson,Giants,0,Red Zone,41.7,11
+7102,Kirk Cousins,Falcons,1,Bracket,71.9,1
+7102,Kirk Cousins,Falcons,1,Cover-0,65.5,12
+7102,Kirk Cousins,Falcons,1,Cover-1,62.7,60
+7102,Kirk Cousins,Falcons,1,Cover-2,73.9,45
+7102,Kirk Cousins,Falcons,1,Cover 2-Man,38.9,12
+7102,Kirk Cousins,Falcons,1,Cover-3,83.1,63
+7102,Kirk Cousins,Falcons,1,Cover-3 Seam,64.6,30
+7102,Kirk Cousins,Falcons,1,Cover-6,51.1,20
+7102,Kirk Cousins,Falcons,1,Quarters,83.7,47
+7102,Kirk Cousins,Falcons,1,Red Zone,59.2,8
+7102,Kirk Cousins,Falcons,1,Unknown,51.1,4
+7820,Geno Smith,Raiders,1,Bracket,64.1,8
+7820,Geno Smith,Raiders,1,Cover-0,67.6,21
+7820,Geno Smith,Raiders,1,Cover-1,65.6,115
+7820,Geno Smith,Raiders,1,Cover-1 Double,68.9,3
+7820,Geno Smith,Raiders,1,Cover-2,44.2,86
+7820,Geno Smith,Raiders,1,Cover 2-Man,71.9,2
+7820,Geno Smith,Raiders,1,Cover-3,74.1,128
+7820,Geno Smith,Raiders,1,Cover-3 Seam,55.3,30
+7820,Geno Smith,Raiders,1,Cover-6,43.3,43
+7820,Geno Smith,Raiders,1,Goal Line,47.5,1
+7820,Geno Smith,Raiders,1,Miscellaneous,70.7,1
+7820,Geno Smith,Raiders,1,Prevent,60,1
+7820,Geno Smith,Raiders,1,Quarters,47.9,97
+7820,Geno Smith,Raiders,1,Red Zone,61.3,18
+7820,Geno Smith,Raiders,1,Unknown,56.6,3
+8667,Teddy Bridgewater,Buccaneers,0,Cover-1,50.3,6
+8667,Teddy Bridgewater,Buccaneers,0,Cover-2,46.4,1
+8667,Teddy Bridgewater,Buccaneers,0,Cover-3,60.4,1
+8667,Teddy Bridgewater,Buccaneers,0,Cover-3 Seam,71.2,3
+8667,Teddy Bridgewater,Buccaneers,0,Cover-6,51.6,4
+8667,Teddy Bridgewater,Buccaneers,0,Quarters,42.3,5
+9434,Jameis Winston,Giants,0,Cover-0,57.2,1
+9434,Jameis Winston,Giants,0,Cover-1,65.5,30
+9434,Jameis Winston,Giants,0,Cover-1 Double,60,1
+9434,Jameis Winston,Giants,0,Cover-2,74.5,5
+9434,Jameis Winston,Giants,0,Cover 2-Man,55.1,1
+9434,Jameis Winston,Giants,0,Cover-3,67,23
+9434,Jameis Winston,Giants,0,Cover-3 Seam,71.9,1
+9434,Jameis Winston,Giants,0,Cover-6,29.4,5
+9434,Jameis Winston,Giants,0,Prevent,60,1
+9434,Jameis Winston,Giants,0,Quarters,59.1,7
+9434,Jameis Winston,Giants,0,Red Zone,85.7,1
+9435,Marcus Mariota,Commanders,1,Bracket,29.3,7
+9435,Marcus Mariota,Commanders,1,Cover-0,77.7,20
+9435,Marcus Mariota,Commanders,1,Cover-1,48.5,64
+9435,Marcus Mariota,Commanders,1,Cover-2,80.1,39
+9435,Marcus Mariota,Commanders,1,Cover 2-Man,45.5,3
+9435,Marcus Mariota,Commanders,1,Cover-3,66.3,69
+9435,Marcus Mariota,Commanders,1,Cover-3 Cloud,60,1
+9435,Marcus Mariota,Commanders,1,Cover-3 Seam,84,25
+9435,Marcus Mariota,Commanders,1,Cover-6,70.3,10
+9435,Marcus Mariota,Commanders,1,Quarters,82.7,41
+9435,Marcus Mariota,Commanders,1,Red Zone,76.1,4
+9435,Marcus Mariota,Commanders,1,Unknown,56,2
+10635,Jared Goff,Lions,1,Bracket,60.1,1
+10635,Jared Goff,Lions,1,Cover-0,47.7,42
+10635,Jared Goff,Lions,1,Cover-1,86,119
+10635,Jared Goff,Lions,1,Cover-1 Double,28.1,8
+10635,Jared Goff,Lions,1,Cover-2,60.8,118
+10635,Jared Goff,Lions,1,Cover 2-Man,68.9,6
+10635,Jared Goff,Lions,1,Cover-3,70.6,157
+10635,Jared Goff,Lions,1,Cover-3 Cloud,73.2,3
+10635,Jared Goff,Lions,1,Cover-3 Seam,77.4,37
+10635,Jared Goff,Lions,1,Cover-6,70.7,48
+10635,Jared Goff,Lions,1,Prevent,50,3
+10635,Jared Goff,Lions,1,Quarters,82,81
+10635,Jared Goff,Lions,1,Red Zone,65.9,23
+10635,Jared Goff,Lions,1,Unknown,56.1,2
+10636,Carson Wentz,Vikings,1,Bracket,56.1,4
+10636,Carson Wentz,Vikings,1,Cover-0,76.1,5
+10636,Carson Wentz,Vikings,1,Cover-1,45,43
+10636,Carson Wentz,Vikings,1,Cover-2,60.4,24
+10636,Carson Wentz,Vikings,1,Cover 2-Man,29,13
+10636,Carson Wentz,Vikings,1,Cover-3,62.6,47
+10636,Carson Wentz,Vikings,1,Cover-3 Seam,88.4,9
+10636,Carson Wentz,Vikings,1,Cover-6,56.1,30
+10636,Carson Wentz,Vikings,1,Quarters,39.4,24
+10636,Carson Wentz,Vikings,1,Red Zone,50.2,10
+10636,Carson Wentz,Vikings,1,Unknown,60,1
+10725,Jacoby Brissett,Cardinals,1,Bracket,65.9,5
+10725,Jacoby Brissett,Cardinals,1,Cover-0,70.4,10
+10725,Jacoby Brissett,Cardinals,1,Cover-1,74.1,87
+10725,Jacoby Brissett,Cardinals,1,Cover-1 Double,68.4,11
+10725,Jacoby Brissett,Cardinals,1,Cover-2,61.1,61
+10725,Jacoby Brissett,Cardinals,1,Cover 2-Man,36.3,6
+10725,Jacoby Brissett,Cardinals,1,Cover-3,61.2,145
+10725,Jacoby Brissett,Cardinals,1,Cover-3 Seam,58.3,52
+10725,Jacoby Brissett,Cardinals,1,Cover-6,60.9,55
+10725,Jacoby Brissett,Cardinals,1,Goal Line,72.7,4
+10725,Jacoby Brissett,Cardinals,1,Prevent,59.7,1
+10725,Jacoby Brissett,Cardinals,1,Quarters,71.4,123
+10725,Jacoby Brissett,Cardinals,1,Red Zone,57.6,20
+10725,Jacoby Brissett,Cardinals,1,Unknown,60,1
+10769,Dak Prescott,Cowboys,1,Bracket,69.1,19
+10769,Dak Prescott,Cowboys,1,Cover-0,62.6,36
+10769,Dak Prescott,Cowboys,1,Cover-1,88.6,110
+10769,Dak Prescott,Cowboys,1,Cover-1 Double,52.2,4
+10769,Dak Prescott,Cowboys,1,Cover-2,80.8,110
+10769,Dak Prescott,Cowboys,1,Cover 2-Man,74.6,28
+10769,Dak Prescott,Cowboys,1,Cover-3,85.8,131
+10769,Dak Prescott,Cowboys,1,Cover-3 Cloud,87.3,1
+10769,Dak Prescott,Cowboys,1,Cover-3 Seam,75.6,43
+10769,Dak Prescott,Cowboys,1,Cover-6,67,96
+10769,Dak Prescott,Cowboys,1,Goal Line,,1
+10769,Dak Prescott,Cowboys,1,Quarters,71.2,96
+10769,Dak Prescott,Cowboys,1,Red Zone,36.7,34
+10769,Dak Prescott,Cowboys,1,Unknown,53.2,3
+10835,Brandon Allen,Titans,0,Cover-0,52.3,2
+10835,Brandon Allen,Titans,0,Cover-1,72.4,5
+10835,Brandon Allen,Titans,0,Cover-2,63,3
+10835,Brandon Allen,Titans,0,Cover-3,66.7,9
+10835,Brandon Allen,Titans,0,Cover-3 Cloud,60,1
+10835,Brandon Allen,Titans,0,Cover-6,52.1,5
+10835,Brandon Allen,Titans,0,Quarters,19.6,7
+11757,Mitch Trubisky,Bills,0,Cover-0,43.3,3
+11757,Mitch Trubisky,Bills,0,Cover-1,86.7,10
+11757,Mitch Trubisky,Bills,0,Cover-2,73.1,7
+11757,Mitch Trubisky,Bills,0,Cover-3,79.8,15
+11757,Mitch Trubisky,Bills,0,Cover-3 Cloud,53.8,1
+11757,Mitch Trubisky,Bills,0,Cover-3 Seam,60.4,1
+11757,Mitch Trubisky,Bills,0,Quarters,55.1,1
+11757,Mitch Trubisky,Bills,0,Red Zone,58.3,1
+11765,Patrick Mahomes,Chiefs,1,Bracket,52.3,7
+11765,Patrick Mahomes,Chiefs,1,Cover-0,67.6,17
+11765,Patrick Mahomes,Chiefs,1,Cover-1,52.7,164
+11765,Patrick Mahomes,Chiefs,1,Cover-1 Double,71.6,3
+11765,Patrick Mahomes,Chiefs,1,Cover-2,93.4,40
+11765,Patrick Mahomes,Chiefs,1,Cover 2-Man,51,9
+11765,Patrick Mahomes,Chiefs,1,Cover-3,65.7,142
+11765,Patrick Mahomes,Chiefs,1,Cover-3 Cloud,70.7,1
+11765,Patrick Mahomes,Chiefs,1,Cover-3 Seam,73.3,33
+11765,Patrick Mahomes,Chiefs,1,Cover-6,82.5,69
+11765,Patrick Mahomes,Chiefs,1,Prevent,54.8,4
+11765,Patrick Mahomes,Chiefs,1,Quarters,56.9,108
+11765,Patrick Mahomes,Chiefs,1,Red Zone,73.2,37
+11765,Patrick Mahomes,Chiefs,1,Unknown,56.1,2
+11890,Joshua Dobbs,Patriots,0,Cover-0,51.7,1
+11890,Joshua Dobbs,Patriots,0,Cover-1,72.9,2
+11890,Joshua Dobbs,Patriots,0,Cover-2,60.4,2
+11890,Joshua Dobbs,Patriots,0,Cover-3,72.5,6
+11890,Joshua Dobbs,Patriots,0,Cover-6,50.4,1
+12282,Nick Mullens,Jaguars,0,Cover-0,60.4,1
+12282,Nick Mullens,Jaguars,0,Cover-1,70.4,1
+12282,Nick Mullens,Jaguars,0,Cover-2,60.4,1
+12324,Cooper Rush,Ravens,0,Cover-0,60.4,1
+12324,Cooper Rush,Ravens,0,Cover-1,85.2,7
+12324,Cooper Rush,Ravens,0,Cover-2,55,8
+12324,Cooper Rush,Ravens,0,Cover 2-Man,60.4,1
+12324,Cooper Rush,Ravens,0,Cover-3,38.3,15
+12324,Cooper Rush,Ravens,0,Cover-3 Seam,55,7
+12324,Cooper Rush,Ravens,0,Cover-6,69.5,5
+12324,Cooper Rush,Ravens,0,Goal Line,60,1
+12324,Cooper Rush,Ravens,0,Quarters,68.9,12
+12659,Shane Buechele,Chiefs,0,Cover-1,47,4
+12659,Shane Buechele,Chiefs,0,Cover-2,34.9,5
+12659,Shane Buechele,Chiefs,0,Cover-3,60.3,4
+12659,Shane Buechele,Chiefs,0,Cover-3 Seam,60,1
+12659,Shane Buechele,Chiefs,0,Cover-6,93.4,2
+12659,Shane Buechele,Chiefs,0,Prevent,53.9,2
+12659,Shane Buechele,Chiefs,0,Quarters,49.3,2
+13725,Jarrett Stidham,Broncos,0,Cover-0,55.2,4
+13725,Jarrett Stidham,Broncos,0,Cover-1,24,9
+13725,Jarrett Stidham,Broncos,0,Cover-2,54.2,9
+13725,Jarrett Stidham,Broncos,0,Cover 2-Man,59,3
+13725,Jarrett Stidham,Broncos,0,Cover-3,50.3,4
+13725,Jarrett Stidham,Broncos,0,Cover-3 Cloud,60,1
+13725,Jarrett Stidham,Broncos,0,Cover-6,76.4,1
+13725,Jarrett Stidham,Broncos,0,Quarters,90.6,5
+13725,Jarrett Stidham,Broncos,0,Red Zone,71.6,1
+26152,Kyle Allen,Lions,0,Cover-1,60.1,1
+26152,Kyle Allen,Lions,0,Cover-6,71.9,1
+28022,Joe Burrow,Bengals,1,Bracket,71.4,9
+28022,Joe Burrow,Bengals,1,Cover-0,68.5,9
+28022,Joe Burrow,Bengals,1,Cover-1,90.1,49
+28022,Joe Burrow,Bengals,1,Cover-1 Double,60.4,2
+28022,Joe Burrow,Bengals,1,Cover-2,67.8,68
+28022,Joe Burrow,Bengals,1,Cover 2-Man,91.5,7
+28022,Joe Burrow,Bengals,1,Cover-3,91.4,74
+28022,Joe Burrow,Bengals,1,Cover-3 Cloud,27.3,2
+28022,Joe Burrow,Bengals,1,Cover-3 Seam,84.8,13
+28022,Joe Burrow,Bengals,1,Cover-6,68.8,38
+28022,Joe Burrow,Bengals,1,Goal Line,68.2,2
+28022,Joe Burrow,Bengals,1,Prevent,60,1
+28022,Joe Burrow,Bengals,1,Quarters,77.2,22
+28022,Joe Burrow,Bengals,1,Red Zone,78.8,7
+28237,Justin Herbert,Chargers,1,Bracket,29.9,17
+28237,Justin Herbert,Chargers,1,Cover-0,48.9,31
+28237,Justin Herbert,Chargers,1,Cover-1,74.8,168
+28237,Justin Herbert,Chargers,1,Cover-1 Double,49.4,2
+28237,Justin Herbert,Chargers,1,Cover-2,91,87
+28237,Justin Herbert,Chargers,1,Cover 2-Man,76.2,4
+28237,Justin Herbert,Chargers,1,Cover-3,59.8,150
+28237,Justin Herbert,Chargers,1,Cover-3 Cloud,40.7,2
+28237,Justin Herbert,Chargers,1,Cover-3 Seam,77.5,41
+28237,Justin Herbert,Chargers,1,Cover-6,53.6,66
+28237,Justin Herbert,Chargers,1,Goal Line,72.2,1
+28237,Justin Herbert,Chargers,1,Prevent,46.7,3
+28237,Justin Herbert,Chargers,1,Quarters,81.2,95
+28237,Justin Herbert,Chargers,1,Red Zone,44.4,24
+29048,Sam Darnold,Seahawks,1,Bracket,65.2,13
+29048,Sam Darnold,Seahawks,1,Cover-0,73.6,23
+29048,Sam Darnold,Seahawks,1,Cover-1,87.5,95
+29048,Sam Darnold,Seahawks,1,Cover-1 Double,55.4,15
+29048,Sam Darnold,Seahawks,1,Cover-2,59.2,74
+29048,Sam Darnold,Seahawks,1,Cover 2-Man,66.6,9
+29048,Sam Darnold,Seahawks,1,Cover-3,78.4,188
+29048,Sam Darnold,Seahawks,1,Cover-3 Cloud,56.1,2
+29048,Sam Darnold,Seahawks,1,Cover-3 Seam,48.5,30
+29048,Sam Darnold,Seahawks,1,Cover-6,61.5,67
+29048,Sam Darnold,Seahawks,1,Goal Line,38.4,5
+29048,Sam Darnold,Seahawks,1,Quarters,81.5,114
+29048,Sam Darnold,Seahawks,1,Red Zone,69.4,20
+29048,Sam Darnold,Seahawks,1,Unknown,52.6,5
+38334,Kyler Murray,Cardinals,1,Cover-0,55.1,5
+38334,Kyler Murray,Cardinals,1,Cover-1,71.4,25
+38334,Kyler Murray,Cardinals,1,Cover-2,64.8,21
+38334,Kyler Murray,Cardinals,1,Cover-3,68.3,45
+38334,Kyler Murray,Cardinals,1,Cover-3 Seam,69.9,17
+38334,Kyler Murray,Cardinals,1,Cover-6,67.3,37
+38334,Kyler Murray,Cardinals,1,Goal Line,58.7,2
+38334,Kyler Murray,Cardinals,1,Prevent,60.4,1
+38334,Kyler Murray,Cardinals,1,Quarters,59.3,46
+38334,Kyler Murray,Cardinals,1,Red Zone,62.2,12
+39395,Daniel Jones,Colts,1,Bracket,60,1
+39395,Daniel Jones,Colts,1,Cover-0,44.4,22
+39395,Daniel Jones,Colts,1,Cover-1,78.3,79
+39395,Daniel Jones,Colts,1,Cover-2,70.5,58
+39395,Daniel Jones,Colts,1,Cover 2-Man,60,1
+39395,Daniel Jones,Colts,1,Cover-3,60.3,112
+39395,Daniel Jones,Colts,1,Cover-3 Cloud,79.7,2
+39395,Daniel Jones,Colts,1,Cover-3 Seam,42.7,20
+39395,Daniel Jones,Colts,1,Cover-6,62.4,50
+39395,Daniel Jones,Colts,1,Prevent,68.5,2
+39395,Daniel Jones,Colts,1,Quarters,65.1,93
+39395,Daniel Jones,Colts,1,Red Zone,81.7,17
+39395,Daniel Jones,Colts,1,Unknown,53.2,3
+39517,Drew Lock,Seahawks,0,Cover-3,62,2
+39517,Drew Lock,Seahawks,0,Miscellaneous,43.2,1
+40291,Jalen Hurts,Eagles,1,Bracket,68.8,7
+40291,Jalen Hurts,Eagles,1,Cover-0,53.5,49
+40291,Jalen Hurts,Eagles,1,Cover-1,71.6,97
+40291,Jalen Hurts,Eagles,1,Cover-1 Double,60.9,1
+40291,Jalen Hurts,Eagles,1,Cover-2,87.6,95
+40291,Jalen Hurts,Eagles,1,Cover 2-Man,52.8,6
+40291,Jalen Hurts,Eagles,1,Cover-3,72.7,130
+40291,Jalen Hurts,Eagles,1,Cover-3 Cloud,62,5
+40291,Jalen Hurts,Eagles,1,Cover-3 Double Cloud,60,1
+40291,Jalen Hurts,Eagles,1,Cover-3 Seam,71.9,46
+40291,Jalen Hurts,Eagles,1,Cover-6,67.7,35
+40291,Jalen Hurts,Eagles,1,Goal Line,73.3,1
+40291,Jalen Hurts,Eagles,1,Prevent,67.7,3
+40291,Jalen Hurts,Eagles,1,Quarters,64.3,117
+40291,Jalen Hurts,Eagles,1,Red Zone,59.3,7
+40291,Jalen Hurts,Eagles,1,Unknown,56.1,2
+40306,Jordan Love,Packers,1,Bracket,57.2,1
+40306,Jordan Love,Packers,1,Cover-0,92.2,25
+40306,Jordan Love,Packers,1,Cover-1,92,146
+40306,Jordan Love,Packers,1,Cover-1 Double,71.6,1
+40306,Jordan Love,Packers,1,Cover-2,77.8,69
+40306,Jordan Love,Packers,1,Cover 2-Man,77.7,5
+40306,Jordan Love,Packers,1,Cover-3,72.7,130
+40306,Jordan Love,Packers,1,Cover-3 Cloud,48.9,5
+40306,Jordan Love,Packers,1,Cover-3 Seam,68.4,31
+40306,Jordan Love,Packers,1,Cover-6,68,61
+40306,Jordan Love,Packers,1,Prevent,40.7,8
+40306,Jordan Love,Packers,1,Quarters,70.2,76
+40306,Jordan Love,Packers,1,Red Zone,55,13
+40306,Jordan Love,Packers,1,Unknown,60,1
+40364,Chris Oladokun,Chiefs,0,Bracket,53.1,1
+40364,Chris Oladokun,Chiefs,0,Cover-0,61.9,3
+40364,Chris Oladokun,Chiefs,0,Cover-1,36.7,7
+40364,Chris Oladokun,Chiefs,0,Cover-1 Double,60.4,1
+40364,Chris Oladokun,Chiefs,0,Cover-2,53.1,10
+40364,Chris Oladokun,Chiefs,0,Cover 2-Man,60.4,1
+40364,Chris Oladokun,Chiefs,0,Cover-3,57.6,17
+40364,Chris Oladokun,Chiefs,0,Cover-3 Seam,64.9,11
+40364,Chris Oladokun,Chiefs,0,Cover-6,61,7
+40364,Chris Oladokun,Chiefs,0,Quarters,53.5,10
+40364,Chris Oladokun,Chiefs,0,Red Zone,29.6,2
+40364,Chris Oladokun,Chiefs,0,Unknown,60,1
+41401,Gardner Minshew,Chiefs,0,Cover-0,71.4,2
+41401,Gardner Minshew,Chiefs,0,Cover-1,27.4,1
+41401,Gardner Minshew,Chiefs,0,Cover-3,43.7,3
+41401,Gardner Minshew,Chiefs,0,Cover-6,54.8,2
+41401,Gardner Minshew,Chiefs,0,Quarters,51.7,7
+46401,Jake Browning,Bengals,0,Bracket,54.9,6
+46401,Jake Browning,Bengals,0,Cover-0,45.8,4
+46401,Jake Browning,Bengals,0,Cover-1,81.1,19
+46401,Jake Browning,Bengals,0,Cover-1 Double,51.5,3
+46401,Jake Browning,Bengals,0,Cover-2,66.4,35
+46401,Jake Browning,Bengals,0,Cover 2-Man,62.2,7
+46401,Jake Browning,Bengals,0,Cover-3,23.9,28
+46401,Jake Browning,Bengals,0,Cover-3 Seam,47.3,3
+46401,Jake Browning,Bengals,0,Cover-6,53.7,25
+46401,Jake Browning,Bengals,0,Quarters,84.3,18
+46401,Jake Browning,Bengals,0,Red Zone,61.6,2
+46416,Lamar Jackson,Ravens,1,Cover-0,50.6,41
+46416,Lamar Jackson,Ravens,1,Cover-1,69.7,100
+46416,Lamar Jackson,Ravens,1,Cover-1 Double,47.5,1
+46416,Lamar Jackson,Ravens,1,Cover-2,60.6,78
+46416,Lamar Jackson,Ravens,1,Cover 2-Man,82.7,1
+46416,Lamar Jackson,Ravens,1,Cover-3,75.4,83
+46416,Lamar Jackson,Ravens,1,Cover-3 Cloud,54.9,3
+46416,Lamar Jackson,Ravens,1,Cover-3 Seam,70,12
+46416,Lamar Jackson,Ravens,1,Cover-6,61.9,19
+46416,Lamar Jackson,Ravens,1,Goal Line,68.5,2
+46416,Lamar Jackson,Ravens,1,Quarters,60.3,37
+46416,Lamar Jackson,Ravens,1,Red Zone,70.5,14
+46416,Lamar Jackson,Ravens,1,Unknown,56.1,2
+46448,Tyler Huntley,Ravens,0,Cover-0,68.7,4
+46448,Tyler Huntley,Ravens,0,Cover-1,74.2,15
+46448,Tyler Huntley,Ravens,0,Cover-1 Double,60,1
+46448,Tyler Huntley,Ravens,0,Cover-2,73.3,14
+46448,Tyler Huntley,Ravens,0,Cover-3,66.7,28
+46448,Tyler Huntley,Ravens,0,Cover-3 Seam,43.6,4
+46448,Tyler Huntley,Ravens,0,Cover-6,50.8,11
+46448,Tyler Huntley,Ravens,0,Quarters,64.5,6
+46448,Tyler Huntley,Ravens,0,Red Zone,60,1
+46448,Tyler Huntley,Ravens,0,Unknown,60,1
+46487,Brett Rypien,Bengals,#N/A,Cover-2,60,1
+46518,Baker Mayfield,Buccaneers,1,Bracket,59.3,5
+46518,Baker Mayfield,Buccaneers,1,Cover-0,45.3,13
+46518,Baker Mayfield,Buccaneers,1,Cover-1,54.3,140
+46518,Baker Mayfield,Buccaneers,1,Cover-1 Double,44.3,5
+46518,Baker Mayfield,Buccaneers,1,Cover-2,67,96
+46518,Baker Mayfield,Buccaneers,1,Cover 2-Man,51.8,5
+46518,Baker Mayfield,Buccaneers,1,Cover-3,68.6,168
+46518,Baker Mayfield,Buccaneers,1,Cover-3 Cloud,72.7,7
+46518,Baker Mayfield,Buccaneers,1,Cover-3 Seam,70.2,59
+46518,Baker Mayfield,Buccaneers,1,Cover-6,61.9,42
+46518,Baker Mayfield,Buccaneers,1,Prevent,41,4
+46518,Baker Mayfield,Buccaneers,1,Quarters,69.3,109
+46518,Baker Mayfield,Buccaneers,1,Red Zone,59.8,26
+46518,Baker Mayfield,Buccaneers,1,Unknown,60,1
+46569,Mason Rudolph,Steelers,0,Cover-0,76.9,4
+46569,Mason Rudolph,Steelers,0,Cover-1,46.7,10
+46569,Mason Rudolph,Steelers,0,Cover-2,57.8,10
+46569,Mason Rudolph,Steelers,0,Cover 2-Man,73,2
+46569,Mason Rudolph,Steelers,0,Cover-3,58.5,16
+46569,Mason Rudolph,Steelers,0,Cover-3 Seam,30.1,6
+46569,Mason Rudolph,Steelers,0,Cover-6,60,1
+46569,Mason Rudolph,Steelers,0,Quarters,53.4,11
+46569,Mason Rudolph,Steelers,0,Red Zone,60,1
+46601,Josh Allen,Bills,1,Bracket,60.4,2
+46601,Josh Allen,Bills,1,Cover-0,55,42
+46601,Josh Allen,Bills,1,Cover-1,76.5,175
+46601,Josh Allen,Bills,1,Cover-1 Double,74.8,1
+46601,Josh Allen,Bills,1,Cover-2,79.6,70
+46601,Josh Allen,Bills,1,Cover 2-Man,59.7,2
+46601,Josh Allen,Bills,1,Cover-3,71.3,172
+46601,Josh Allen,Bills,1,Cover-3 Cloud,73.6,7
+46601,Josh Allen,Bills,1,Cover-3 Seam,67.4,59
+46601,Josh Allen,Bills,1,Cover-6,77.9,51
+46601,Josh Allen,Bills,1,Goal Line,75.8,2
+46601,Josh Allen,Bills,1,Prevent,68.1,2
+46601,Josh Allen,Bills,1,Quarters,87.2,75
+46601,Josh Allen,Bills,1,Red Zone,77,16
+46601,Josh Allen,Bills,1,Unknown,60,1
+52269,Davis Mills,Texans,1,Bracket,44.2,2
+52269,Davis Mills,Texans,1,Cover-0,30.7,9
+52269,Davis Mills,Texans,1,Cover-1,72.8,34
+52269,Davis Mills,Texans,1,Cover-2,64.8,21
+52269,Davis Mills,Texans,1,Cover 2-Man,53.7,3
+52269,Davis Mills,Texans,1,Cover-3,75.9,40
+52269,Davis Mills,Texans,1,Cover-3 Cloud,60.4,1
+52269,Davis Mills,Texans,1,Cover-3 Seam,47.5,5
+52269,Davis Mills,Texans,1,Cover-6,80,34
+52269,Davis Mills,Texans,1,Prevent,59.5,1
+52269,Davis Mills,Texans,1,Quarters,31.5,22
+52269,Davis Mills,Texans,1,Red Zone,90.1,11
+60323,Mac Jones,49ers,1,Bracket,60,1
+60323,Mac Jones,49ers,1,Cover-0,60.2,5
+60323,Mac Jones,49ers,1,Cover-1,74.6,48
+60323,Mac Jones,49ers,1,Cover-2,65.2,39
+60323,Mac Jones,49ers,1,Cover 2-Man,48.9,3
+60323,Mac Jones,49ers,1,Cover-3,80.7,76
+60323,Mac Jones,49ers,1,Cover-3 Cloud,33.7,3
+60323,Mac Jones,49ers,1,Cover-3 Seam,62.3,22
+60323,Mac Jones,49ers,1,Cover-6,47.6,27
+60323,Mac Jones,49ers,1,Goal Line,91.2,3
+60323,Mac Jones,49ers,1,Prevent,59.9,2
+60323,Mac Jones,49ers,1,Quarters,75.7,92
+60323,Mac Jones,49ers,1,Red Zone,62.3,10
+60323,Mac Jones,49ers,1,Unknown,53.2,3
+60326,Tua Tagovailoa,Dolphins,1,Cover-0,82.1,16
+60326,Tua Tagovailoa,Dolphins,1,Cover-1,64.6,45
+60326,Tua Tagovailoa,Dolphins,1,Cover-2,56.5,90
+60326,Tua Tagovailoa,Dolphins,1,Cover 2-Man,84.3,12
+60326,Tua Tagovailoa,Dolphins,1,Cover-3,54.3,140
+60326,Tua Tagovailoa,Dolphins,1,Cover-3 Cloud,53.6,1
+60326,Tua Tagovailoa,Dolphins,1,Cover-3 Double Cloud,60.5,1
+60326,Tua Tagovailoa,Dolphins,1,Cover-3 Seam,41.5,17
+60326,Tua Tagovailoa,Dolphins,1,Cover-6,85.4,52
+60326,Tua Tagovailoa,Dolphins,1,Prevent,29,7
+60326,Tua Tagovailoa,Dolphins,1,Quarters,62.8,66
+60326,Tua Tagovailoa,Dolphins,1,Red Zone,91.2,15
+60326,Tua Tagovailoa,Dolphins,1,Unknown,31.8,3
+60341,Malik Willis,Packers,0,Cover-0,71.3,4
+60341,Malik Willis,Packers,0,Cover-1,83.9,6
+60341,Malik Willis,Packers,0,Cover-2,90.3,3
+60341,Malik Willis,Packers,0,Cover-3,77.4,19
+60341,Malik Willis,Packers,0,Cover-3 Seam,60,1
+60341,Malik Willis,Packers,0,Cover-6,76.8,6
+60341,Malik Willis,Packers,0,Quarters,65.9,6
+60341,Malik Willis,Packers,0,Red Zone,61.9,4
+60515,Kenny Pickett,Raiders,0,Cover-0,60.5,1
+60515,Kenny Pickett,Raiders,0,Cover-1,52.6,16
+60515,Kenny Pickett,Raiders,0,Cover-2,20.2,4
+60515,Kenny Pickett,Raiders,0,Cover 2-Man,71.2,5
+60515,Kenny Pickett,Raiders,0,Cover-3,54.1,7
+60515,Kenny Pickett,Raiders,0,Cover-3 Seam,57.2,11
+60515,Kenny Pickett,Raiders,0,Cover-6,59.6,4
+60515,Kenny Pickett,Raiders,0,Prevent,74.9,1
+60515,Kenny Pickett,Raiders,0,Quarters,59.9,8
+60515,Kenny Pickett,Raiders,0,Unknown,60,1
+60516,Aidan O'Connell,Raiders,0,Bracket,47.5,1
+60516,Aidan O'Connell,Raiders,0,Cover-0,71.6,2
+60516,Aidan O'Connell,Raiders,0,Cover-1,78.7,3
+60516,Aidan O'Connell,Raiders,0,Cover-1 Double,60.4,2
+60516,Aidan O'Connell,Raiders,0,Cover-2,57.6,5
+60516,Aidan O'Connell,Raiders,0,Cover-3,60.8,5
+60516,Aidan O'Connell,Raiders,0,Cover-3 Cloud,71.9,1
+60516,Aidan O'Connell,Raiders,0,Cover-3 Seam,62.8,4
+60516,Aidan O'Connell,Raiders,0,Miscellaneous,46.5,1
+60516,Aidan O'Connell,Raiders,0,Quarters,60.4,1
+77632,Trevor Lawrence,Jaguars,1,Bracket,71.9,3
+77632,Trevor Lawrence,Jaguars,1,Cover-0,66,37
+77632,Trevor Lawrence,Jaguars,1,Cover-1,79.2,128
+77632,Trevor Lawrence,Jaguars,1,Cover-1 Double,80.7,3
+77632,Trevor Lawrence,Jaguars,1,Cover-2,84.1,85
+77632,Trevor Lawrence,Jaguars,1,Cover 2-Man,92,4
+77632,Trevor Lawrence,Jaguars,1,Cover-3,63.8,216
+77632,Trevor Lawrence,Jaguars,1,Cover-3 Cloud,90.3,4
+77632,Trevor Lawrence,Jaguars,1,Cover-3 Seam,64.7,41
+77632,Trevor Lawrence,Jaguars,1,Cover-6,66.6,57
+77632,Trevor Lawrence,Jaguars,1,Prevent,28.2,4
+77632,Trevor Lawrence,Jaguars,1,Quarters,78.9,112
+77632,Trevor Lawrence,Jaguars,1,Red Zone,68.3,27
+77632,Trevor Lawrence,Jaguars,1,Unknown,51.1,4
+77652,Clayton Tune,Packers,0,Cover-0,56,2
+77652,Clayton Tune,Packers,0,Cover-2,58,5
+77652,Clayton Tune,Packers,0,Cover-3,44.9,8
+77652,Clayton Tune,Packers,0,Cover-3 Cloud,60,1
+77652,Clayton Tune,Packers,0,Cover-6,44.5,3
+77652,Clayton Tune,Packers,0,Quarters,59.9,3
+77652,Clayton Tune,Packers,0,Red Zone,26.5,1
+77672,Brock Purdy,49ers,1,Bracket,79.1,3
+77672,Brock Purdy,49ers,1,Cover-0,91.3,12
+77672,Brock Purdy,49ers,1,Cover-1,70.9,70
+77672,Brock Purdy,49ers,1,Cover-2,70.8,29
+77672,Brock Purdy,49ers,1,Cover 2-Man,70.7,1
+77672,Brock Purdy,49ers,1,Cover-3,73.3,92
+77672,Brock Purdy,49ers,1,Cover-3 Cloud,60.4,1
+77672,Brock Purdy,49ers,1,Cover-3 Seam,75.8,40
+77672,Brock Purdy,49ers,1,Cover-6,73,64
+77672,Brock Purdy,49ers,1,Goal Line,58.4,2
+77672,Brock Purdy,49ers,1,Prevent,46.2,4
+77672,Brock Purdy,49ers,1,Quarters,71.9,66
+77672,Brock Purdy,49ers,1,Red Zone,73.4,20
+82096,Zach Wilson,Dolphins,0,Cover-1,60,1
+82096,Zach Wilson,Dolphins,0,Cover-2,59,3
+82096,Zach Wilson,Dolphins,0,Cover-3,55.4,6
+82096,Zach Wilson,Dolphins,0,Cover-6,48.3,2
+82118,Justin Fields,Jets,1,Cover-0,80.6,21
+82118,Justin Fields,Jets,1,Cover-1,70.5,53
+82118,Justin Fields,Jets,1,Cover-2,39.7,64
+82118,Justin Fields,Jets,1,Cover 2-Man,46,2
+82118,Justin Fields,Jets,1,Cover-3,75.9,66
+82118,Justin Fields,Jets,1,Cover-3 Cloud,54.7,2
+82118,Justin Fields,Jets,1,Cover-3 Seam,39.1,14
+82118,Justin Fields,Jets,1,Cover-6,60.9,24
+82118,Justin Fields,Jets,1,Goal Line,73.2,1
+82118,Justin Fields,Jets,1,Prevent,60.5,1
+82118,Justin Fields,Jets,1,Quarters,65.4,20
+82118,Justin Fields,Jets,1,Red Zone,69.3,6
+82118,Justin Fields,Jets,1,Unknown,56.1,2
+82134,Michael Penix Jr.,Falcons,1,Bracket,39.2,4
+82134,Michael Penix Jr.,Falcons,1,Cover-0,51,14
+82134,Michael Penix Jr.,Falcons,1,Cover-1,50.4,66
+82134,Michael Penix Jr.,Falcons,1,Cover-1 Double,47.5,1
+82134,Michael Penix Jr.,Falcons,1,Cover-2,67.4,46
+82134,Michael Penix Jr.,Falcons,1,Cover 2-Man,70.5,5
+82134,Michael Penix Jr.,Falcons,1,Cover-3,55.8,82
+82134,Michael Penix Jr.,Falcons,1,Cover-3 Cloud,53.1,2
+82134,Michael Penix Jr.,Falcons,1,Cover-3 Seam,67.4,26
+82134,Michael Penix Jr.,Falcons,1,Cover-6,78,36
+82134,Michael Penix Jr.,Falcons,1,Quarters,62.8,31
+82134,Michael Penix Jr.,Falcons,1,Red Zone,36.6,12
+82151,Joe Milton III,Cowboys,0,Bracket,58,1
+82151,Joe Milton III,Cowboys,0,Cover-0,55.5,2
+82151,Joe Milton III,Cowboys,0,Cover-1,85.2,6
+82151,Joe Milton III,Cowboys,0,Cover-2,44.7,6
+82151,Joe Milton III,Cowboys,0,Cover-3,38.5,7
+82151,Joe Milton III,Cowboys,0,Cover-3 Seam,60,2
+82151,Joe Milton III,Cowboys,0,Quarters,54.9,6
+83537,Tyler Shough,Saints,1,Cover-0,61.3,12
+83537,Tyler Shough,Saints,1,Cover-1,68.7,38
+83537,Tyler Shough,Saints,1,Cover-1 Double,71.5,3
+83537,Tyler Shough,Saints,1,Cover-2,70.5,43
+83537,Tyler Shough,Saints,1,Cover 2-Man,69.2,5
+83537,Tyler Shough,Saints,1,Cover-3,58.9,95
+83537,Tyler Shough,Saints,1,Cover-3 Cloud,,1
+83537,Tyler Shough,Saints,1,Cover-3 Seam,82.2,44
+83537,Tyler Shough,Saints,1,Cover-6,67.4,34
+83537,Tyler Shough,Saints,1,Goal Line,,1
+83537,Tyler Shough,Saints,1,Prevent,60,1
+83537,Tyler Shough,Saints,1,Quarters,69.7,109
+83537,Tyler Shough,Saints,1,Red Zone,56.5,8
+83537,Tyler Shough,Saints,1,Unknown,53.2,3
+86272,Dillon Gabriel,Browns,1,Bracket,68.3,3
+86272,Dillon Gabriel,Browns,1,Cover-0,68.2,9
+86272,Dillon Gabriel,Browns,1,Cover-1,60.3,59
+86272,Dillon Gabriel,Browns,1,Cover-2,53.3,41
+86272,Dillon Gabriel,Browns,1,Cover 2-Man,68.7,15
+86272,Dillon Gabriel,Browns,1,Cover-3,41,48
+86272,Dillon Gabriel,Browns,1,Cover-3 Cloud,54,1
+86272,Dillon Gabriel,Browns,1,Cover-3 Seam,72.9,4
+86272,Dillon Gabriel,Browns,1,Cover-6,65.4,12
+86272,Dillon Gabriel,Browns,1,Prevent,54.9,1
+86272,Dillon Gabriel,Browns,1,Quarters,32.6,28
+86272,Dillon Gabriel,Browns,1,Red Zone,54.8,9
+86272,Dillon Gabriel,Browns,1,Unknown,52,2
+91399,Trey Lance,Chargers,0,Cover-0,62.3,4
+91399,Trey Lance,Chargers,0,Cover-1,53.8,8
+91399,Trey Lance,Chargers,0,Cover-2,50.9,13
+91399,Trey Lance,Chargers,0,Cover 2-Man,,1
+91399,Trey Lance,Chargers,0,Cover-3,46.7,11
+91399,Trey Lance,Chargers,0,Cover-3 Cloud,,1
+91399,Trey Lance,Chargers,0,Cover-3 Seam,25.5,7
+91399,Trey Lance,Chargers,0,Cover-6,63.1,3
+91399,Trey Lance,Chargers,0,Prevent,54.5,1
+91399,Trey Lance,Chargers,0,Quarters,32.8,15
+91399,Trey Lance,Chargers,0,Red Zone,64.3,4
+91399,Trey Lance,Chargers,0,Unknown,51.1,4
+97408,Spencer Rattler,Saints,1,Bracket,61.3,5
+97408,Spencer Rattler,Saints,1,Cover-0,66.7,9
+97408,Spencer Rattler,Saints,1,Cover-1,80.5,50
+97408,Spencer Rattler,Saints,1,Cover-2,73.6,52
+97408,Spencer Rattler,Saints,1,Cover 2-Man,80.3,4
+97408,Spencer Rattler,Saints,1,Cover-3,66.3,90
+97408,Spencer Rattler,Saints,1,Cover-3 Cloud,87.3,1
+97408,Spencer Rattler,Saints,1,Cover-3 Seam,26.3,13
+97408,Spencer Rattler,Saints,1,Cover-6,28.4,20
+97408,Spencer Rattler,Saints,1,Goal Line,71.9,1
+97408,Spencer Rattler,Saints,1,Quarters,61.4,63
+97408,Spencer Rattler,Saints,1,Red Zone,53.2,3
+97408,Spencer Rattler,Saints,1,Unknown,53.2,3
+97790,Bo Nix,Broncos,1,Bracket,72.2,1
+97790,Bo Nix,Broncos,1,Cover-0,49.7,28
+97790,Bo Nix,Broncos,1,Cover-1,87.2,105
+97790,Bo Nix,Broncos,1,Cover-2,62.8,113
+97790,Bo Nix,Broncos,1,Cover 2-Man,80.1,6
+97790,Bo Nix,Broncos,1,Cover-3,71.7,210
+97790,Bo Nix,Broncos,1,Cover-3 Cloud,41.6,9
+97790,Bo Nix,Broncos,1,Cover-3 Seam,68.1,52
+97790,Bo Nix,Broncos,1,Cover-6,72.9,90
+97790,Bo Nix,Broncos,1,Prevent,59.7,1
+97790,Bo Nix,Broncos,1,Quarters,74.9,117
+97790,Bo Nix,Broncos,1,Red Zone,46.7,38
+97790,Bo Nix,Broncos,1,Unknown,60,1
+97993,Jayden Daniels,Commanders,1,Bracket,74.6,2
+97993,Jayden Daniels,Commanders,1,Cover-0,65.8,10
+97993,Jayden Daniels,Commanders,1,Cover-1,66,65
+97993,Jayden Daniels,Commanders,1,Cover-2,67.6,34
+97993,Jayden Daniels,Commanders,1,Cover-3,62.6,83
+97993,Jayden Daniels,Commanders,1,Cover-3 Cloud,70.7,1
+97993,Jayden Daniels,Commanders,1,Cover-3 Seam,42.5,8
+97993,Jayden Daniels,Commanders,1,Cover-6,82.9,32
+97993,Jayden Daniels,Commanders,1,Quarters,81,20
+97993,Jayden Daniels,Commanders,1,Red Zone,77.3,9
+97993,Jayden Daniels,Commanders,1,Unknown,56.1,2
+100580,Kedon Slovis,Cardinals,0,Cover-3,58,1
+100580,Kedon Slovis,Cardinals,0,Cover-6,60.4,1
+105568,Max Brosmer,Vikings,0,Cover-0,60,1
+105568,Max Brosmer,Vikings,0,Cover-1,41.6,16
+105568,Max Brosmer,Vikings,0,Cover-1 Double,60,1
+105568,Max Brosmer,Vikings,0,Cover-2,54.7,17
+105568,Max Brosmer,Vikings,0,Cover-3,27.1,31
+105568,Max Brosmer,Vikings,0,Cover-3 Seam,46.8,4
+105568,Max Brosmer,Vikings,0,Cover-6,32.8,12
+105568,Max Brosmer,Vikings,0,Quarters,67.8,8
+105568,Max Brosmer,Vikings,0,Red Zone,27.3,3
+123943,Bryce Young,Panthers,1,Bracket,90.2,3
+123943,Bryce Young,Panthers,1,Cover-0,73,17
+123943,Bryce Young,Panthers,1,Cover-1,44.4,115
+123943,Bryce Young,Panthers,1,Cover-2,85.5,88
+123943,Bryce Young,Panthers,1,Cover 2-Man,60,1
+123943,Bryce Young,Panthers,1,Cover-3,64.3,157
+123943,Bryce Young,Panthers,1,Cover-3 Cloud,57.8,4
+123943,Bryce Young,Panthers,1,Cover-3 Seam,78.2,51
+123943,Bryce Young,Panthers,1,Cover-6,61,40
+123943,Bryce Young,Panthers,1,Goal Line,26.1,1
+123943,Bryce Young,Panthers,1,Prevent,52.9,6
+123943,Bryce Young,Panthers,1,Quarters,67.4,116
+123943,Bryce Young,Panthers,1,Red Zone,71.8,25
+123943,Bryce Young,Panthers,1,Unknown,56.1,2
+124199,Brady Cook,Jets,1,Bracket,60.4,1
+124199,Brady Cook,Jets,1,Cover-0,29.5,3
+124199,Brady Cook,Jets,1,Cover-1,35,20
+124199,Brady Cook,Jets,1,Cover-2,64.4,35
+124199,Brady Cook,Jets,1,Cover 2-Man,57.2,1
+124199,Brady Cook,Jets,1,Cover-3,68.5,50
+124199,Brady Cook,Jets,1,Cover-3 Cloud,60,1
+124199,Brady Cook,Jets,1,Cover-3 Seam,27.6,16
+124199,Brady Cook,Jets,1,Cover-6,51.8,24
+124199,Brady Cook,Jets,1,Prevent,59.5,1
+124199,Brady Cook,Jets,1,Quarters,26.9,30
+124199,Brady Cook,Jets,1,Red Zone,25.1,2
+124393,Anthony Richardson,Colts,0,Cover-0,73.3,1
+124393,Anthony Richardson,Colts,0,Cover-3 Seam,51.7,1
+127253,Quinn Ewers,Dolphins,0,Bracket,60.4,1
+127253,Quinn Ewers,Dolphins,0,Cover-0,60,1
+127253,Quinn Ewers,Dolphins,0,Cover-1,50.2,13
+127253,Quinn Ewers,Dolphins,0,Cover-2,41.3,19
+127253,Quinn Ewers,Dolphins,0,Cover 2-Man,37.6,2
+127253,Quinn Ewers,Dolphins,0,Cover-3,52,32
+127253,Quinn Ewers,Dolphins,0,Cover-3 Cloud,52.1,1
+127253,Quinn Ewers,Dolphins,0,Cover-3 Seam,42,10
+127253,Quinn Ewers,Dolphins,0,Cover-6,62,2
+127253,Quinn Ewers,Dolphins,0,Quarters,42.7,17
+127253,Quinn Ewers,Dolphins,0,Red Zone,84.9,3
+129759,C.J. Stroud,Texans,1,Bracket,69,7
+129759,C.J. Stroud,Texans,1,Cover-0,29.6,30
+129759,C.J. Stroud,Texans,1,Cover-1,67.1,115
+129759,C.J. Stroud,Texans,1,Cover-1 Double,48.3,4
+129759,C.J. Stroud,Texans,1,Cover-2,63.1,80
+129759,C.J. Stroud,Texans,1,Cover 2-Man,44.4,12
+129759,C.J. Stroud,Texans,1,Cover-3,60.7,148
+129759,C.J. Stroud,Texans,1,Cover-3 Cloud,35.1,1
+129759,C.J. Stroud,Texans,1,Cover-3 Seam,64.7,28
+129759,C.J. Stroud,Texans,1,Cover-6,63,64
+129759,C.J. Stroud,Texans,1,Goal Line,71.9,1
+129759,C.J. Stroud,Texans,1,Prevent,57,3
+129759,C.J. Stroud,Texans,1,Quarters,68.2,87
+129759,C.J. Stroud,Texans,1,Red Zone,68.8,21
+129759,C.J. Stroud,Texans,1,Unknown,53.2,3
+131396,Shedeur Sanders,Browns,1,Bracket,60,1
+131396,Shedeur Sanders,Browns,1,Cover-0,87.8,11
+131396,Shedeur Sanders,Browns,1,Cover-1,48.3,38
+131396,Shedeur Sanders,Browns,1,Cover-2,34.7,44
+131396,Shedeur Sanders,Browns,1,Cover 2-Man,52.4,4
+131396,Shedeur Sanders,Browns,1,Cover-3,37.5,77
+131396,Shedeur Sanders,Browns,1,Cover-3 Seam,54.9,10
+131396,Shedeur Sanders,Browns,1,Cover-6,61.7,17
+131396,Shedeur Sanders,Browns,1,Goal Line,81.3,1
+131396,Shedeur Sanders,Browns,1,Quarters,52.9,57
+131396,Shedeur Sanders,Browns,1,Red Zone,35.5,5
+131770,Tanner McKee,Eagles,0,Cover-1,49.1,11
+131770,Tanner McKee,Eagles,0,Cover-2,79.8,2
+131770,Tanner McKee,Eagles,0,Cover-3,56.5,12
+131770,Tanner McKee,Eagles,0,Cover-3 Seam,57.9,2
+131770,Tanner McKee,Eagles,0,Cover-6,60.7,8
+131770,Tanner McKee,Eagles,0,Quarters,66.5,14
+131770,Tanner McKee,Eagles,0,Red Zone,60,1
+133244,Cam Ward,Titans,1,Bracket,60,1
+133244,Cam Ward,Titans,1,Cover-0,57.7,21
+133244,Cam Ward,Titans,1,Cover-1,58,120
+133244,Cam Ward,Titans,1,Cover-2,71.2,91
+133244,Cam Ward,Titans,1,Cover 2-Man,75,5
+133244,Cam Ward,Titans,1,Cover-3,45.8,189
+133244,Cam Ward,Titans,1,Cover-3 Cloud,27.1,3
+133244,Cam Ward,Titans,1,Cover-3 Double Cloud,47.5,1
+133244,Cam Ward,Titans,1,Cover-3 Seam,76.6,32
+133244,Cam Ward,Titans,1,Cover-6,61.2,91
+133244,Cam Ward,Titans,1,Goal Line,74.6,3
+133244,Cam Ward,Titans,1,Prevent,58.6,1
+133244,Cam Ward,Titans,1,Quarters,57.7,84
+133244,Cam Ward,Titans,1,Red Zone,56.3,17
+133244,Cam Ward,Titans,1,Unknown,53.2,3
+143862,Riley Leonard,Colts,0,Cover-0,69.4,3
+143862,Riley Leonard,Colts,0,Cover-1,54.7,14
+143862,Riley Leonard,Colts,0,Cover-2,56.5,11
+143862,Riley Leonard,Colts,0,Cover-3,46.6,16
+143862,Riley Leonard,Colts,0,Cover-3 Cloud,71.9,2
+143862,Riley Leonard,Colts,0,Cover-3 Seam,77.8,6
+143862,Riley Leonard,Colts,0,Cover-6,62.1,12
+143862,Riley Leonard,Colts,0,Prevent,60.6,2
+143862,Riley Leonard,Colts,0,Quarters,52.4,10
+143862,Riley Leonard,Colts,0,Red Zone,84.3,3
+143969,Drake Maye,Patriots,1,Bracket,58.9,6
+143969,Drake Maye,Patriots,1,Cover-0,42.8,35
+143969,Drake Maye,Patriots,1,Cover-1,62.4,156
+143969,Drake Maye,Patriots,1,Cover-1 Double,69.4,4
+143969,Drake Maye,Patriots,1,Cover-2,92.2,105
+143969,Drake Maye,Patriots,1,Cover 2-Man,74.4,17
+143969,Drake Maye,Patriots,1,Cover-3,74,207
+143969,Drake Maye,Patriots,1,Cover-3 Cloud,78.1,5
+143969,Drake Maye,Patriots,1,Cover-3 Seam,53,40
+143969,Drake Maye,Patriots,1,Cover-6,53.5,101
+143969,Drake Maye,Patriots,1,Goal Line,62.5,4
+143969,Drake Maye,Patriots,1,Prevent,58.4,2
+143969,Drake Maye,Patriots,1,Quarters,90.6,87
+143969,Drake Maye,Patriots,1,Red Zone,55.1,28
+144622,Caleb Williams,Bears,1,Bracket,86,2
+144622,Caleb Williams,Bears,1,Cover-0,66.2,42
+144622,Caleb Williams,Bears,1,Cover-1,72.9,137
+144622,Caleb Williams,Bears,1,Cover-2,61.2,109
+144622,Caleb Williams,Bears,1,Cover-3,59.6,231
+144622,Caleb Williams,Bears,1,Cover-3 Cloud,64.7,8
+144622,Caleb Williams,Bears,1,Cover-3 Seam,78.1,38
+144622,Caleb Williams,Bears,1,Cover-6,71.6,78
+144622,Caleb Williams,Bears,1,Goal Line,71.5,2
+144622,Caleb Williams,Bears,1,Prevent,57.7,2
+144622,Caleb Williams,Bears,1,Quarters,82.3,107
+144622,Caleb Williams,Bears,1,Red Zone,36.7,22
+144622,Caleb Williams,Bears,1,Unknown,56.1,2
+144918,J.J. McCarthy,Vikings,1,Bracket,77.3,5
+144918,J.J. McCarthy,Vikings,1,Cover-0,46.4,18
+144918,J.J. McCarthy,Vikings,1,Cover-1,44.4,58
+144918,J.J. McCarthy,Vikings,1,Cover-1 Double,95.1,4
+144918,J.J. McCarthy,Vikings,1,Cover-2,60.1,56
+144918,J.J. McCarthy,Vikings,1,Cover 2-Man,70.7,1
+144918,J.J. McCarthy,Vikings,1,Cover-3,74.2,71
+144918,J.J. McCarthy,Vikings,1,Cover-3 Cloud,60,1
+144918,J.J. McCarthy,Vikings,1,Cover-3 Seam,89.1,4
+144918,J.J. McCarthy,Vikings,1,Cover-6,66.4,37
+144918,J.J. McCarthy,Vikings,1,Goal Line,60,1
+144918,J.J. McCarthy,Vikings,1,Prevent,57.1,1
+144918,J.J. McCarthy,Vikings,1,Quarters,45.4,41
+144918,J.J. McCarthy,Vikings,1,Red Zone,40.9,12
+146409,Jaxson Dart,Giants,1,Bracket,,1
+146409,Jaxson Dart,Giants,1,Cover-0,57.6,27
+146409,Jaxson Dart,Giants,1,Cover-1,48.1,89
+146409,Jaxson Dart,Giants,1,Cover-1 Double,71.5,2
+146409,Jaxson Dart,Giants,1,Cover-2,55.6,58
+146409,Jaxson Dart,Giants,1,Cover 2-Man,55.1,1
+146409,Jaxson Dart,Giants,1,Cover-3,80.1,109
+146409,Jaxson Dart,Giants,1,Cover-3 Seam,76.9,47
+146409,Jaxson Dart,Giants,1,Cover-6,89.2,43
+146409,Jaxson Dart,Giants,1,Quarters,40.1,61
+146409,Jaxson Dart,Giants,1,Red Zone,28,8
+146409,Jaxson Dart,Giants,1,Unknown,60,1
+169628,Tyson Bagent,Bears,0,Cover-1,71.9,1
+169628,Tyson Bagent,Bears,0,Cover-2,60.4,1
+169628,Tyson Bagent,Bears,0,Cover-3,49.2,2
+169628,Tyson Bagent,Bears,0,Quarters,60.1,1

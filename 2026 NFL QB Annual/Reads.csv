@@ -1,0 +1,374 @@
+﻿Player Id,Name,Team,QB Decision,PASS GRD,Att
+1725,Philip Rivers,Colts,Checkdown,59.7,10
+1725,Philip Rivers,Colts,First Read,49.3,71
+1725,Philip Rivers,Colts,Scramble Drill,60.4,1
+1725,Philip Rivers,Colts,Next Read,52.7,8
+1725,Philip Rivers,Colts,N/A,63.4,12
+2241,Aaron Rodgers,Steelers,Checkdown,67.4,73
+2241,Aaron Rodgers,Steelers,Hail Mary,59.5,1
+2241,Aaron Rodgers,Steelers,First Read,68.3,349
+2241,Aaron Rodgers,Steelers,Scramble Drill,83.9,43
+2241,Aaron Rodgers,Steelers,Next Read,37.2,60
+2241,Aaron Rodgers,Steelers,N/A,69.1,86
+4332,Joe Flacco,Bengals,Checkdown,48.7,67
+4332,Joe Flacco,Bengals,Hail Mary,52.1,1
+4332,Joe Flacco,Bengals,First Read,73.2,295
+4332,Joe Flacco,Bengals,Scramble Drill,52.6,15
+4332,Joe Flacco,Bengals,Next Read,55.9,55
+4332,Joe Flacco,Bengals,N/A,64,33
+4474,Josh Johnson,Commanders,Checkdown,34,5
+4474,Josh Johnson,Commanders,First Read,64.2,49
+4474,Josh Johnson,Commanders,Next Read,42.9,9
+4474,Josh Johnson,Commanders,N/A,62.1,9
+4924,Matthew Stafford,Rams,Checkdown,59.4,88
+4924,Matthew Stafford,Rams,First Read,94.2,535
+4924,Matthew Stafford,Rams,Scramble Drill,52,21
+4924,Matthew Stafford,Rams,Next Read,71.1,96
+4924,Matthew Stafford,Rams,N/A,59.1,57
+6187,Andy Dalton,Panthers,Checkdown,60.4,1
+6187,Andy Dalton,Panthers,First Read,69.5,38
+6187,Andy Dalton,Panthers,Scramble Drill,60.5,1
+6187,Andy Dalton,Panthers,Next Read,49.2,6
+6187,Andy Dalton,Panthers,N/A,27.5,4
+6332,Tyrod Taylor,Jets,Checkdown,64.5,10
+6332,Tyrod Taylor,Jets,First Read,50.6,116
+6332,Tyrod Taylor,Jets,Scramble Drill,90.5,15
+6332,Tyrod Taylor,Jets,Next Read,56.6,22
+6332,Tyrod Taylor,Jets,N/A,62.1,15
+7077,Russell Wilson,Giants,Checkdown,62.2,22
+7077,Russell Wilson,Giants,First Read,64.7,94
+7077,Russell Wilson,Giants,Scramble Drill,68.1,8
+7077,Russell Wilson,Giants,Next Read,54.5,17
+7077,Russell Wilson,Giants,N/A,58.3,11
+7102,Kirk Cousins,Falcons,Checkdown,67.5,44
+7102,Kirk Cousins,Falcons,First Read,79.7,165
+7102,Kirk Cousins,Falcons,Scramble Drill,57.4,4
+7102,Kirk Cousins,Falcons,Next Read,63.5,47
+7102,Kirk Cousins,Falcons,N/A,55.1,42
+7820,Geno Smith,Raiders,Checkdown,66.3,62
+7820,Geno Smith,Raiders,First Read,59.8,358
+7820,Geno Smith,Raiders,Scramble Drill,78.2,23
+7820,Geno Smith,Raiders,Next Read,30.5,57
+7820,Geno Smith,Raiders,N/A,62.7,57
+8667,Teddy Bridgewater,Buccaneers,First Read,48.4,13
+8667,Teddy Bridgewater,Buccaneers,Scramble Drill,60,1
+8667,Teddy Bridgewater,Buccaneers,Next Read,43.9,2
+8667,Teddy Bridgewater,Buccaneers,N/A,63.7,4
+9434,Jameis Winston,Giants,Checkdown,58.1,5
+9434,Jameis Winston,Giants,First Read,62.3,55
+9434,Jameis Winston,Giants,Scramble Drill,95.7,2
+9434,Jameis Winston,Giants,Next Read,51.4,9
+9434,Jameis Winston,Giants,N/A,64.1,5
+9435,Marcus Mariota,Commanders,Checkdown,61.1,13
+9435,Marcus Mariota,Commanders,First Read,82.2,196
+9435,Marcus Mariota,Commanders,Scramble Drill,27.1,25
+9435,Marcus Mariota,Commanders,Next Read,76.1,19
+9435,Marcus Mariota,Commanders,N/A,58.4,32
+10635,Jared Goff,Lions,Checkdown,63.8,57
+10635,Jared Goff,Lions,First Read,80.5,423
+10635,Jared Goff,Lions,Scramble Drill,58.5,18
+10635,Jared Goff,Lions,Next Read,63.7,75
+10635,Jared Goff,Lions,N/A,60.9,75
+10636,Carson Wentz,Vikings,Checkdown,65.9,14
+10636,Carson Wentz,Vikings,First Read,53.2,128
+10636,Carson Wentz,Vikings,Scramble Drill,69.5,11
+10636,Carson Wentz,Vikings,Next Read,31.6,34
+10636,Carson Wentz,Vikings,N/A,61.3,23
+10725,Jacoby Brissett,Cardinals,Checkdown,56.7,69
+10725,Jacoby Brissett,Cardinals,Hail Mary,60.3,2
+10725,Jacoby Brissett,Cardinals,First Read,80.4,367
+10725,Jacoby Brissett,Cardinals,Scramble Drill,28.9,24
+10725,Jacoby Brissett,Cardinals,Next Read,37.9,73
+10725,Jacoby Brissett,Cardinals,N/A,66,46
+10769,Dak Prescott,Cowboys,Checkdown,59,90
+10769,Dak Prescott,Cowboys,Hail Mary,53.1,1
+10769,Dak Prescott,Cowboys,First Read,86.7,464
+10769,Dak Prescott,Cowboys,Scramble Drill,77.3,23
+10769,Dak Prescott,Cowboys,Next Read,76.1,100
+10769,Dak Prescott,Cowboys,N/A,63.7,34
+10835,Brandon Allen,Titans,Checkdown,63.6,4
+10835,Brandon Allen,Titans,First Read,45.4,15
+10835,Brandon Allen,Titans,Scramble Drill,70.7,1
+10835,Brandon Allen,Titans,Next Read,21.3,4
+10835,Brandon Allen,Titans,N/A,66,8
+11757,Mitch Trubisky,Bills,Checkdown,63,3
+11757,Mitch Trubisky,Bills,First Read,80.8,26
+11757,Mitch Trubisky,Bills,Scramble Drill,56,2
+11757,Mitch Trubisky,Bills,Next Read,64.1,7
+11757,Mitch Trubisky,Bills,N/A,60.4,1
+11765,Patrick Mahomes,Chiefs,Checkdown,44.7,37
+11765,Patrick Mahomes,Chiefs,Hail Mary,57.1,3
+11765,Patrick Mahomes,Chiefs,First Read,62.6,381
+11765,Patrick Mahomes,Chiefs,Scramble Drill,93,56
+11765,Patrick Mahomes,Chiefs,Next Read,69.4,75
+11765,Patrick Mahomes,Chiefs,N/A,68.6,84
+11890,Joshua Dobbs,Patriots,Checkdown,60.4,1
+11890,Joshua Dobbs,Patriots,First Read,59.7,8
+11890,Joshua Dobbs,Patriots,Scramble Drill,71.9,1
+11890,Joshua Dobbs,Patriots,N/A,62,2
+12282,Nick Mullens,Jaguars,First Read,70.4,1
+12282,Nick Mullens,Jaguars,N/A,61.8,2
+12324,Cooper Rush,Ravens,Checkdown,40.5,9
+12324,Cooper Rush,Ravens,First Read,76.3,34
+12324,Cooper Rush,Ravens,Scramble Drill,58.1,2
+12324,Cooper Rush,Ravens,Next Read,30.7,7
+12324,Cooper Rush,Ravens,N/A,54.9,5
+12659,Shane Buechele,Chiefs,Checkdown,59,2
+12659,Shane Buechele,Chiefs,First Read,54.5,12
+12659,Shane Buechele,Chiefs,Scramble Drill,60,2
+12659,Shane Buechele,Chiefs,Next Read,57,2
+12659,Shane Buechele,Chiefs,N/A,62.1,2
+13725,Jarrett Stidham,Broncos,Checkdown,26.8,8
+13725,Jarrett Stidham,Broncos,First Read,51,18
+13725,Jarrett Stidham,Broncos,Scramble Drill,76.4,1
+13725,Jarrett Stidham,Broncos,Next Read,69.9,4
+13725,Jarrett Stidham,Broncos,N/A,57.8,6
+26152,Kyle Allen,Lions,First Read,73,2
+28022,Joe Burrow,Bengals,Checkdown,63.3,45
+28022,Joe Burrow,Bengals,First Read,92.2,194
+28022,Joe Burrow,Bengals,Scramble Drill,85.8,22
+28022,Joe Burrow,Bengals,Next Read,71.5,24
+28022,Joe Burrow,Bengals,N/A,56.1,18
+28237,Justin Herbert,Chargers,Checkdown,68.9,52
+28237,Justin Herbert,Chargers,First Read,71.9,438
+28237,Justin Herbert,Chargers,Scramble Drill,65,45
+28237,Justin Herbert,Chargers,Next Read,70,113
+28237,Justin Herbert,Chargers,N/A,61.9,43
+29048,Sam Darnold,Seahawks,Checkdown,60.4,58
+29048,Sam Darnold,Seahawks,First Read,85.8,435
+29048,Sam Darnold,Seahawks,Scramble Drill,51.2,29
+29048,Sam Darnold,Seahawks,Next Read,64,81
+29048,Sam Darnold,Seahawks,N/A,61.1,57
+38334,Kyler Murray,Cardinals,Checkdown,61.7,16
+38334,Kyler Murray,Cardinals,First Read,67.6,132
+38334,Kyler Murray,Cardinals,Scramble Drill,44,14
+38334,Kyler Murray,Cardinals,Next Read,89.4,20
+38334,Kyler Murray,Cardinals,N/A,64.1,29
+39395,Daniel Jones,Colts,Checkdown,58.1,41
+39395,Daniel Jones,Colts,First Read,71.3,338
+39395,Daniel Jones,Colts,Scramble Drill,73.1,8
+39395,Daniel Jones,Colts,Next Read,56,39
+39395,Daniel Jones,Colts,N/A,55.8,34
+39517,Drew Lock,Seahawks,Checkdown,62,2
+39517,Drew Lock,Seahawks,First Read,43.2,1
+40291,Jalen Hurts,Eagles,Checkdown,66.4,41
+40291,Jalen Hurts,Eagles,Hail Mary,59.5,1
+40291,Jalen Hurts,Eagles,First Read,75.7,418
+40291,Jalen Hurts,Eagles,Scramble Drill,73.9,45
+40291,Jalen Hurts,Eagles,Next Read,68.5,50
+40291,Jalen Hurts,Eagles,N/A,61.7,47
+40306,Jordan Love,Packers,Checkdown,55.6,73
+40306,Jordan Love,Packers,Hail Mary,29.7,1
+40306,Jordan Love,Packers,First Read,92.8,373
+40306,Jordan Love,Packers,Scramble Drill,38.9,20
+40306,Jordan Love,Packers,Next Read,74.1,49
+40306,Jordan Love,Packers,N/A,64.3,56
+40364,Chris Oladokun,Chiefs,Checkdown,38.8,9
+40364,Chris Oladokun,Chiefs,First Read,43.7,38
+40364,Chris Oladokun,Chiefs,Scramble Drill,54.6,9
+40364,Chris Oladokun,Chiefs,Next Read,68.2,3
+40364,Chris Oladokun,Chiefs,N/A,65.4,12
+41401,Gardner Minshew,Chiefs,Checkdown,60,1
+41401,Gardner Minshew,Chiefs,First Read,36.1,8
+41401,Gardner Minshew,Chiefs,Scramble Drill,60,1
+41401,Gardner Minshew,Chiefs,Next Read,43.7,3
+41401,Gardner Minshew,Chiefs,N/A,62.1,2
+46401,Jake Browning,Bengals,Checkdown,60,14
+46401,Jake Browning,Bengals,First Read,45.7,96
+46401,Jake Browning,Bengals,Scramble Drill,50.5,8
+46401,Jake Browning,Bengals,Next Read,72.9,15
+46401,Jake Browning,Bengals,N/A,68.5,17
+46416,Lamar Jackson,Ravens,Checkdown,69.1,30
+46416,Lamar Jackson,Ravens,First Read,75.8,239
+46416,Lamar Jackson,Ravens,Scramble Drill,65.4,37
+46416,Lamar Jackson,Ravens,Next Read,39.9,53
+46416,Lamar Jackson,Ravens,N/A,59,34
+46448,Tyler Huntley,Ravens,Checkdown,60.5,8
+46448,Tyler Huntley,Ravens,First Read,73.7,58
+46448,Tyler Huntley,Ravens,Scramble Drill,45.2,3
+46448,Tyler Huntley,Ravens,Next Read,57.5,8
+46448,Tyler Huntley,Ravens,N/A,63.7,8
+46487,Brett Rypien,Bengals,First Read,60,1
+46518,Baker Mayfield,Buccaneers,Checkdown,62.5,50
+46518,Baker Mayfield,Buccaneers,Hail Mary,61.3,2
+46518,Baker Mayfield,Buccaneers,First Read,59.6,415
+46518,Baker Mayfield,Buccaneers,Scramble Drill,80.6,38
+46518,Baker Mayfield,Buccaneers,Next Read,62.7,92
+46518,Baker Mayfield,Buccaneers,N/A,69.7,83
+46569,Mason Rudolph,Steelers,Checkdown,65.1,7
+46569,Mason Rudolph,Steelers,First Read,41,33
+46569,Mason Rudolph,Steelers,Scramble Drill,50.6,2
+46569,Mason Rudolph,Steelers,Next Read,71.9,10
+46569,Mason Rudolph,Steelers,N/A,63.9,9
+46601,Josh Allen,Bills,Checkdown,65.8,61
+46601,Josh Allen,Bills,First Read,85.1,384
+46601,Josh Allen,Bills,Scramble Drill,91.4,54
+46601,Josh Allen,Bills,Next Read,59.1,92
+46601,Josh Allen,Bills,N/A,61.2,86
+52269,Davis Mills,Texans,Checkdown,62.7,11
+52269,Davis Mills,Texans,Hail Mary,59.5,1
+52269,Davis Mills,Texans,First Read,70.8,138
+52269,Davis Mills,Texans,Scramble Drill,22.1,5
+52269,Davis Mills,Texans,Next Read,79.6,17
+52269,Davis Mills,Texans,N/A,62.8,11
+60323,Mac Jones,49ers,Checkdown,65.2,48
+60323,Mac Jones,49ers,First Read,76.3,231
+60323,Mac Jones,49ers,Scramble Drill,60.9,9
+60323,Mac Jones,49ers,Next Read,66.6,21
+60323,Mac Jones,49ers,N/A,61.4,25
+60326,Tua Tagovailoa,Dolphins,Checkdown,55.7,43
+60326,Tua Tagovailoa,Dolphins,Hail Mary,60,1
+60326,Tua Tagovailoa,Dolphins,First Read,78.3,251
+60326,Tua Tagovailoa,Dolphins,Scramble Drill,62.3,20
+60326,Tua Tagovailoa,Dolphins,Next Read,40.9,76
+60326,Tua Tagovailoa,Dolphins,N/A,55.2,74
+60341,Malik Willis,Packers,Checkdown,62.2,2
+60341,Malik Willis,Packers,First Read,91.7,38
+60341,Malik Willis,Packers,Scramble Drill,73.6,1
+60341,Malik Willis,Packers,Next Read,58.1,3
+60341,Malik Willis,Packers,N/A,61.8,5
+60515,Kenny Pickett,Raiders,Checkdown,57.4,7
+60515,Kenny Pickett,Raiders,First Read,38.1,38
+60515,Kenny Pickett,Raiders,Scramble Drill,74.9,2
+60515,Kenny Pickett,Raiders,Next Read,69.4,6
+60515,Kenny Pickett,Raiders,N/A,61.9,5
+60516,Aidan O'Connell,Raiders,Checkdown,57,6
+60516,Aidan O'Connell,Raiders,First Read,72,16
+60516,Aidan O'Connell,Raiders,N/A,52.2,3
+77632,Trevor Lawrence,Jaguars,Checkdown,64.9,54
+77632,Trevor Lawrence,Jaguars,Hail Mary,60,1
+77632,Trevor Lawrence,Jaguars,First Read,85.7,490
+77632,Trevor Lawrence,Jaguars,Scramble Drill,65.9,27
+77632,Trevor Lawrence,Jaguars,Next Read,61,74
+77632,Trevor Lawrence,Jaguars,N/A,53.1,79
+77652,Clayton Tune,Packers,Checkdown,64,4
+77652,Clayton Tune,Packers,First Read,28.3,12
+77652,Clayton Tune,Packers,Next Read,52,4
+77652,Clayton Tune,Packers,N/A,45.5,3
+77672,Brock Purdy,49ers,Checkdown,58.1,44
+77672,Brock Purdy,49ers,First Read,81.1,232
+77672,Brock Purdy,49ers,Scramble Drill,86.8,27
+77672,Brock Purdy,49ers,Next Read,73.5,63
+77672,Brock Purdy,49ers,N/A,66.4,38
+82096,Zach Wilson,Dolphins,First Read,45.2,6
+82096,Zach Wilson,Dolphins,Next Read,59,3
+82096,Zach Wilson,Dolphins,N/A,62.9,3
+82118,Justin Fields,Jets,Checkdown,66.6,29
+82118,Justin Fields,Jets,First Read,66.3,167
+82118,Justin Fields,Jets,Scramble Drill,91.1,11
+82118,Justin Fields,Jets,Next Read,45.8,45
+82118,Justin Fields,Jets,N/A,56.3,24
+82134,Michael Penix Jr.,Falcons,Checkdown,35.1,26
+82134,Michael Penix Jr.,Falcons,First Read,55.5,212
+82134,Michael Penix Jr.,Falcons,Scramble Drill,78.9,15
+82134,Michael Penix Jr.,Falcons,Next Read,67.9,42
+82134,Michael Penix Jr.,Falcons,N/A,62.7,30
+82151,Joe Milton III,Cowboys,Checkdown,62,2
+82151,Joe Milton III,Cowboys,First Read,49.1,23
+82151,Joe Milton III,Cowboys,Scramble Drill,52.1,1
+82151,Joe Milton III,Cowboys,Next Read,70.8,1
+82151,Joe Milton III,Cowboys,N/A,63.1,3
+83537,Tyler Shough,Saints,Checkdown,67.4,41
+83537,Tyler Shough,Saints,First Read,71.3,262
+83537,Tyler Shough,Saints,Scramble Drill,59.8,21
+83537,Tyler Shough,Saints,Next Read,73.6,46
+83537,Tyler Shough,Saints,N/A,66.3,27
+86272,Dillon Gabriel,Browns,Checkdown,54.6,20
+86272,Dillon Gabriel,Browns,First Read,58.8,152
+86272,Dillon Gabriel,Browns,Scramble Drill,46.5,8
+86272,Dillon Gabriel,Browns,Next Read,28,27
+86272,Dillon Gabriel,Browns,N/A,62,25
+91399,Trey Lance,Chargers,Checkdown,55.9,6
+91399,Trey Lance,Chargers,First Read,28.4,50
+91399,Trey Lance,Chargers,Scramble Drill,72.3,3
+91399,Trey Lance,Chargers,Next Read,53.2,4
+91399,Trey Lance,Chargers,N/A,57.3,9
+97408,Spencer Rattler,Saints,Checkdown,65.2,34
+97408,Spencer Rattler,Saints,First Read,72.5,211
+97408,Spencer Rattler,Saints,Scramble Drill,59.5,18
+97408,Spencer Rattler,Saints,Next Read,35.7,27
+97408,Spencer Rattler,Saints,N/A,57,24
+97790,Bo Nix,Broncos,Checkdown,60.4,108
+97790,Bo Nix,Broncos,First Read,76.2,458
+97790,Bo Nix,Broncos,Scramble Drill,59.3,30
+97790,Bo Nix,Broncos,Next Read,78.1,77
+97790,Bo Nix,Broncos,N/A,66.6,98
+97993,Jayden Daniels,Commanders,Checkdown,59.1,24
+97993,Jayden Daniels,Commanders,First Read,75.1,172
+97993,Jayden Daniels,Commanders,Scramble Drill,93.3,11
+97993,Jayden Daniels,Commanders,Next Read,51.7,27
+97993,Jayden Daniels,Commanders,N/A,50.2,32
+100580,Kedon Slovis,Cardinals,Checkdown,60.4,1
+100580,Kedon Slovis,Cardinals,First Read,58,1
+105568,Max Brosmer,Vikings,Checkdown,67.1,11
+105568,Max Brosmer,Vikings,First Read,28.6,50
+105568,Max Brosmer,Vikings,Scramble Drill,25.5,4
+105568,Max Brosmer,Vikings,Next Read,36.9,13
+105568,Max Brosmer,Vikings,N/A,45.1,15
+123943,Bryce Young,Panthers,Checkdown,61.2,59
+123943,Bryce Young,Panthers,First Read,63.5,406
+123943,Bryce Young,Panthers,Scramble Drill,85.6,36
+123943,Bryce Young,Panthers,Next Read,69.6,76
+123943,Bryce Young,Panthers,N/A,64,49
+124199,Brady Cook,Jets,Checkdown,65.5,12
+124199,Brady Cook,Jets,Hail Mary,59.5,1
+124199,Brady Cook,Jets,First Read,30,129
+124199,Brady Cook,Jets,Scramble Drill,43.3,6
+124199,Brady Cook,Jets,Next Read,69.7,13
+124199,Brady Cook,Jets,N/A,42.7,23
+124393,Anthony Richardson,Colts,First Read,65.9,2
+127253,Quinn Ewers,Dolphins,Checkdown,61.5,8
+127253,Quinn Ewers,Dolphins,First Read,41.6,57
+127253,Quinn Ewers,Dolphins,Scramble Drill,68.5,4
+127253,Quinn Ewers,Dolphins,Next Read,27.9,13
+127253,Quinn Ewers,Dolphins,N/A,65.5,19
+129759,C.J. Stroud,Texans,Checkdown,61.4,49
+129759,C.J. Stroud,Texans,Hail Mary,60.7,1
+129759,C.J. Stroud,Texans,First Read,66.7,416
+129759,C.J. Stroud,Texans,Scramble Drill,54,30
+129759,C.J. Stroud,Texans,Next Read,47.5,74
+129759,C.J. Stroud,Texans,N/A,57.1,34
+131396,Shedeur Sanders,Browns,Checkdown,37.4,36
+131396,Shedeur Sanders,Browns,First Read,46.7,158
+131396,Shedeur Sanders,Browns,Scramble Drill,48.4,16
+131396,Shedeur Sanders,Browns,Next Read,46.8,23
+131396,Shedeur Sanders,Browns,N/A,60.9,32
+131770,Tanner McKee,Eagles,Checkdown,60,3
+131770,Tanner McKee,Eagles,First Read,62,39
+131770,Tanner McKee,Eagles,Scramble Drill,62.9,4
+131770,Tanner McKee,Eagles,Next Read,48.7,2
+131770,Tanner McKee,Eagles,N/A,62.2,2
+133244,Cam Ward,Titans,Checkdown,45.1,65
+133244,Cam Ward,Titans,First Read,51.1,398
+133244,Cam Ward,Titans,Scramble Drill,91.9,31
+133244,Cam Ward,Titans,Next Read,67.5,79
+133244,Cam Ward,Titans,N/A,54.6,89
+143862,Riley Leonard,Colts,Checkdown,64.3,5
+143862,Riley Leonard,Colts,Hail Mary,59.7,1
+143862,Riley Leonard,Colts,First Read,74,59
+143862,Riley Leonard,Colts,Scramble Drill,42.5,3
+143862,Riley Leonard,Colts,Next Read,25,6
+143862,Riley Leonard,Colts,N/A,61.8,5
+143969,Drake Maye,Patriots,Checkdown,71,72
+143969,Drake Maye,Patriots,Hail Mary,60.7,1
+143969,Drake Maye,Patriots,First Read,76.1,556
+143969,Drake Maye,Patriots,Scramble Drill,53.3,35
+143969,Drake Maye,Patriots,Next Read,74.3,84
+143969,Drake Maye,Patriots,N/A,67.7,49
+144622,Caleb Williams,Bears,Checkdown,61.7,61
+144622,Caleb Williams,Bears,First Read,71.6,466
+144622,Caleb Williams,Bears,Scramble Drill,62.9,77
+144622,Caleb Williams,Bears,Next Read,75.8,92
+144622,Caleb Williams,Bears,N/A,60.8,84
+144918,J.J. McCarthy,Vikings,Checkdown,64.4,24
+144918,J.J. McCarthy,Vikings,First Read,64.4,202
+144918,J.J. McCarthy,Vikings,Scramble Drill,29.1,10
+144918,J.J. McCarthy,Vikings,Next Read,67.6,35
+144918,J.J. McCarthy,Vikings,N/A,46.5,39
+146409,Jaxson Dart,Giants,Checkdown,63.1,27
+146409,Jaxson Dart,Giants,First Read,65.5,301
+146409,Jaxson Dart,Giants,Scramble Drill,61.3,26
+146409,Jaxson Dart,Giants,Next Read,50.3,48
+146409,Jaxson Dart,Giants,N/A,67.2,45
+169628,Tyson Bagent,Bears,First Read,61.7,4
+169628,Tyson Bagent,Bears,N/A,60.1,1
