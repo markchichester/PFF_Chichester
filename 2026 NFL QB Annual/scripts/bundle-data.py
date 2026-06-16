@@ -19,8 +19,8 @@ FILES = {
         ROOT / "grading-profile.csv",
     ],
     "stableUnstableFeedText": [
-        ROOT / "Stable and unstable.csv",
         ROOT / "stable-unstable.csv",
+        ROOT / "Stable and unstable.csv",
     ],
     "passingPressureFeedText": [ROOT / "passing_pressure.csv"],
     "passingConceptFeedText": [ROOT / "passing_concept.csv"],

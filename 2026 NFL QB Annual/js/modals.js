@@ -222,16 +222,50 @@
     if (!game) return;
 
     const weekLabel = game.weekLabel || `Week ${game.week}`;
-    const opponent = game.opponent || "—";
+    const opponentRaw = game.opponent || "";
     const stats = game.gameStats || {};
     const glossary = global.QbAnnualStatGlossary?.groups || [];
+    const Teams = global.QbAnnualTeams;
+
+    // Home/away + opponent name
+    const isAway = /^@/.test(opponentRaw.trim());
+    const oppNickname = opponentRaw.replace(/^(vs\.?\s*|@\s*)/i, "").trim();
+
+    // QB team
+    const qbTeam  = Teams.resolve(profile.franchiseId || "");
+    const qbColor = qbTeam.primary || "#003594";
+    const qbNick  = qbTeam.nickname || profile.team || "—";
+    const qbLogo  = qbTeam.logo || "";
+
+    // Opponent team
+    const oppTeam  = oppNickname ? Teams.resolveByNickname(oppNickname) : { primary: "#6b7280", nickname: oppNickname || "—", logo: "" };
+    const oppColor = oppTeam.primary || "#6b7280";
+    const oppLogo  = oppTeam.logo || "";
+
+    // Nothing needed for tier anymore
+
+    // Logo helper with fallback initial
+    const logoImg = (url, nick, color) => {
+      const fallback = `<span class="qb-gm-logo-fb" style="background:${escapeAttr(color)}">${escapeHtml((nick || "?")[0])}</span>`;
+      if (!url) return fallback;
+      return `<img class="qb-gm-logo-img" src="${escapeAttr(url)}" alt="${escapeAttr(nick)}" loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">${fallback.replace('style="', 'style="display:none;')}`;
+    };
+
+    const homeAwayBadge = isAway
+      ? `<span class="qb-gm-pill qb-gm-pill--away">Away</span>`
+      : `<span class="qb-gm-pill qb-gm-pill--home">Home</span>`;
 
     const statBlocks = glossary
       .map((group) => {
         const items = group.stats
           .map((stat) => {
-            const value = statValue(stats, stat.key);
+            let value = statValue(stats, stat.key);
             if (value === "—") return "";
+            if (stat.format === "1dp") {
+              const n = parseFloat(value);
+              if (Number.isFinite(n)) value = n.toFixed(1);
+            }
             return `<div class="qb-game-stat">
   <span class="qb-game-stat-abbr" title="${escapeAttr(stat.label)}">${escapeHtml(stat.abbr)}</span>
   <span class="qb-game-stat-value">${escapeHtml(value)}</span>
@@ -248,15 +282,36 @@
       .filter(Boolean)
       .join("");
 
+    const qbSec = qbTeam.secondary || "#ffffff";
+
     open(
-      `${escapeHtml(weekLabel)} · ${escapeHtml(opponent)}`,
-      `<div class="qb-game-modal-head">
-  <div class="qb-game-modal-grade">
-    <span class="qb-game-modal-grade-label">PFF grade</span>
-    <span class="qb-game-modal-grade-value">${formatGrade(game.grade)}</span>
+      escapeHtml(weekLabel),
+      `<div class="qb-gm-wrap" style="--pri:${escapeAttr(qbColor)};--sec:${escapeAttr(qbSec)};--opp:${escapeAttr(oppColor)}">
+  <div class="qb-gm-hero">
+    <div class="qb-gm-meta">
+      <span class="qb-gm-week-lbl">${escapeHtml(weekLabel)}</span>
+      ${homeAwayBadge}
+    </div>
+    <div class="qb-gm-matchup-row">
+      <div class="qb-gm-team-col">
+        <div class="qb-gm-logo-ring">${logoImg(qbLogo, qbNick, qbColor)}</div>
+        <span class="qb-gm-team-lbl">${escapeHtml(qbNick)}</span>
+      </div>
+      <div class="qb-gm-vs-col">vs</div>
+      <div class="qb-gm-team-col">
+        <div class="qb-gm-logo-ring qb-gm-logo-ring--opp">${logoImg(oppLogo, oppTeam.nickname, oppColor)}</div>
+        <span class="qb-gm-team-lbl">${escapeHtml(oppTeam.nickname)}</span>
+      </div>
+    </div>
+    <div class="qb-gm-grade-card">
+      <span class="qb-gm-grade-eyebrow">PFF Grade</span>
+      <span class="qb-gm-grade-num">${escapeHtml(formatGrade(game.grade))}</span>
+    </div>
   </div>
-</div>
-${statBlocks || `<p class="qb-modal-sub">No stat line found in opponents.csv for this week.</p>`}`
+  <div class="qb-gm-stats-body">
+    ${statBlocks || `<p class="qb-gm-empty">No stat line found in opponents.csv for this week.</p>`}
+  </div>
+</div>`
     );
   }
 

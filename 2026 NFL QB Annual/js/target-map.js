@@ -157,9 +157,11 @@
   }
 
   function scrollToMapSlide(track, slideId) {
-    const slide = track.querySelector(`.qb-target-map-slide[data-map-slide="${slideId}"]`);
-    if (!slide) return;
-    slide.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+    const slides = [...track.querySelectorAll(".qb-target-map-slide")];
+    const idx = slides.findIndex((s) => s.dataset.mapSlide === slideId);
+    if (idx === -1) return;
+    // Scroll only the carousel track — do not affect page scroll position
+    track.scrollTo({ left: idx * track.clientWidth, behavior: "smooth" });
   }
 
   function syncMapTabsFromScroll(widget) {

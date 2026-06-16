@@ -2047,7 +2047,7 @@
       showAttempts: true,
       showRank: Boolean(rankPools),
       rows: rows
-        .filter((row) => row.grade != null && Number.isFinite(row.grade))
+        .filter((row) => row.grade != null && Number.isFinite(row.grade) && String(row.label || "").trim().toUpperCase() !== "N/A")
         .map((row) => {
           const metricId = normalizeMetricId(row.label);
           const { rank, total } = computeRushRank(rankPools?.[metricId], pid, playerName);
@@ -3642,6 +3642,8 @@
     const qualified = rows.filter((row) => row.dropbacks >= CAREER_EPA_MIN_DROPBACKS);
     const totalDropbacks = qualified.reduce((sum, row) => sum + row.dropbacks, 0);
     const totalEpa = qualified.reduce((sum, row) => sum + (row.totalEpa ?? 0), 0);
+    // sorted desc by epaPerDropback — used for rank and neighbor lookup
+    const sorted = [...qualified].sort((a, b) => (b.epaPerDropback ?? -Infinity) - (a.epaPerDropback ?? -Infinity));
 
     return {
       rows,
@@ -3649,6 +3651,7 @@
       leagueAvg: totalDropbacks ? totalEpa / totalDropbacks : null,
       leagueQualifiedCount: qualified.length,
       leagueTotalDropbacks: totalDropbacks,
+      sorted,
     };
   }
 
@@ -3674,6 +3677,12 @@
       };
     });
 
+    const sorted = epaState.career?.sorted || [];
+    const rankIdx = sorted.findIndex((r) => r.nameKey === nameKey);
+    const careerRank = rankIdx >= 0 ? rankIdx + 1 : null;
+    const rankAboveRow = rankIdx > 0 ? sorted[rankIdx - 1] : null;
+    const rankBelowRow = rankIdx >= 0 && rankIdx < sorted.length - 1 ? sorted[rankIdx + 1] : null;
+
     const career = careerRow
       ? {
           epaPerDropback: careerRow.epaPerDropback,
@@ -3685,6 +3694,10 @@
             careerRow.epaPerDropback != null && epaState.career?.leagueAvg != null
               ? careerRow.epaPerDropback - epaState.career.leagueAvg
               : null,
+          rank: careerRank,
+          rankAbove: rankAboveRow ? { name: rankAboveRow.name, epaPerDropback: rankAboveRow.epaPerDropback } : null,
+          rankBelow: rankBelowRow ? { name: rankBelowRow.name, epaPerDropback: rankBelowRow.epaPerDropback } : null,
+          leaderboard: sorted.map((r, i) => ({ rank: i + 1, name: r.name, epaPerDropback: r.epaPerDropback })),
         }
       : null;
 

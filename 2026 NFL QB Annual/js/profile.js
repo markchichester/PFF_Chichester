@@ -102,6 +102,7 @@
         metricLabel: "quarterback WAR",
         className: "qb-donut--war",
         valueClass: " qb-donut-war",
+        compact: false,
       });
     },
 
@@ -504,10 +505,12 @@ ${gridLines}${barEls}</svg></div>`;
       return this.buildCollapsibleSection({
         title: "Grading profile",
         leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap to compare charts · hover points for details</p>`,
-        bodyHtml: `<div class="qb-scatter-carousel qb-animate-item" data-default-chart="btt-twp">
+        bodyHtml: `<div class="qb-chart-card qb-animate-item">
+  <div class="qb-scatter-carousel" data-default-chart="btt-twp">
     <div class="qb-scatter-tabs" role="tablist">${tabs}</div>
     <div class="qb-scatter-track">${slides}</div>
-  </div>`,
+  </div>
+</div>`,
       });
     },
 
@@ -522,9 +525,14 @@ ${gridLines}${barEls}</svg></div>`;
       return "#d04040";
     },
 
-    buildPassingGradeCell(grade) {
+    buildPassingGradeCell(grade, accent) {
       const display = this.formatGrade(grade);
-      const color = this.gradeColorFor(grade);
+      const accentColor = normalizeHex(accent, "#2D6A4F");
+      const pct =
+        grade != null && Number.isFinite(grade)
+          ? Math.round(25 + Math.min(100, Math.max(0, grade)) * 0.75)
+          : 50;
+      const color = `color-mix(in srgb, ${accentColor} ${pct}%, #374151)`;
       return `<span class="qb-pass-grade-pill" style="--grade-color:${color}">${escapeHtml(display)}</span>`;
     },
 
@@ -572,13 +580,18 @@ ${gridLines}${barEls}</svg></div>`;
     },
 
     buildPassingGradesTableRow(row, table, accent, maxAttempts) {
-      const gradeColor = this.gradeColorFor(row.grade);
+      const accentColor = normalizeHex(accent, "#2D6A4F");
+      const pct =
+        row.grade != null && Number.isFinite(row.grade)
+          ? Math.round(25 + Math.min(100, Math.max(0, row.grade)) * 0.75)
+          : 50;
+      const gradeColor = `color-mix(in srgb, ${accentColor} ${pct}%, #374151)`;
       let rankClass = "";
       if (row.rank === 1) rankClass = " qb-pass-table-row--rank-1";
       else if (row.rank != null && row.rank <= 3) rankClass = " qb-pass-table-row--rank-top";
 
       const cells = [
-        `<td class="qb-pass-table-grade">${this.buildPassingGradeCell(row.grade)}</td>`,
+        `<td class="qb-pass-table-grade">${this.buildPassingGradeCell(row.grade, accent)}</td>`,
       ];
       if (table.showAttempts || table.type === "rows") {
         cells.push(
@@ -634,10 +647,49 @@ ${gridLines}${barEls}</svg></div>`;
         .join("");
     },
 
+    getAllPassingGradeRows(table) {
+      if (table.type === "grouped") {
+        return (table.groups || []).flatMap((g) => g.rows || []);
+      }
+      return table.rows || [];
+    },
+
+    buildPassingGradesCallouts(table, accent) {
+      const rows = this.getAllPassingGradeRows(table).filter(
+        (r) => r.rank != null && r.rankTotal != null && r.rankTotal > 0
+      );
+      if (rows.length < 2) return "";
+
+      const best = rows.reduce((b, r) => (!b || r.rank < b.rank ? r : b), null);
+      const worst = rows.reduce((w, r) => (!w || r.rank > w.rank ? r : w), null);
+      if (!best || !worst || best === worst) return "";
+
+      const accentColor = normalizeHex(accent, "#2D6A4F");
+
+      const renderCallout = (row, eyebrow) => {
+        const grade = this.formatGrade(row.grade);
+        const rankLabel = row.rankLabel || `#${row.rank}`;
+        const total = row.rankTotal;
+        return `<div class="qb-pass-callout">
+  <div class="qb-pass-callout-eyebrow">${escapeHtml(eyebrow)}</div>
+  <div class="qb-pass-callout-situation">${escapeHtml(row.label)}</div>
+  <div class="qb-pass-callout-grade">${escapeHtml(grade)}</div>
+  <div class="qb-pass-callout-rank">${escapeHtml(rankLabel)} of ${escapeHtml(String(total))} quarterbacks</div>
+</div>`;
+      };
+
+      return `<div class="qb-pass-callouts" style="--pass-accent:${accentColor}">
+  ${renderCallout(best, "Where he wins")}
+  ${renderCallout(worst, "Pressure points")}
+</div>`;
+    },
+
     buildPassingGradesTableSlide(table, accent) {
       const accentColor = normalizeHex(accent, "#2D6A4F");
+      const callouts = this.buildPassingGradesCallouts(table, accent);
       return `<article class="qb-compare-slide qb-pass-table-slide" data-split-id="${escapeAttr(table.id)}" style="--pass-accent:${accentColor}">
   <h3 class="qb-compare-slide-title">${escapeHtml(table.title)}</h3>
+  ${callouts}
   <div class="qb-pass-table-wrap">
     <table class="qb-pass-table qb-pass-table--visual${table.showRank ? " qb-pass-table--ranked" : ""}">
       ${this.buildPassingGradesTableHead(table)}
@@ -2071,14 +2123,20 @@ ${this.buildAccuracyCellSummary(cell)}
 
       const color = normalizeHex(accent, "#2D6A4F");
       const leagueColor = "#94A3B8";
-      const W = 920;
-      const H = 360;
-      const padL = 52;
+      const W = 960;
+      const H = 420;
+      const padL = 68;
       const padR = 24;
       const padT = 28;
-      const padB = 64;
+      const padB = 52;
       const plotW = W - padL - padR;
       const plotH = H - padT - padB;
+
+      // 2dp axis formatter — cleaner than 3dp for tick labels and hover values
+      const fmtAxis = (v) => {
+        if (v == null || !Number.isFinite(v)) return "—";
+        return `${v > 0 ? "+" : ""}${v.toFixed(2)}`;
+      };
 
       const values = seasons.flatMap((row) =>
         [row.epaPerDropback, row.leagueAvg].filter((val) => val != null && Number.isFinite(val))
@@ -2091,7 +2149,7 @@ ${this.buildAccuracyCellSummary(cell)}
       const yScale = (value) => padT + plotH - ((value - yMin) / (yMax - yMin)) * plotH;
       const baseY = yScale(0);
       const groupW = plotW / seasons.length;
-      const barW = Math.min(24, groupW * 0.18);
+      const barW = Math.min(40, groupW * 0.30);
       const innerGap = 6;
 
       const yTicks = 5;
@@ -2107,7 +2165,7 @@ ${this.buildAccuracyCellSummary(cell)}
       const yLabels = Array.from({ length: yTicks + 1 }, (_, i) => {
         const value = yMin + ((yMax - yMin) * i) / yTicks;
         const y = yScale(value);
-        return `<text class="qb-axis-label" x="${(padL - 10).toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="end">${escapeHtml(this.formatEpaPerDropback(value))}</text>`;
+        return `<text class="qb-axis-label" x="${(padL - 8).toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="end">${escapeHtml(fmtAxis(value))}</text>`;
       }).join("");
 
       const bars = seasons
@@ -2126,7 +2184,7 @@ ${this.buildAccuracyCellSummary(cell)}
             const h = Math.abs(baseY - y);
             barEls += `<g class="qb-chart-bar qb-epa-bar" data-y="${top.toFixed(1)}" data-h="${h.toFixed(1)}" data-base="${baseY.toFixed(1)}" data-delay="${delay}">
   <rect x="${qbX.toFixed(1)}" y="${baseY.toFixed(1)}" width="${barW.toFixed(1)}" height="0" fill="${color}" rx="3" />
-  <text class="qb-bar-value" x="${(qbX + barW / 2).toFixed(1)}" y="${(top - 8).toFixed(1)}" text-anchor="middle" opacity="0">${escapeHtml(this.formatEpaPerDropback(qbVal))}</text>
+  <text class="qb-bar-value" x="${(qbX + barW / 2).toFixed(1)}" y="${(top - 8).toFixed(1)}" text-anchor="middle" opacity="0">${escapeHtml(fmtAxis(qbVal))}</text>
 </g>`;
           }
 
@@ -2136,23 +2194,23 @@ ${this.buildAccuracyCellSummary(cell)}
             const h = Math.abs(baseY - y);
             barEls += `<g class="qb-chart-bar qb-epa-bar qb-epa-bar--league" data-y="${top.toFixed(1)}" data-h="${h.toFixed(1)}" data-base="${baseY.toFixed(1)}" data-delay="${delay + 20}">
   <rect x="${leagueX.toFixed(1)}" y="${baseY.toFixed(1)}" width="${barW.toFixed(1)}" height="0" fill="${leagueColor}" rx="3" />
-  <text class="qb-bar-value" x="${(leagueX + barW / 2).toFixed(1)}" y="${(top - 8).toFixed(1)}" text-anchor="middle" opacity="0">${escapeHtml(this.formatEpaPerDropback(leagueVal))}</text>
+  <text class="qb-bar-value" x="${(leagueX + barW / 2).toFixed(1)}" y="${(top - 8).toFixed(1)}" text-anchor="middle" opacity="0">${escapeHtml(fmtAxis(leagueVal))}</text>
 </g>`;
           }
 
-          return `${barEls}<text class="qb-axis-label qb-epa-season-label" x="${centerX.toFixed(1)}" y="${(H - padB + 28).toFixed(1)}" text-anchor="middle">${escapeHtml(String(row.season))}</text>`;
+          return `${barEls}<text class="qb-axis-label qb-epa-season-label" x="${centerX.toFixed(1)}" y="${(H - padB + 24).toFixed(1)}" text-anchor="middle">${escapeHtml(String(row.season))}</text>`;
         })
         .join("");
 
-      return `<div class="qb-chart-wrap qb-epa-chart-wrap qb-animate-item">
+      return `<div class="qb-chart-wrap qb-epa-season-card qb-animate-item">
   <div class="qb-epa-legend" aria-hidden="true">
     <span class="qb-epa-legend-item"><span class="qb-epa-legend-swatch" style="background:${escapeAttr(color)}"></span>Quarterback</span>
     <span class="qb-epa-legend-item"><span class="qb-epa-legend-swatch" style="background:${leagueColor}"></span>NFL avg · 200+ dropbacks</span>
+    <span class="qb-epa-legend-unit">EPA per dropback</span>
   </div>
   <svg class="qb-epa-chart" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="EPA per dropback by season compared with NFL average">
     ${gridLines}${yLabels}${bars}
-    <text class="qb-epa-axis-title" x="${(padL + plotW / 2).toFixed(1)}" y="${(H - 10).toFixed(1)}" text-anchor="middle">Season</text>
-    <text class="qb-epa-axis-title" transform="translate(16 ${(padT + plotH / 2).toFixed(1)}) rotate(-90)" text-anchor="middle">EPA / dropback</text>
+    <text class="qb-epa-axis-title" x="${(padL + plotW / 2).toFixed(1)}" y="${(H - 8).toFixed(1)}" text-anchor="middle">Season</text>
   </svg>
 </div>`;
     },
@@ -2166,32 +2224,103 @@ ${this.buildAccuracyCellSummary(cell)}
 </article>`;
       }
 
+      const color = normalizeHex(accent, "#2D6A4F");
+      const fmtEpa = (v) => {
+        if (v == null || !Number.isFinite(v)) return "—";
+        return `${v > 0 ? "+" : ""}${v.toFixed(2)}`;
+      };
+
       const delta = career.delta;
-      const deltaClass =
-        delta == null ? "" : delta > 0 ? " is-positive" : delta < 0 ? " is-negative" : "";
-      const deltaText =
-        delta == null
-          ? "—"
-          : `${delta > 0 ? "+" : ""}${delta.toFixed(3)} vs qualified NFL average`;
+      const deltaClass = delta == null ? "" : delta > 0 ? " is-pos" : delta < 0 ? " is-neg" : "";
+      const deltaTxt = delta == null ? "—" : `${delta > 0 ? "+" : ""}${delta.toFixed(2)} vs NFL avg`;
+
+      // Spectrum bar: position QB and league avg on a meaningful range
+      const qbVal = career.epaPerDropback ?? 0;
+      const avgVal = career.leagueAvg ?? 0;
+      const specMin = Math.min(qbVal, avgVal, -0.05) - 0.05;
+      const specMax = Math.max(qbVal, avgVal, 0.40) + 0.05;
+      const specRange = specMax - specMin;
+      const toSpecPct = (v) => Math.max(2, Math.min(97, ((v - specMin) / specRange) * 100)).toFixed(1);
+      const qbPct = toSpecPct(qbVal);
+      const avgPct = toSpecPct(avgVal);
+
+      // Ordinal helper — spelled out for 1–9, numeric for 10+
+      const ORDINAL_WORDS = ["first","second","third","fourth","fifth","sixth","seventh","eighth","ninth"];
+      const ordinal = (n) => {
+        if (n == null) return "—";
+        if (n >= 1 && n <= 9) return ORDINAL_WORDS[n - 1];
+        const s = ["th","st","nd","rd"], v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+      };
+
+      // Narrative sentence
+      let narrative = "";
+      if (career.epaPerDropback != null) {
+        const name = profile.playerName || "This quarterback";
+        const pool = career.leagueQualifiedCount || "—";
+        const rankStr = career.rank != null ? ordinal(career.rank) : "unranked";
+        const aboveLine = career.rankAbove
+          ? `${escapeHtml(career.rankAbove.name)} ranks ${escapeHtml(ordinal(career.rank - 1))} at ${escapeHtml(fmtEpa(career.rankAbove.epaPerDropback))}`
+          : "";
+        const belowLine = career.rankBelow
+          ? `${escapeHtml(career.rankBelow.name)} ranks ${escapeHtml(ordinal(career.rank + 1))} at ${escapeHtml(fmtEpa(career.rankBelow.epaPerDropback))}`
+          : "";
+        const neighborTxt = [aboveLine, belowLine].filter(Boolean).join("; ");
+        const absDelta = delta != null ? Math.abs(delta).toFixed(2) : null;
+        const dirWord = delta != null ? (delta >= 0 ? "above" : "below") : null;
+
+        narrative = `<div class="epa-career-narrative">` +
+          `${escapeHtml(name)} has averaged ${escapeHtml(fmtEpa(career.epaPerDropback))} EPA per dropback over his career, ` +
+          `ranking ${escapeHtml(rankStr)} among ${escapeHtml(String(pool))} quarterbacks who have dropped back at least 1,000 times in the PFF era.` +
+          (neighborTxt ? ` ${neighborTxt}.` : "") +
+          (absDelta && dirWord ? ` That is ${escapeHtml(absDelta)} points ${dirWord} the NFL average for qualified passers in that span.` : "") +
+          `</div>`;
+      }
+
+      // Leaderboard carousel cards
+      const leaderboard = career.leaderboard || [];
+      const fmtEpa3 = (v) => {
+        if (v == null || !Number.isFinite(v)) return "—";
+        return `${v > 0 ? "+" : ""}${v.toFixed(4)}`;
+      };
+      const carouselCards = leaderboard.map((entry) => {
+        const isActive = entry.rank === career.rank;
+        const cardStyle = isActive ? ` style="background:${escapeAttr(color)};border-color:${escapeAttr(color)}"` : "";
+        const nameParts = entry.name.trim().split(/\s+/);
+        const lastName = nameParts.length > 1 ? nameParts.pop() : "";
+        const firstName = nameParts.join(" ");
+        return `<div class="epa-rank-card${isActive ? " is-active" : ""}"${cardStyle} data-epa-rank-active="${isActive}">
+  <span class="epa-rank-num">${escapeHtml(String(entry.rank))}</span>
+  <span class="epa-rank-firstname">${escapeHtml(firstName)}</span>
+  <span class="epa-rank-lastname">${escapeHtml(lastName)}</span>
+  <span class="epa-rank-val">${escapeHtml(fmtEpa3(entry.epaPerDropback))}</span>
+</div>`;
+      }).join("");
 
       return `<article class="qb-compare-slide qb-epa-career-slide" data-split-id="career">
   <h3 class="qb-compare-slide-title">Career EPA per dropback</h3>
-  <p class="qb-compare-slide-kicker">Since 2006 · league pool: QBs with 1,000+ career dropbacks (${career.leagueQualifiedCount || "—"})</p>
-  <div class="qb-compare-hero qb-epa-career-hero">
-    <div class="qb-compare-pane qb-compare-pane-left">
-      <span class="qb-compare-pane-label">${escapeHtml(profile.playerName || "Quarterback")}</span>
-      <span class="qb-compare-pane-grade">${escapeHtml(this.formatEpaPerDropback(career.epaPerDropback))}</span>
-      <span class="qb-compare-pane-meta">${career.dropbacks != null ? `${Math.round(career.dropbacks).toLocaleString("en-US")} dropbacks` : "—"}</span>
+  <p class="qb-compare-slide-kicker">Since 2006 · qualifying pool: 1,000+ career dropbacks (${career.leagueQualifiedCount || "—"} QBs)</p>
+  <div class="epa-career-board">
+    <div class="epa-career-hero">
+      <div class="epa-career-main">
+        <span class="epa-career-val" style="color:${escapeAttr(color)}">${escapeHtml(fmtEpa(career.epaPerDropback))}</span>
+        <span class="epa-career-label">Career EPA / dropback</span>
+      </div>
+      <span class="epa-career-delta${deltaClass}">${escapeHtml(deltaTxt)}</span>
     </div>
-    <div class="qb-compare-hero-divider">
-      <span class="qb-compare-hero-vs">vs</span>
-      <span class="qb-compare-hero-delta${deltaClass}">${escapeHtml(deltaText)}</span>
+    <div class="epa-spectrum qb-animate-item">
+      <div class="epa-spectrum-track">
+        <div class="epa-spectrum-avg-line" style="left:${avgPct}%" data-label="${escapeAttr("NFL avg " + fmtEpa(career.leagueAvg))}"></div>
+        <div class="epa-spectrum-qb-pip" style="left:${qbPct}%; background:${escapeAttr(color)}"></div>
+      </div>
+      <div class="epa-spectrum-labels">
+        <span>Below avg</span>
+        <span>NFL avg ${escapeHtml(fmtEpa(career.leagueAvg))}</span>
+        <span>Elite</span>
+      </div>
     </div>
-    <div class="qb-compare-pane qb-compare-pane-right">
-      <span class="qb-compare-pane-label">NFL average</span>
-      <span class="qb-compare-pane-grade">${escapeHtml(this.formatEpaPerDropback(career.leagueAvg))}</span>
-      <span class="qb-compare-pane-meta">1,000+ dropbacks</span>
-    </div>
+    ${narrative}
+    ${carouselCards.length ? `<div class="epa-rank-carousel" aria-label="Career EPA leaderboard"><div class="epa-rank-track">${carouselCards}</div></div>` : ""}
   </div>
 </article>`;
     },
@@ -2240,7 +2369,7 @@ ${this.buildAccuracyCellSummary(cell)}
     bodyHtml: this.buildGameGradesSvg(profile.gameGrades, barColor),
   })}
   ${this.buildCollapsibleSection({
-    title: "Play-level grade distribution",
+    title: "Play-level grade distribution (passing plays only)",
     bodyHtml: `${this.buildDistributionIntro()}${this.buildDistributionSvg(profile.gradeDistribution, barColor)}`,
   })}
   ${this.buildGradingProfileSection(profile.gradingProfile, barColor)}
@@ -2316,6 +2445,16 @@ ${this.buildAccuracyCellSummary(cell)}
 .qb-epa-chart-wrap {
   margin-top: 6px;
 }
+.qb-chart-card,
+.qb-epa-season-card {
+  margin-top: 6px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent, #2d6a4f) 22%, transparent);
+  border-top: 4px solid var(--accent, #2d6a4f);
+  background: color-mix(in srgb, var(--accent, #2d6a4f) 3%, #fff);
+  padding: 18px 20px 14px;
+  box-sizing: border-box;
+}
 .qb-epa-legend {
   display: flex;
   flex-wrap: wrap;
@@ -2364,6 +2503,187 @@ ${this.buildAccuracyCellSummary(cell)}
 .qb-compare-hero-delta.is-negative {
   color: #991B1B;
 }
+/* legend unit label */
+.qb-epa-legend-unit {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  padding-left: 4px;
+  border-left: 1px solid #e2e8f0;
+  margin-left: 4px;
+}
+/* ----- EPA career scorecard ----- */
+.epa-career-board {
+  min-width: 0;
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent, #2d6a4f) 22%, transparent);
+  border-top: 4px solid var(--accent, #2d6a4f);
+  background: color-mix(in srgb, var(--accent, #2d6a4f) 3%, #fff);
+  padding: 20px 20px 16px;
+  box-sizing: border-box;
+}
+.epa-career-hero {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px; margin-bottom: 28px;
+}
+.epa-career-main { display: flex; flex-direction: column; gap: 6px; }
+.epa-career-val {
+  font-size: clamp(2.4rem, 5vw, 3.4rem); font-weight: 900;
+  letter-spacing: -0.04em; line-height: 1;
+  font-variant-numeric: tabular-nums; font-family: "Archivo", sans-serif;
+}
+.epa-career-label {
+  font-size: 0.64rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #94a3b8; font-family: "Archivo", sans-serif;
+}
+.epa-career-delta {
+  display: inline-flex; align-items: center; align-self: center;
+  padding: 9px 18px; border-radius: 999px;
+  font-size: 0.86rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  font-family: "Archivo", sans-serif;
+  background: #f1f5f9; color: #64748b;
+}
+.epa-career-delta.is-pos { background: rgba(21,106,60,0.1); color: #156a3c; }
+.epa-career-delta.is-neg { background: rgba(155,28,28,0.08); color: #9b1c1c; }
+.epa-spectrum { margin-bottom: 28px; }
+.epa-spectrum-track {
+  position: relative; height: 10px; border-radius: 99px;
+  background: linear-gradient(90deg, #dde4ee, #c8d4e8 50%, #94a3b8);
+  margin: 0 10px 28px;
+}
+.epa-spectrum-avg-line {
+  position: absolute; top: -6px; bottom: -6px; width: 2px;
+  background: #64748b; border-radius: 99px; transform: translateX(-50%);
+}
+.epa-spectrum-avg-line::after {
+  content: attr(data-label);
+  position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  font-size: 0.58rem; font-weight: 800; color: #64748b;
+  white-space: nowrap; letter-spacing: 0.04em; font-family: "Archivo", sans-serif;
+}
+.epa-spectrum-qb-pip {
+  position: absolute; top: 50%; width: 20px; height: 20px;
+  border-radius: 50%; border: 3px solid #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+  transform: translate(-50%, -50%);
+}
+.epa-spectrum-labels {
+  display: flex; justify-content: space-between;
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #94a3b8; padding: 0 10px;
+  font-family: "Archivo", sans-serif;
+}
+.epa-career-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.epa-career-stat {
+  border-radius: 14px; background: #f7f8fa; padding: 14px 16px; text-align: center;
+}
+.epa-career-stat .v {
+  display: block; font-size: 1.3rem; font-weight: 900;
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  font-family: "Archivo", sans-serif;
+}
+.epa-career-stat .l {
+  display: block; margin-top: 4px; font-size: 0.6rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #8a8f98;
+  font-family: "Archivo", sans-serif;
+}
+@media (max-width: 560px) {
+  .epa-career-stats { grid-template-columns: repeat(2, 1fr); }
+  .epa-career-hero { flex-direction: column; }
+}
+.epa-career-narrative {
+  margin: 20px 0 0;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent, #2d6a4f) 6%, #fff);
+  border-left: 4px solid var(--accent, #2d6a4f);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.7;
+  color: #374151;
+  font-family: "Archivo", sans-serif;
+}
+/* ----- career EPA leaderboard carousel ----- */
+.epa-rank-carousel {
+  margin-top: 20px;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+}
+.epa-rank-track {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+.epa-rank-track::-webkit-scrollbar { display: none; }
+.epa-rank-card {
+  flex: 0 0 106px;
+  scroll-snap-align: center;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f7f8fa;
+  padding: 10px 10px 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: default;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.epa-rank-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(14,15,18,0.08); }
+.epa-rank-card.is-active { color: #fff; }
+.epa-rank-num {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  font-family: "Archivo", sans-serif;
+  align-self: flex-start;
+}
+.epa-rank-card.is-active .epa-rank-num { opacity: 0.8; color: #fff; }
+.epa-rank-firstname {
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #6b7280;
+  font-family: "Archivo", sans-serif;
+  text-align: center;
+  margin-top: 2px;
+}
+.epa-rank-card.is-active .epa-rank-firstname { color: rgba(255,255,255,0.75); }
+.epa-rank-lastname {
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #111418;
+  font-family: "Archivo", sans-serif;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+.epa-rank-card.is-active .epa-rank-lastname { color: #fff; }
+.epa-rank-val {
+  font-size: 0.92rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: #374151;
+  font-family: "Archivo", sans-serif;
+  margin-top: 4px;
+  text-align: center;
+  align-self: stretch;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 5px;
+}
+.epa-rank-card.is-active .epa-rank-val { color: #fff; border-top-color: rgba(255,255,255,0.2); }
 .qb-collapsible-details {
   border: 1px solid #E5E7EB;
   border-radius: 14px;
@@ -5110,10 +5430,12 @@ ${this.buildAccuracyCellSummary(cell)}
 }
 .qb-modal-close:hover { background: #e5e7eb; }
 .qb-modal-title {
-  margin: 0 36px 8px 0;
-  font-size: 1.15rem;
+  margin: 0 36px 14px 0;
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
 }
 .qb-modal-sub {
   margin: 0 0 14px;
@@ -5158,27 +5480,153 @@ ${this.buildAccuracyCellSummary(cell)}
   font-weight: 800;
   text-align: right;
 }
-.qb-game-modal-head { margin-bottom: 16px; }
-.qb-game-modal-grade {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  background: #f8f9fb;
-  border: 1px solid #e5e7eb;
+/* ===== game modal — full team-color redesign ===== */
+
+/* Modal shell: strip padding, allow internal scroll, rounded clip */
+.qb-modal:has(.qb-gm-wrap) {
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-.qb-game-modal-grade-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+.qb-modal-body:has(.qb-gm-wrap) .qb-modal-title {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
+}
+.qb-modal:has(.qb-gm-wrap) .qb-modal-close {
+  z-index: 20;
+  background: rgba(0,0,0,0.25);
+  color: var(--sec, #fff);
+  mix-blend-mode: normal;
+}
+.qb-modal:has(.qb-gm-wrap) .qb-modal-close:hover { background: rgba(0,0,0,0.4); }
+
+/* Wrapper: entire modal background = team primary */
+.qb-gm-wrap {
+  background: var(--pri, #002244);
+  border-radius: 14px;
+  min-height: 100%;
+}
+
+/* Hero section */
+.qb-gm-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 44px 28px 28px;
+  text-align: center;
+}
+/* Subtle opponent color bloom on the right */
+.qb-gm-hero::before {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 100% at 88% 50%,
+    color-mix(in srgb, var(--opp, #e31837) 22%, transparent) 0%, transparent 65%);
+}
+
+/* Week + pill row */
+.qb-gm-meta {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 28px;
+}
+.qb-gm-week-lbl {
+  font-size: 0.68rem; font-weight: 900; letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #6b7280;
+  color: color-mix(in srgb, var(--sec, #fff) 55%, transparent);
+  font-family: "Archivo", sans-serif;
 }
-.qb-game-modal-grade-value {
-  font-size: 1.8rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+.qb-gm-pill {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 99px;
+  font-family: "Archivo", sans-serif;
+  background: color-mix(in srgb, var(--sec, #fff) 14%, transparent);
+  color: var(--sec, #fff);
+  border: 1px solid color-mix(in srgb, var(--sec, #fff) 28%, transparent);
+}
+
+/* Matchup row */
+.qb-gm-matchup-row {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 28px;
+}
+.qb-gm-team-col {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1;
+}
+.qb-gm-logo-ring {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: color-mix(in srgb, var(--sec, #fff) 10%, transparent);
+  border: 2px solid color-mix(in srgb, var(--sec, #fff) 30%, transparent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--sec, #fff) 14%, transparent);
+  display: flex; align-items: center; justify-content: center;
+}
+.qb-gm-logo-ring--opp {
+  background: color-mix(in srgb, var(--opp, #e31837) 15%, transparent);
+  border-color: color-mix(in srgb, var(--opp, #e31837) 40%, transparent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--opp, #e31837) 20%, transparent);
+}
+.qb-gm-logo-img {
+  width: 62px; height: 62px; object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.45));
+}
+.qb-gm-logo-fb {
+  width: 54px; height: 54px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 900;
+  color: var(--pri, #002244);
+  background: var(--sec, #fff);
+  font-family: "Archivo", sans-serif;
+}
+.qb-gm-team-lbl {
+  font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em;
+  color: var(--sec, #fff); font-family: "Archivo", sans-serif; text-align: center;
+}
+.qb-gm-vs-col {
+  font-size: 0.62rem; font-weight: 900; letter-spacing: 0.18em;
+  text-transform: uppercase; flex: 0 0 auto;
+  color: color-mix(in srgb, var(--sec, #fff) 28%, transparent);
+  font-family: "Archivo", sans-serif;
+}
+
+/* Grade card */
+.qb-gm-grade-card {
+  position: relative; z-index: 2;
+  display: inline-flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 16px 52px 14px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--sec, #fff) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sec, #fff) 25%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sec, #fff) 18%, transparent);
+}
+.qb-gm-grade-eyebrow {
+  font-size: 0.58rem; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--sec, #fff) 50%, transparent);
+  font-family: "Archivo", sans-serif;
+}
+.qb-gm-grade-num {
+  font-size: 4rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1.05;
+  color: var(--sec, #fff); font-family: "Archivo", sans-serif;
+}
+
+/* Stats body — stays in the same team-color world */
+.qb-gm-stats-body {
+  padding: 20px 22px 22px;
+  background: color-mix(in srgb, var(--pri, #002244) 100%, #000);
+  border-top: 1px solid color-mix(in srgb, var(--sec, #fff) 12%, transparent);
+  overflow-x: auto;
+}
+.qb-gm-stats-body .qb-game-stat-group-title {
+  color: color-mix(in srgb, var(--sec, #fff) 55%, transparent);
+}
+.qb-gm-stats-body .qb-game-stat {
+  background: color-mix(in srgb, var(--sec, #fff) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sec, #fff) 18%, transparent);
+}
+.qb-gm-stats-body .qb-game-stat-abbr { color: color-mix(in srgb, var(--sec, #fff) 60%, transparent); }
+.qb-gm-stats-body .qb-game-stat-value { color: var(--sec, #fff); }
+.qb-gm-empty {
+  color: color-mix(in srgb, var(--sec, #fff) 55%, transparent);
+  font-size: 0.84rem; margin: 0; font-family: "Archivo", sans-serif;
 }
 .qb-game-stat-group + .qb-game-stat-group { margin-top: 16px; }
 .qb-game-stat-group-title {
@@ -5191,18 +5639,18 @@ ${this.buildAccuracyCellSummary(cell)}
 }
 .qb-game-stat-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
 }
 .qb-game-stat {
-  padding: 10px;
+  padding: 9px 11px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #fff;
 }
 .qb-game-stat-abbr {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;

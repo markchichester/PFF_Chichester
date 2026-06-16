@@ -91,9 +91,11 @@
   }
 
   function scrollToChart(track, chartId) {
-    const slide = track.querySelector(`.qb-scatter-slide[data-chart-id="${chartId}"]`);
-    if (!slide) return;
-    slide.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+    const slides = [...track.querySelectorAll(".qb-scatter-slide")];
+    const idx = slides.findIndex((s) => s.dataset.chartId === chartId);
+    if (idx === -1) return;
+    // Scroll only the carousel track horizontally — do not affect page scroll position
+    track.scrollTo({ left: idx * track.clientWidth, behavior: "smooth" });
   }
 
   function syncTabsFromScroll(carousel) {

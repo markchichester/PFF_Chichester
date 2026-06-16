@@ -3,9 +3,11 @@
  */
 (function (global) {
   function scrollToSplit(track, splitId) {
-    const slide = track.querySelector(`.qb-compare-slide[data-split-id="${splitId}"]`);
-    if (!slide) return;
-    slide.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+    const slides = [...track.querySelectorAll(".qb-compare-slide")];
+    const idx = slides.findIndex((s) => s.dataset.splitId === splitId);
+    if (idx === -1) return;
+    // Scroll only the carousel track — do not affect page scroll position
+    track.scrollTo({ left: idx * track.clientWidth, behavior: "smooth" });
   }
 
   function syncTabsFromScroll(carousel) {

@@ -271,6 +271,7 @@
         padding: clamp(22px, 3.4vw, 40px) clamp(14px, 3vw, 28px) 30px;
       }
 
+
       .data-notes {
         margin: 0 0 18px; font-size: 0.78rem; font-weight: 700; color: #8a8f98;
       }
@@ -632,6 +633,46 @@
         background: linear-gradient(90deg, var(--pass-accent, var(--accent)), #f5c518) !important;
       }
 
+      /* ----- where he wins / pressure points callouts ----- */
+      .qb-pass-callouts {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        margin-bottom: 18px !important;
+      }
+      .qb-pass-callout {
+        background: color-mix(in srgb, var(--pass-accent, var(--accent)) 12%, #f8f9fb) !important;
+        border-left: 3px solid var(--pass-accent, var(--accent)) !important;
+        border-radius: 10px !important;
+        padding: 14px 16px !important;
+      }
+      .qb-pass-callout-eyebrow {
+        font-size: 0.64rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.14em !important;
+        text-transform: uppercase !important;
+        color: var(--pass-accent, var(--accent)) !important;
+        margin-bottom: 5px !important;
+      }
+      .qb-pass-callout-situation {
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        color: #0d1117 !important;
+        margin-bottom: 6px !important;
+      }
+      .qb-pass-callout-grade {
+        font-size: 2rem !important;
+        font-weight: 900 !important;
+        color: var(--pass-accent, var(--accent)) !important;
+        line-height: 1 !important;
+        margin-bottom: 5px !important;
+      }
+      .qb-pass-callout-rank {
+        font-size: 0.72rem !important;
+        font-weight: 600 !important;
+        color: #5b6470 !important;
+      }
+
       /* ----- tabs → segmented control ----- */
       .qb-compare-tabs, .qb-scatter-tabs, .qb-target-map-tabs {
         display: inline-flex !important; flex-wrap: wrap;
@@ -659,6 +700,10 @@
         border: 0 !important; background: transparent !important; box-shadow: none !important;
       }
       .qb-compare-slide { padding: 18px 4px 4px !important; }
+
+      /* ----- EPA career slide containment (prevents rank carousel from bleeding the page) ----- */
+      .qb-section-epa .qb-compare-carousel { min-width: 0; width: 100%; }
+      .qb-section-epa .qb-compare-slide { max-width: 100%; min-width: 0; overflow: hidden; }
 
       /* ----- split hero panes → gradient scoreboard ----- */
       .qb-compare-pane {
@@ -822,7 +867,7 @@
       @keyframes paneIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
       .annual-kicker {
-        margin: 0 0 18px; font-size: 0.78rem; font-weight: 700; color: #8a8f98;
+        margin: 0 0 18px; font-size: 0.78rem; font-weight: 700; color: #6b717a;
       }
       .annual-rank-chip {
         display: inline-flex; align-items: baseline; gap: 4px;
@@ -1221,6 +1266,767 @@
         .gb-row { grid-template-columns: minmax(110px, 0.8fr) minmax(0, 1fr); }
         .gb-row .annual-rank-chip { display: none; }
       }
+
+
+
+      /* ====================================================
+         SLIDING INDEX PANEL
+         ==================================================== */
+
+      /* ── trigger button ── */
+      .idx-toggle {
+        display: flex; align-items: center; justify-content: center;
+        width: 36px; height: 36px; border-radius: 10px;
+        border: 1.5px solid rgba(14,15,18,0.12);
+        background: transparent; cursor: pointer;
+        color: #374151; margin-right: 10px;
+        transition: background 0.18s, border-color 0.18s, color 0.18s;
+        flex: 0 0 36px;
+      }
+      .idx-toggle:hover { background: #f3f4f6; border-color: #9ca3af; }
+      .topbar.is-stuck .idx-toggle {
+        border-color: rgba(14,15,18,0.15);
+        color: #374151;
+      }
+      /* three-line icon */
+      .idx-toggle-lines { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+      .idx-toggle-lines span {
+        display: block; height: 1.5px; background: currentColor;
+        border-radius: 2px; transition: width 0.22s ease;
+      }
+      .idx-toggle-lines span:nth-child(1) { width: 16px; }
+      .idx-toggle-lines span:nth-child(2) { width: 11px; }
+      .idx-toggle-lines span:nth-child(3) { width: 14px; }
+      .idx-toggle:hover .idx-toggle-lines span:nth-child(1) { width: 16px; }
+      .idx-toggle:hover .idx-toggle-lines span:nth-child(2) { width: 16px; }
+      .idx-toggle:hover .idx-toggle-lines span:nth-child(3) { width: 16px; }
+
+      /* ── backdrop ── */
+      /* ── index panel backdrop ── */
+      .idx-backdrop {
+        position: fixed; inset: 0; z-index: 490;
+        background: rgba(5,7,14,0.6);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .idx-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+      /* ── panel ── */
+      .idx-panel {
+        position: fixed; left: 0; top: 0; bottom: 0;
+        width: 320px; max-width: 88vw;
+        z-index: 500;
+        background: #0b0d14;
+        border-right: 1px solid rgba(255,255,255,0.07);
+        box-shadow: 12px 0 60px rgba(0,0,0,0.5);
+        display: flex; flex-direction: column;
+        transform: translateX(-100%);
+        transition: transform 0.38s cubic-bezier(0.32,1.05,0.5,1);
+        overflow: hidden;
+      }
+      .idx-panel.is-open { transform: translateX(0); }
+
+      /* ── panel header ── */
+      .idx-panel-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 20px 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        flex: 0 0 auto;
+      }
+      .idx-panel-brand {
+        font-size: 0.68rem; font-weight: 900;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: rgba(255,255,255,0.3);
+      }
+      .idx-panel-close {
+        width: 30px; height: 30px; border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.5); font-size: 1rem;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        transition: background 0.16s, color 0.16s;
+      }
+      .idx-panel-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+      /* ── scrollable body ── */
+      .idx-panel-body {
+        flex: 1; overflow-y: auto; padding: 8px 0 32px;
+        scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+      }
+
+      /* ── section group label ── */
+      .idx-section-label {
+        padding: 16px 20px 6px;
+        font-size: 0.58rem; font-weight: 900;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: rgba(255,255,255,0.2);
+      }
+
+      /* ── nav rows (magazine sections) ── */
+      .idx-nav-row {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 20px; width: 100%; text-align: left;
+        border: 0; background: transparent; cursor: pointer;
+        color: rgba(255,255,255,0.7); font-family: inherit;
+        font-size: 0.88rem; font-weight: 700;
+        transition: background 0.15s, color 0.15s;
+        /* animate in */
+        opacity: 0; transform: translateX(-14px);
+      }
+      .idx-nav-row.is-visible {
+        opacity: 1; transform: translateX(0);
+        transition: background 0.15s, color 0.15s,
+                    opacity 0.3s ease, transform 0.35s cubic-bezier(0.34,1.2,0.64,1);
+      }
+      .idx-nav-row:hover { background: rgba(255,255,255,0.05); color: #fff; }
+      .idx-nav-row-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: rgba(255,255,255,0.25); flex: 0 0 6px;
+      }
+
+      /* ── divider ── */
+      .idx-divider {
+        height: 1px; background: rgba(255,255,255,0.06);
+        margin: 8px 0;
+      }
+
+      /* ── QB rows ── */
+      .idx-qb-row {
+        display: flex; align-items: center; gap: 12px;
+        padding: 8px 20px; width: 100%; text-align: left;
+        border: 0; background: transparent; cursor: pointer;
+        font-family: inherit; color: rgba(255,255,255,0.8);
+        transition: background 0.15s, color 0.15s;
+        /* animate in */
+        opacity: 0; transform: translateX(-14px);
+      }
+      .idx-qb-row.is-visible {
+        opacity: 1; transform: translateX(0);
+        transition: background 0.15s, color 0.15s,
+                    opacity 0.28s ease, transform 0.32s cubic-bezier(0.34,1.2,0.64,1);
+      }
+      .idx-qb-row:hover { background: rgba(255,255,255,0.05); color: #fff; }
+      .idx-qb-swatch {
+        width: 3px; height: 32px; border-radius: 2px;
+        flex: 0 0 3px;
+        background: var(--qb-color, #4a90d9);
+        box-shadow: 0 0 8px var(--qb-color, #4a90d9);
+      }
+      .idx-qb-name {
+        flex: 1; font-size: 0.86rem; font-weight: 700;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .idx-qb-grade {
+        font-size: 0.8rem; font-weight: 900;
+        color: rgba(255,255,255,0.4);
+        font-variant-numeric: tabular-nums;
+        flex: 0 0 auto;
+      }
+      .idx-qb-row:hover .idx-qb-grade { color: rgba(255,255,255,0.75); }
+
+      /* toggle button */
+      .idx-toggle {
+        display: flex; align-items: center; justify-content: center;
+        width: 36px; height: 36px; border-radius: 10px;
+        border: 1.5px solid rgba(14,15,18,0.12);
+        background: transparent; cursor: pointer;
+        color: #374151; margin-right: 10px;
+        transition: background 0.18s, border-color 0.18s, color 0.18s;
+        flex: 0 0 36px;
+      }
+      .idx-toggle:hover { background: #f3f4f6; border-color: #9ca3af; }
+      .topbar.is-stuck .idx-toggle { border-color: rgba(14,15,18,0.15); color: #374151; }
+      .idx-toggle-lines { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+      .idx-toggle-lines span {
+        display: block; height: 1.5px; background: currentColor;
+        border-radius: 2px; transition: width 0.22s ease;
+      }
+      .idx-toggle-lines span:nth-child(1) { width: 16px; }
+      .idx-toggle-lines span:nth-child(2) { width: 11px; }
+      .idx-toggle-lines span:nth-child(3) { width: 14px; }
+      .idx-toggle:hover .idx-toggle-lines span:nth-child(2) { width: 16px; }
+
+      /* ====================================================
+         MAGAZINE COLOR INDEPENDENCE
+         The magazine front matter uses PFF's own neutral
+         palette — never inherits the active QB's team color.
+         ==================================================== */
+      #magFront {
+        --accent: #00338d;        /* PFF navy — fixed */
+        --accent-ink: #ffffff;
+      }
+
+
+      /* ====================================================
+         TOPBAR DUAL MODE
+         .is-mag-mode  = scrolled inside magazine sections
+         default       = scrolled into QB profile
+         ==================================================== */
+      .topbar-profile-group {
+        display: flex; align-items: center; gap: 8px;
+        transition: opacity 0.25s ease;
+      }
+      .topbar-mag-nav {
+        display: none;
+        align-items: center;
+        gap: 4px;
+        transition: opacity 0.25s ease;
+      }
+      .topbar.is-mag-mode .topbar-profile-group {
+        opacity: 0; pointer-events: none;
+        position: absolute; right: -9999px;
+      }
+      .topbar.is-mag-mode .topbar-mag-nav {
+        display: flex;
+      }
+      .mag-nav-chip {
+        padding: 6px 13px;
+        border-radius: 999px;
+        border: 1px solid rgba(14,15,18,0.12);
+        background: transparent;
+        font-family: inherit;
+        font-size: 0.71rem; font-weight: 800;
+        letter-spacing: 0.06em; text-transform: uppercase;
+        color: #4b5563; cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.18s, color 0.18s, border-color 0.18s;
+      }
+      .mag-nav-chip:hover,
+      .mag-nav-chip.is-active {
+        background: #00338d; border-color: #00338d; color: #fff;
+      }
+      /* topbar background in mag mode — stays light */
+      .topbar.is-mag-mode.is-stuck {
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 1px 0 rgba(14,15,18,0.08);
+      }
+
+      /* ====================================================
+         QB INDEX SECTION
+         ==================================================== */
+      .mag-index {
+        background:
+          radial-gradient(1100px 500px at 85% -10%, color-mix(in srgb, #00338d 32%, transparent), transparent 60%),
+          radial-gradient(800px 500px at 0% 100%, color-mix(in srgb, #00338d 18%, transparent), transparent 65%),
+          #0b0c10;
+        padding: 0;
+        position: relative; overflow: hidden;
+        color: #fff;
+      }
+      /* PFF logo watermark */
+      .mag-index::before {
+        content: "";
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: clamp(300px, 38vw, 580px); height: clamp(100px, 14vw, 200px);
+        background: url("https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png") center/contain no-repeat;
+        opacity: 0.04; pointer-events: none;
+      }
+      /* header zone */
+      .mag-index-head {
+        max-width: 1180px; margin: 0 auto;
+        padding: clamp(32px,6vh,72px) clamp(22px,5vw,70px) clamp(32px,5vh,56px);
+        text-align: center;
+        position: relative; z-index: 1;
+      }
+      .mag-index-logo-img {
+        height: clamp(32px,4.5vw,48px); width: auto;
+        display: block; margin: 0 auto 22px;
+        filter: drop-shadow(0 4px 18px rgba(0,0,0,0.45));
+      }
+      .mag-index-eyebrow {
+        font-size: 0.72rem; font-weight: 800;
+        letter-spacing: 0.34em; text-transform: uppercase;
+        color: rgba(255,255,255,0.5); margin: 0 0 16px;
+      }
+      .mag-index-title {
+        margin: 0 0 20px;
+        font-size: clamp(2.4rem, 7vw, 5.2rem);
+        font-weight: 900; letter-spacing: -0.03em;
+        line-height: 0.96; text-transform: uppercase;
+        color: #fff;
+      }
+      .mag-index-title-accent {
+        /* matches .switcher-title .accent — team-tinted ghost text */
+        background: linear-gradient(90deg, #c8ccd4, color-mix(in srgb, #00338d 55%, #c8ccd4));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .mag-index-sub {
+        font-size: 0.97rem; font-weight: 600;
+        color: rgba(255,255,255,0.58);
+        max-width: 580px; margin: 0 auto 32px;
+        line-height: 1.6;
+      }
+      .mag-index-search-wrap {
+        max-width: 560px; margin: 0 auto 0;
+        position: relative;
+      }
+      .mag-index-search {
+        display: block; width: 100%;
+        height: 56px; padding: 0 24px 0 52px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.08);
+        color: #fff; font-family: inherit;
+        font-size: 1rem; font-weight: 600;
+        outline: none; transition: all 0.25s ease;
+        box-sizing: border-box;
+      }
+      .mag-index-search::placeholder { color: rgba(255,255,255,0.38); }
+      .mag-index-search:focus {
+        border-color: rgba(255,255,255,0.35);
+        background: rgba(255,255,255,0.12);
+        box-shadow: 0 0 0 4px rgba(0,51,141,0.35);
+      }
+      .mag-index-search-icon {
+        position: absolute; left: 18px; top: 50%;
+        transform: translateY(-50%); pointer-events: none;
+      }
+      /* grid wrapper */
+      .mag-index-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;
+        padding: clamp(28px,4vh,48px) clamp(22px,5vw,70px) clamp(48px,6vw,80px);
+      }
+      .mag-index-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+        gap: 14px;
+      }
+      .mag-index-card {
+        background: #14161b; border-radius: 18px;
+        padding: 0; overflow: hidden;
+        cursor: pointer; border: 1px solid rgba(255,255,255,0.07);
+        transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+        display: flex; flex-direction: column; align-items: center;
+        text-align: center; color: #fff;
+        position: relative;
+      }
+      .mag-index-card:hover {
+        transform: translateY(-4px);
+        border-color: color-mix(in srgb, var(--card-team, #00338d) 80%, #fff);
+        box-shadow: 0 22px 50px color-mix(in srgb, var(--card-team, #000) 35%, transparent);
+      }
+      .mag-index-photo-wrap {
+        position: relative; width: 100%; aspect-ratio: 1 / 0.92; overflow: hidden;
+        background: radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--card-team, #555) 80%, rgba(255,255,255,0.1)), var(--card-team, #333) 75%);
+      }
+      .mag-index-card-watermark {
+        position: absolute; left: 50%; top: 44%;
+        width: 124%; height: auto;
+        transform: translate(-50%, -50%) rotate(-6deg);
+        opacity: 0.16; pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      .mag-index-card:hover .mag-index-card-watermark { opacity: 0.26; }
+      .mag-index-photo {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; object-position: top center; display: block;
+        background: transparent;
+      }
+      .mag-index-logo {
+        position: absolute; bottom: 6px; right: 6px;
+        width: 22px; height: 22px; object-fit: contain;
+      }
+      .mag-index-body { padding: 10px 12px 14px; width: 100%; }
+      .mag-index-name {
+        font-size: 0.88rem; font-weight: 800;
+        color: #fff; line-height: 1.2; margin: 0 0 4px;
+      }
+      .mag-index-team {
+        font-size: 0.66rem; font-weight: 700;
+        color: rgba(255,255,255,0.5); text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      .mag-index-grade {
+        margin-top: 6px; font-size: 1.05rem; font-weight: 900;
+        color: #fff; font-variant-numeric: tabular-nums;
+        background: rgba(255,255,255,0.1); display: inline-block;
+        padding: 2px 8px; border-radius: 7px;
+      }
+      .mag-index-empty {
+        grid-column: 1 / -1;
+        padding: 32px; text-align: center;
+        font-size: 0.88rem; color: rgba(255,255,255,0.35); font-weight: 600;
+      }
+      /* ====================================================
+         MAGAZINE FRONT MATTER
+         ==================================================== */
+
+      /* ---------- cover ---------- */
+      #magFront { position: relative; }
+
+      .mag-cover {
+        position: relative;
+        width: 100%;
+        height: 100svh;
+        min-height: 640px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-end;
+        overflow: hidden;
+        background: #070a12;
+      }
+      .mag-cover-bg {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; object-position: center top;
+      }
+      .mag-cover-placeholder {
+        position: absolute; inset: 0;
+        background: linear-gradient(145deg, #0b1020 0%, #181e3a 45%, #0d1422 100%);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 16px;
+        color: rgba(255,255,255,0.14);
+        font-size: 0.72rem; font-weight: 800;
+        letter-spacing: 0.14em; text-transform: uppercase;
+      }
+      .mag-cover-placeholder-box {
+        width: 80px; height: 80px; opacity: 0.2;
+        border: 3px dashed currentColor; border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.2rem;
+      }
+      .mag-cover-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(0,0,0,0.06) 0%,
+          rgba(0,0,0,0.0) 20%,
+          rgba(0,0,0,0.38) 60%,
+          rgba(0,0,0,0.88) 100%
+        );
+      }
+      .mag-cover-content {
+        position: relative; z-index: 2;
+        width: 100%; max-width: 1160px;
+        padding: clamp(28px,5vw,70px) clamp(22px,5vw,70px);
+        margin: 0 auto;
+        display: flex; flex-direction: column; gap: 16px;
+      }
+      .mag-cover-eyebrow {
+        font-size: 0.68rem; font-weight: 800;
+        letter-spacing: 0.22em; text-transform: uppercase;
+        color: rgba(255,255,255,0.42);
+        display: flex; align-items: center; gap: 12px;
+      }
+      .mag-cover-eyebrow::before {
+        content: ""; display: block;
+        width: 26px; height: 2px;
+        background: var(--accent, #4a9eff);
+        border-radius: 2px;
+      }
+      .mag-cover-title {
+        font-size: clamp(3.4rem, 10.5vw, 8.5rem);
+        font-weight: 900; line-height: 0.87;
+        letter-spacing: -0.04em; color: #fff;
+        margin: 0;
+      }
+      .mag-cover-title em {
+        font-style: normal;
+        color: var(--accent, #4a9eff);
+      }
+      .mag-cover-sub {
+        font-size: clamp(0.88rem, 1.8vw, 1.05rem);
+        font-weight: 500; color: rgba(255,255,255,0.52);
+        max-width: 420px; line-height: 1.65; margin: 0;
+      }
+      .mag-cover-actions {
+        display: flex; align-items: center;
+        gap: 12px; flex-wrap: wrap;
+        padding-bottom: 6px;
+      }
+      .mag-btn-primary {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 13px 26px;
+        background: var(--accent, #4a9eff); color: #fff;
+        font-weight: 800; font-size: 0.85rem;
+        letter-spacing: 0.05em; text-transform: uppercase;
+        border: 0; border-radius: 999px;
+        cursor: pointer; font-family: inherit;
+        transition: opacity 0.18s, transform 0.18s;
+        box-shadow: 0 6px 24px color-mix(in srgb, var(--accent) 50%, transparent);
+      }
+      .mag-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+      .mag-btn-secondary {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 13px 22px;
+        background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+        font-weight: 700; font-size: 0.85rem;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 999px;
+        cursor: pointer; font-family: inherit;
+        backdrop-filter: blur(10px);
+        transition: background 0.18s;
+      }
+      .mag-btn-secondary:hover { background: rgba(255,255,255,0.2); }
+      .mag-cover-scroll {
+        position: absolute; bottom: 28px; right: clamp(22px,5vw,70px);
+        z-index: 2; display: flex; flex-direction: column;
+        align-items: center; gap: 8px;
+        color: rgba(255,255,255,0.28);
+        font-size: 0.59rem; font-weight: 800;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        pointer-events: none;
+      }
+      .mag-cover-scroll-icon { animation: mag-bounce 1.7s ease-in-out infinite; }
+      @keyframes mag-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(6px); }
+      }
+
+      /* ---------- intro / letter from editor ---------- */
+      .mag-intro {
+        background: #fff;
+        padding: clamp(56px,8vw,100px) clamp(22px,5vw,70px);
+      }
+      .mag-intro-inner { max-width: 760px; margin: 0 auto; }
+      .mag-eyebrow {
+        font-size: 0.68rem; font-weight: 800;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--accent, #2d6a4f);
+        display: flex; align-items: center; gap: 10px;
+        margin-bottom: 18px;
+      }
+      .mag-eyebrow::before {
+        content: ""; display: block;
+        width: 22px; height: 2px;
+        background: var(--accent, #2d6a4f);
+        border-radius: 2px;
+      }
+      .mag-intro h2 {
+        font-size: clamp(1.8rem, 4vw, 2.9rem);
+        font-weight: 900; letter-spacing: -0.03em;
+        line-height: 1.08; margin: 0 0 28px; color: #0d1117;
+      }
+      .mag-intro-body {
+        font-size: 1.03rem; line-height: 1.85;
+        color: #374151; font-weight: 500; margin-bottom: 36px;
+      }
+      .mag-intro-body p { margin: 0 0 18px; }
+      .mag-intro-body p:last-child { margin-bottom: 0; }
+      .mag-intro-sig {
+        display: flex; align-items: center; gap: 14px;
+        padding-top: 28px;
+        border-top: 1px solid #eceef2;
+      }
+      .mag-intro-sig-name { font-weight: 800; font-size: 0.9rem; color: #0d1117; }
+      .mag-intro-sig-role { font-size: 0.76rem; color: #6b7280; font-weight: 600; margin-top: 3px; }
+
+      /* ---------- glossary ---------- */
+      .mag-glossary {
+        background: var(--paper, #f5f6f8);
+        padding: clamp(48px,7vw,80px) clamp(22px,5vw,70px);
+        border-top: 1px solid #eceef2;
+      }
+      .mag-glossary-inner { max-width: 1100px; margin: 0 auto; }
+      .mag-glossary h2 {
+        font-size: clamp(1.4rem,3vw,2rem); font-weight: 900;
+        letter-spacing: -0.03em; color: #0d1117;
+        margin: 0 0 8px;
+      }
+      .mag-glossary-sub {
+        font-size: 0.88rem; color: #6b7280; font-weight: 600;
+        margin-bottom: 32px;
+      }
+      .mag-glossary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 12px;
+      }
+      .mag-glossary-item {
+        background: #fff; border-radius: 14px;
+        padding: 15px 18px;
+        box-shadow: 0 1px 2px rgba(14,15,18,0.04);
+      }
+      .mag-glossary-abbr {
+        font-size: 0.75rem; font-weight: 900;
+        color: var(--accent, #2d6a4f);
+        letter-spacing: 0.08em; margin-bottom: 4px;
+      }
+      .mag-glossary-label {
+        font-size: 0.76rem; font-weight: 700; color: #0d1117;
+        margin-bottom: 5px;
+      }
+      .mag-glossary-desc {
+        font-size: 0.71rem; color: #6b7280;
+        line-height: 1.55; font-weight: 500;
+      }
+
+      /* ---------- summary leaderboards ---------- */
+      .mag-summary {
+        background: var(--paper, #f5f6f8);
+        padding: clamp(48px,6vw,80px) clamp(22px,5vw,70px);
+        border-top: 1px solid #eceef2;
+      }
+      .mag-summary-inner { max-width: 1200px; margin: 0 auto; }
+      .mag-summary h2 {
+        font-size: clamp(1.6rem,3.5vw,2.4rem);
+        font-weight: 900; letter-spacing: -0.03em;
+        color: #0d1117; margin: 0 0 8px;
+      }
+      .mag-summary-sub {
+        font-size: 0.88rem; color: #6b7280;
+        font-weight: 600; margin-bottom: 36px;
+      }
+      .mag-lb-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+        gap: 20px;
+      }
+      .mag-lb-card {
+        background: #fff; border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(14,15,18,0.04), 0 6px 22px rgba(14,15,18,0.06);
+        transition: box-shadow 0.22s ease, transform 0.22s ease;
+      }
+      .mag-lb-card:hover {
+        box-shadow: 0 2px 4px rgba(14,15,18,0.05), 0 16px 42px rgba(14,15,18,0.10);
+        transform: translateY(-2px);
+      }
+      .mag-lb-header {
+        padding: 14px 20px 12px;
+        border-bottom: 1px solid #f0f1f4;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .mag-lb-icon {
+        width: 30px; height: 30px; border-radius: 8px;
+        background: color-mix(in srgb, var(--accent) 12%, #f0f1f4);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.9rem; flex: 0 0 30px;
+      }
+      .mag-lb-title {
+        font-size: 0.71rem; font-weight: 800;
+        letter-spacing: 0.1em; text-transform: uppercase; color: #0d1117;
+      }
+      .mag-lb-rows { padding: 4px 0 0; }
+      .mag-lb-row {
+        display: grid;
+        grid-template-columns: 26px 28px minmax(0,1fr) minmax(48px,0.8fr) 52px;
+        align-items: center; gap: 8px;
+        padding: 8px 18px;
+        cursor: pointer; transition: background 0.14s;
+      }
+      .mag-lb-row:hover { background: #f8f9fb; }
+      .mag-lb-rank {
+        font-size: 0.7rem; font-weight: 800;
+        color: #9ca3af; text-align: center; line-height: 1;
+      }
+      .mag-lb-row[data-rank="1"] .mag-lb-rank { font-size: 1rem; color: #c8972a; }
+      .mag-lb-logo-img {
+        width: 26px; height: 26px; object-fit: contain; display: block;
+      }
+      .mag-lb-name {
+        font-size: 0.83rem; font-weight: 700; color: #0d1117;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+      .mag-lb-name small {
+        display: block; font-size: 0.62rem; font-weight: 600;
+        color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;
+      }
+      .mag-lb-bar-wrap {
+        height: 5px; background: #eceef2;
+        border-radius: 99px; overflow: hidden;
+      }
+      .mag-lb-bar {
+        height: 100%; border-radius: 99px;
+        background: linear-gradient(90deg,
+          color-mix(in srgb, var(--accent) 55%, #374151),
+          var(--accent)
+        );
+        transition: width 0.7s cubic-bezier(0.34,1.2,0.64,1);
+      }
+      .mag-lb-val {
+        font-size: 0.85rem; font-weight: 900;
+        color: var(--accent, #0d1117);
+        font-variant-numeric: tabular-nums;
+        text-align: right; white-space: nowrap;
+      }
+      .mag-lb-footer {
+        padding: 8px 18px 12px;
+        font-size: 0.62rem; font-weight: 700;
+        color: #9ca3af; letter-spacing: 0.07em;
+        text-transform: uppercase;
+        border-top: 1px solid #f0f1f4;
+        margin-top: 4px;
+      }
+      .mag-lb-empty {
+        padding: 24px 18px;
+        font-size: 0.84rem; color: #9ca3af;
+        font-weight: 600; text-align: center;
+      }
+
+
+      /* ---------- acknowledgements ---------- */
+      /* Outer wrapper is the dark page bg — inner card is white, framed */
+      .mag-ack {
+        background: #f5f6f8; /* light — sits between the dark sections */
+        padding: 0;          /* padding lives on the inner card */
+        border-top: 3px solid #0d1117;
+        border-bottom: 3px solid #0d1117;
+      }
+      .mag-ack-inner {
+        max-width: 1100px; margin: 0 auto;
+        /* Inset "window" frame — recessed panel effect */
+        background: #fff;
+        border-left: 1px solid #dde0e6;
+        border-right: 1px solid #dde0e6;
+        box-shadow:
+          -8px 0 0 0 #f5f6f8,
+          8px 0 0 0 #f5f6f8,
+          0 0 0 1px #dde0e6;
+        padding: clamp(48px,6vw,80px) clamp(32px,5vw,72px);
+      }
+      .mag-ack .mag-eyebrow { color: #00338d; }
+      .mag-ack .mag-eyebrow::before { background: #00338d; }
+      .mag-ack h2 {
+        font-size: clamp(1.6rem,3.5vw,2.4rem);
+        font-weight: 900; letter-spacing: -0.03em;
+        color: #0d1117; margin: 0 0 16px;
+        line-height: 1.08;
+      }
+      .mag-ack-intro {
+        font-size: 1rem; line-height: 1.8; font-weight: 500;
+        color: #4b5260;
+        max-width: 680px; margin-bottom: 44px;
+      }
+      .mag-ack-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 10px 14px;
+      }
+      .mag-ack-name {
+        font-size: 0.88rem; font-weight: 700;
+        color: #1a1d24;
+        padding: 10px 14px;
+        background: #f5f6f8;
+        border-left: 2px solid #00338d;
+        border-radius: 0 8px 8px 0;
+        transition: background 0.16s, color 0.16s;
+      }
+      .mag-ack-name:hover {
+        background: #e8edf5;
+        color: #00338d;
+      }
+      .mag-ack-footer {
+        margin-top: 44px;
+        padding-top: 28px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 0.76rem; font-weight: 600;
+        color: #9ca3af;
+        line-height: 1.7;
+      }
+      /* ---------- divider ---------- */
+      .mag-profile-divider {
+        height: 1px;
+        background: linear-gradient(to right,
+          transparent,
+          color-mix(in srgb, var(--accent) 18%, #eceef2) 50%,
+          transparent
+        );
+      }
     </style>
   </head>
   <body>
@@ -1232,27 +2038,190 @@
 
     <div class="progress" id="progress"></div>
 
+    <!-- ====== MAGAZINE FRONT MATTER ====== -->
+    <div id="magFront">
+
+      <!-- COVER -->
+      <section class="mag-cover" id="magCover">
+        <!--
+          When the cover image is ready, replace the .mag-cover-placeholder div with:
+          <img class="mag-cover-bg" src="cover.jpg" alt="2026 NFL QB Annual cover">
+          Recommended image size: 1920 × 1080 px (or 3840 × 2160 px at 2x for retina).
+          Use JPG or PNG. The image will be cropped to fill the full viewport.
+        -->
+        <div class="mag-cover-placeholder" id="magCoverPlaceholder">
+          <div class="mag-cover-placeholder-box">📷</div>
+          <span>Cover image placeholder · 1920 × 1080 px</span>
+          <span style="opacity:0.6;font-weight:600;letter-spacing:0.06em;font-size:0.65rem">Replace with &lt;img class="mag-cover-bg" src="cover.jpg"&gt;</span>
+        </div>
+        <div class="mag-cover-overlay"></div>
+        <div class="mag-cover-content">
+          <p class="mag-cover-eyebrow">PFF · 2025 regular season</p>
+          <h1 class="mag-cover-title">NFL<br>QB<br><em>Annual</em></h1>
+          <p class="mag-cover-sub">The definitive quarterback evaluation — grades, splits, accuracy, pressure, clutch play and more for every NFL passer.</p>
+          <div class="mag-cover-actions">
+            <button class="mag-btn-primary" id="magBrowseQbsBtn">Browse quarterbacks</button>
+            <button class="mag-btn-secondary" id="magReadBtn">Read the annual ↓</button>
+          </div>
+        </div>
+        <div class="mag-cover-scroll">
+          <svg class="mag-cover-scroll-icon" width="16" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="14" height="20" rx="7" stroke="currentColor" stroke-width="1.6"/>
+            <rect x="7" y="5" width="2" height="5" rx="1" fill="currentColor"/>
+          </svg>
+          Scroll
+        </div>
+      </section>
+
+      <!-- INTRO / LETTER FROM EDITOR -->
+      <section class="mag-intro" id="magIntro">
+        <div class="mag-intro-inner">
+          <p class="mag-eyebrow">Letter from the editor</p>
+          <h2>Welcome to the 2026 NFL QB Annual</h2>
+          <div class="mag-intro-body">
+            <p>Two decades ago, a small group of football pioneers set out to build something many thought impossible: a system capable of evaluating individual performance on every snap.</p>
+            <p>Since then, thousands of people have spent hundreds of thousands of hours watching, grading and charting games. The result is an organization that now serves all 32 NFL teams, 136 FBS programs and almost every major media outlet across the football landscape. Yet despite that growth, the central idea has remained remarkably simple.</p>
+            <p>PFF has never claimed to be a source of objective football truth, nor was it ever meant to be. Every play contains hundreds of variables. Every evaluation contains context. Every opinion is ultimately shaped by perspective. What PFF has always sought to do is provide information — one piece of a larger and more complicated puzzle.</p>
+            <p>The grading system, advanced statistics and charting data are not designed to settle debates; they are designed to make them better. They serve as a compass rather than a destination, helping the football world navigate one of the most complex sports in the world with more information than they had before.</p>
+            <p>That philosophy exists because of the people who built it. Analysts, data scientists, developers, editors and researchers have all contributed to a body of work that changed the way football is discussed, studied and understood. Behind every grade, chart and statistic is an enormous amount of work from people who care deeply about the game.</p>
+            <p>This annual is the product of that effort.</p>
+            <p>So it is my pleasure to welcome you to the 2026 edition of the PFF NFL QB Annual — an updated, expanded and long-awaited return of one of our flagship products.</p>
+            <p>Inside, you'll find comprehensive profiles for every qualifying quarterback from the 2025 season, featuring PFF grades, advanced metrics, situational performance, accuracy data and much more.</p>
+            <p>Use the leaderboards as your starting point. Explore the profiles. Challenge your assumptions. Draw your own conclusions. Most importantly, enjoy the process.</p>
+            <p>Thank you for reading, and welcome back to the PFF NFL QB Annual.</p>
+          </div>
+          <div class="mag-intro-sig">
+            <div>
+              <div class="mag-intro-sig-name">Mark Chichester</div>
+              <div class="mag-intro-sig-role">Head of Editorial · PFF</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GLOSSARY -->
+      <!-- GLOSSARY -->
+
+
+      <!-- ACKNOWLEDGEMENTS -->
+      <section class="mag-ack" id="magAck">
+        <div class="mag-ack-inner">
+          <p class="mag-eyebrow">Acknowledgements</p>
+          <h2>Made possible by the people behind the data</h2>
+          <p class="mag-ack-intro">This annual is made possible through the extraordinary work of our analysts, who have spent thousands of hours and dozens of processes capturing, refining, and checking the data that powers every number you see here.</p>
+          <div class="mag-ack-grid">
+            <div class="mag-ack-name">Alex Hellwig</div>
+            <div class="mag-ack-name">Andrew Ites</div>
+            <div class="mag-ack-name">Brady Morrison</div>
+            <div class="mag-ack-name">Brett Geerling</div>
+            <div class="mag-ack-name">Jake Gudoian</div>
+            <div class="mag-ack-name">Jeff McCann</div>
+            <div class="mag-ack-name">Jordan Plocher</div>
+            <div class="mag-ack-name">Julia Hershey</div>
+            <div class="mag-ack-name">Julien Wilson</div>
+            <div class="mag-ack-name">Logan Schocknesse</div>
+            <div class="mag-ack-name">Luke Paldino</div>
+            <div class="mag-ack-name">Mark Baker</div>
+            <div class="mag-ack-name">Matt Tichenor</div>
+            <div class="mag-ack-name">Michael Preville</div>
+            <div class="mag-ack-name">Nathan Lowes</div>
+            <div class="mag-ack-name">Nick Akridge</div>
+            <div class="mag-ack-name">Ryan Cooley</div>
+            <div class="mag-ack-name">Sam McGaw</div>
+            <div class="mag-ack-name">Sathya Henderson</div>
+            <div class="mag-ack-name">Tim Beckman</div>
+            <div class="mag-ack-name">Trevor Lynch</div>
+            <div class="mag-ack-name">Winston Dimel</div>
+            <div class="mag-ack-name">John Kosko</div>
+            <div class="mag-ack-name">Ryan Smith</div>
+            <div class="mag-ack-name">Ben Stockwell</div>
+            <div class="mag-ack-name">Bryson Vesnaver</div>
+            <div class="mag-ack-name">Billy Moy</div>
+            <div class="mag-ack-name">Matt Claassen</div>
+          </div>
+          <p class="mag-ack-footer">
+            PFF NFL QB Annual · 2026 Edition · 2025 regular season data<br>
+            All grades, splits, and metrics are the property of Pro Football Focus. Not for redistribution without permission.
+          </p>
+        </div>
+      </section>
+
+      <!-- QB INDEX -->
+      <section class="mag-index" id="magIndex">
+        <div class="mag-index-head">
+          <img class="mag-index-logo-img" src="https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png" alt="PFF+" onerror="this.style.display='none'" />
+          <p class="mag-index-eyebrow">The definitive quarterback evaluation</p>
+          <h2 class="mag-index-title">2026 NFL QB <span class="mag-index-title-accent">Annual</span></h2>
+          <p class="mag-index-sub">Every passer. Every split. Grades, accuracy, pressure, clutch play and more —<br>pick a quarterback to open the full profile.</p>
+          <div class="mag-index-search-wrap">
+            <svg class="mag-index-search-icon" width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="6.5" cy="6.5" r="5" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+              <path d="M10.5 10.5L14 14" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input class="mag-index-search" id="magIndexSearch" type="search" placeholder="Search quarterbacks…" autocomplete="off" />
+          </div>
+        </div>
+        <div class="mag-index-inner">
+          <div class="mag-index-grid" id="magIndexGrid">
+            <p class="mag-index-empty">Loading quarterbacks…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUMMARY LEADERBOARDS -->
+      <section class="mag-summary" id="magSummary">
+        <div class="mag-summary-inner">
+          <p class="mag-eyebrow">2025 season at a glance</p>
+          <h2>The numbers that matter</h2>
+          <p class="mag-summary-sub">Qualifying passers only · click any row to open the full quarterback profile</p>
+          <div class="mag-lb-grid" id="magLbGrid">
+            <p class="mag-lb-empty">Loading leaderboard data…</p>
+          </div>
+        </div>
+      </section>
+
+
+      <div class="mag-profile-divider"></div>
+    </div>
+    <!-- ====== END MAGAZINE FRONT MATTER ====== -->
+
     <!-- top bar -->
     <header class="topbar" id="topbar">
+      <button class="idx-toggle" id="idxToggle" type="button" title="Open index" aria-expanded="false" aria-controls="idxPanel">
+        <span class="idx-toggle-lines" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
       <button class="brand" id="brandBtn" type="button" title="Browse all quarterbacks">
         QB&nbsp;ANNUAL <span class="yr">/ 2026</span>
       </button>
       <div class="topbar-spacer"></div>
-      <button class="qb-switch-btn" id="qbSwitchBtn" type="button" title="Switch quarterback">
-        <img id="qbSwitchImg" alt="" />
-        <span class="nm" id="qbSwitchName">Select QB</span>
-        <img class="switch-logo" id="qbSwitchLogo" alt="" />
-        <span class="hint-k">/</span>
-      </button>
-      <select class="season-select" id="seasonSelect" title="Hero stat season">
-        <option value="2025">2025</option>
-        <option value="2024">2024</option>
-        <option value="2023">2023</option>
-      </select>
-      <span class="nav-arrows">
-        <button class="nav-arrow" id="prevQb" type="button" title="Previous QB">‹</button>
-        <button class="nav-arrow" id="nextQb" type="button" title="Next QB">›</button>
-      </span>
+      <!-- Magazine section nav — shown when in magazine zone -->
+      <nav class="topbar-mag-nav" id="magTopNav" aria-label="Magazine sections">
+        <button class="mag-nav-chip" data-mag-target="magCover">Cover</button>
+        <button class="mag-nav-chip" data-mag-target="magIntro">Introduction</button>
+        <button class="mag-nav-chip" data-mag-target="magAck">Acknowledgements</button>
+        <button class="mag-nav-chip" data-mag-target="magIndex">Quarterbacks</button>
+        <button class="mag-nav-chip" data-mag-target="magSummary">Top 5</button>
+      </nav>
+      <!-- Profile controls — shown when in QB profile zone -->
+      <div class="topbar-profile-group" id="topbarProfileGroup">
+        <button class="qb-switch-btn" id="qbSwitchBtn" type="button" title="Switch quarterback">
+          <img id="qbSwitchImg" alt="" />
+          <span class="nm" id="qbSwitchName">Select QB</span>
+          <img class="switch-logo" id="qbSwitchLogo" alt="" />
+          <span class="hint-k">/</span>
+        </button>
+        <select class="season-select" id="seasonSelect" title="Hero stat season">
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+        </select>
+        <span class="nav-arrows">
+          <button class="nav-arrow" id="prevQb" type="button" title="Previous QB">‹</button>
+          <button class="nav-arrow" id="nextQb" type="button" title="Next QB">›</button>
+        </span>
+      </div>
     </header>
 
     <!-- hero -->
@@ -1590,6 +2559,13 @@
             });
             root.querySelectorAll("[data-bar-w]").forEach((el) => {
               el.style.width = parseFloat(el.dataset.barW || "0") + "%";
+            });
+            // scroll EPA career leaderboard to the active card
+            root.querySelectorAll(".epa-rank-track").forEach((track) => {
+              const active = track.querySelector(".epa-rank-card.is-active");
+              if (!active) return;
+              const tr = track.getBoundingClientRect(), cr = active.getBoundingClientRect();
+              track.scrollLeft += cr.left - tr.left - tr.width / 2 + cr.width / 2;
             });
           }));
         }
@@ -1948,7 +2924,8 @@
             labels.push("Why throws missed");
             const maxShare = inc.rows.reduce((m, r) => Math.max(m, r.share || 0), 0) || 1;
             const ledger = inc.rows.map((row) => {
-              const color = accColor({ ...row, value: row.share, format: "pct" });
+              const sharePct = Math.round(25 + ((row.share || 0) / maxShare) * 75);
+              const color = `color-mix(in srgb, ${escapeAttr(theme.accent)} ${sharePct}%, #374151)`;
               const w = ((row.share || 0) / maxShare) * 100;
               return `<div class="inc-row qb-animate-item" style="--ic:${escapeAttr(color)}">
                 <span class="inc-count">${escapeHtml(String(Math.round(row.count || 0)))}</span>
@@ -1968,22 +2945,23 @@
             : panes[0];
         }
 
-        function gbRow(row, showAtt) {
+        function gbRow(row, showAtt, accent) {
           const grade = row.grade;
-          const color = gradeColor(grade);
+          const pct = grade != null ? Math.round(25 + Math.min(100, Math.max(0, grade)) * 0.75) : 50;
+          const color = `color-mix(in srgb, ${escapeAttr(accent || "#2D6A4F")} ${pct}%, #374151)`;
           const w = grade != null ? Math.max(0, Math.min(100, grade)) : 0;
           const high = w > 55;
           const att = showAtt && row.attempts != null
             ? `<small>${escapeHtml(Math.round(row.attempts).toLocaleString("en-US"))} att</small>` : "";
           return `<div class="gb-row qb-animate-item${row.rank === 1 ? " is-rank1" : ""}">
             <span class="gb-label">${escapeHtml(row.label)}${att}</span>
-            <span class="gb-meter${high ? " is-high" : ""}" style="--gc:${escapeAttr(color)}; --gw:${w.toFixed(1)}%">
+            <span class="gb-meter${high ? " is-high" : ""}" style="--gc:${color}; --gw:${w.toFixed(1)}%">
               <i style="width:${w.toFixed(1)}%"></i><span class="gv">${FMT.grade(grade)}</span>
             </span>
             ${rankChip(row)}
           </div>`;
         }
-        function rebuildPassingGrades(profile) {
+        function rebuildPassingGrades(profile, theme) {
           const sec = els.mount.querySelector(".qb-section-pass-tables") || findSectionByTitle("Grades by throw type and situation");
           const inner = panelInnerOf(sec);
           const tables = profile.passingGradesTables?.tables || [];
@@ -1995,18 +2973,27 @@
               ? (table.groups || []).flatMap((g) => g.rows || [])
               : (table.rows || [])).filter((r) => r.grade != null);
 
-            // spotlight: strengths & pressure points
+            // spotlight: best-ranked / worst-ranked single callout
             let spotlight = "";
-            const ranked = flat.filter((r) => r.rank != null);
-            const pool = ranked.length >= 4 ? [...ranked].sort((a, b) => a.rank - b.rank)
-              : [...flat].sort((a, b) => b.grade - a.grade);
-            if (pool.length >= 4) {
-              const best = pool.slice(0, 3);
-              const worst = pool.slice(-3).reverse();
-              const item = (r) => `<span class="item"><span>${escapeHtml(r.label)}</span><span class="g" style="color:${escapeAttr(gradeColor(r.grade))}">${FMT.grade(r.grade)}</span></span>`;
-              spotlight = `<div class="gb-spotlight qb-animate-item">
-                <div class="gb-spot" style="--gs:#156a3c"><span class="tag">Where he wins</span>${best.map(item).join("")}</div>
-                <div class="gb-spot" style="--gs:#9b1c1c"><span class="tag">Pressure points</span>${worst.map(item).join("")}</div>
+            const ranked = flat.filter((r) => r.rank != null && r.rankTotal != null && r.rankTotal > 0)
+              .sort((a, b) => a.rank - b.rank);
+            if (ranked.length >= 2) {
+              const best = ranked[0];
+              const worst = ranked[ranked.length - 1];
+              const accent = theme?.accent || "#2D6A4F";
+              const mkCallout = (row, eyebrow) => {
+                const rl = row.rankLabel || `#${row.rank}`;
+                const tot = row.rankTotal;
+                return `<div class="qb-pass-callout">
+                  <div class="qb-pass-callout-eyebrow">${escapeHtml(eyebrow)}</div>
+                  <div class="qb-pass-callout-situation">${escapeHtml(row.label)}</div>
+                  <div class="qb-pass-callout-grade">${FMT.grade(row.grade)}</div>
+                  ${tot ? `<div class="qb-pass-callout-rank">${escapeHtml(rl)} of ${tot} quarterbacks</div>` : ""}
+                </div>`;
+              };
+              spotlight = `<div class="qb-pass-callouts qb-animate-item" style="--pass-accent:${escapeAttr(accent)}">
+                ${mkCallout(best, "Where he wins")}
+                ${mkCallout(worst, "Pressure points")}
               </div>`;
             }
 
@@ -2016,7 +3003,7 @@
             const body = groups.filter((g) => g.rows.length).map((g) => {
               const rows = [...g.rows].sort((a, b) => (b.grade ?? -1) - (a.grade ?? -1));
               return `${g.label ? `<h4 class="gb-group-title">${escapeHtml(g.label)}</h4>` : ""}
-                <div class="gb-rows">${rows.map((r) => gbRow(r, showAtt)).join("")}</div>`;
+                <div class="gb-rows">${rows.map((r) => gbRow(r, showAtt, theme?.accent)).join("")}</div>`;
             }).join("");
 
             return `<div class="annual-pane${idx === 0 ? " is-active" : ""}">${spotlight}${body}</div>`;
@@ -2035,7 +3022,7 @@
           safe(() => rebuildAllowedPressures(profile, theme), "pressures rebuild");
           safe(() => rebuildClutch(profile, theme), "clutch rebuild");
           safe(() => rebuildAccuracy(profile, theme), "accuracy rebuild");
-          safe(() => rebuildPassingGrades(profile), "grade board rebuild");
+          safe(() => rebuildPassingGrades(profile, theme), "grade board rebuild");
           // chapters: everything open, headers become editorial
           els.mount.querySelectorAll(".qb-collapsible-details").forEach((d) => { d.open = true; });
           armRings(els.mount);
@@ -2201,7 +3188,7 @@
           safe(() => window.QbAnnualRouteTree?.init(host), "route tree");
 
           els.content.classList.remove("is-swapping");
-          if (scrollTop) window.scrollTo({ top: 0, behavior: "smooth" });
+          if (scrollTop) els.hero.scrollIntoView({ behavior: "instant" });
           writeHash();
           persist();
         }
@@ -2259,13 +3246,24 @@
             const h = document.documentElement;
             const max = h.scrollHeight - h.clientHeight;
             els.progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
-            els.topbar.classList.toggle("is-stuck", h.scrollTop > els.hero.offsetHeight - 120);
+            const magH = document.getElementById("magFront")?.offsetHeight || 0;
+            const pastMag = h.scrollTop > magH;
+            els.topbar.classList.toggle("is-stuck", pastMag && h.scrollTop > magH + Math.max(0, els.hero.offsetHeight - 200));
           }, { passive: true });
 
           els.qbSwitchBtn.addEventListener("click", () => openSwitcher());
-          els.brandBtn.addEventListener("click", () => openSwitcher());
+          els.brandBtn.addEventListener("click", () => {
+            const mag = document.getElementById("magCover");
+            if (mag) mag.scrollIntoView({ behavior: "smooth" });
+            else openSwitcher();
+          });
           els.switcherClose.addEventListener("click", closeSwitcher);
           els.switcherSearch.addEventListener("input", () => renderSwitcherGrid(els.switcherSearch.value));
+          // magazine cover buttons
+          document.getElementById("magBrowseQbsBtn")?.addEventListener("click", () => openSwitcher());
+          document.getElementById("magReadBtn")?.addEventListener("click", () => {
+            document.getElementById("magIntro")?.scrollIntoView({ behavior: "smooth" });
+          });
           els.switcherGrid.addEventListener("click", (e) => {
             const card = e.target.closest(".qb-card[data-id]");
             if (!card) return;
@@ -2406,6 +3404,343 @@
           showQb(next, { scrollTop: false });
         }
 
+        /* -------- index panel -------- */
+        function wireIndexPanel() {
+          const panel    = document.getElementById("idxPanel");
+          const backdrop = document.getElementById("idxBackdrop");
+          const toggle   = document.getElementById("idxToggle");
+          const closeBtn = document.getElementById("idxClose");
+          if (!panel || !toggle) return;
+
+          let isOpen = false;
+
+          function animateRows() {
+            const rows = panel.querySelectorAll(".idx-nav-row, .idx-qb-row");
+            rows.forEach((el, i) => {
+              el.classList.remove("is-visible");
+              setTimeout(() => el.classList.add("is-visible"), 40 + i * 28);
+            });
+          }
+
+          function open() {
+            isOpen = true;
+            panel.classList.add("is-open");
+            panel.setAttribute("aria-hidden", "false");
+            backdrop.classList.add("is-open");
+            toggle.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden";
+            animateRows();
+          }
+
+          function close() {
+            isOpen = false;
+            panel.classList.remove("is-open");
+            panel.setAttribute("aria-hidden", "true");
+            backdrop.classList.remove("is-open");
+            toggle.setAttribute("aria-expanded", "false");
+            document.body.style.overflow = "";
+          }
+
+          toggle.addEventListener("click", () => isOpen ? close() : open());
+          closeBtn.addEventListener("click", close);
+          backdrop.addEventListener("click", close);
+          document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) close(); });
+
+          // Magazine section nav items
+          panel.querySelectorAll(".idx-nav-row[data-idx-target]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const el = document.getElementById(btn.dataset.idxTarget);
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+              close();
+            });
+          });
+
+          // Expose QB list builder — called after data loads
+          window._idxPopulateQbs = function(qbs) {
+            const list = document.getElementById("idxQbList");
+            if (!list) return;
+            list.innerHTML = qbs.map((qb) => {
+              const team = window.QbAnnualTeams?.resolve(qb.franchiseId) || {};
+              const color = team.primary || "#4a90d9";
+              const grade = qb.grade != null ? Number(qb.grade).toFixed(1) : "—";
+              return `<button class="idx-qb-row" data-qb-id="${escapeAttr(String(qb.playerId))}" style="--qb-color:${escapeAttr(color)}">
+  <span class="idx-qb-swatch"></span>
+  <span class="idx-qb-name">${escapeHtml(qb.playerName)}</span>
+  <span class="idx-qb-grade">${escapeHtml(grade)}</span>
+</button>`;
+            }).join("");
+            list.querySelectorAll(".idx-qb-row").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const qb = qbs.find((q) => String(q.playerId) === btn.dataset.qbId);
+                if (qb) { showQb(qb, { scrollTop: true }); close(); }
+              });
+            });
+          };
+        }
+
+
+        /* -------- REMOVED -------- */
+        function wireEditorLetter() {
+          const section = document.getElementById("magIntro");
+          if (!section) return;
+
+          // Paragraph + signature reveal via IntersectionObserver
+          const revealEls = [
+            ...section.querySelectorAll(".mag-intro-body p, .mag-intro-body blockquote"),
+            document.getElementById("introSig"),
+            document.getElementById("introBadgeGrade"),
+            document.getElementById("introBadgeTeams"),
+          ].filter(Boolean);
+
+          const revealObs = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                revealObs.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+
+          revealEls.forEach((el, i) => {
+            if (el.classList.contains("mag-intro-badge") || el.id === "introSig") return; // delay handled by CSS
+            el.style.transitionDelay = (i * 0.07) + "s";
+            revealObs.observe(el);
+          });
+          // Observe sig and badges separately (no extra delay stacking)
+          ["introSig","introBadgeGrade","introBadgeTeams"].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) revealObs.observe(el);
+          });
+
+          // Cutout parallax on scroll
+          const cutout = document.getElementById("introCutout");
+          if (cutout && window.matchMedia("(min-width: 860px)").matches) {
+            const onScroll = () => {
+              const rect = section.getBoundingClientRect();
+              const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
+              cutout.style.transform = `translateY(${progress * -40}px)`;
+            };
+            window.addEventListener("scroll", onScroll, { passive: true });
+          }
+        }
+
+        /* -------- magazine: QB index -------- */
+        function buildMagazineIndex() {
+          const grid = document.getElementById("magIndexGrid");
+          const search = document.getElementById("magIndexSearch");
+          if (!grid) return;
+          if (!qbOrder.length) {
+            grid.innerHTML = '<p class="mag-index-empty">No quarterbacks loaded.</p>';
+            return;
+          }
+          function renderCards(filter) {
+            const q = (filter || "").trim().toLowerCase();
+            const list = q
+              ? qbOrder.filter((p) => {
+                  const team = window.QbAnnualTeams.resolve(p.franchiseId);
+                  return p.playerName.toLowerCase().includes(q) ||
+                    (team.nickname || "").toLowerCase().includes(q) ||
+                    (team.abbr || "").toLowerCase().includes(q);
+                })
+              : qbOrder;
+            if (!list.length) {
+              grid.innerHTML = `<p class="mag-index-empty">No quarterbacks match "${escapeHtml(filter)}".</p>`;
+              return;
+            }
+            grid.innerHTML = list.map((p) => {
+              const team = window.QbAnnualTeams.resolve(p.franchiseId);
+              const logo = teamLogoUrl(p.franchiseId);
+              const logoBit = logo
+                ? `<img class="mag-index-logo" src="${escapeAttr(logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+                : "";
+              const grade = p.grade != null
+                ? `<span class="mag-index-grade">${Number(p.grade).toFixed(1)}</span>` : "";
+              return `<div class="mag-index-card" data-id="${escapeAttr(String(p.playerId))}" style="--card-team:${escapeAttr(team.primary || "#00338d")}">
+  <div class="mag-index-photo-wrap">
+    ${logo ? `<img class="mag-index-card-watermark" src="${escapeAttr(logo)}" alt="" aria-hidden="true" loading="lazy">` : ""}
+    <img class="mag-index-photo" src="${escapeAttr(headshotUrl(p.playerId))}" alt="${escapeAttr(p.playerName)}" loading="lazy" onerror="this.style.visibility='hidden'">
+    ${logoBit}
+  </div>
+  <div class="mag-index-body">
+    <div class="mag-index-name">${escapeHtml(p.playerName)}</div>
+    <div class="mag-index-team">${escapeHtml(team.nickname || p.teamName || "")}</div>
+    ${grade}
+  </div>
+</div>`;
+            }).join("");
+            grid.querySelectorAll(".mag-index-card[data-id]").forEach((card) => {
+              card.addEventListener("click", () => {
+                const qb = qbOrder.find((p) => String(p.playerId) === card.dataset.id);
+                if (qb) showQb(qb);
+              });
+            });
+          }
+          renderCards("");
+          if (search) {
+            search.addEventListener("input", () => renderCards(search.value));
+          }
+        }
+
+        /* -------- magazine: topbar mode switching -------- */
+        function wireMagazineTopbar() {
+          // Wire mag nav chips
+          document.querySelectorAll(".mag-nav-chip[data-mag-target]").forEach((chip) => {
+            chip.addEventListener("click", () => {
+              document.getElementById(chip.dataset.magTarget)
+                ?.scrollIntoView({ behavior: "smooth" });
+            });
+          });
+
+          // Toggle topbar mode based on whether magFront is in view
+          const magFront = document.getElementById("magFront");
+          if (!magFront) return;
+          const observer = new IntersectionObserver(
+            ([entry]) => {
+              els.topbar.classList.toggle("is-mag-mode", entry.isIntersecting);
+            },
+            { threshold: 0, rootMargin: "0px 0px -40px 0px" }
+          );
+          observer.observe(magFront);
+
+          // Scrollspy: highlight the active mag section chip
+          const magSections = ["magCover","magIntro","magAck","magIndex","magSummary"]
+            .map((id) => document.getElementById(id)).filter(Boolean);
+          const chipMap = {};
+          document.querySelectorAll(".mag-nav-chip[data-mag-target]").forEach((c) => {
+            chipMap[c.dataset.magTarget] = c;
+          });
+          const magSpy = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              Object.values(chipMap).forEach((c) => c.classList.remove("is-active"));
+              const chip = chipMap[entry.target.id];
+              if (chip) chip.classList.add("is-active");
+            });
+          }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
+          magSections.forEach((s) => magSpy.observe(s));
+        }
+
+        /* -------- magazine: leaderboards -------- */
+        function buildMagazineSummary() {
+          const grid = document.getElementById("magLbGrid");
+          if (!grid) return;
+
+          const passingState = window.QbAnnualApi.getPassingSummaryState();
+          const season2025 = (passingState?.rows || []).filter(
+            (r) => String(r.season) === "2025" && r.includedInRank
+          );
+
+          if (!season2025.length) {
+            grid.innerHTML = '<p class="mag-lb-empty">No 2025 qualifying data loaded.</p>';
+            return;
+          }
+
+          const boards = [
+            {
+              icon: "⭐", title: "PFF Pass Grade",
+              note: "Higher = better · qualifying passers",
+              rows: [...season2025].filter(r => r.gradesPass != null)
+                .sort((a,b) => b.gradesPass - a.gradesPass).slice(0,5),
+              raw: r => r.gradesPass || 0,
+              display: r => (r.gradesPass||0).toFixed(1),
+              maxVal: 100, invert: false,
+            },
+            {
+              icon: "🏈", title: "Passing Yards",
+              note: "Regular season · all attempts",
+              rows: [...season2025].filter(r => r.yards != null)
+                .sort((a,b) => b.yards - a.yards).slice(0,5),
+              raw: r => r.yards || 0,
+              display: r => Math.round(r.yards||0).toLocaleString("en-US"),
+              maxVal: null, invert: false,
+            },
+            {
+              icon: "🎯", title: "Passing Touchdowns",
+              note: "Regular season",
+              rows: [...season2025].filter(r => r.touchdowns != null)
+                .sort((a,b) => b.touchdowns - a.touchdowns).slice(0,5),
+              raw: r => r.touchdowns || 0,
+              display: r => Math.round(r.touchdowns||0),
+              maxVal: null, invert: false,
+            },
+            {
+              icon: "📐", title: "Avg Depth of Target",
+              note: "Air yards per attempt · deeper = more aggressive",
+              rows: [...season2025].filter(r => r.avgDepthOfTarget != null)
+                .sort((a,b) => b.avgDepthOfTarget - a.avgDepthOfTarget).slice(0,5),
+              raw: r => r.avgDepthOfTarget || 0,
+              display: r => (r.avgDepthOfTarget||0).toFixed(1) + " yds",
+              maxVal: null, invert: false,
+            },
+            {
+              icon: "⚡", title: "Time to Throw",
+              note: "Quickest releases · lower is faster",
+              rows: [...season2025].filter(r => r.avgTimeToThrow != null)
+                .sort((a,b) => a.avgTimeToThrow - b.avgTimeToThrow).slice(0,5),
+              raw: r => r.avgTimeToThrow || 0,
+              display: r => (r.avgTimeToThrow||0).toFixed(2) + "s",
+              maxVal: null, invert: true,
+            },
+            {
+              icon: "🛡", title: "Pressure-to-Sack Rate",
+              note: "Best at avoiding sacks when pressured · lower = better",
+              rows: [...season2025].filter(r => r.pressureToSackRate != null)
+                .sort((a,b) => a.pressureToSackRate - b.pressureToSackRate).slice(0,5),
+              raw: r => r.pressureToSackRate || 0,
+              display: r => ((r.pressureToSackRate||0)*100).toFixed(1) + "%",
+              maxVal: null, invert: true,
+            },
+          ];
+
+          grid.innerHTML = boards.map(lb => {
+            if (!lb.rows.length) return "";
+            const topVal = lb.raw(lb.rows[0]);
+            const maxVal = lb.maxVal || Math.max(...lb.rows.map(lb.raw), 1);
+
+            const rowsHtml = lb.rows.map((r, i) => {
+              const team = window.QbAnnualTeams.resolve(r.franchiseId);
+              const logo = team.logo
+                ? `<img class="mag-lb-logo-img" src="${escapeAttr(team.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+                : `<span class="mag-lb-logo-img" style="display:inline-block"></span>`;
+              const val = lb.raw(r);
+              const barPct = lb.invert
+                ? Math.min(100, Math.round((topVal / Math.max(val, 0.001)) * 100))
+                : Math.min(100, Math.round((val / maxVal) * 100));
+              const parts = (r.player || "").trim().split(/\s+/);
+              const lastName = parts.slice(-1)[0] || r.player || "";
+              const firstName = parts.length > 1 ? parts.slice(0,-1).join(" ") : "";
+              const rankBadge = i === 0 ? "🥇" : String(i + 1);
+              return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
+  <span class="mag-lb-rank">${rankBadge}</span>
+  ${logo}
+  <span class="mag-lb-name">${escapeHtml(lastName)}<small>${escapeHtml(firstName)}</small></span>
+  <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%"></div></div>
+  <span class="mag-lb-val">${escapeHtml(String(lb.display(r)))}</span>
+</div>`;
+            }).join("");
+
+            return `<div class="mag-lb-card">
+  <div class="mag-lb-header">
+    <div class="mag-lb-icon">${lb.icon}</div>
+    <span class="mag-lb-title">${escapeHtml(lb.title)}</span>
+  </div>
+  <div class="mag-lb-rows">${rowsHtml}</div>
+  <div class="mag-lb-footer">${escapeHtml(lb.note)}</div>
+</div>`;
+          }).join("");
+
+          // clicking a row opens the QB profile
+          grid.querySelectorAll(".mag-lb-row[data-id]").forEach(row => {
+            row.addEventListener("click", () => {
+              const id = row.dataset.id;
+              const name = row.dataset.name;
+              const qb = qbOrder.find(p => String(p.playerId) === id)
+                       || qbOrder.find(p => p.playerName === name);
+              if (qb) showQb(qb);
+            });
+          });
+        }
+
         /* ---------------- boot ---------------- */
         async function init() {
           try {
@@ -2415,7 +3750,12 @@
             }
             await loadAllData();
             buildQbOrder();
+            // Populate index panel QB list now that data is ready
+            if (window._idxPopulateQbs) window._idxPopulateQbs(qbOrder);
+            buildMagazineIndex();
+            buildMagazineSummary();
             wireChrome();
+            wireMagazineTopbar();
 
             const hash = readHash();
             const saved = restore();
@@ -2445,8 +3785,38 @@
           }
         }
 
+        // Wire the index panel immediately — doesn't need QB data
+        wireIndexPanel();
         init();
       })();
     </script>
+
+    <!-- ====== SLIDING INDEX PANEL ====== -->
+    <div class="idx-backdrop" id="idxBackdrop"></div>
+    <aside class="idx-panel" id="idxPanel" aria-hidden="true" aria-label="QB Annual index">
+      <div class="idx-panel-head">
+        <span class="idx-panel-brand">2026 QB Annual</span>
+        <button class="idx-panel-close" id="idxClose" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="idx-panel-body" id="idxPanelBody">
+        <!-- Magazine sections — always present -->
+        <div class="idx-section-label">Magazine</div>
+        <button class="idx-nav-row" data-idx-target="magCover">
+          <span class="idx-nav-row-dot"></span>Home
+        </button>
+        <button class="idx-nav-row" data-idx-target="magIntro">
+          <span class="idx-nav-row-dot"></span>Introduction
+        </button>
+        <button class="idx-nav-row" data-idx-target="magAck">
+          <span class="idx-nav-row-dot"></span>Acknowledgements
+        </button>
+        <div class="idx-divider"></div>
+        <!-- QB list — populated by JS after data loads -->
+        <div class="idx-section-label">Quarterbacks</div>
+        <div id="idxQbList"><div style="padding:12px 20px;font-size:0.78rem;color:rgba(255,255,255,0.25);font-weight:600;">Loading…</div></div>
+      </div>
+    </aside>
+    <!-- ====== END INDEX PANEL ====== -->
+
   </body>
 </html>
