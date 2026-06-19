@@ -16,9 +16,9 @@
     <!-- ============ ANNUAL SKIN — design system overrides ============ -->
     <style id="annualSkin">
       :root {
-        --team: #00338d;
+        --team: #006bff;
         --team-deep: #001a47;
-        --accent: #00338d;
+        --accent: #006bff;
         --team-ink: #ffffff;
         --paper: #f5f6f8;
         --ink: #0e0f12;
@@ -84,6 +84,26 @@
       .topbar.is-stuck .brand .yr { color: var(--accent); opacity: 1; }
 
       .topbar-spacer { flex: 1; }
+
+      .back-btn {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
+        color: rgba(255,255,255,0.75);
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 99px;
+        padding: 5px 13px 5px 10px;
+        cursor: pointer; white-space: nowrap;
+        transition: background 0.16s, color 0.16s, border-color 0.16s;
+        font-family: inherit;
+        flex-shrink: 0;
+      }
+      .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+      .topbar.is-stuck .back-btn {
+        color: #374151; background: #fff; border-color: rgba(14,15,18,0.12);
+        box-shadow: 0 1px 4px rgba(14,15,18,0.07);
+      }
+      .topbar.is-stuck .back-btn:hover { background: #f3f4f6; }
 
       .qb-switch-btn {
         display: inline-flex; align-items: center; gap: 10px;
@@ -504,29 +524,103 @@
 
       /* ---------- loader ---------- */
       .loader {
-        position: fixed; inset: 0; z-index: 400; display: flex; flex-direction: column;
-        align-items: center; justify-content: center; gap: 18px;
-        background: #0b0c10; color: #fff;
-        transition: opacity 0.4s ease;
+        position: fixed; inset: 0; z-index: 400;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        background: #000; color: #fff;
+        transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
       }
       .loader.is-done { opacity: 0; pointer-events: none; }
-      .loader-mark {
-        font-size: 1rem; font-weight: 900; letter-spacing: 0.34em; text-transform: uppercase;
-        animation: loaderPulse 1.6s ease-in-out infinite;
+
+      /* phase 1 — hero image emerges */
+      .loader-img {
+        position: absolute; inset: 0;
+        background: url("Clutch_header.jpg") center / cover no-repeat;
+        opacity: 0;
+        animation: loaderImgIn 2.4s ease-out forwards,
+                   loaderKenBurns 10s ease-out forwards;
       }
+      .loader-img::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to bottom,
+          rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.60) 100%);
+      }
+      @keyframes loaderImgIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes loaderKenBurns {
+        0%   { transform: scale(1.12); }
+        100% { transform: scale(1.00); }
+      }
+
+      /* phase 2 — veil fades over image */
+      .loader-veil {
+        position: absolute; inset: 0;
+        background: #000; opacity: 0;
+        animation: loaderVeilIn 2.6s cubic-bezier(0.4, 0, 0.6, 1) 3.2s forwards;
+      }
+      @keyframes loaderVeilIn {
+        from { opacity: 0; }
+        to   { opacity: 0.96; }
+      }
+
+      /* phase 3 — PFF+ logo */
+      .loader-brand {
+        position: relative; z-index: 2;
+        display: flex; flex-direction: column;
+        align-items: center;
+        opacity: 0; transform: translateY(12px);
+        animation: loaderBrandIn 1.6s cubic-bezier(0.22, 1, 0.36, 1) 5.0s forwards;
+      }
+      @keyframes loaderBrandIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .loader-pff-logo {
+        width: 210px; height: auto;
+        filter: drop-shadow(0 0 50px rgba(255,255,255,0.12));
+      }
+      .loader-rule {
+        width: 44px; height: 1px;
+        background: rgba(255,255,255,0.18);
+        margin: 22px auto 18px;
+      }
+
+      /* phase 3b — title text (slightly later) */
+      .loader-titles {
+        display: flex; flex-direction: column;
+        align-items: center; gap: 9px;
+        opacity: 0;
+        animation: loaderTitlesIn 1.4s ease-out 5.8s forwards;
+      }
+      @keyframes loaderTitlesIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      .loader-annual {
+        font-size: 0.66rem; font-weight: 800; letter-spacing: 0.46em;
+        text-transform: uppercase; color: rgba(255,255,255,0.72);
+      }
+      .loader-year-num {
+        font-size: 0.52rem; font-weight: 700; letter-spacing: 0.34em;
+        text-transform: uppercase; color: rgba(255,255,255,0.30);
+      }
+
+      /* shimmer progress bar */
       .loader-bar {
-        width: 180px; height: 3px; border-radius: 99px; overflow: hidden;
-        background: rgba(255, 255, 255, 0.12); position: relative;
+        position: absolute; bottom: 0; left: 0; right: 0;
+        height: 2px; background: rgba(255,255,255,0.06); z-index: 3;
       }
       .loader-bar::after {
-        content: ""; position: absolute; inset: 0; width: 40%;
-        background: #fff; border-radius: 99px;
-        animation: loaderSlide 1.1s ease-in-out infinite;
+        content: ""; position: absolute; inset: 0; width: 28%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+        animation: loaderSlide 2.2s ease-in-out infinite;
       }
-      @keyframes loaderPulse { 50% { opacity: 0.55; } }
       @keyframes loaderSlide {
-        0% { transform: translateX(-120%); }
-        100% { transform: translateX(420%); }
+        0%   { transform: translateX(-130%); }
+        100% { transform: translateX(480%); }
       }
 
       /* ---------- profile swap transition ---------- */
@@ -1178,6 +1272,12 @@
         transition: background 0.18s ease;
       }
       .acc-row:hover { background: color-mix(in srgb, var(--accent) 5%, #fff); }
+      .acc-row--hero:hover { background: color-mix(in srgb, var(--accent) 88%, #000) !important; }
+      .acc-row--hero .annual-rank-chip { background: rgba(255,255,255,0.18); color: #fff; }
+      .acc-row--hero .annual-rank-chip small { color: rgba(255,255,255,0.6); }
+      .acc-row--hero .annual-rank-chip.is-gold { background: rgba(245,197,24,0.25); color: #f5c518; }
+      .acc-row--hero .lbl { font-size: 0.95rem; }
+      .acc-row--hero .val { font-size: 1.25rem; }
       .acc-row .dot { width: 12px; height: 12px; border-radius: 50%; }
       .acc-row .lbl { font-size: 0.8rem; font-weight: 800; }
       .acc-row .lbl small { display: block; font-weight: 700; color: #9aa1ab; font-size: 0.68rem; margin-top: 1px; }
@@ -1453,7 +1553,7 @@
          palette — never inherits the active QB's team color.
          ==================================================== */
       #magFront {
-        --accent: #00338d;        /* PFF navy — fixed */
+        --accent: #006bff;        /* PFF navy — fixed */
         --accent-ink: #ffffff;
       }
 
@@ -1494,7 +1594,7 @@
       }
       .mag-nav-chip:hover,
       .mag-nav-chip.is-active {
-        background: #00338d; border-color: #00338d; color: #fff;
+        background: #006bff; border-color: #006bff; color: #fff;
       }
       /* topbar background in mag mode — stays light */
       .topbar.is-mag-mode.is-stuck {
@@ -1508,8 +1608,8 @@
          ==================================================== */
       .mag-index {
         background:
-          radial-gradient(1100px 500px at 85% -10%, color-mix(in srgb, #00338d 32%, transparent), transparent 60%),
-          radial-gradient(800px 500px at 0% 100%, color-mix(in srgb, #00338d 18%, transparent), transparent 65%),
+          radial-gradient(1100px 500px at 85% -10%, color-mix(in srgb, #006bff 32%, transparent), transparent 60%),
+          radial-gradient(800px 500px at 0% 100%, color-mix(in srgb, #006bff 18%, transparent), transparent 65%),
           #0b0c10;
         padding: 0;
         position: relative; overflow: hidden;
@@ -1550,7 +1650,7 @@
       }
       .mag-index-title-accent {
         /* matches .switcher-title .accent — team-tinted ghost text */
-        background: linear-gradient(90deg, #c8ccd4, color-mix(in srgb, #00338d 55%, #c8ccd4));
+        background: linear-gradient(90deg, #c8ccd4, color-mix(in srgb, #006bff 55%, #c8ccd4));
         -webkit-background-clip: text; background-clip: text; color: transparent;
       }
       .mag-index-sub {
@@ -1604,7 +1704,7 @@
       }
       .mag-index-card:hover {
         transform: translateY(-4px);
-        border-color: color-mix(in srgb, var(--card-team, #00338d) 80%, #fff);
+        border-color: color-mix(in srgb, var(--card-team, #006bff) 80%, #fff);
         box-shadow: 0 22px 50px color-mix(in srgb, var(--card-team, #000) 35%, transparent);
       }
       .mag-index-photo-wrap {
@@ -1779,41 +1879,153 @@
 
       /* ---------- intro / letter from editor ---------- */
       .mag-intro {
+        position: relative;
         background: #fff;
-        padding: clamp(56px,8vw,100px) clamp(22px,5vw,70px);
+        overflow: hidden;
+        padding: 0;
       }
-      .mag-intro-inner { max-width: 760px; margin: 0 auto; }
-      .mag-eyebrow {
-        font-size: 0.68rem; font-weight: 800;
-        letter-spacing: 0.18em; text-transform: uppercase;
-        color: var(--accent, #2d6a4f);
+      /* side-bleed images */
+      .mag-intro-side {
+        position: absolute;
+        top: 0; bottom: 0;
+        width: calc((100% - 1040px) / 2);
+        min-width: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .mag-intro-side--left  { left: 0; }
+      .mag-intro-side--right { right: 0; }
+      .mag-intro-side-img {
+        display: block;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        object-position: left center;
+        opacity: 0;
+        transition: opacity 1.2s ease;
+      }
+      .mag-intro-side--right .mag-intro-side-img {
+        object-position: right center;
+      }
+      .mag-intro-side-img.is-revealed { opacity: 1; }
+      /* fade sides inward so they blend into the white column */
+      .mag-intro-side--left::after {
+        content: "";
+        position: absolute; inset: 0;
+        background: linear-gradient(to right, transparent 0%, #fff 100%);
+        pointer-events: none;
+      }
+      .mag-intro-side--right::after {
+        content: "";
+        position: absolute; inset: 0;
+        background: linear-gradient(to left, transparent 0%, #fff 100%);
+        pointer-events: none;
+      }
+      /* inner layout */
+      .mag-intro-inner {
+        position: relative; z-index: 2;
+        max-width: 1040px; margin: 0 auto;
+        padding: clamp(36px,5vw,64px) clamp(24px,5vw,72px) clamp(56px,8vw,100px);
+      }
+      /* eyebrow */
+      .mag-intro .mag-eyebrow {
+        color: #006bff;
+        font-size: 0.66rem; font-weight: 800;
+        letter-spacing: 0.2em; text-transform: uppercase;
         display: flex; align-items: center; gap: 10px;
         margin-bottom: 18px;
       }
-      .mag-eyebrow::before {
+      .mag-intro .mag-eyebrow::before {
         content: ""; display: block;
         width: 22px; height: 2px;
-        background: var(--accent, #2d6a4f);
-        border-radius: 2px;
+        background: #006bff; border-radius: 2px;
       }
       .mag-intro h2 {
-        font-size: clamp(1.8rem, 4vw, 2.9rem);
+        font-size: clamp(1.9rem, 4vw, 3rem);
         font-weight: 900; letter-spacing: -0.03em;
-        line-height: 1.08; margin: 0 0 28px; color: #0d1117;
+        line-height: 1.07; margin: 0 0 28px;
+        color: #0d1117;
+      }
+      /* ruled divider */
+      .mag-intro-rule {
+        width: 100%; height: 1px;
+        background: linear-gradient(to right, #006bff 0%, rgba(0,51,141,0.15) 50%, transparent 100%);
+        margin-bottom: 28px;
       }
       .mag-intro-body {
-        font-size: 1.03rem; line-height: 1.85;
-        color: #374151; font-weight: 500; margin-bottom: 36px;
+        font-size: 1.03rem; line-height: 1.88;
+        color: #374151; font-weight: 400;
+        margin-bottom: 0;
       }
-      .mag-intro-body p { margin: 0 0 18px; }
+      .mag-intro-body p {
+        margin: 0 0 20px;
+        opacity: 0;
+        transform: translateX(var(--para-x, 0px)) translateY(14px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+      .mag-intro-body p.is-revealed { opacity: 1; transform: translateY(0); }
       .mag-intro-body p:last-child { margin-bottom: 0; }
+      /* drop cap */
+      .mag-intro-body p:first-child::first-letter {
+        font-size: 4.4rem; font-weight: 900;
+        line-height: 0.78; float: left;
+        margin: 0.06em 0.12em 0 0;
+        color: #006bff; letter-spacing: -0.02em;
+      }
+
+      /* ---- sentence-level reveals ---- */
+      .mag-s {
+        opacity: 0;
+        transition: opacity 0.65s ease var(--d, 0s);
+      }
+      .mag-intro-body p.is-revealed .mag-s { opacity: 1; }
+
+      /* ---- reading progress rail ---- */
+      .mag-intro-rail {
+        position: absolute;
+        left: 0; top: 0;
+        width: 3px; height: 0%;
+        background: linear-gradient(to bottom, #006bff 0%, rgba(0,51,141,0.25) 100%);
+        border-radius: 0 2px 2px 0;
+        z-index: 10;
+        pointer-events: none;
+        will-change: height;
+        transition: height 0.1s linear;
+      }
+
+      /* ---- pull quote ---- */
+      .mag-intro-body p.mag-pull-quote {
+        font-size: clamp(1.3rem, 2.5vw, 1.7rem) !important;
+        font-weight: 900 !important;
+        color: #006bff !important;
+        border-left: 4px solid #006bff;
+        padding: 6px 0 6px 22px !important;
+        margin: 40px 0 40px -26px !important;
+        line-height: 1.38 !important;
+        letter-spacing: -0.02em;
+        transform: translateX(var(--para-x, 0px)) translateY(14px);
+      }
+      .mag-intro-body p.mag-pull-quote.is-revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      @media (max-width: 900px) {
+        .mag-intro-body p.mag-pull-quote {
+          margin-left: 0 !important;
+        }
+      }
+
+      /* signature */
       .mag-intro-sig {
         display: flex; align-items: center; gap: 14px;
-        padding-top: 28px;
+        margin-top: 36px; padding-top: 28px;
         border-top: 1px solid #eceef2;
+        opacity: 0; transform: translateY(10px);
+        transition: opacity 0.75s ease 0.15s, transform 0.75s ease 0.15s;
       }
+      .mag-intro-sig.is-revealed { opacity: 1; transform: translateY(0); }
       .mag-intro-sig-name { font-weight: 800; font-size: 0.9rem; color: #0d1117; }
-      .mag-intro-sig-role { font-size: 0.76rem; color: #6b7280; font-weight: 600; margin-top: 3px; }
+      .mag-intro-sig-role { font-size: 0.76rem; color: #6b7280; font-weight: 500; margin-top: 3px; }
 
       /* ---------- glossary ---------- */
       .mag-glossary {
@@ -1857,18 +2069,37 @@
 
       /* ---------- summary leaderboards ---------- */
       .mag-summary {
-        background: var(--paper, #f5f6f8);
+        position: relative;
+        background: #07101c;
         padding: clamp(48px,6vw,80px) clamp(22px,5vw,70px);
-        border-top: 1px solid #eceef2;
+        border-top: none;
+        overflow: hidden;
       }
-      .mag-summary-inner { max-width: 1200px; margin: 0 auto; }
+      .mag-summary::before {
+        content: "";
+        position: absolute; inset: 0;
+        background: url("QB_email.jpg") center / cover no-repeat;
+        filter: grayscale(100%) brightness(0.18);
+        opacity: 0.55;
+        pointer-events: none; z-index: 0;
+      }
+      .mag-summary::after {
+        content: "";
+        position: absolute; inset: 0;
+        background:
+          radial-gradient(ellipse at 15% 50%, rgba(0,107,255,0.07) 0%, transparent 55%),
+          radial-gradient(ellipse at 85% 20%, rgba(0,107,255,0.05) 0%, transparent 45%),
+          linear-gradient(to bottom, rgba(7,16,28,0.55) 0%, rgba(7,16,28,0.3) 50%, rgba(7,16,28,0.65) 100%);
+        pointer-events: none; z-index: 0;
+      }
+      .mag-summary-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
       .mag-summary h2 {
         font-size: clamp(1.6rem,3.5vw,2.4rem);
         font-weight: 900; letter-spacing: -0.03em;
-        color: #0d1117; margin: 0 0 8px;
+        color: #f1f5f9; margin: 0 0 8px;
       }
       .mag-summary-sub {
-        font-size: 0.88rem; color: #6b7280;
+        font-size: 0.88rem; color: rgba(255,255,255,0.38);
         font-weight: 600; margin-bottom: 36px;
       }
       .mag-lb-grid {
@@ -1877,29 +2108,25 @@
         gap: 20px;
       }
       .mag-lb-card {
-        background: #fff; border-radius: 18px;
+        background: #0f1923; border-radius: 18px;
         overflow: hidden;
-        box-shadow: 0 1px 2px rgba(14,15,18,0.04), 0 6px 22px rgba(14,15,18,0.06);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.32), 0 1px 2px rgba(0,0,0,0.2);
         transition: box-shadow 0.22s ease, transform 0.22s ease;
       }
       .mag-lb-card:hover {
-        box-shadow: 0 2px 4px rgba(14,15,18,0.05), 0 16px 42px rgba(14,15,18,0.10);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.44), 0 2px 4px rgba(0,0,0,0.3);
         transform: translateY(-2px);
       }
       .mag-lb-header {
         padding: 14px 20px 12px;
-        border-bottom: 1px solid #f0f1f4;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
         display: flex; align-items: center; gap: 10px;
       }
-      .mag-lb-icon {
-        width: 30px; height: 30px; border-radius: 8px;
-        background: color-mix(in srgb, var(--accent) 12%, #f0f1f4);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 0.9rem; flex: 0 0 30px;
-      }
+      .mag-lb-icon { display: none; }
       .mag-lb-title {
         font-size: 0.71rem; font-weight: 800;
-        letter-spacing: 0.1em; text-transform: uppercase; color: #0d1117;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        color: rgba(255,255,255,0.9);
       }
       .mag-lb-rows { padding: 4px 0 0; }
       .mag-lb-row {
@@ -1909,25 +2136,25 @@
         padding: 8px 18px;
         cursor: pointer; transition: background 0.14s;
       }
-      .mag-lb-row:hover { background: #f8f9fb; }
+      .mag-lb-row:hover { background: rgba(255,255,255,0.05); }
       .mag-lb-rank {
         font-size: 0.7rem; font-weight: 800;
-        color: #9ca3af; text-align: center; line-height: 1;
+        color: rgba(255,255,255,0.28); text-align: center; line-height: 1;
       }
-      .mag-lb-row[data-rank="1"] .mag-lb-rank { font-size: 1rem; color: #c8972a; }
+      .mag-lb-row[data-rank="1"] .mag-lb-rank { font-size: 1rem; color: #f0b429; }
       .mag-lb-logo-img {
         width: 26px; height: 26px; object-fit: contain; display: block;
       }
       .mag-lb-name {
-        font-size: 0.83rem; font-weight: 700; color: #0d1117;
+        font-size: 0.83rem; font-weight: 700; color: rgba(255,255,255,0.92);
         overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       }
       .mag-lb-name small {
         display: block; font-size: 0.62rem; font-weight: 600;
-        color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;
+        color: rgba(255,255,255,0.36); text-transform: uppercase; letter-spacing: 0.05em;
       }
       .mag-lb-bar-wrap {
-        height: 5px; background: #eceef2;
+        height: 5px; background: rgba(255,255,255,0.1);
         border-radius: 99px; overflow: hidden;
       }
       .mag-lb-bar {
@@ -1940,47 +2167,231 @@
       }
       .mag-lb-val {
         font-size: 0.85rem; font-weight: 900;
-        color: var(--accent, #0d1117);
+        color: rgba(255,255,255,0.92);
         font-variant-numeric: tabular-nums;
         text-align: right; white-space: nowrap;
       }
       .mag-lb-footer {
         padding: 8px 18px 12px;
         font-size: 0.62rem; font-weight: 700;
-        color: #9ca3af; letter-spacing: 0.07em;
+        color: rgba(255,255,255,0.28); letter-spacing: 0.07em;
         text-transform: uppercase;
-        border-top: 1px solid #f0f1f4;
+        border-top: 1px solid rgba(255,255,255,0.06);
         margin-top: 4px;
       }
       .mag-lb-empty {
         padding: 24px 18px;
-        font-size: 0.84rem; color: #9ca3af;
+        font-size: 0.84rem; color: rgba(255,255,255,0.35);
         font-weight: 600; text-align: center;
       }
 
+      /* ---- full-width and wide card spans ---- */
+      .mag-lb-card.is-full, .mag-lb-yoy-pair.is-full { grid-column: 1 / -1; }
+      .mag-lb-card.is-wide  { grid-column: span 2; }
+      @media (max-width: 680px) {
+        .mag-lb-card.is-wide { grid-column: span 1; }
+      }
+
+      /* ---- segmented rush yards bar ---- */
+      .mag-lb-row--rush {
+        grid-template-columns: 26px 28px minmax(0,1fr) minmax(0, 2fr) 60px;
+      }
+      .mag-seg-wrap {
+        display: flex; height: 6px; border-radius: 99px;
+        overflow: hidden; background: rgba(255,255,255,0.1);
+      }
+      .mag-seg-designed {
+        height: 100%; background: #006bff;
+        transition: width 0.7s cubic-bezier(0.34,1.2,0.64,1);
+        flex-shrink: 0;
+      }
+      .mag-seg-scramble {
+        height: 100%; background: #0d9488;
+        transition: width 0.7s cubic-bezier(0.34,1.2,0.64,1) 0.05s;
+        flex-shrink: 0;
+      }
+      .mag-seg-legend {
+        margin-left: auto;
+        display: flex; align-items: center; gap: 10px;
+        font-size: 0.65rem; font-weight: 700;
+        color: #6b7280; letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .mag-seg-dot {
+        display: inline-block;
+        width: 8px; height: 8px; border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* ---- SVG scatter ---- */
+      .mag-scatter-wrap {
+        padding: 12px 18px 4px;
+        width: 100%;
+      }
+      .mag-scatter-svg {
+        display: block; width: 100%; height: auto;
+        max-height: 460px;
+      }
+
+      /* ---- YoY change cards ---- */
+      .mag-lb-card.is-jump-card    { border-top: 3px solid #16a34a; }
+      .mag-lb-card.is-decline-card { border-top: 3px solid #dc2626; }
+      .mag-lb-bar.is-jump    { background: linear-gradient(90deg, #15803d, #22c55e); }
+      .mag-lb-bar.is-decline { background: linear-gradient(90deg, #b91c1c, #ef4444); }
+      .mag-lb-delta--pos { color: #16a34a !important; }
+      .mag-lb-delta--neg { color: #dc2626 !important; }
+      .mag-lb-yoy-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+      /* ---- placeholder card ---- */
+      .mag-lb-placeholder {
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        min-height: 180px; gap: 8px;
+        color: #9ca3af;
+      }
+      .mag-lb-placeholder-icon { font-size: 2rem; }
+      .mag-lb-placeholder-label {
+        font-size: 0.76rem; font-weight: 700;
+        text-align: center; line-height: 1.5;
+      }
+
+      /* ---------- zero-graded throw bar charts ---------- */
+      .zg-explainer {
+        font-size: 0.82rem; color: #6b7280; line-height: 1.6;
+        margin: 0 0 18px;
+        padding: 12px 16px; border-left: 3px solid #006bff;
+        background: #f8f9fb; border-radius: 0 8px 8px 0;
+      }
+      .zg-attempts-row {
+        display: flex; align-items: baseline; gap: 10px;
+        margin-bottom: 20px;
+      }
+      .zg-attempts-label {
+        font-size: 0.68rem; font-weight: 700; color: #9ca3af;
+        text-transform: uppercase; letter-spacing: 0.05em;
+      }
+      .zg-attempts-val {
+        font-size: 1.3rem; font-weight: 900; color: #0d1117;
+        font-variant-numeric: tabular-nums;
+      }
+      .zg-stat-cards {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 16px; margin-bottom: 24px;
+      }
+      .zg-stat-card {
+        background: #f8f9fb; border-radius: 12px;
+        padding: 18px 20px; border: 1px solid #eceef2;
+      }
+      .zg-stat-card-label {
+        font-size: 0.64rem; font-weight: 800; letter-spacing: 0.09em;
+        text-transform: uppercase; color: #9ca3af; margin-bottom: 10px;
+      }
+      .zg-stat-card-row {
+        display: flex; align-items: baseline; gap: 12px; margin-bottom: 5px;
+      }
+      .zg-stat-card-val {
+        font-size: 2.1rem; font-weight: 900;
+        font-variant-numeric: tabular-nums; line-height: 1;
+      }
+      .zg-stat-card-rank {
+        font-size: 1rem; font-weight: 800; color: #9ca3af;
+      }
+      .zg-stat-card-context {
+        font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 14px;
+      }
+      .zg-stat-strip-wrap {
+        height: 5px; background: #e5e7eb; border-radius: 99px;
+        position: relative; overflow: visible;
+      }
+      .zg-stat-strip-fill {
+        height: 100%; border-radius: 99px;
+        transition: width 0.8s cubic-bezier(0.34,1.2,0.64,1);
+      }
+      .zg-stat-strip-avg {
+        position: absolute; top: -4px;
+        width: 2px; height: 13px;
+        background: #9ca3af; border-radius: 1px;
+        transform: translateX(-50%);
+      }
+      .zg-tabs {
+        display: flex; gap: 6px; margin-bottom: 10px;
+      }
+      .zg-tab {
+        padding: 4px 12px; border-radius: 99px;
+        font-size: 0.72rem; font-weight: 700;
+        border: 1.5px solid #d1d5db; background: #fff; color: #6b7280;
+        cursor: pointer; transition: all 0.15s ease;
+      }
+      .zg-tab[aria-pressed="true"] { background: #006bff; border-color: #006bff; color: #fff; }
+      .zg-scroll {
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        border: 1px solid #eceef2; border-radius: 8px;
+        background: #fafafa;
+      }
+      .zg-bar-svg { display: block; }
+      .zg-svgbar { cursor: pointer; transition: opacity 0.15s; }
+      .zg-svgbar:hover { opacity: 0.8; }
+      /* legend row */
+      .zg-legend {
+        display: flex; gap: 14px; align-items: center;
+        font-size: 0.67rem; font-weight: 700; color: #9ca3af;
+        text-transform: uppercase; letter-spacing: .04em;
+        margin-top: 8px;
+      }
+      .zg-legend-dot {
+        width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+      }
 
       /* ---------- acknowledgements ---------- */
       /* Outer wrapper is the dark page bg — inner card is white, framed */
+      /* -------- acknowledgements -------- */
       .mag-ack {
-        background: #f5f6f8; /* light — sits between the dark sections */
-        padding: 0;          /* padding lives on the inner card */
-        border-top: 3px solid #0d1117;
-        border-bottom: 3px solid #0d1117;
+        position: relative;
+        background: #fff;
+        padding: 0;
+        overflow: hidden;
+      }
+      /* Player cutout side panels */
+      .mag-ack-side {
+        position: absolute;
+        top: 0; bottom: 0;
+        width: calc((100% - 1100px) / 2);
+        min-width: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 1;
+        display: flex;
+        align-items: flex-end;
+      }
+      .mag-ack-side--left  { left: 0; justify-content: flex-start; }
+      .mag-ack-side--right { right: 0; justify-content: flex-end; }
+      .mag-ack-side-img {
+        display: block;
+        height: 92%;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+        object-position: bottom center;
+        opacity: 0;
+        transition: opacity 1.3s ease;
+      }
+      .mag-ack-side--right .mag-ack-side-img {
+        transform: scaleX(-1);
+      }
+      .mag-ack-side-img.is-revealed { opacity: 1; }
+      @media (max-width: 1200px) {
+        .mag-ack-side { display: none; }
       }
       .mag-ack-inner {
+        position: relative; z-index: 2;
         max-width: 1100px; margin: 0 auto;
-        /* Inset "window" frame — recessed panel effect */
-        background: #fff;
-        border-left: 1px solid #dde0e6;
-        border-right: 1px solid #dde0e6;
-        box-shadow:
-          -8px 0 0 0 #f5f6f8,
-          8px 0 0 0 #f5f6f8,
-          0 0 0 1px #dde0e6;
         padding: clamp(48px,6vw,80px) clamp(32px,5vw,72px);
+        background: none;
+        border: none;
+        box-shadow: none;
       }
-      .mag-ack .mag-eyebrow { color: #00338d; }
-      .mag-ack .mag-eyebrow::before { background: #00338d; }
+      .mag-ack .mag-eyebrow { color: #006bff; }
+      .mag-ack .mag-eyebrow::before { background: #006bff; }
       .mag-ack h2 {
         font-size: clamp(1.6rem,3.5vw,2.4rem);
         font-weight: 900; letter-spacing: -0.03em;
@@ -2002,13 +2413,21 @@
         color: #1a1d24;
         padding: 10px 14px;
         background: #f5f6f8;
-        border-left: 2px solid #00338d;
+        border-left: 2px solid #006bff;
         border-radius: 0 8px 8px 0;
-        transition: background 0.16s, color 0.16s;
+        /* animation initial state */
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+          opacity  0.45s ease var(--nd, 0s),
+          transform 0.45s ease var(--nd, 0s),
+          background 0.16s ease,
+          color 0.16s ease;
       }
+      .mag-ack-name.is-revealed { opacity: 1; transform: translateY(0); }
       .mag-ack-name:hover {
         background: #e8edf5;
-        color: #00338d;
+        color: #006bff;
       }
       .mag-ack-footer {
         margin-top: 44px;
@@ -2030,9 +2449,21 @@
     </style>
   </head>
   <body>
+    <script>window.__loaderStart = Date.now();</script>
     <!-- loader -->
     <div class="loader" id="loader">
-      <div class="loader-mark">QB&nbsp;Annual&nbsp;2026</div>
+      <div class="loader-img" aria-hidden="true"></div>
+      <div class="loader-veil" aria-hidden="true"></div>
+      <div class="loader-brand">
+        <img class="loader-pff-logo"
+          src="https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png"
+          alt="PFF+">
+        <div class="loader-rule"></div>
+        <div class="loader-titles">
+          <span class="loader-annual">QB Annual</span>
+          <span class="loader-year-num">2026</span>
+        </div>
+      </div>
       <div class="loader-bar"></div>
     </div>
 
@@ -2056,7 +2487,7 @@
         </div>
         <div class="mag-cover-overlay"></div>
         <div class="mag-cover-content">
-          <p class="mag-cover-eyebrow">PFF · 2025 regular season</p>
+          <p class="mag-cover-eyebrow">PFF · 2025 regular season &amp; postseason</p>
           <h1 class="mag-cover-title">NFL<br>QB<br><em>Annual</em></h1>
           <p class="mag-cover-sub">The definitive quarterback evaluation — grades, splits, accuracy, pressure, clutch play and more for every NFL passer.</p>
           <div class="mag-cover-actions">
@@ -2075,22 +2506,30 @@
 
       <!-- INTRO / LETTER FROM EDITOR -->
       <section class="mag-intro" id="magIntro">
+        <div class="mag-intro-side mag-intro-side--left" aria-hidden="true">
+          <img class="mag-intro-side-img" src="qb_feature%20(1).jpg" alt="" />
+        </div>
+        <div class="mag-intro-side mag-intro-side--right" aria-hidden="true">
+          <img class="mag-intro-side-img" src="qb_feature%20(1).jpg" alt="" />
+        </div>
         <div class="mag-intro-inner">
+          <div class="mag-intro-rail" id="introRail" aria-hidden="true"></div>
           <p class="mag-eyebrow">Letter from the editor</p>
           <h2>Welcome to the 2026 NFL QB Annual</h2>
+          <div class="mag-intro-rule"></div>
           <div class="mag-intro-body">
             <p>Two decades ago, a small group of football pioneers set out to build something many thought impossible: a system capable of evaluating individual performance on every snap.</p>
             <p>Since then, thousands of people have spent hundreds of thousands of hours watching, grading and charting games. The result is an organization that now serves all 32 NFL teams, 136 FBS programs and almost every major media outlet across the football landscape. Yet despite that growth, the central idea has remained remarkably simple.</p>
             <p>PFF has never claimed to be a source of objective football truth, nor was it ever meant to be. Every play contains hundreds of variables. Every evaluation contains context. Every opinion is ultimately shaped by perspective. What PFF has always sought to do is provide information — one piece of a larger and more complicated puzzle.</p>
             <p>The grading system, advanced statistics and charting data are not designed to settle debates; they are designed to make them better. They serve as a compass rather than a destination, helping the football world navigate one of the most complex sports in the world with more information than they had before.</p>
             <p>That philosophy exists because of the people who built it. Analysts, data scientists, developers, editors and researchers have all contributed to a body of work that changed the way football is discussed, studied and understood. Behind every grade, chart and statistic is an enormous amount of work from people who care deeply about the game.</p>
-            <p>This annual is the product of that effort.</p>
+            <p class="mag-pull-quote">This annual is the product of that effort.</p>
             <p>So it is my pleasure to welcome you to the 2026 edition of the PFF NFL QB Annual — an updated, expanded and long-awaited return of one of our flagship products.</p>
             <p>Inside, you'll find comprehensive profiles for every qualifying quarterback from the 2025 season, featuring PFF grades, advanced metrics, situational performance, accuracy data and much more.</p>
             <p>Use the leaderboards as your starting point. Explore the profiles. Challenge your assumptions. Draw your own conclusions. Most importantly, enjoy the process.</p>
             <p>Thank you for reading, and welcome back to the PFF NFL QB Annual.</p>
           </div>
-          <div class="mag-intro-sig">
+          <div class="mag-intro-sig" id="introSig">
             <div>
               <div class="mag-intro-sig-name">Mark Chichester</div>
               <div class="mag-intro-sig-role">Head of Editorial · PFF</div>
@@ -2105,43 +2544,65 @@
 
       <!-- ACKNOWLEDGEMENTS -->
       <section class="mag-ack" id="magAck">
+        <div class="mag-ack-side mag-ack-side--left" aria-hidden="true">
+          <img class="mag-ack-side-img" src="Stafford%20cutout.png" alt="" />
+        </div>
+        <div class="mag-ack-side mag-ack-side--right" aria-hidden="true">
+          <img class="mag-ack-side-img" src="Stafford%20cutout.png" alt="" />
+        </div>
         <div class="mag-ack-inner">
           <p class="mag-eyebrow">Acknowledgements</p>
           <h2>Made possible by the people behind the data</h2>
           <p class="mag-ack-intro">This annual is made possible through the extraordinary work of our analysts, who have spent thousands of hours and dozens of processes capturing, refining, and checking the data that powers every number you see here.</p>
           <div class="mag-ack-grid">
-            <div class="mag-ack-name">Alex Hellwig</div>
             <div class="mag-ack-name">Andrew Ites</div>
+            <div class="mag-ack-name">Alex Hellwig</div>
             <div class="mag-ack-name">Brady Morrison</div>
-            <div class="mag-ack-name">Brett Geerling</div>
+            <div class="mag-ack-name">Cody Milardo</div>
+            <div class="mag-ack-name">Ezekiel Ayers</div>
+            <div class="mag-ack-name">Jordan Casper</div>
             <div class="mag-ack-name">Jake Gudoian</div>
-            <div class="mag-ack-name">Jeff McCann</div>
+            <div class="mag-ack-name">Josh Liskiewitz</div>
             <div class="mag-ack-name">Jordan Plocher</div>
-            <div class="mag-ack-name">Julia Hershey</div>
             <div class="mag-ack-name">Julien Wilson</div>
+            <div class="mag-ack-name">Jim Wyman</div>
             <div class="mag-ack-name">Logan Schocknesse</div>
-            <div class="mag-ack-name">Luke Paldino</div>
             <div class="mag-ack-name">Mark Baker</div>
-            <div class="mag-ack-name">Matt Tichenor</div>
             <div class="mag-ack-name">Michael Preville</div>
-            <div class="mag-ack-name">Nathan Lowes</div>
+            <div class="mag-ack-name">Matt Tichenor</div>
             <div class="mag-ack-name">Nick Akridge</div>
+            <div class="mag-ack-name">Nathan Lowes</div>
             <div class="mag-ack-name">Ryan Cooley</div>
             <div class="mag-ack-name">Sam McGaw</div>
-            <div class="mag-ack-name">Sathya Henderson</div>
-            <div class="mag-ack-name">Tim Beckman</div>
             <div class="mag-ack-name">Trevor Lynch</div>
-            <div class="mag-ack-name">Winston Dimel</div>
-            <div class="mag-ack-name">John Kosko</div>
-            <div class="mag-ack-name">Ryan Smith</div>
-            <div class="mag-ack-name">Ben Stockwell</div>
-            <div class="mag-ack-name">Bryson Vesnaver</div>
+            <div class="mag-ack-name">Brett Geerling</div>
             <div class="mag-ack-name">Billy Moy</div>
+            <div class="mag-ack-name">Bryson Vesnaver</div>
+            <div class="mag-ack-name">Cameron Gale</div>
+            <div class="mag-ack-name">Garrett Mehal</div>
+            <div class="mag-ack-name">John Kosko</div>
+            <div class="mag-ack-name">Jeff McCann</div>
+            <div class="mag-ack-name">Luke Paldino</div>
             <div class="mag-ack-name">Matt Claassen</div>
+            <div class="mag-ack-name">Mike Mountford</div>
+            <div class="mag-ack-name">Ryan M Smith</div>
+            <div class="mag-ack-name">Simon Chester</div>
+            <div class="mag-ack-name">Tim Beckman</div>
+            <div class="mag-ack-name">Winston Dimel</div>
+            <div class="mag-ack-name">Zoltan Buday</div>
+            <div class="mag-ack-name">Matthew Ross</div>
+            <div class="mag-ack-name">Lauren Gray</div>
+            <div class="mag-ack-name">Ronald Jones</div>
+            <div class="mag-ack-name">Conor Redmond</div>
+            <div class="mag-ack-name">Kevin Connaghan</div>
+            <div class="mag-ack-name">Martyn Carlise</div>
+            <div class="mag-ack-name">Ben Stockwell</div>
+            <div class="mag-ack-name">Sathya Henderson</div>
+            <div class="mag-ack-name">Julia Hershey</div>
           </div>
           <p class="mag-ack-footer">
-            PFF NFL QB Annual · 2026 Edition · 2025 regular season data<br>
-            All grades, splits, and metrics are the property of Pro Football Focus. Not for redistribution without permission.
+            PFF NFL QB Annual · 2026 Edition · 2025 regular season &amp; postseason data<br>
+            All grades, splits, and metrics are the property of PFF. Not for redistribution without permission.
           </p>
         </div>
       </section>
@@ -2152,7 +2613,6 @@
           <img class="mag-index-logo-img" src="https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png" alt="PFF+" onerror="this.style.display='none'" />
           <p class="mag-index-eyebrow">The definitive quarterback evaluation</p>
           <h2 class="mag-index-title">2026 NFL QB <span class="mag-index-title-accent">Annual</span></h2>
-          <p class="mag-index-sub">Every passer. Every split. Grades, accuracy, pressure, clutch play and more —<br>pick a quarterback to open the full profile.</p>
           <div class="mag-index-search-wrap">
             <svg class="mag-index-search-icon" width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <circle cx="6.5" cy="6.5" r="5" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
@@ -2173,7 +2633,7 @@
         <div class="mag-summary-inner">
           <p class="mag-eyebrow">2025 season at a glance</p>
           <h2>The numbers that matter</h2>
-          <p class="mag-summary-sub">Qualifying passers only · click any row to open the full quarterback profile</p>
+          <p class="mag-summary-sub">Qualifying passers only · regular season &amp; postseason · click any row to open the full quarterback profile</p>
           <div class="mag-lb-grid" id="magLbGrid">
             <p class="mag-lb-empty">Loading leaderboard data…</p>
           </div>
@@ -2205,6 +2665,7 @@
         <button class="mag-nav-chip" data-mag-target="magSummary">Top 5</button>
       </nav>
       <!-- Profile controls — shown when in QB profile zone -->
+      <button class="back-btn" id="backBtn" type="button" hidden>‹ Leaderboards</button>
       <div class="topbar-profile-group" id="topbarProfileGroup">
         <button class="qb-switch-btn" id="qbSwitchBtn" type="button" title="Switch quarterback">
           <img id="qbSwitchImg" alt="" />
@@ -2258,7 +2719,7 @@
 
     <footer class="site-footer">
       <span class="f-brand">2026 NFL QB ANNUAL</span>
-      <span>Charting &amp; grades · PFF data · Built for the film room</span>
+      <span>All grades, splits, and metrics are the property of PFF. Not for redistribution without permission.</span>
     </footer>
 
     <!-- switcher / cover -->
@@ -2298,6 +2759,33 @@
     <script src="js/animations.js"></script>
 
     <!-- ============ Annual reader app ============ -->
+    <!-- ====== SLIDING INDEX PANEL ====== -->
+    <div class="idx-backdrop" id="idxBackdrop"></div>
+    <aside class="idx-panel" id="idxPanel" aria-hidden="true" aria-label="QB Annual index">
+      <div class="idx-panel-head">
+        <span class="idx-panel-brand">2026 QB Annual</span>
+        <button class="idx-panel-close" id="idxClose" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="idx-panel-body" id="idxPanelBody">
+        <!-- Magazine sections — always present -->
+        <div class="idx-section-label">Magazine</div>
+        <button class="idx-nav-row" data-idx-target="magCover">
+          <span class="idx-nav-row-dot"></span>Home
+        </button>
+        <button class="idx-nav-row" data-idx-target="magIntro">
+          <span class="idx-nav-row-dot"></span>Introduction
+        </button>
+        <button class="idx-nav-row" data-idx-target="magAck">
+          <span class="idx-nav-row-dot"></span>Acknowledgements
+        </button>
+        <div class="idx-divider"></div>
+        <!-- QB list — populated by JS after data loads -->
+        <div class="idx-section-label">Quarterbacks</div>
+        <div id="idxQbList"><div style="padding:12px 20px;font-size:0.78rem;color:rgba(255,255,255,0.25);font-weight:600;">Loading…</div></div>
+      </div>
+    </aside>
+    <!-- ====== END INDEX PANEL ====== -->
+
     <script>
       (function () {
         "use strict";
@@ -2312,6 +2800,7 @@
           rail: $("rail"), content: $("content"), mount: $("profileMount"), dataNotes: $("dataNotes"),
           switcher: $("switcher"), switcherClose: $("switcherClose"),
           switcherSearch: $("switcherSearch"), switcherGrid: $("switcherGrid"),
+          backBtn: $("backBtn"),
         };
 
         const { escapeHtml, escapeAttr } = window.QbAnnualUtils;
@@ -2627,6 +3116,7 @@
           pct: (v) => (v == null || !Number.isFinite(v) ? "—" : v.toFixed(1) + "%"),
           decimal: (v) => (v == null || !Number.isFinite(v) ? "—" : v.toFixed(1)),
           grade: (v) => (v == null || !Number.isFinite(v) ? "—" : Number(v).toFixed(1)),
+          epa: (v) => (v == null || !Number.isFinite(v) ? "—" : (v >= 0 ? "+" : "") + v.toFixed(2)),
         };
         function gradeColor(v) {
           try { return window.QbAnnualProfile.gradeColorFor(v) || "#374151"; } catch (_) { return "#374151"; }
@@ -2822,7 +3312,7 @@
         function accColor(row) {
           try { return window.QbAnnualProfile.accuracyValueColor(row) || "#374151"; } catch (_) { return "#374151"; }
         }
-        const ACC_RING_COLORS = { acc: null, catchable: "#E8A020", uncatchable: "#D04040", other: "#9CA3AF" };
+        const ACC_RING_COLORS = { plus: null, acc: null, catchable: "#E8A020", uncatchable: "#D04040", other: "#9CA3AF" };
         function classifyAccRow(label) {
           const l = (label || "").toLowerCase();
           if (l.includes("plus")) return "plus";
@@ -2876,7 +3366,7 @@
             const by = {};
             const extras = [];
             (rates.rows || []).forEach((row) => {
-              const kind = classifyAccRow(row.label);
+              const kind = row.format === "plus" ? "plus" : classifyAccRow(row.label);
               if (kind === "other" && by.other) extras.push(row);
               else by[kind] = row;
             });
@@ -2885,21 +3375,25 @@
               catchable: by.catchable?.displayValue ?? null,
               uncatchable: by.uncatchable?.displayValue ?? null,
             };
-            const heroCard = by.plus ? `
-              <div class="acc-hero-card qb-animate-item">
-                <div><span class="v">${escapeHtml(by.plus.displayValue || "—")}</span><span class="l">${escapeHtml(by.plus.label)}</span></div>
-                ${rankChip(by.plus)}
-              </div>` : "";
             const rowCard = (row, kind) => {
+              if (kind === "plus") {
+                return `<div class="acc-row acc-row--hero qb-animate-item" style="background:${escapeAttr(theme.accent)}">
+                  <span class="dot" style="background:rgba(255,255,255,0.35)"></span>
+                  <span class="lbl" style="color:#fff">${escapeHtml(row.label)}</span>
+                  <span class="val" style="color:#fff">${escapeHtml(row.displayValue || "—")}</span>
+                  ${rankChip(row)}
+                </div>`;
+              }
               const dot = ACC_RING_COLORS[kind] === null ? theme.accent : (ACC_RING_COLORS[kind] || "#9CA3AF");
               return `<div class="acc-row qb-animate-item">
                 <span class="dot" style="background:${escapeAttr(dot)}"></span>
                 <span class="lbl">${escapeHtml(row.label)}</span>
-                <span class="val" style="color:${escapeAttr(accColor(row))}">${escapeHtml(row.displayValue || "—")}</span>
+                <span class="val" style="color:${escapeAttr(theme.accent)}">${escapeHtml(row.displayValue || "—")}</span>
                 ${rankChip(row)}
               </div>`;
             };
             const metricRows = [
+              by.plus ? rowCard(by.plus, "plus") : "",
               by.acc ? rowCard(by.acc, "acc") : "",
               by.catchable ? rowCard(by.catchable, "catchable") : "",
               by.uncatchable ? rowCard(by.uncatchable, "uncatchable") : "",
@@ -2915,7 +3409,7 @@
                   ${ringVals.uncatchable != null ? `<span><i style="background:#D04040"></i>Uncatchable</span>` : ""}
                 </div>
               </div>
-              <div class="acc-metrics">${heroCard}${metricRows}</div>
+              <div class="acc-metrics">${metricRows}</div>
             </div>`);
           }
 
@@ -3015,6 +3509,213 @@
             `<div class="annual-panes">${panes.join("")}</div>`;
         }
 
+        /* ---- zero-graded throws — shared SVG bar chart builder ---- */
+        function buildZgBarSvg(rows, metric, currentPid, accentColor) {
+          if (!rows || !rows.length) return { svg: "", totalW: 0 };
+          const isEpa = metric === "epaPerAtt";
+          const COL_W = 44, BAR_W = 30;
+          const PAD_T = 28, PAD_L = 12, PAD_R = 12, LABEL_H = 66;
+          const CHART_H = 156;
+          const totalH = PAD_T + CHART_H + LABEL_H;
+          const totalW = PAD_L + rows.length * COL_W + PAD_R;
+
+          const vals = rows.map(r => r[metric] || 0);
+          const maxPos = Math.max(...vals.filter(v => v > 0), 0.001);
+          const maxNeg = Math.max(...vals.filter(v => v < 0).map(Math.abs), 0.001);
+          const norm = isEpa ? (maxPos + maxNeg) : maxPos;
+          const zeroY = isEpa ? PAD_T + CHART_H * (maxNeg / norm) : PAD_T + CHART_H;
+
+          const ps = [];
+          ps.push(`<line x1="${PAD_L}" y1="${(PAD_T + CHART_H).toFixed(1)}" x2="${(totalW - PAD_R).toFixed(1)}" y2="${(PAD_T + CHART_H).toFixed(1)}" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>`);
+          if (isEpa) {
+            ps.push(`<line x1="${PAD_L}" y1="${zeroY.toFixed(1)}" x2="${(totalW - PAD_R).toFixed(1)}" y2="${zeroY.toFixed(1)}" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4,3"/>`);
+          }
+
+          rows.forEach((r, i) => {
+            const val = r[metric] || 0;
+            const isCurrent = String(r.playerId || "").trim() === currentPid;
+            const isQual = r.includedInRank;
+            const cx = PAD_L + i * COL_W + COL_W / 2;
+            const bx = cx - BAR_W / 2;
+
+            let fill;
+            if (isCurrent) {
+              fill = accentColor || "#006bff";
+            } else if (!isQual) {
+              fill = "#d1d5db";
+            } else {
+              const t = window.QbAnnualTeams?.resolve(r.franchiseId);
+              fill = (t && t.primary) ? t.primary : "#006bff";
+            }
+
+            let barY, barH;
+            if (isEpa) {
+              barH = Math.max(2, (Math.abs(val) / norm) * CHART_H);
+              barY = val >= 0 ? zeroY - barH : zeroY;
+            } else {
+              barH = Math.max(2, (Math.max(val, 0) / norm) * CHART_H);
+              barY = PAD_T + CHART_H - barH;
+            }
+
+            const stroke = isCurrent ? `stroke="#fff" stroke-width="2"` : "";
+            ps.push(`<rect x="${bx.toFixed(1)}" y="${barY.toFixed(1)}" width="${BAR_W}" height="${barH.toFixed(1)}" rx="2" fill="${escapeAttr(fill)}" ${stroke} class="zg-svgbar" data-id="${escapeAttr(String(r.playerId || ""))}" data-name="${escapeAttr(r.player || "")}"/>`);
+
+            if (isCurrent) {
+              const valStr = isEpa ? ((val >= 0 ? "+" : "") + val.toFixed(3)) : val.toFixed(2);
+              const labelY = (val < 0 && isEpa) ? (barY + barH + 11).toFixed(1) : (barY - 5).toFixed(1);
+              ps.push(`<text x="${cx.toFixed(1)}" y="${labelY}" text-anchor="middle" font-size="9.5" font-weight="900" fill="${escapeAttr(fill)}">${escapeHtml(valStr)}</text>`);
+            }
+
+            const nameAnchorY = PAD_T + CHART_H + 8;
+            const lastName = (r.player || "").trim().split(/\s+/).slice(-1)[0] || "";
+            ps.push(`<text x="${cx.toFixed(1)}" y="${nameAnchorY}" text-anchor="end" font-size="${isCurrent ? "9.5" : "8.5"}" fill="${isCurrent ? "#f1f5f9" : (isQual ? "#94a3b8" : "rgba(255,255,255,0.3)")}" font-weight="${isCurrent ? "900" : "500"}" transform="rotate(-52 ${cx.toFixed(1)} ${nameAnchorY})">${escapeHtml(lastName)}</text>`);
+          });
+
+          return {
+            svg: `<svg viewBox="0 0 ${totalW} ${totalH}" width="${totalW}" height="${totalH}" xmlns="http://www.w3.org/2000/svg" class="zg-bar-svg">${ps.join("")}</svg>`,
+            totalW
+          };
+        }
+
+        /* ---- zero-graded throws profile section ---- */
+        function buildZeroGradedSection(profile, theme) {
+          const zgState = window.QbAnnualApi.getZeroGradedState();
+          if (!zgState) return;
+
+          const pid = String(profile.playerId || "").trim();
+          const myRow = zgState.byPlayerId?.[pid] || null;
+          if (!myRow) return;
+
+          const accent = theme?.accent || "#006bff";
+
+          // Enrich all rows with franchiseId from passing summary
+          const passRows = window.QbAnnualApi.getPassingSummaryState()?.rows || [];
+          const franchiseById = {};
+          passRows.forEach(r => { if (r.playerId) franchiseById[String(r.playerId).trim()] = r.franchiseId; });
+          const allRows = (zgState.rows || []).map(r => ({
+            ...r, franchiseId: franchiseById[String(r.playerId).trim()] || null
+          }));
+
+          // Sort descending — all QBs shown, team color for qualifiers, gray for non
+          const byYpa = [...allRows].sort((a,b) => b.ypa - a.ypa);
+          const byEpa = [...allRows].sort((a,b) => b.epaPerAtt - a.epaPerAtt);
+
+          // Rank among qualifiers
+          const qualByYpa = allRows.filter(r => r.includedInRank).sort((a,b) => b.ypa - a.ypa);
+          const qualByEpa = allRows.filter(r => r.includedInRank).sort((a,b) => b.epaPerAtt - a.epaPerAtt);
+          const ypaRank = qualByYpa.findIndex(r => String(r.playerId).trim() === pid) + 1;
+          const epaRank = qualByEpa.findIndex(r => String(r.playerId).trim() === pid) + 1;
+          const ypaIdx  = byYpa.findIndex(r => String(r.playerId).trim() === pid);
+          const epaIdx  = byEpa.findIndex(r => String(r.playerId).trim() === pid);
+
+          // Percentile strip helper
+          function pctStrip(val, vals) {
+            if (!vals.length || val == null) return { fillPct: 50, avgPct: 50, avg: null };
+            const mn = Math.min(...vals), mx = Math.max(...vals);
+            const avg = vals.reduce((a,b) => a+b, 0) / vals.length;
+            const range = mx - mn || 1;
+            return {
+              fillPct: Math.max(2, Math.min(98, ((val - mn) / range) * 100)),
+              avgPct:  Math.max(2, Math.min(98, ((avg - mn) / range) * 100)),
+              avg
+            };
+          }
+
+          const ypaVals = qualByYpa.map(r => r.ypa).filter(v => v != null);
+          const epaVals = qualByEpa.map(r => r.epaPerAtt).filter(v => v != null);
+          const ypaPct = pctStrip(myRow.ypa, ypaVals);
+          const epaPct = pctStrip(myRow.epaPerAtt, epaVals);
+
+          const statCards = `<div class="zg-stat-cards">
+            <div class="zg-stat-card">
+              <div class="zg-stat-card-label">YPA on 0-Graded Throws</div>
+              <div class="zg-stat-card-row">
+                <span class="zg-stat-card-val" style="color:${escapeAttr(accent)}">${myRow.ypa != null ? myRow.ypa.toFixed(2) : "—"}</span>
+                ${ypaRank ? `<span class="zg-stat-card-rank">#${ypaRank} of ${qualByYpa.length}</span>` : ""}
+              </div>
+              ${ypaPct.avg != null ? `<div class="zg-stat-card-context">League avg: ${ypaPct.avg.toFixed(2)} · ${qualByYpa.length} qualifiers</div>` : ""}
+              ${myRow.ypa != null ? `<div class="zg-stat-strip-wrap">
+                <div class="zg-stat-strip-fill" style="width:${ypaPct.fillPct.toFixed(1)}%;background:${escapeAttr(accent)}"></div>
+                <div class="zg-stat-strip-avg" style="left:${ypaPct.avgPct.toFixed(1)}%"></div>
+              </div>` : ""}
+            </div>
+            <div class="zg-stat-card">
+              <div class="zg-stat-card-label">EPA / Att on 0-Graded Throws</div>
+              <div class="zg-stat-card-row">
+                <span class="zg-stat-card-val" style="color:${escapeAttr(accent)}">${myRow.epaPerAtt != null ? (myRow.epaPerAtt >= 0 ? "+" : "") + myRow.epaPerAtt.toFixed(3) : "—"}</span>
+                ${epaRank ? `<span class="zg-stat-card-rank">#${epaRank} of ${qualByEpa.length}</span>` : ""}
+              </div>
+              ${epaPct.avg != null ? `<div class="zg-stat-card-context">League avg: ${epaPct.avg >= 0 ? "+" : ""}${epaPct.avg.toFixed(3)} · ${qualByEpa.length} qualifiers</div>` : ""}
+              ${myRow.epaPerAtt != null ? `<div class="zg-stat-strip-wrap">
+                <div class="zg-stat-strip-fill" style="width:${epaPct.fillPct.toFixed(1)}%;background:${escapeAttr(accent)}"></div>
+                <div class="zg-stat-strip-avg" style="left:${epaPct.avgPct.toFixed(1)}%"></div>
+              </div>` : ""}
+            </div>
+          </div>`;
+
+          const sectionHtml = chapterShell("Zero-graded throw production",
+            `<p class="zg-explainer">The PFF grading scale ranges from -2 to +2 in 0.5-point increments, with a zero-graded throw representing an expected NFL pass. Looking at yards per attempt and EPA per attempt on those throws helps quantify the production generated when the quarterback simply does what is asked of him. Put another way, it offers a glimpse into how much value is being created by the offense around the quarterback rather than by the quarterback himself.</p>
+            <div class="zg-attempts-row">
+              <span class="zg-attempts-label">Zero-Graded Attempts</span>
+              <span class="zg-attempts-val">${escapeHtml(String(myRow.attempts ?? "—"))}</span>
+            </div>
+            ${statCards}`
+          );
+
+          // Inject after grading profile / grade distribution section
+          const gradingSec = findSectionByTitle("Grading profile")
+            || findSectionByTitle("Grade distribution")
+            || els.mount.querySelector(".qb-section-grading-profile");
+
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = sectionHtml;
+          const newSec = wrapper.firstElementChild;
+
+          if (gradingSec) {
+            gradingSec.parentNode.insertBefore(newSec, gradingSec.nextSibling);
+          } else {
+            const firstSec = els.mount.querySelector(".qb-section");
+            if (firstSec) firstSec.parentNode.insertBefore(newSec, firstSec);
+            else els.mount.appendChild(newSec);
+          }
+
+          // Scroll each pane to center the current QB on reveal
+          function scrollToCurrentQb(pane) {
+            const idx = parseInt(pane.dataset.zgCurIdx, 10);
+            const colW = parseInt(pane.dataset.zgColW, 10) || 44;
+            if (idx < 0) return;
+            const barCx = 12 + idx * colW + colW / 2;
+            const target = barCx - pane.clientWidth / 2;
+            pane.scrollLeft = Math.max(0, target);
+          }
+
+          newSec.querySelectorAll("[data-zg-pane]").forEach(pane => {
+            if (!pane.hidden) requestAnimationFrame(() => scrollToCurrentQb(pane));
+          });
+
+          // Tab wiring
+          newSec.querySelectorAll(".zg-tab").forEach(tab => {
+            tab.addEventListener("click", () => {
+              newSec.querySelectorAll(".zg-tab").forEach(t => t.setAttribute("aria-pressed", "false"));
+              tab.setAttribute("aria-pressed", "true");
+              const which = tab.dataset.zgTab;
+              newSec.querySelectorAll("[data-zg-pane]").forEach(pane => {
+                pane.hidden = pane.dataset.zgPane !== which;
+                if (!pane.hidden) requestAnimationFrame(() => scrollToCurrentQb(pane));
+              });
+            });
+          });
+
+          // SVG bar click → open QB profile
+          newSec.addEventListener("click", e => {
+            const bar = e.target.closest(".zg-svgbar");
+            if (!bar) return;
+            const id = bar.dataset.id, name = bar.dataset.name;
+            const qb = qbOrder.find(p => String(p.playerId) === id) || qbOrder.find(p => p.playerName === name);
+            if (qb) showQb(qb, { backTo: 'leaderboards' });
+          });
+        }
+
         function customizeSections(profile, theme) {
           safe(() => mergeSeasonDonutSections(), "donut merge");
           safe(() => rebuildQbAlignment(profile, theme), "alignment rebuild");
@@ -3023,6 +3724,7 @@
           safe(() => rebuildClutch(profile, theme), "clutch rebuild");
           safe(() => rebuildAccuracy(profile, theme), "accuracy rebuild");
           safe(() => rebuildPassingGrades(profile, theme), "grade board rebuild");
+          safe(() => buildZeroGradedSection(profile, theme), "zero-graded section");
           // chapters: everything open, headers become editorial
           els.mount.querySelectorAll(".qb-collapsible-details").forEach((d) => { d.open = true; });
           armRings(els.mount);
@@ -3146,7 +3848,7 @@
         }
 
         let swapToken = 0;
-        async function showQb(qb, { scrollTop = true } = {}) {
+        async function showQb(qb, { scrollTop = true, backTo = null } = {}) {
           if (!qb) return;
           const token = ++swapToken;
           current = qb;
@@ -3189,6 +3891,16 @@
 
           els.content.classList.remove("is-swapping");
           if (scrollTop) els.hero.scrollIntoView({ behavior: "instant" });
+          // Back button
+          if (els.backBtn) {
+            if (backTo) {
+              els.backBtn.textContent = backTo === 'index' ? '‹ QB Index' : '‹ Leaderboards';
+              els.backBtn.dataset.target = backTo === 'index' ? 'magIndex' : 'magSummary';
+              els.backBtn.hidden = false;
+            } else {
+              els.backBtn.hidden = true;
+            }
+          }
           writeHash();
           persist();
         }
@@ -3256,6 +3968,12 @@
             const mag = document.getElementById("magCover");
             if (mag) mag.scrollIntoView({ behavior: "smooth" });
             else openSwitcher();
+          });
+          els.backBtn.addEventListener("click", () => {
+            const targetId = els.backBtn.dataset.target || "magSummary";
+            const el = document.getElementById(targetId);
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+            els.backBtn.hidden = true;
           });
           els.switcherClose.addEventListener("click", closeSwitcher);
           els.switcherSearch.addEventListener("input", () => renderSwitcherGrid(els.switcherSearch.value));
@@ -3479,49 +4197,138 @@
         }
 
 
-        /* -------- REMOVED -------- */
+        /* -------- Editor letter wiring -------- */
         function wireEditorLetter() {
           const section = document.getElementById("magIntro");
           if (!section) return;
 
-          // Paragraph + signature reveal via IntersectionObserver
-          const revealEls = [
-            ...section.querySelectorAll(".mag-intro-body p, .mag-intro-body blockquote"),
-            document.getElementById("introSig"),
-            document.getElementById("introBadgeGrade"),
-            document.getElementById("introBadgeTeams"),
-          ].filter(Boolean);
+          const inner  = section.querySelector(".mag-intro-inner");
+          const rail   = document.getElementById("introRail");
+          const paras  = Array.from(section.querySelectorAll(".mag-intro-body p"));
+          const sig    = document.getElementById("introSig");
 
-          const revealObs = new IntersectionObserver((entries) => {
+          // --- Side images: fade in on entry ---
+          section.querySelectorAll(".mag-intro-side-img").forEach((img) => {
+            const obs = new IntersectionObserver((entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) { img.classList.add("is-revealed"); obs.unobserve(img); }
+              });
+            }, { threshold: 0.05 });
+            obs.observe(img);
+          });
+
+          // --- Split each normal paragraph into sentence spans ---
+          // Pull-quote paragraph is styled differently; skip sentence splitting for it.
+          function wrapSentences(p) {
+            const raw = p.innerHTML.trim();
+            // Split on sentence-ending punctuation (., !, ?) followed by whitespace.
+            // Lookbehind keeps the punctuation with the preceding sentence.
+            const parts = raw.split(/(?<=[.!?])\s+/);
+            if (parts.length <= 1) {
+              p.innerHTML = `<span class="mag-s" style="--d:0s">${raw}</span>`;
+              return;
+            }
+            p.innerHTML = parts.map((s, i) =>
+              `<span class="mag-s" style="--d:${(i * 0.13).toFixed(2)}s">${s.trim()}</span>`
+            ).join(' ');
+          }
+
+          // --- Assign alternating slide direction and wrap sentences ---
+          paras.forEach((p, i) => {
+            const xPx = (i % 2 === 0) ? "-12px" : "12px";
+            p.style.setProperty("--para-x", xPx);
+            if (!p.classList.contains("mag-pull-quote")) {
+              if (i === 0) {
+                // First paragraph has a drop cap (::first-letter float) — keep as one span
+                // so the float context is preserved across all browsers.
+                p.innerHTML = `<span class="mag-s" style="--d:0s">${p.innerHTML.trim()}</span>`;
+              } else {
+                wrapSentences(p);
+              }
+            }
+          });
+
+          // --- Paragraph reveal via IntersectionObserver ---
+          const paraObs = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("is-visible");
-                revealObs.unobserve(entry.target);
+              if (entry.isIntersecting && !entry.target.classList.contains("is-revealed")) {
+                entry.target.classList.add("is-revealed");
+                paraObs.unobserve(entry.target);
               }
             });
-          }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+          }, { threshold: 0.15, rootMargin: "0px 0px -30px 0px" });
 
-          revealEls.forEach((el, i) => {
-            if (el.classList.contains("mag-intro-badge") || el.id === "introSig") return; // delay handled by CSS
-            el.style.transitionDelay = (i * 0.07) + "s";
-            revealObs.observe(el);
-          });
-          // Observe sig and badges separately (no extra delay stacking)
-          ["introSig","introBadgeGrade","introBadgeTeams"].forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) revealObs.observe(el);
-          });
+          paras.forEach((p) => paraObs.observe(p));
 
-          // Cutout parallax on scroll
-          const cutout = document.getElementById("introCutout");
-          if (cutout && window.matchMedia("(min-width: 860px)").matches) {
+          // --- Signature reveal ---
+          if (sig) {
+            const sigObs = new IntersectionObserver((entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) { sig.classList.add("is-revealed"); sigObs.unobserve(sig); }
+              });
+            }, { threshold: 0.4 });
+            sigObs.observe(sig);
+          }
+
+          // --- Reading progress rail ---
+          if (rail && inner) {
+            const updateRail = () => {
+              const sectRect = section.getBoundingClientRect();
+              const scrolled = Math.max(0, -sectRect.top + window.innerHeight * 0.25);
+              const pct = Math.min(100, (scrolled / section.offsetHeight) * 100);
+              rail.style.height = pct.toFixed(1) + "%";
+            };
+            window.addEventListener("scroll", updateRail, { passive: true });
+            updateRail();
+          }
+
+          // --- Parallax on side images ---
+          const sideImgs = Array.from(section.querySelectorAll(".mag-intro-side-img"));
+          if (sideImgs.length && window.matchMedia("(min-width: 1100px)").matches) {
             const onScroll = () => {
               const rect = section.getBoundingClientRect();
-              const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
-              cutout.style.transform = `translateY(${progress * -40}px)`;
+              if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+              const progress = Math.max(0, Math.min(1, -rect.top / (rect.height || 1)));
+              sideImgs.forEach((img) => {
+                img.style.transform = `translateY(${progress * -30}px)`;
+              });
             };
             window.addEventListener("scroll", onScroll, { passive: true });
           }
+        }
+
+        /* -------- Acknowledgements wiring -------- */
+        function wireAckSection() {
+          const section = document.getElementById("magAck");
+          if (!section) return;
+
+          // Fade in side cutouts when section enters view
+          section.querySelectorAll(".mag-ack-side-img").forEach((img) => {
+            const obs = new IntersectionObserver((entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) { img.classList.add("is-revealed"); obs.unobserve(img); }
+              });
+            }, { threshold: 0.05 });
+            obs.observe(img);
+          });
+
+          // Stagger name cards in as the grid scrolls into view
+          const names = Array.from(section.querySelectorAll(".mag-ack-name"));
+          names.forEach((n, i) => {
+            n.style.setProperty("--nd", (i * 0.028).toFixed(3) + "s");
+          });
+
+          const grid = section.querySelector(".mag-ack-grid");
+          if (!grid) return;
+          const gridObs = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                names.forEach((n) => n.classList.add("is-revealed"));
+                gridObs.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.05 });
+          gridObs.observe(grid);
         }
 
         /* -------- magazine: QB index -------- */
@@ -3555,7 +4362,7 @@
                 : "";
               const grade = p.grade != null
                 ? `<span class="mag-index-grade">${Number(p.grade).toFixed(1)}</span>` : "";
-              return `<div class="mag-index-card" data-id="${escapeAttr(String(p.playerId))}" style="--card-team:${escapeAttr(team.primary || "#00338d")}">
+              return `<div class="mag-index-card" data-id="${escapeAttr(String(p.playerId))}" style="--card-team:${escapeAttr(team.primary || "#006bff")}">
   <div class="mag-index-photo-wrap">
     ${logo ? `<img class="mag-index-card-watermark" src="${escapeAttr(logo)}" alt="" aria-hidden="true" loading="lazy">` : ""}
     <img class="mag-index-photo" src="${escapeAttr(headshotUrl(p.playerId))}" alt="${escapeAttr(p.playerName)}" loading="lazy" onerror="this.style.visibility='hidden'">
@@ -3571,7 +4378,7 @@
             grid.querySelectorAll(".mag-index-card[data-id]").forEach((card) => {
               card.addEventListener("click", () => {
                 const qb = qbOrder.find((p) => String(p.playerId) === card.dataset.id);
-                if (qb) showQb(qb);
+                if (qb) showQb(qb, { backTo: 'index' });
               });
             });
           }
@@ -3625,118 +4432,528 @@
           const grid = document.getElementById("magLbGrid");
           if (!grid) return;
 
-          const passingState = window.QbAnnualApi.getPassingSummaryState();
+          const passingState    = window.QbAnnualApi.getPassingSummaryState();
+          const rushingState    = window.QbAnnualApi.getRushingSummaryState();
+          const pressureState   = window.QbAnnualApi.getPassingPressureState();
+          const zeroGradedState = window.QbAnnualApi.getZeroGradedState();
+          const qbAccuracyState = window.QbAnnualApi.getQbAccuracyState();
+
           const season2025 = (passingState?.rows || []).filter(
-            (r) => String(r.season) === "2025" && r.includedInRank
+            r => String(r.season) === "2025" && r.includedInRank
           );
+          const season2024 = (passingState?.rows || []).filter(
+            r => String(r.season) === "2024"
+          );
+          const byId2024 = {};
+          season2024.forEach(r => { byId2024[String(r.playerId)] = r; });
+
+          const rushRows = [...(rushingState?.rows || [])].filter(r => (r.yards || 0) > 0);
 
           if (!season2025.length) {
             grid.innerHTML = '<p class="mag-lb-empty">No 2025 qualifying data loaded.</p>';
             return;
           }
 
-          const boards = [
-            {
-              icon: "⭐", title: "PFF Pass Grade",
-              note: "Higher = better · qualifying passers",
-              rows: [...season2025].filter(r => r.gradesPass != null)
-                .sort((a,b) => b.gradesPass - a.gradesPass).slice(0,5),
+          /* ---- shared helpers ---- */
+          function lbLogo(franchiseId) {
+            const team = window.QbAnnualTeams.resolve(franchiseId);
+            return team.logo
+              ? `<img class="mag-lb-logo-img" src="${escapeAttr(team.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+              : `<span class="mag-lb-logo-img" style="display:inline-block"></span>`;
+          }
+          function lbNameParts(player) {
+            const parts = (player || "").trim().split(/\s+/);
+            return {
+              last:  parts.slice(-1)[0] || player || "",
+              first: parts.length > 1 ? parts.slice(0,-1).join(" ") : "",
+            };
+          }
+
+          /* ---- standard top-5 card ---- */
+          function top5Card({ icon, title, note, rows, raw, display, invert, maxVal, cls }) {
+            if (!rows.length) return "";
+            const topVal = raw(rows[0]);
+            const mv = maxVal || Math.max(...rows.map(raw), 1);
+            const rowsHtml = rows.map((r, i) => {
+              const val = raw(r);
+              const barPct = invert
+                ? Math.min(100, Math.round((topVal / Math.max(val, 0.001)) * 100))
+                : Math.min(100, Math.round((val / mv) * 100));
+              const { last, first } = lbNameParts(r.player);
+              return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
+                <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+                ${lbLogo(r.franchiseId)}
+                <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
+                <div class="mag-lb-bar-wrap"><div class="mag-lb-bar${cls ? " "+cls : ""}" style="width:${barPct}%"></div></div>
+                <span class="mag-lb-val">${escapeHtml(String(display(r)))}</span>
+              </div>`;
+            }).join("");
+            return `<div class="mag-lb-card">
+              <div class="mag-lb-header"><div class="mag-lb-icon">${icon}</div><span class="mag-lb-title">${escapeHtml(title)}</span></div>
+              <div class="mag-lb-rows">${rowsHtml}</div>
+              <div class="mag-lb-footer">${escapeHtml(note)}</div>
+            </div>`;
+          }
+
+          /* ---- YoY change card ---- */
+          function yoyCard({ title, note, deltas, isDecline }) {
+            if (!deltas.length) return "";
+            const maxAbs = Math.max(...deltas.map(d => Math.abs(d.delta)), 1);
+            const rowsHtml = deltas.map((d, i) => {
+              const barPct = Math.round((Math.abs(d.delta) / maxAbs) * 100);
+              const { last, first } = lbNameParts(d.player);
+              const deltaStr = (d.delta > 0 ? "+" : "") + d.delta.toFixed(1);
+              return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(d.playerId||""))}" data-name="${escapeAttr(d.player||"")}">
+                <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+                ${lbLogo(d.franchiseId)}
+                <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
+                <div class="mag-lb-bar-wrap"><div class="mag-lb-bar ${isDecline ? "is-decline" : "is-jump"}" style="width:${barPct}%"></div></div>
+                <span class="mag-lb-val ${isDecline ? "mag-lb-delta--neg" : "mag-lb-delta--pos"}">${escapeHtml(deltaStr)}</span>
+              </div>`;
+            }).join("");
+            return `<div class="mag-lb-card ${isDecline ? "is-decline-card" : "is-jump-card"}">
+              <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
+              <div class="mag-lb-rows">${rowsHtml}</div>
+              <div class="mag-lb-footer">${escapeHtml(note)}</div>
+            </div>`;
+          }
+
+          /* ---- segmented rush yards card ---- */
+          function rushYardsCard(rushRows) {
+            const top = [...rushRows].sort((a,b) => (b.yards||0)-(a.yards||0)).slice(0,12);
+            if (!top.length) return "";
+            const maxYards = Math.max(...top.map(r => r.yards||0), 1);
+            const legend = `<div class="mag-seg-legend">
+              <span class="mag-seg-dot" style="background:#006bff"></span>Designed
+              <span class="mag-seg-dot" style="background:#0d9488"></span>Scramble
+            </div>`;
+            const rowsHtml = top.map((r, i) => {
+              const dPct = ((r.designedYards||0) / maxYards * 100).toFixed(1);
+              const sPct = ((r.scrambleYards||0) / maxYards * 100).toFixed(1);
+              const { last, first } = lbNameParts(r.player);
+              return `<div class="mag-lb-row mag-lb-row--rush" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
+                <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+                ${lbLogo(r.franchiseId)}
+                <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
+                <div class="mag-seg-wrap">
+                  <div class="mag-seg-designed" style="width:${dPct}%"></div>
+                  <div class="mag-seg-scramble" style="width:${sPct}%"></div>
+                </div>
+                <span class="mag-lb-val">${Math.round(r.yards||0)}</span>
+              </div>`;
+            }).join("");
+            return `<div class="mag-lb-card is-full">
+              <div class="mag-lb-header"><div class="mag-lb-icon">🏃</div><span class="mag-lb-title">QB Rushing Yards</span>${legend}</div>
+              <div class="mag-lb-rows">${rowsHtml}</div>
+              <div class="mag-lb-footer">Total rush yards · designed carries (navy) vs scrambles (teal) · top 12</div>
+            </div>`;
+          }
+
+          /* ---- SVG scatterplot card ---- */
+          function scatterCard({ title, note, pts, xKey, yKey, xLabel, yLabel, diagLine, xFmt, yFmt }) {
+            const data = pts.filter(d => d[xKey] != null && d[yKey] != null);
+            if (data.length < 4) return "";
+
+            const W = 860, H = 460;
+            const mx = { t: 16, r: 16, b: 48, l: 52 };
+            const pw = W - mx.l - mx.r, ph = H - mx.t - mx.b;
+
+            const xs = data.map(d => d[xKey]);
+            const ys = data.map(d => d[yKey]);
+            const xMin = Math.min(...xs), xMax = Math.max(...xs);
+            const yMin = Math.min(...ys), yMax = Math.max(...ys);
+            const xPad = (xMax - xMin) * 0.1 || 1;
+            const yPad = (yMax - yMin) * 0.1 || 1;
+            const x0 = xMin-xPad, x1 = xMax+xPad;
+            const y0 = yMin-yPad, y1 = yMax+yPad;
+
+            const sx = v => mx.l + ((v-x0)/(x1-x0)) * pw;
+            const sy = v => mx.t + ph - ((v-y0)/(y1-y0)) * ph;
+            const fmtX = xFmt || (v => v.toFixed(2));
+            const fmtY = yFmt || (v => v.toFixed(1));
+
+            // Gridlines + tick labels
+            let gridSvg = "";
+            const nT = 5;
+            for (let i = 0; i <= nT; i++) {
+              const xv = x0 + (x1-x0)/nT*i;
+              const yv = y0 + (y1-y0)/nT*i;
+              gridSvg += `<line x1="${sx(xv).toFixed(1)}" y1="${mx.t}" x2="${sx(xv).toFixed(1)}" y2="${(mx.t+ph).toFixed(1)}" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>`;
+              gridSvg += `<text x="${sx(xv).toFixed(1)}" y="${(mx.t+ph+14).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="#9ca3af">${fmtX(xv)}</text>`;
+              gridSvg += `<line x1="${mx.l}" y1="${sy(yv).toFixed(1)}" x2="${(mx.l+pw).toFixed(1)}" y2="${sy(yv).toFixed(1)}" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>`;
+              gridSvg += `<text x="${(mx.l-5).toFixed(1)}" y="${(sy(yv)+3.5).toFixed(1)}" text-anchor="end" font-size="9.5" fill="#9ca3af">${fmtY(yv)}</text>`;
+            }
+
+            // Diagonal y=x reference line
+            let diagSvg = "";
+            if (diagLine) {
+              const dMin = Math.max(x0,y0), dMax = Math.min(x1,y1);
+              if (dMin < dMax)
+                diagSvg = `<line x1="${sx(dMin).toFixed(1)}" y1="${sy(dMin).toFixed(1)}" x2="${sx(dMax).toFixed(1)}" y2="${sy(dMax).toFixed(1)}" stroke="#d1d5db" stroke-width="1.5" stroke-dasharray="5,3"/>`;
+            }
+
+            // Average cross-lines (faint red dashed)
+            const avgX = data.reduce((s,d) => s + d[xKey], 0) / data.length;
+            const avgY = data.reduce((s,d) => s + d[yKey], 0) / data.length;
+            const avgSvg = `<line x1="${sx(avgX).toFixed(1)}" y1="${mx.t}" x2="${sx(avgX).toFixed(1)}" y2="${(mx.t+ph).toFixed(1)}" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,4" opacity="0.45"/><line x1="${mx.l}" y1="${sy(avgY).toFixed(1)}" x2="${(mx.l+pw).toFixed(1)}" y2="${sy(avgY).toFixed(1)}" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,4" opacity="0.45"/>`;
+
+            // Dots + name labels (team-colored)
+            const dotsSvg = data.map(d => {
+              const cx = sx(d[xKey]).toFixed(1);
+              const cy = sy(d[yKey]).toFixed(1);
+              const label = (d.player || "").trim().split(/\s+/).slice(-1)[0] || "";
+              const teamColor = window.QbAnnualTeams?.resolve(d.franchiseId)?.primary || "#006bff";
+              return `<circle cx="${cx}" cy="${cy}" r="4.5" fill="${escapeAttr(teamColor)}" fill-opacity="0.9" stroke="#fff" stroke-width="1.5"/><text x="${(parseFloat(cx)+7).toFixed(1)}" y="${(parseFloat(cy)+3.5).toFixed(1)}" font-size="9" fill="#e2e8f0" font-weight="600">${escapeHtml(label)}</text>`;
+            }).join("\n");
+
+            // Axis labels
+            const axSvg = `<text x="${(mx.l+pw/2).toFixed(1)}" y="${(H-5).toFixed(1)}" text-anchor="middle" font-size="11" fill="#94a3b8" font-weight="700">${xLabel}</text>
+<text transform="rotate(-90)" x="${(-(mx.t+ph/2)).toFixed(1)}" y="13" text-anchor="middle" font-size="11" fill="#94a3b8" font-weight="700">${yLabel}</text>`;
+
+            return `<div class="mag-lb-card is-full">
+              <div class="mag-lb-header"><div class="mag-lb-icon">📊</div><span class="mag-lb-title">${escapeHtml(title)}</span></div>
+              <div class="mag-scatter-wrap">
+                <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="mag-scatter-svg" preserveAspectRatio="xMidYMid meet">
+                  ${gridSvg}${diagSvg}${avgSvg}${dotsSvg}${axSvg}
+                </svg>
+              </div>
+              <div class="mag-lb-footer">${escapeHtml(note)}</div>
+            </div>`;
+          }
+
+          /* ---- placeholder card ---- */
+          function placeholderCard({ icon, title, message }) {
+            return `<div class="mag-lb-card">
+              <div class="mag-lb-header"><div class="mag-lb-icon">${icon}</div><span class="mag-lb-title">${escapeHtml(title)}</span></div>
+              <div class="mag-lb-placeholder">
+                <div class="mag-lb-placeholder-icon">📤</div>
+                <div class="mag-lb-placeholder-label">${escapeHtml(message)}</div>
+              </div>
+            </div>`;
+          }
+
+          /* ======== BUILD ALL COMPONENTS ======== */
+
+          // YoY deltas (pass grade 2024 → 2025)
+          const yoyDeltas = [];
+          season2025.forEach(r25 => {
+            const r24 = byId2024[String(r25.playerId)];
+            if (!r24) return;
+            const g25 = r25.gradesPass;
+            const g24 = parseFloat(r24.gradesPass || "");
+            if (g25 == null || !Number.isFinite(g24)) return;
+            yoyDeltas.push({ player: r25.player, playerId: r25.playerId, franchiseId: r25.franchiseId, delta: +(g25 - g24).toFixed(1) });
+          });
+          yoyDeltas.sort((a,b) => b.delta - a.delta);
+
+          // Pressure state rows (all QBs, not just qualifiers — scatterplot)
+          const pressureRows = pressureState?.byPlayerId
+            ? Object.values(pressureState.byPlayerId)
+            : [];
+          // Merge pressure grades back to the season2025 player objects for scatter
+          const pressureById = {};
+          pressureRows.forEach(row => {
+            const pid = String(row.player_id || "").trim();
+            if (pid) pressureById[pid] = row;
+          });
+          const cleanVsPressurePts = season2025.map(r => {
+            const pr = pressureById[String(r.playerId)] || pressureById[r.player] || null;
+            return {
+              player: r.player,
+              playerId: r.playerId,
+              franchiseId: r.franchiseId,
+              cleanGrade:    pr ? parseFloat(pr["no_pressure_grades_pass"] || "") : null,
+              pressureGrade: pr ? parseFloat(pr["pressure_grades_pass"]    || "") : null,
+            };
+          }).filter(d => d.cleanGrade != null && d.pressureGrade != null);
+
+          /* -- render -- */
+          const parts = [
+            // Row 1: Three core grade boards
+            top5Card({
+              icon: "⭐", title: "Overall Grade",
+              note: "PFF overall offensive grade · qualifying passers",
+              rows: [...season2025].filter(r => r.gradesOffense != null).sort((a,b) => b.gradesOffense - a.gradesOffense).slice(0,5),
+              raw: r => r.gradesOffense || 0,
+              display: r => (r.gradesOffense||0).toFixed(1),
+              maxVal: 100,
+            }),
+            top5Card({
+              icon: "🏈", title: "Passing Grade",
+              note: "PFF passing grade · qualifying passers",
+              rows: [...season2025].filter(r => r.gradesPass != null).sort((a,b) => b.gradesPass - a.gradesPass).slice(0,5),
               raw: r => r.gradesPass || 0,
               display: r => (r.gradesPass||0).toFixed(1),
-              maxVal: 100, invert: false,
-            },
-            {
-              icon: "🏈", title: "Passing Yards",
-              note: "Regular season · all attempts",
-              rows: [...season2025].filter(r => r.yards != null)
-                .sort((a,b) => b.yards - a.yards).slice(0,5),
-              raw: r => r.yards || 0,
-              display: r => Math.round(r.yards||0).toLocaleString("en-US"),
-              maxVal: null, invert: false,
-            },
-            {
-              icon: "🎯", title: "Passing Touchdowns",
-              note: "Regular season",
-              rows: [...season2025].filter(r => r.touchdowns != null)
-                .sort((a,b) => b.touchdowns - a.touchdowns).slice(0,5),
-              raw: r => r.touchdowns || 0,
-              display: r => Math.round(r.touchdowns||0),
-              maxVal: null, invert: false,
-            },
-            {
-              icon: "📐", title: "Avg Depth of Target",
-              note: "Air yards per attempt · deeper = more aggressive",
-              rows: [...season2025].filter(r => r.avgDepthOfTarget != null)
-                .sort((a,b) => b.avgDepthOfTarget - a.avgDepthOfTarget).slice(0,5),
-              raw: r => r.avgDepthOfTarget || 0,
-              display: r => (r.avgDepthOfTarget||0).toFixed(1) + " yds",
-              maxVal: null, invert: false,
-            },
-            {
-              icon: "⚡", title: "Time to Throw",
-              note: "Quickest releases · lower is faster",
-              rows: [...season2025].filter(r => r.avgTimeToThrow != null)
-                .sort((a,b) => a.avgTimeToThrow - b.avgTimeToThrow).slice(0,5),
-              raw: r => r.avgTimeToThrow || 0,
-              display: r => (r.avgTimeToThrow||0).toFixed(2) + "s",
-              maxVal: null, invert: true,
-            },
-            {
+              maxVal: 100,
+            }),
+            top5Card({
+              icon: "🏃", title: "Rushing Grade",
+              note: "PFF rushing grade · QBs with rush data",
+              rows: [...rushRows].filter(r => r.gradesRun != null).sort((a,b) => b.gradesRun - a.gradesRun).slice(0,5),
+              raw: r => r.gradesRun || 0,
+              display: r => (r.gradesRun||0).toFixed(1),
+              maxVal: 100,
+            }),
+
+            // Row 2: Rate boards
+            top5Card({
+              icon: "💣", title: "Big-Time Throw Rate",
+              note: "BTTs as % of attempts · higher = better",
+              rows: [...season2025].filter(r => r.bttRate != null).sort((a,b) => b.bttRate - a.bttRate).slice(0,5),
+              raw: r => r.bttRate || 0,
+              display: r => (r.bttRate||0).toFixed(1) + "%",
+            }),
+            top5Card({
+              icon: "⚠️", title: "Turnover-Worthy Play Rate",
+              note: "TWP rate · lower = better",
+              rows: [...season2025].filter(r => r.twpRate != null).sort((a,b) => a.twpRate - b.twpRate).slice(0,5),
+              raw: r => r.twpRate || 0,
+              display: r => (r.twpRate||0).toFixed(1) + "%",
+              invert: true,
+            }),
+            top5Card({
+              icon: "🎯", title: "Adj. Completion %",
+              note: "Accuracy % — excl. drops, throwaways & spikes · higher = better",
+              rows: [...season2025].filter(r => r.accuracyPercent != null).sort((a,b) => b.accuracyPercent - a.accuracyPercent).slice(0,5),
+              raw: r => r.accuracyPercent || 0,
+              display: r => (r.accuracyPercent||0).toFixed(1) + "%",
+            }),
+
+            // Row 3: EPA + accuracy metrics
+            (() => {
+              const epaRows = [...season2025]
+                .filter(r => r.epa != null && Number.isFinite(r.epa))
+                .sort((a, b) => b.epa - a.epa)
+                .slice(0, 5);
+              const fById = {};
+              season2025.forEach(r => { if (r.playerId) fById[String(r.playerId).trim()] = r.franchiseId; });
+              const accQual = (qbAccuracyState?.rows || [])
+                .filter(r => r.includedInRank)
+                .map(r => ({ ...r, franchiseId: fById[String(r.playerId).trim()] || null }));
+              const plusRows = accQual
+                .filter(r => r.metrics?.plus?.value != null && Number.isFinite(r.metrics.plus.value))
+                .sort((a, b) => b.metrics.plus.value - a.metrics.plus.value)
+                .slice(0, 5);
+              const accRateRows = accQual
+                .filter(r => r.metrics?.acc?.value != null && Number.isFinite(r.metrics.acc.value))
+                .sort((a, b) => b.metrics.acc.value - a.metrics.acc.value)
+                .slice(0, 5);
+              return [
+                top5Card({
+                  icon: "⚡", title: "EPA per Dropback",
+                  note: "Expected points added per dropback · qualifying passers",
+                  rows: epaRows,
+                  raw: r => r.epa || 0,
+                  display: r => (r.epa >= 0 ? "+" : "") + (r.epa || 0).toFixed(3),
+                }),
+                top5Card({
+                  icon: "💎", title: "Perfectly Accurate %",
+                  note: "Share of attempts graded as perfectly accurate · qualifying passers",
+                  rows: plusRows,
+                  raw: r => r.metrics.plus.value || 0,
+                  display: r => (r.metrics.plus.value || 0).toFixed(1) + "%",
+                }),
+                top5Card({
+                  icon: "🎯", title: "Accurate Throw %",
+                  note: "Share of attempts graded as accurate (ACC%) · qualifying passers",
+                  rows: accRateRows,
+                  raw: r => r.metrics.acc.value || 0,
+                  display: r => (r.metrics.acc.value || 0).toFixed(1) + "%",
+                }),
+              ].join("");
+            })(),
+
+            // Row 4: Pressure + placeholder
+            top5Card({
               icon: "🛡", title: "Pressure-to-Sack Rate",
               note: "Best at avoiding sacks when pressured · lower = better",
-              rows: [...season2025].filter(r => r.pressureToSackRate != null)
-                .sort((a,b) => a.pressureToSackRate - b.pressureToSackRate).slice(0,5),
+              rows: [...season2025].filter(r => r.pressureToSackRate != null).sort((a,b) => a.pressureToSackRate - b.pressureToSackRate).slice(0,5),
               raw: r => r.pressureToSackRate || 0,
-              display: r => ((r.pressureToSackRate||0)*100).toFixed(1) + "%",
-              maxVal: null, invert: true,
-            },
-          ];
+              display: r => (r.pressureToSackRate||0).toFixed(1) + "%",
+              invert: true,
+            }),
+            // Zero-graded throw table cards (YPA + EPA/Att)
+            (() => {
+              if (!zeroGradedState) return "";
+              const passRows2 = season2025;
+              const fById = {};
+              passRows2.forEach(r => { if (r.playerId) fById[String(r.playerId).trim()] = r.franchiseId; });
+              const allZgRows = (zeroGradedState.rows || []).map(r => ({ ...r, franchiseId: fById[String(r.playerId).trim()] || null }));
+              const zgQual = allZgRows.filter(r => r.includedInRank);
+              if (!zgQual.length) return "";
 
-          grid.innerHTML = boards.map(lb => {
-            if (!lb.rows.length) return "";
-            const topVal = lb.raw(lb.rows[0]);
-            const maxVal = lb.maxVal || Math.max(...lb.rows.map(lb.raw), 1);
+              const byYpa = [...zgQual].sort((a,b) => b.ypa - a.ypa);
+              const byEpa = [...zgQual].sort((a,b) => b.epaPerAtt - a.epaPerAtt);
 
-            const rowsHtml = lb.rows.map((r, i) => {
-              const team = window.QbAnnualTeams.resolve(r.franchiseId);
-              const logo = team.logo
-                ? `<img class="mag-lb-logo-img" src="${escapeAttr(team.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`
-                : `<span class="mag-lb-logo-img" style="display:inline-block"></span>`;
-              const val = lb.raw(r);
-              const barPct = lb.invert
-                ? Math.min(100, Math.round((topVal / Math.max(val, 0.001)) * 100))
-                : Math.min(100, Math.round((val / maxVal) * 100));
-              const parts = (r.player || "").trim().split(/\s+/);
-              const lastName = parts.slice(-1)[0] || r.player || "";
-              const firstName = parts.length > 1 ? parts.slice(0,-1).join(" ") : "";
-              const rankBadge = i === 0 ? "🥇" : String(i + 1);
-              return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
-  <span class="mag-lb-rank">${rankBadge}</span>
-  ${logo}
-  <span class="mag-lb-name">${escapeHtml(lastName)}<small>${escapeHtml(firstName)}</small></span>
-  <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%"></div></div>
-  <span class="mag-lb-val">${escapeHtml(String(lb.display(r)))}</span>
-</div>`;
-            }).join("");
+              function zgTableCard(rows, metric, title, footer) {
+                const top5 = rows.slice(0, 5);
+                const maxAbs = Math.max(...top5.map(r => Math.abs(r[metric] || 0)), 0.001);
+                const isEpa = metric === "epaPerAtt";
+                const rowsHtml = top5.map((r, i) => {
+                  const val = r[metric] || 0;
+                  const valStr = isEpa ? ((val >= 0 ? "+" : "") + val.toFixed(3)) : val.toFixed(2);
+                  const barPct = Math.min(100, (Math.abs(val) / maxAbs) * 100).toFixed(1);
+                  const t = window.QbAnnualTeams?.resolve(r.franchiseId);
+                  const rowAccent = (t && t.primary) ? t.primary : "#006bff";
+                  const { last, first } = lbNameParts(r.player);
+                  return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
+                    <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+                    ${lbLogo(r.franchiseId)}
+                    <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
+                    <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%;background:linear-gradient(90deg,#0050c8,#006bff)"></div></div>
+                    <span class="mag-lb-val">${escapeHtml(valStr)}</span>
+                  </div>`;
+                }).join("");
+                return `<div class="mag-lb-card">
+                  <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
+                  <div class="mag-lb-rows">${rowsHtml}</div>
+                  <div class="mag-lb-footer">${escapeHtml(footer)}</div>
+                </div>`;
+              }
 
-            return `<div class="mag-lb-card">
-  <div class="mag-lb-header">
-    <div class="mag-lb-icon">${lb.icon}</div>
-    <span class="mag-lb-title">${escapeHtml(lb.title)}</span>
-  </div>
-  <div class="mag-lb-rows">${rowsHtml}</div>
-  <div class="mag-lb-footer">${escapeHtml(lb.note)}</div>
-</div>`;
-          }).join("");
+              return zgTableCard(byYpa, "ypa", "Zero-Graded YPA", "Yards per attempt on zero-graded throws · qualifying passers")
+                + zgTableCard(byEpa, "epaPerAtt", "Zero-Graded EPA/Att", "EPA per attempt on zero-graded throws · qualifying passers");
+            })(),
 
-          // clicking a row opens the QB profile
-          grid.querySelectorAll(".mag-lb-row[data-id]").forEach(row => {
-            row.addEventListener("click", () => {
-              const id = row.dataset.id;
-              const name = row.dataset.name;
-              const qb = qbOrder.find(p => String(p.playerId) === id)
-                       || qbOrder.find(p => p.playerName === name);
-              if (qb) showQb(qb);
+            // Row: Crunch time leaderboards (3 cards)
+            (() => {
+              const cs = window.QbAnnualApi.getClutchState();
+              if (!cs) return "";
+              const fById = {};
+              season2025.forEach(r => { if (r.playerId) fById[String(r.playerId).trim()] = r.franchiseId; });
+              function clutchCard(metricId, title, note, fmt) {
+                const pool = (cs.rankPools[metricId] || []).slice(0, 5).map(r => ({
+                  ...r, franchiseId: fById[String(r.playerId).trim()] || null
+                }));
+                if (!pool.length) return "";
+                const maxVal = Math.max(...pool.map(r => r.value), 1);
+                const rowsHtml = pool.map((r, i) => {
+                  const barPct = Math.min(100, (r.value / maxVal) * 100).toFixed(1);
+                  const { last, first } = lbNameParts(r.player);
+                  const t = window.QbAnnualTeams?.resolve(r.franchiseId);
+                  const bar = (t && t.primary) ? t.primary : "#006bff";
+                  return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(r.playerId)}" data-name="${escapeAttr(r.player||"")}">
+                    <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+                    ${lbLogo(r.franchiseId)}
+                    <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
+                    <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%;background:${escapeAttr(bar)}"></div></div>
+                    <span class="mag-lb-val">${escapeHtml(fmt(r.value))}</span>
+                  </div>`;
+                }).join("");
+                return `<div class="mag-lb-card">
+                  <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
+                  <div class="mag-lb-rows">${rowsHtml}</div>
+                  <div class="mag-lb-footer">${escapeHtml(note)}</div>
+                </div>`;
+              }
+              const gradeCard = clutchCard("passGrd", "Crunch Time Passing Grade", "PFF passing grade · 4th qtr or OT, ≤8 pts · qualifying passers", v => v.toFixed(1));
+              const ypaCard   = clutchCard("ypa",     "Crunch Time Yards / Attempt", "Yards per pass attempt · 4th qtr or OT, ≤8 pts · qualifying passers", v => v.toFixed(2));
+              const bttCard   = clutchCard("bttPct",  "Crunch Time Big-Time Throw %", "BTT rate · 4th qtr or OT, ≤8 pts · qualifying passers", v => v.toFixed(1) + "%");
+              return gradeCard + ypaCard + bttCard;
+            })(),
+
+            // Row: Luckiest / Unluckiest net interception luck — paired full-width card
+            (() => {
+              const ils = window.QbAnnualApi.getIntLuckState();
+              if (!ils) return "";
+              const fById = {};
+              season2025.forEach(r => { if (r.playerId) fById[String(r.playerId).trim()] = r.franchiseId; });
+              const _isQ = v => { const s = String(v ?? "").trim().toLowerCase(); return s === "1" || s === "1.0" || s === "yes" || s === "true"; };
+              const qualRows = Object.values(ils.byPlayerSeason)
+                .filter(row => row.season === "2025" && _isQ(row["included in rank?"]))
+                .map(row => ({
+                  player: row.player_name,
+                  playerId: String(row.player_id || "").trim(),
+                  netLuck: Number(row.net_luck),
+                  franchiseId: fById[String(row.player_id || "").trim()] || null,
+                }))
+                .filter(r => Number.isFinite(r.netLuck))
+                .sort((a, b) => b.netLuck - a.netLuck);
+              if (!qualRows.length) return "";
+              const luckiest   = qualRows.slice(0, 5);
+              const unluckiest = [...qualRows].reverse().slice(0, 5);
+              function luckCard(rows, title, note, isUnlucky) {
+                const maxAbs = Math.max(...rows.map(r => Math.abs(r.netLuck)), 0.1);
+                const barColor = isUnlucky ? "#DC2626" : "#16A34A";
+                const rowsHtml = rows.map((r, i) => {
+                  const barPct = Math.min(100, (Math.abs(r.netLuck) / maxAbs) * 100).toFixed(1);
+                  const sign = r.netLuck >= 0 ? "+" : "";
+                  const { last, first } = lbNameParts(r.player);
+                  return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(r.playerId)}" data-name="${escapeAttr(r.player||"")}">
+                    <span class="mag-lb-rank">${i === 0 ? (isUnlucky ? "💀" : "🍀") : i+1}</span>
+                    ${lbLogo(r.franchiseId)}
+                    <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
+                    <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%;background:${barColor}"></div></div>
+                    <span class="mag-lb-val" style="color:${barColor}">${escapeHtml(sign + r.netLuck.toFixed(1))}</span>
+                  </div>`;
+                }).join("");
+                return `<div class="mag-lb-card">
+                  <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
+                  <div class="mag-lb-rows">${rowsHtml}</div>
+                  <div class="mag-lb-footer">${escapeHtml(note)}</div>
+                </div>`;
+              }
+              const l = luckCard(luckiest,   "Luckiest QBs",   "Net interception luck · fewer picks than model expected · 2025", false);
+              const u = luckCard(unluckiest, "Unluckiest QBs", "Net interception luck · more picks than model expected · 2025", true);
+              return `<div class="mag-lb-yoy-pair is-full">${l}${u}</div>`;
+            })(),
+
+            // YoY change boards — combined full-width card
+            (() => {
+              const j = yoyCard({ title: "Biggest Grade Jumps (2024→2025)", note: "PFF passing grade improvement vs prior season", deltas: yoyDeltas.slice(0,5), isDecline: false });
+              const d = yoyCard({ title: "Biggest Grade Declines (2024→2025)", note: "PFF passing grade decline vs prior season", deltas: [...yoyDeltas].reverse().slice(0,5), isDecline: true });
+              if (!j && !d) return "";
+              return `<div class="mag-lb-yoy-pair is-full">${j}${d}</div>`;
+            })(),
+
+            // Full-width rush yards segmented bar
+            rushYardsCard(rushRows),
+
+            // Full-width scatterplots
+            scatterCard({
+              title: "Time to Throw vs Target Depth",
+              note: "Avg time to throw (x) vs avg depth of target (y) · all qualifying passers · 2025 reg + post",
+              pts: season2025,
+              xKey: "avgTimeToThrow",
+              yKey: "avgDepthOfTarget",
+              xLabel: "Avg Time to Throw (sec)",
+              yLabel: "Avg Depth of Target (yds)",
+              xFmt: v => v.toFixed(2),
+              yFmt: v => v.toFixed(1),
+            }),
+            scatterCard({
+              title: "Clean Pocket Grade vs Pressured Grade",
+              note: "Clean pocket passing grade (x) vs under-pressure grade (y) · all qualifying passers · 2025 reg + post",
+              pts: cleanVsPressurePts,
+              xKey: "cleanGrade",
+              yKey: "pressureGrade",
+              xLabel: "Clean Pocket Grade",
+              yLabel: "Under Pressure Grade",
+              xFmt: v => v.toFixed(0),
+              yFmt: v => v.toFixed(0),
+            }),
+          ].filter(Boolean).join("");
+
+          grid.innerHTML = parts;
+
+          // Click rows / SVG bars to open QB profile
+          grid.addEventListener("click", e => {
+            const row = e.target.closest(".mag-lb-row[data-id], .zg-svgbar[data-id]");
+            if (!row) return;
+            const id = row.dataset.id, name = row.dataset.name;
+            const qb = qbOrder.find(p => String(p.playerId) === id) || qbOrder.find(p => p.playerName === name);
+            if (qb) showQb(qb, { backTo: 'leaderboards' });
+          });
+
+          // Zero-graded leaderboard tab toggles
+          grid.querySelectorAll("[data-zg-lb-tab]").forEach(tab => {
+            tab.addEventListener("click", () => {
+              const card = tab.closest(".mag-lb-card");
+              if (!card) return;
+              card.querySelectorAll("[data-zg-lb-tab]").forEach(t => t.setAttribute("aria-pressed", "false"));
+              tab.setAttribute("aria-pressed", "true");
+              const which = tab.dataset.zgLbTab;
+              card.querySelectorAll("[data-zg-lb-pane]").forEach(p => { p.hidden = p.dataset.zgLbPane !== which; });
             });
           });
         }
@@ -3766,8 +4983,13 @@
             const wantedId = hash.qb || saved.playerId || "";
             const qb = qbOrder.find((p) => String(p.playerId) === String(wantedId));
 
-            els.loader.classList.add("is-done");
-            setTimeout(() => els.loader.remove(), 500);
+            const loaderMinMs = 7500;
+            const loaderAge = Date.now() - (window.__loaderStart || Date.now());
+            const loaderWait = Math.max(0, loaderMinMs - loaderAge);
+            setTimeout(() => {
+              els.loader.classList.add("is-done");
+              setTimeout(() => els.loader.remove(), 1100);
+            }, loaderWait);
 
             if (qb) {
               showQb(qb, { scrollTop: false });
@@ -3785,38 +5007,13 @@
           }
         }
 
-        // Wire the index panel immediately — doesn't need QB data
+        // Panel HTML is above the script, so elements exist — wire immediately
         wireIndexPanel();
+        wireEditorLetter();
+        wireAckSection();
         init();
       })();
     </script>
-
-    <!-- ====== SLIDING INDEX PANEL ====== -->
-    <div class="idx-backdrop" id="idxBackdrop"></div>
-    <aside class="idx-panel" id="idxPanel" aria-hidden="true" aria-label="QB Annual index">
-      <div class="idx-panel-head">
-        <span class="idx-panel-brand">2026 QB Annual</span>
-        <button class="idx-panel-close" id="idxClose" aria-label="Close">&#x2715;</button>
-      </div>
-      <div class="idx-panel-body" id="idxPanelBody">
-        <!-- Magazine sections — always present -->
-        <div class="idx-section-label">Magazine</div>
-        <button class="idx-nav-row" data-idx-target="magCover">
-          <span class="idx-nav-row-dot"></span>Home
-        </button>
-        <button class="idx-nav-row" data-idx-target="magIntro">
-          <span class="idx-nav-row-dot"></span>Introduction
-        </button>
-        <button class="idx-nav-row" data-idx-target="magAck">
-          <span class="idx-nav-row-dot"></span>Acknowledgements
-        </button>
-        <div class="idx-divider"></div>
-        <!-- QB list — populated by JS after data loads -->
-        <div class="idx-section-label">Quarterbacks</div>
-        <div id="idxQbList"><div style="padding:12px 20px;font-size:0.78rem;color:rgba(255,255,255,0.25);font-weight:600;">Loading…</div></div>
-      </div>
-    </aside>
-    <!-- ====== END INDEX PANEL ====== -->
 
   </body>
 </html>

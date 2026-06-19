@@ -11,7 +11,7 @@
     <p class="qb-scatter-panel-name">${escapeHtml(point.name)}</p>
     <p class="qb-scatter-panel-team">${escapeHtml(point.team || "—")}</p>
     <dl class="qb-scatter-panel-stats">
-      <div><dt>Pass grade</dt><dd>${escapeHtml(point.passGrade)}</dd></div>
+      <div><dt>Passing grade</dt><dd>${escapeHtml(point.passGrade)}</dd></div>
       <div><dt>${escapeHtml(point.xLabel)}</dt><dd>${escapeHtml(point.xValue)}</dd></div>
       <div><dt>${escapeHtml(point.yLabel)}</dt><dd>${escapeHtml(point.yValue)}</dd></div>
     </dl>

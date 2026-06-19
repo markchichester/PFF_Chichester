@@ -70,6 +70,7 @@ FILES = {
     ],
     "targetAlignmentFeedText": [ROOT / "target-alignment.csv"],
     "throwTypeFeedText": [ROOT / "throw-type.csv"],
+    "zeroGradedFeedText": [ROOT / "zero graded throws.csv"],
 }
 
 def read_first(paths):

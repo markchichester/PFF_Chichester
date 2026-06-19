@@ -21,6 +21,7 @@
   const PASSING_CONCEPT_URL = "passing_concept.csv";
   const TIME_IN_POCKET_URL = "time_in_pocket.csv";
   const RUSHING_SUMMARY_URL = "rushing_summary.csv";
+  const ZERO_GRADED_URL = "zero graded throws.csv";
   const PASSING_GRADES_SITUATION_URLS = [
     "Passing grades by situation.csv",
     encodeURI("Passing grades by situation.csv"),
@@ -81,14 +82,14 @@
     encodeURI("Clutch 2025.csv"),
   ];
   const CLUTCH_METRICS = [
-    { id: "passGrd", label: "Pass grade", column: "pass grd", format: "grade", higherBetter: true },
-    { id: "ypa", label: "YPA", column: "pass ypa", format: "ypa", higherBetter: true },
-    { id: "bttPct", label: "BTT%", column: "btt%", format: "pct", higherBetter: true },
-    { id: "twpPct", label: "TWP%", column: "twp%", format: "pct", higherBetter: false },
-    { id: "posPct", label: "Pos %", column: "pos %", format: "pct", higherBetter: true },
-    { id: "negPct", label: "Neg %", column: "neg %", format: "pct", higherBetter: false },
-    { id: "accPct", label: "ACC%", column: "acc%", format: "pct", higherBetter: true },
-    { id: "p2sPct", label: "P2S%", column: "p2s%", format: "pct", higherBetter: false },
+    { id: "passGrd", label: "PFF passing grade", column: "pass grd", format: "grade", higherBetter: true },
+    { id: "ypa", label: "Yards per attempt", column: "pass ypa", format: "ypa", higherBetter: true },
+    { id: "bttPct", label: "Big-time throw %", column: "btt%", format: "pct", higherBetter: true },
+    { id: "twpPct", label: "Turnover-worthy play %", column: "twp%", format: "pct", higherBetter: false },
+    { id: "posPct", label: "Pos. graded play %", column: "pos %", format: "pct", higherBetter: true },
+    { id: "negPct", label: "Neg. graded play %", column: "neg %", format: "pct", higherBetter: false },
+    { id: "accPct", label: "Accurate throw %", column: "acc%", format: "pct", higherBetter: true },
+    { id: "p2sPct", label: "Pressure-to-sack %", column: "p2s%", format: "pct", higherBetter: false },
   ];
   const QB_ALIGNMENT_TYPES = [
     { id: "shotgun", label: "Shotgun", countKey: "shotgun", shareKey: "shotgun %" },
@@ -101,18 +102,18 @@
     },
   ];
   const QB_ACCURACY_METRICS = [
-    { id: "plus", label: "PLUS%", header: "plus%", format: "plus", higherBetter: true },
-    { id: "acc", label: "ACC%", header: "acc%", format: "pct", higherBetter: true },
+    { id: "plus", label: "Perfectly accurate %", header: "plus%", format: "plus", higherBetter: true },
+    { id: "acc", label: "Accurate throw %", header: "acc%", format: "pct", higherBetter: true },
     {
       id: "cat-inac",
-      label: "Catchable incompletion",
+      label: "Catchable but inaccurate %",
       header: "cat inac%",
       format: "pct",
       higherBetter: false,
     },
     {
       id: "unc-inac",
-      label: "Uncatchable incompletion",
+      label: "Uncatchable and inaccurate %",
       header: "unc inac%",
       format: "pct",
       higherBetter: false,
@@ -159,8 +160,9 @@
     { field: "drop_rate", label: "Drop rate", format: "pct" },
   ];
   const PASSING_SPLIT_HIGHLIGHTS = [
-    { field: "completion_percent", label: "Completion %", format: "pct", higherBetter: true },
+    { field: "accuracy_percent", label: "Adj. completion %", format: "pct", higherBetter: true },
     { field: "ypa", label: "YPA", format: "decimal", higherBetter: true },
+    { field: "epa", label: "EPA / dropback", format: "epa", higherBetter: true },
     { field: "btt_rate", label: "BTT rate", format: "pct", higherBetter: true },
     { field: "twp_rate", label: "TWP rate", format: "pct", higherBetter: false },
     { field: "sack_percent", label: "Sack rate", format: "pct", higherBetter: false },
@@ -267,6 +269,8 @@
   let warSeasonPromise = null;
   let rushingSummaryState = null;
   let rushingSummaryPromise = null;
+  let zeroGradedState = null;
+  let zeroGradedPromise = null;
   let passingGradesSituationState = null;
   let passingGradesSituationPromise = null;
   let passingGradesReadsState = null;
@@ -419,14 +423,24 @@
         teamName: cell(cols, idx, "team_name"),
         franchiseId: cell(cols, idx, "franchise_id"),
         gradesPass: parseNum(cell(cols, idx, "grades_pass")),
+        gradesOffense: parseNum(cell(cols, idx, "grades_offense")),
+        gradesRun: parseNum(cell(cols, idx, "grades_run")),
         attempts: parseNum(cell(cols, idx, "attempts")),
         completions: parseNum(cell(cols, idx, "completions")),
+        dropbacks: parseNum(cell(cols, idx, "dropbacks")),
         yards: parseNum(cell(cols, idx, "yards")),
         touchdowns: parseNum(cell(cols, idx, "touchdowns")),
         interceptions: parseNum(cell(cols, idx, "interceptions")),
         avgTimeToThrow: parseNum(cell(cols, idx, "avg_time_to_throw")),
         avgDepthOfTarget: parseNum(cell(cols, idx, "avg_depth_of_target")),
         pressureToSackRate: parseNum(cell(cols, idx, "pressure_to_sack_rate")),
+        bttRate: parseNum(cell(cols, idx, "btt_rate")),
+        twpRate: parseNum(cell(cols, idx, "twp_rate")),
+        accuracyPercent: parseNum(cell(cols, idx, "accuracy_percent")),
+        bigTimeThrows: parseNum(cell(cols, idx, "big_time_throws")),
+        turnoverWorthyPlays: parseNum(cell(cols, idx, "turnover_worthy_plays")),
+        sackPercent: parseNum(cell(cols, idx, "sack_percent")),
+        epa: parseNum(cell(cols, idx, "epa")),
       });
     }
 
@@ -1013,17 +1027,17 @@
       id: "btt-twp",
       title: "Big-time throw rate vs turnover-worthy play rate",
       shortTitle: "BTT vs TWP",
-      xLabel: "Big-time throw rate",
-      yLabel: "Turnover-worthy play rate",
+      xLabel: "BTT%",
+      yLabel: "TWP%",
       xKey: "bttRate",
       yKey: "twpRate",
     },
     {
       id: "pos-neg",
       title: "Positively graded vs negatively graded play rate",
-      shortTitle: "+ vs − grade rate",
-      xLabel: "Positively graded play rate",
-      yLabel: "Negatively graded play rate",
+      shortTitle: "Pos. and Neg. graded plays",
+      xLabel: "Pos. graded play %",
+      yLabel: "Neg. graded play %",
       xKey: "positiveRate",
       yKey: "negativeRate",
     },
@@ -1489,6 +1503,48 @@
     });
 
     return { rows, rankPools, byPlayerId, byPlayerName };
+  }
+
+  function parseZeroGradedCsv(text) {
+    const lines = String(text || "")
+      .replace(/^﻿/, "")
+      .split(/\r?\n/)
+      .filter((l) => l.trim());
+    if (lines.length < 2) return { rows: [], byPlayerId: {}, byPlayerName: {} };
+
+    const headers = parseCsvLine(lines[0]);
+    const idx = headerIndex(headers);
+    const rows = [];
+    const byPlayerId = {};
+    const byPlayerName = {};
+
+    for (let li = 1; li < lines.length; li++) {
+      const cols = parseCsvLine(lines[li]);
+      if (!cols.some((c) => c.trim())) continue;
+
+      const row = {
+        player:          cell(cols, idx, "passer_name"),
+        playerId:        cell(cols, idx, "passer_player_id"),
+        includedInRank:  isRankIncluded(cell(cols, idx, "included in rank?")),
+        attempts:        parseNum(cell(cols, idx, "attempt")),
+        yards:           parseNum(cell(cols, idx, "yards")),
+        epa:             parseNum(cell(cols, idx, "epa")),
+        ypa:             parseNum(cell(cols, idx, "ypa")),
+        epaPerAtt:       parseNum(cell(cols, idx, "epa/att")),
+      };
+
+      rows.push(row);
+      if (row.playerId) byPlayerId[String(row.playerId).trim()] = row;
+      const name = normalizePlayerKey(row.player);
+      if (name) byPlayerName[name] = row;
+    }
+
+    // League averages across qualifying QBs
+    const qualRows = rows.filter(r => r.includedInRank && r.attempts >= 5);
+    const avgYpa    = qualRows.length ? qualRows.reduce((s,r) => s + (r.ypa    || 0), 0) / qualRows.length : null;
+    const avgEpaAtt = qualRows.length ? qualRows.reduce((s,r) => s + (r.epaPerAtt || 0), 0) / qualRows.length : null;
+
+    return { rows, byPlayerId, byPlayerName, avgYpa, avgEpaAtt };
   }
 
   function computeRushRank(rankPool, playerId, playerName) {
@@ -2560,11 +2616,12 @@
   function findPctKeyForCount(idx, countLower) {
     const exact = `${countLower} %`;
     if (idx[exact] != null) return exact;
+    const singular = countLower.replace(/s$/, "");
     return (
       Object.keys(idx).find((key) => {
         if (!key.endsWith(" %") && !key.endsWith("%")) return false;
         const stem = key.replace(/ %?$/, "").trim();
-        return stem === countLower || stem === `${countLower} %`.replace(/ %$/, "");
+        return stem === countLower || stem === singular;
       }) || null
     );
   }
@@ -2749,12 +2806,16 @@
     const pid = String(playerId || "").trim();
     const tableRows = QB_ACCURACY_METRICS.map((metric) => {
       const entry = row.metrics[metric.id];
-      if (!entry || entry.value == null || !Number.isFinite(entry.value)) return null;
-      const { rank, total } = computeValueRank(rankPools?.[metric.id], pid, playerName);
+      const hasValue = entry && entry.value != null && Number.isFinite(entry.value);
+      // Always include the plus row so ACC+ is visible even if data is missing
+      if (!hasValue && metric.id !== "plus") return null;
+      const { rank, total } = hasValue
+        ? computeValueRank(rankPools?.[metric.id], pid, playerName)
+        : { rank: null, total: null };
       return {
         label: metric.label,
-        value: entry.value,
-        displayValue: formatQbAccuracyValue(entry.value, metric.format),
+        value: hasValue ? entry.value : null,
+        displayValue: hasValue ? formatQbAccuracyValue(entry.value, metric.format) : "—",
         format: metric.format,
         higherBetter: metric.higherBetter,
         rank,
@@ -4458,6 +4519,36 @@
     rushingSummaryPromise = null;
   }
 
+  async function ensureZeroGradedLoaded(customText) {
+    const override = feedOverride(customText);
+    if (override) {
+      zeroGradedState = parseZeroGradedCsv(override);
+      return zeroGradedState;
+    }
+    if (zeroGradedState) return zeroGradedState;
+    if (!zeroGradedPromise) {
+      zeroGradedPromise = fetchCsvText(
+        ZERO_GRADED_URL,
+        "zero graded throws.csv",
+        "zeroGradedFeedText"
+      )
+        .then((text) => {
+          zeroGradedState = parseZeroGradedCsv(text);
+          return zeroGradedState;
+        })
+        .catch((err) => {
+          zeroGradedPromise = null;
+          throw err;
+        });
+    }
+    return zeroGradedPromise;
+  }
+
+  function invalidateZeroGradedFeed() {
+    zeroGradedState = null;
+    zeroGradedPromise = null;
+  }
+
   async function ensurePassingGradesSituationLoaded(customText) {
     const override = feedOverride(customText);
     if (override) {
@@ -4691,6 +4782,10 @@
         run: () => ensureRushingSummaryLoaded(overrides.rushingSummaryFeedText),
       },
       {
+        label: "zero graded throws.csv",
+        run: () => ensureZeroGradedLoaded(overrides.zeroGradedFeedText),
+      },
+      {
         label: "Passing grades by situation.csv",
         run: () => ensurePassingGradesSituationLoaded(overrides.passingGradesSituationFeedText),
       },
@@ -4861,6 +4956,9 @@
     getClutchState: () => clutchState,
     getWarSeasonState: () => warSeasonState,
     getRushingSummaryState: () => rushingSummaryState,
+    getZeroGradedState: () => zeroGradedState,
+    invalidateZeroGradedFeed,
+    parseZeroGradedCsv,
     getPassingGradesSituationState: () => passingGradesSituationState,
     getPassingGradesReadsState: () => passingGradesReadsState,
     getPassingGradesCoverageState: () => passingGradesCoverageState,

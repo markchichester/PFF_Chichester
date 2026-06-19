@@ -1184,27 +1184,24 @@ ${gridLines}${barEls}</svg></div>`;
       return metric.displayValue ?? "—";
     },
 
-    buildRushingMetricCard(metric, accent, delay = 0) {
+    buildRushingMetricRow(metric, accent, delay = 0) {
       const fill = normalizeHex(accent, "#2D6A4F");
       const ringPct = Math.max(0, Math.min(100, metric.ringPct ?? 0));
-      const poolLabel =
-        metric.rankTotal != null && metric.rankTotal > 0
-          ? `${metric.rankTotal} qualified QBs`
-          : "Qualified QBs";
-
-      return `<button type="button" class="qb-rush-card qb-animate-item" style="--rush-accent:${fill}; --rush-ring:${ringPct}%; --delay:${delay}ms" data-rush-metric="${escapeAttr(metric.id)}" aria-label="${escapeAttr(`${metric.label}: ${this.formatRushingMetricValue(metric)}, ranked ${metric.rankLabel}`)}">
-  <span class="qb-rush-card-ring" aria-hidden="true"></span>
-  <span class="qb-rush-card-rank">${escapeHtml(metric.rankLabel || "—")}</span>
-  <span class="qb-rush-card-value">${escapeHtml(this.formatRushingMetricValue(metric))}</span>
-  <span class="qb-rush-card-label">${escapeHtml(metric.label)}</span>
-  <span class="qb-rush-card-pool">${escapeHtml(poolLabel)}</span>
-</button>`;
+      const rankChip = metric.rankLabel
+        ? `<span class="qb-rush-row-rank">${escapeHtml(metric.rankLabel)}</span>`
+        : `<span class="qb-rush-row-rank">—</span>`;
+      return `<div class="qb-rush-row qb-animate-item" style="--rush-accent:${fill}; --rush-ring:${ringPct}%; --delay:${delay}ms" data-rush-metric="${escapeAttr(metric.id)}">
+  <span class="qb-rush-row-label">${escapeHtml(metric.label)}</span>
+  <div class="qb-rush-row-bar-wrap"><div class="qb-rush-row-bar"></div></div>
+  <span class="qb-rush-row-value">${escapeHtml(this.formatRushingMetricValue(metric))}</span>
+  ${rankChip}
+</div>`;
     },
 
-    buildRushingMetricsGrid(metrics, accent, startDelay = 0) {
+    buildRushingMetricsLedger(metrics, accent, startDelay = 0) {
       if (!metrics?.length) return "";
-      return `<div class="qb-rush-grid" role="list">${metrics
-        .map((metric, i) => this.buildRushingMetricCard(metric, accent, startDelay + i * 60))
+      return `<div class="qb-rush-ledger">${metrics
+        .map((metric, i) => this.buildRushingMetricRow(metric, accent, startDelay + i * 50))
         .join("")}</div>`;
     },
 
@@ -1221,20 +1218,22 @@ ${gridLines}${barEls}</svg></div>`;
       const dash = ringPct * circ;
       const gap = circ - dash;
 
-      return `<div class="qb-rush-hero-ring qb-animate-item qb-rush-hero-interactive" style="--rush-accent:${fill}" data-rush-metric="${escapeAttr(hero?.id || "gradesRun")}" role="button" tabindex="0" aria-label="${escapeAttr(`View ${hero?.label || "Run grade"} rankings`)}">
-  <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="${escapeAttr(`${hero?.label || "Run grade"} ${this.formatRushingMetricValue(hero)}, rank ${hero?.rankLabel || "—"}`)}">
+      return `<figure class="qb-donut qb-donut-interactive qb-animate-item qb-rush-hero-ring" style="--rush-accent:${fill}" data-rush-metric="${escapeAttr(hero?.id || "gradesRun")}" role="button" tabindex="0" aria-label="${escapeAttr(`View ${hero?.label || "Run grade"} rankings`)}">
+  <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-hidden="true">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#E5E7EB" stroke-width="${stroke}" />
     <circle class="qb-donut-progress" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${fill}" stroke-width="${stroke}"
       stroke-linecap="butt"
       stroke-dasharray="0 ${circ.toFixed(2)}"
       data-dash="${dash.toFixed(2)}" data-gap="${gap.toFixed(2)}"
       transform="rotate(-90 ${cx} ${cy})" />
-    <circle cx="${cx}" cy="${cy}" r="${innerR}" fill="#0F0F10" />
-    <text x="${cx}" y="${cy - 8}" text-anchor="middle" class="qb-rush-hero-grade">${escapeHtml(this.formatRushingMetricValue(hero))}</text>
-    <text x="${cx}" y="${cy + 20}" text-anchor="middle" class="qb-rush-hero-rank">${escapeHtml(hero?.rankLabel || "—")}</text>
+    <g class="qb-donut-inner qb-animate-item qb-donut-hit" style="--delay:420ms">
+      <circle class="qb-donut-center" cx="${cx}" cy="${cy}" r="${innerR}" fill="#0F0F10" />
+      <text x="${cx}" y="${cy - 6}" text-anchor="middle" class="qb-donut-grade">${escapeHtml(this.formatRushingMetricValue(hero))}</text>
+      <text x="${cx}" y="${cy + 22}" text-anchor="middle" class="qb-donut-rank">${escapeHtml(hero?.rankLabel || "—")}</text>
+    </g>
   </svg>
-  <p class="qb-rush-hero-caption">${escapeHtml(hero?.label || "Run grade")}</p>
-</div>`;
+  <figcaption class="qb-rush-hero-caption">${escapeHtml(hero?.label || "Run grade")}</figcaption>
+</figure>`;
     },
 
     formatRushSplitPrimary(value, splitType) {
@@ -1308,13 +1307,16 @@ ${gridLines}${barEls}</svg></div>`;
       let body = "";
 
       if (window.type === "hero") {
-        body = `${this.buildRushingHeroRing(window.hero, fill)}${this.buildRushingMetricsGrid(window.metrics, fill, 120)}`;
+        body = `<div class="qb-rush-hero-layout">
+  ${this.buildRushingHeroRing(window.hero, fill)}
+  ${this.buildRushingMetricsLedger(window.metrics, fill, 80)}
+</div>`;
       } else if (window.type === "designedScramble") {
-        body = `${this.buildRushingSplitHero(window.split, fill, "designedScramble")}${this.buildRushingMetricsGrid(window.metrics, fill, 120)}`;
+        body = `${this.buildRushingSplitHero(window.split, fill, "designedScramble")}${this.buildRushingMetricsLedger(window.metrics, fill, 80)}`;
       } else if (window.type === "gapZone") {
-        body = `${this.buildRushingSplitHero(window.split, fill, "gapZone")}${this.buildRushingMetricsGrid(window.metrics, fill, 120)}`;
+        body = `${this.buildRushingSplitHero(window.split, fill, "gapZone")}${this.buildRushingMetricsLedger(window.metrics, fill, 80)}`;
       } else {
-        body = this.buildRushingMetricsGrid(window.metrics, fill, 0);
+        body = this.buildRushingMetricsLedger(window.metrics, fill, 0);
       }
 
       return `<article class="qb-compare-slide qb-rush-slide" data-split-id="${escapeAttr(window.id)}" style="--rush-accent:${fill}">
@@ -2017,7 +2019,7 @@ ${this.buildAccuracyCellSummary(cell)}
 </table>`;
     },
 
-    buildInterceptionLuckSection(interceptionLuck, profile) {
+    buildInterceptionLuckSection(interceptionLuck, profile, accent) {
       if (!interceptionLuck) {
         return this.buildCollapsibleSection({
           title: "Interception luck",
@@ -2028,72 +2030,120 @@ ${this.buildAccuracyCellSummary(cell)}
       const luck = interceptionLuck;
       const season = luck.season || profile.displaySeason || "2025";
       const netClass = this.luckToneClass(luck.netLuck);
-      const badFlex = Math.abs(luck.luckOnBad || 0);
-      const goodFlex = Math.abs(luck.luckOnGood || 0);
-      const totalFlex = Math.max(badFlex + goodFlex, 0.01);
-      const badShare = ((badFlex / totalFlex) * 100).toFixed(1);
-      const goodShare = ((goodFlex / totalFlex) * 100).toFixed(1);
-      const droppedGood = luck.droppedGood ?? 0;
-      const droppedBad = luck.droppedBad ?? 0;
+      const badClass = this.luckToneClass(luck.luckOnBad);
+      const goodClass = this.luckToneClass(luck.luckOnGood);
       const droppedTotal = luck.droppedInts ?? 0;
 
+      // Bar widths: expected anchors at 100%, actual scaled relative
+      const badExp = Math.max(luck.expectedTwps ?? 0, 0.001);
+      const badAct = luck.intsOnTwps ?? 0;
+      const badActPct = Math.min(160, (badAct / badExp) * 100).toFixed(1);
+
+      const goodExp = Math.max(luck.expectedClean ?? 0, 0.001);
+      const goodAct = luck.nonTwpInts ?? 0;
+      const goodActPct = Math.min(160, (goodAct / goodExp) * 100).toFixed(1);
+
+      // Stacked bar panel builder
+      const barPanel = (title, expected, actual, luckVal, accentColor) => {
+        const safeExp = Math.max(expected ?? 0, 0.001);
+        const actPct  = Math.min(100, ((actual ?? 0) / safeExp) * 100).toFixed(1);
+        const tone    = this.luckToneClass(luckVal);
+        const barColor = tone === " is-unlucky" ? "#DC2626" : accentColor;
+        const expLabel = expected != null ? this.formatLuckDecimal(expected) : "—";
+        const actLabel = actual   != null ? String(Math.round(actual))       : "—";
+        return `<div class="qb-il-bar-panel">
+  <p class="qb-il-split-title">${escapeHtml(title)}</p>
+  <div class="qb-il-bar-rows">
+    <div class="qb-il-bar-row">
+      <span class="qb-il-bar-lbl">Expected</span>
+      <div class="qb-il-bar-track"><div class="qb-il-bar-fill" style="width:100%;background:#D1D5DB"></div></div>
+      <span class="qb-il-bar-num">${escapeHtml(expLabel)}</span>
+    </div>
+    <div class="qb-il-bar-row">
+      <span class="qb-il-bar-lbl">Actual</span>
+      <div class="qb-il-bar-track qb-il-bar-track--actual"><div class="qb-il-bar-fill qb-animate-fill" style="width:${actPct}%;background:${escapeAttr(barColor)}"></div></div>
+      <span class="qb-il-bar-num" style="color:${escapeAttr(barColor)}">${escapeHtml(actLabel)}</span>
+    </div>
+  </div>
+  <p class="qb-il-split-result${tone}">${escapeHtml(this.formatLuck(luckVal))} on ${title.toLowerCase().replace("on ", "")}</p>
+</div>`;
+      };
+
+      // Compute percentile rank among qualifying 2025 QBs for the scale
+      const _intLuckState = window.QbAnnualApi?.getIntLuckState?.();
+      const _allLuck = Object.entries(_intLuckState?.byPlayerSeason || {})
+        .filter(([key, row]) => { const s = String(row["included in rank?"] ?? "").trim().toLowerCase(); return key.endsWith(`:${season}`) && (s === "1" || s === "1.0" || s === "yes" || s === "true"); })
+        .map(([, row]) => { const n = Number(row.net_luck); return Number.isFinite(n) ? n : null; })
+        .filter(v => v != null)
+        .sort((a, b) => a - b);
+      const _thisLuck = luck.netLuck ?? 0;
+      const _below = _allLuck.filter(v => v < _thisLuck).length;
+      const _scalePct = _allLuck.length > 1
+        ? Math.max(3, Math.min(97, Math.round((_below / (_allLuck.length - 1)) * 100)))
+        : 50;
+      const _scaleMin = _allLuck.length ? _allLuck[0] : -5;
+      const _scaleMax = _allLuck.length ? _allLuck[_allLuck.length - 1] : 5;
+      const _scaleN   = _allLuck.length;
+      const _luckRank = _scaleN - _below; // 1 = most lucky
+
+      const fill = accent || "#006bff";
       const bodyHtml = `<div class="qb-int-luck qb-animate-item">
-  <div class="qb-int-luck-hero">
-    <div class="qb-int-luck-hero-copy">
-      <p class="qb-int-luck-eyebrow">Interception luck · ${escapeHtml(String(season))}</p>
-      <p class="qb-int-luck-meta">${escapeHtml(profile.teamName || "Team")} · ${luck.attempts != null ? `${Math.round(luck.attempts).toLocaleString("en-US")} attempts` : "—"} · ${luck.twps != null ? `${Math.round(luck.twps)} turnover-worthy throws` : "—"} · ${luck.totalInts != null ? `${Math.round(luck.totalInts)} interceptions` : "—"}</p>
+
+  <div class="qb-il-header">
+    <p class="qb-il-eyebrow">Interception luck · ${escapeHtml(String(season))}</p>
+    <p class="qb-il-meta">${luck.attempts != null ? Math.round(luck.attempts).toLocaleString("en-US") + " attempts" : "—"} · ${luck.twps != null ? Math.round(luck.twps) + " turnover-worthy throws" : "—"} · ${luck.totalInts != null ? Math.round(luck.totalInts) + " interceptions" : "—"}</p>
+  </div>
+
+  <div class="qb-il-net-hero${netClass}">
+    <span class="qb-il-net-hero-num">${escapeHtml(this.formatLuck(luck.netLuck))}</span>
+    <span class="qb-il-net-hero-lbl">${luck.netLuck != null && luck.netLuck >= 0 ? "fewer interceptions than model expected" : "more interceptions than model expected"}</span>
+  </div>
+
+  <div class="qb-il-bar-panels">
+    ${barPanel("On turnover-worthy throws", luck.expectedTwps, luck.intsOnTwps, luck.luckOnBad, fill)}
+    <div class="qb-il-split-divider"></div>
+    ${barPanel("On non-turnover-worthy throws", luck.expectedClean, luck.nonTwpInts, luck.luckOnGood, fill)}
+  </div>
+
+  <div class="qb-il-equation">
+    <div class="qb-il-eq-tile qb-animate-item" style="--delay:80ms">
+      <span class="qb-il-eq-lbl">Model expected</span>
+      <span class="qb-il-eq-val">${escapeHtml(this.formatLuckDecimal(luck.totalExpected))}</span>
     </div>
-    <div class="qb-int-luck-hero-stat${netClass}">
-      <div class="qb-int-luck-hero-value">${escapeHtml(this.formatLuck(luck.netLuck))}</div>
-      <div class="qb-int-luck-hero-label">Net luck</div>
-      <p class="qb-int-luck-hero-caption">${luck.netLuck != null && luck.netLuck >= 0 ? "Fewer picks than league average on the same throws" : "More picks than league average on the same throws"}</p>
+    <span class="qb-il-eq-op">→</span>
+    <div class="qb-il-eq-tile qb-animate-item" style="--delay:160ms">
+      <span class="qb-il-eq-lbl">Actual picks</span>
+      <span class="qb-il-eq-val">${luck.actualTotal != null ? Math.round(luck.actualTotal) : "—"}</span>
+    </div>
+    <span class="qb-il-eq-op">=</span>
+    <div class="qb-il-eq-tile qb-il-eq-tile--net${netClass} qb-animate-item" style="--delay:240ms">
+      <span class="qb-il-eq-lbl">Net luck</span>
+      <span class="qb-il-eq-val">${escapeHtml(this.formatLuck(luck.netLuck))}</span>
     </div>
   </div>
 
-  <div class="qb-int-luck-waterfall">
-    <p class="qb-int-luck-waterfall-title">Where the ${escapeHtml(this.formatLuck(luck.netLuck))} comes from</p>
-    <div class="qb-int-luck-waterfall-track">
-      <div class="qb-int-luck-waterfall-seg qb-int-luck-waterfall-seg--bad" style="flex:${badFlex.toFixed(3)}">
-        <span class="qb-int-luck-waterfall-val">${escapeHtml(this.formatLuck(luck.luckOnBad))}</span>
-        <span class="qb-int-luck-waterfall-lbl">Bad throws</span>
-      </div>
-      <span class="qb-int-luck-waterfall-eq" aria-hidden="true">+</span>
-      <div class="qb-int-luck-waterfall-seg qb-int-luck-waterfall-seg--good" style="flex:${goodFlex.toFixed(3)}">
-        <span class="qb-int-luck-waterfall-val">${escapeHtml(this.formatLuck(luck.luckOnGood))}</span>
-        <span class="qb-int-luck-waterfall-lbl">Good throws</span>
-      </div>
-      <span class="qb-int-luck-waterfall-eq" aria-hidden="true">=</span>
-      <div class="qb-int-luck-waterfall-seg qb-int-luck-waterfall-seg--total">
-        <span class="qb-int-luck-waterfall-val">${escapeHtml(this.formatLuckDecimal(Math.abs(luck.netLuck ?? 0)))}</span>
-        <span class="qb-int-luck-waterfall-lbl">Total</span>
+  <div class="qb-il-scale qb-animate-item" style="--delay:360ms">
+    <p class="qb-il-scale-title">Luck vs. qualifying ${escapeHtml(String(season))} QBs</p>
+    <div class="qb-il-scale-track">
+      <div class="qb-il-scale-marker" style="--scale-pct:${_scalePct}%;--accent:${escapeAttr(fill)}">
+        <span class="qb-il-scale-marker-val">${escapeHtml(this.formatLuck(luck.netLuck))}</span>
+        <div class="qb-il-scale-marker-dot" style="background:${escapeAttr(fill)}"></div>
       </div>
     </div>
-    <p class="qb-int-luck-waterfall-note">Bad throws ${badShare}% · Good throws ${goodShare}% of total luck</p>
+    <div class="qb-il-scale-ends">
+      <span class="qb-il-scale-end">Most unlucky (${escapeHtml(this.formatLuck(_scaleMin))})</span>
+      <span class="qb-il-scale-end">Most lucky (${escapeHtml(this.formatLuck(_scaleMax))})</span>
+    </div>
+    ${_scaleN > 1 ? `<p class="qb-il-scale-rank">#${_luckRank} of ${_scaleN} qualifying passers</p>` : ""}
   </div>
 
-  <div class="qb-int-luck-grid">
-    <div class="qb-int-luck-card">
-      <div class="qb-int-luck-card-head">
-        <h4 class="qb-int-luck-card-title">Picks on bad throws</h4>
-        <p class="qb-int-luck-card-formula">${luck.twps != null ? Math.round(luck.twps) : "—"} TWP × <strong>${escapeHtml(this.formatLuckRate(luck.leagueTwpIntRate, 1))}</strong> league rate</p>
-      </div>
-      ${this.buildIntLuckCompareTable(luck.expectedTwps, luck.intsOnTwps, luck.luckOnBad)}
-    </div>
-    <div class="qb-int-luck-card">
-      <div class="qb-int-luck-card-head">
-        <h4 class="qb-int-luck-card-title">Picks on good throws</h4>
-        <p class="qb-int-luck-card-formula">${luck.cleanAttempts != null ? Math.round(luck.cleanAttempts).toLocaleString("en-US") : "—"} clean atts × <strong>${escapeHtml(this.formatLuckRate(luck.leagueCleanIntRate, 2))}</strong> rate</p>
-      </div>
-      ${this.buildIntLuckCompareTable(luck.expectedClean, luck.nonTwpInts, luck.luckOnGood)}
-    </div>
+  ${droppedTotal > 0 ? `<p class="qb-il-drops">Defenders dropped <strong>${Math.round(droppedTotal)}</strong> would-be interception${droppedTotal === 1 ? "" : "s"} (${Math.round(luck.droppedBad ?? 0)} on bad throws, ${Math.round(luck.droppedGood ?? 0)} on good) — additional luck not captured in the model above.</p>` : ""}
+
+  <div class="qb-il-methodology">
+    <p class="qb-il-methodology-title">Interception luck methodology</p>
+    <p class="qb-il-methodology-body">Since 2006, only 49.09% of turnover-worthy throws have actually become interceptions, while 0.79% of non-turnover-worthy throws have still resulted in interceptions due to factors outside the quarterback's control. Using those historical rates, we can estimate an expected interception total by applying a 49.09% conversion rate to a quarterback's turnover-worthy throws and adding the expected interceptions generated from their non-turnover-worthy attempts. <a class="qb-il-methodology-link" href="https://www.pff.com/news/nfl-hidden-story-behind-quarterback-interceptions" target="_blank" rel="noopener">Read more about the methodology here</a>.</p>
   </div>
 
-  ${droppedTotal > 0 ? `<div class="qb-int-luck-callout qb-animate-item">
-    <span class="qb-int-luck-callout-num">${Math.round(droppedTotal)}</span>
-    <p class="qb-int-luck-callout-text"><strong>Defenders dropped ${Math.round(droppedTotal)} would-be INT${droppedTotal === 1 ? "" : "s"}</strong> (${Math.round(droppedBad)} on bad throws, ${Math.round(droppedGood)} on good). Those are not in the model above — extra luck on top of the ${escapeHtml(this.formatLuck(luck.netLuck))}.</p>
-  </div>` : ""}
-
-  <p class="qb-int-luck-footer">League-average modeling expected about <strong>${escapeHtml(this.formatLuckDecimal(luck.totalExpected))} picks</strong> (${escapeHtml(this.formatLuckDecimal(luck.expectedTwps))} + ${escapeHtml(this.formatLuckDecimal(luck.expectedClean))}). This QB threw <strong>${luck.actualTotal != null ? Math.round(luck.actualTotal) : "—"}</strong> (${luck.intsOnTwps != null ? Math.round(luck.intsOnTwps) : "—"} + ${luck.nonTwpInts != null ? Math.round(luck.nonTwpInts) : "—"}) — roughly <em class="${netClass.trim()}">${escapeHtml(this.formatLuck(luck.netLuck))}</em> ${luck.netLuck != null && luck.netLuck >= 0 ? "fewer" : "more"} than expected on throw quality alone.</p>
 </div>`;
 
       return this.buildCollapsibleSection({
@@ -2380,7 +2430,7 @@ ${this.buildAccuracyCellSummary(cell)}
   ${this.buildPassingPressureSection(profile.passingPressure, barColor)}
   ${this.buildAllowedPressureSection(profile.allowedPressures, barColor)}
   ${this.buildRushingSection(profile.rushing, barColor)}
-  ${this.buildInterceptionLuckSection(profile.interceptionLuck, profile)}
+  ${this.buildInterceptionLuckSection(profile.interceptionLuck, profile, barColor)}
   ${this.buildTargetMapsSection(profile.passingDepth, profile.targetMap, profile.accuracyByDepth, profile.routeTree, profile, barColor)}
   ${this.buildSeasonMetricDonutSection(profile, barColor, {
     title: "Average time to throw",
@@ -3494,21 +3544,6 @@ ${this.buildAccuracyCellSummary(cell)}
   align-items: center;
   gap: 8px;
 }
-.qb-rush-hero-interactive {
-  cursor: pointer;
-}
-.qb-rush-hero-grade {
-  fill: #FFFFFF;
-  font-family: "Archivo", sans-serif;
-  font-size: 34px;
-  font-weight: 800;
-}
-.qb-rush-hero-rank {
-  fill: #F5C518;
-  font-family: "Archivo", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-}
 .qb-rush-hero-caption {
   margin: 0;
   font-size: 0.82rem;
@@ -3517,71 +3552,67 @@ ${this.buildAccuracyCellSummary(cell)}
   text-transform: uppercase;
   color: #6B7280;
 }
-.qb-rush-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+/* rush ledger */
+.qb-rush-hero-layout {
+  display: flex;
+  gap: 24px;
+  align-items: center;
 }
-.qb-rush-card {
-  position: relative;
+.qb-rush-hero-layout .qb-rush-hero-ring { flex-shrink: 0; }
+.qb-rush-hero-layout .qb-rush-ledger { flex: 1; align-self: stretch; justify-content: center; }
+.qb-rush-ledger {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  min-height: 132px;
-  padding: 16px 16px 14px;
-  border: 1px solid #E5E7EB;
-  border-radius: 14px;
-  background: #FFFFFF;
-  text-align: left;
-  cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  gap: 7px;
 }
-.qb-rush-card:hover {
-  transform: translateY(-2px);
-  border-color: #CBD5E1;
-  box-shadow: 0 10px 24px rgba(15, 15, 16, 0.08);
+.qb-rush-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.85fr) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: #f7f8fa;
+  transition: background 0.15s ease;
 }
-.qb-rush-card-ring {
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
-  height: 4px;
-  background: #E5E7EB;
-}
-.qb-rush-card-ring::after {
-  content: "";
-  display: block;
-  height: 100%;
-  width: var(--rush-ring, 0%);
-  background: var(--rush-accent, #2D6A4F);
-  border-radius: 0 999px 999px 0;
-}
-.qb-rush-card-rank {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #F5C518;
-}
-.qb-rush-card-value {
-  font-size: 1.55rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  color: #0F0F10;
-}
-.qb-rush-card-label {
+.qb-rush-row:hover { background: color-mix(in srgb, var(--rush-accent, #2D6A4F) 8%, #fff); }
+.qb-rush-row-label {
   font-size: 0.78rem;
   font-weight: 700;
   color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.qb-rush-card-pool {
-  margin-top: auto;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: #9CA3AF;
+.qb-rush-row-bar-wrap {
+  height: 6px;
+  background: #E5E7EB;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.qb-rush-row-bar {
+  height: 100%;
+  width: var(--rush-ring, 0%);
+  background: var(--rush-accent, #2D6A4F);
+  border-radius: 99px;
+  transition: width 0.65s cubic-bezier(0.34, 1.1, 0.64, 1) 0.1s;
+}
+.qb-rush-row-value {
+  font-size: 0.92rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: #111827;
+  white-space: nowrap;
+  text-align: right;
+}
+.qb-rush-row-rank {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--rush-accent, #2D6A4F) 12%, #fff);
+  color: var(--rush-accent, #2D6A4F);
+  white-space: nowrap;
 }
 .qb-rush-split-hero {
   display: flex;
@@ -3879,7 +3910,249 @@ ${this.buildAccuracyCellSummary(cell)}
   font-weight: 800;
   color: #166534;
 }
-.qb-int-luck-footer em.is-unlucky { color: #991B1B; }
+/* ---- redesigned int luck layout ---- */
+.qb-il-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #EEF0F3;
+}
+.qb-il-eyebrow {
+  margin: 0 0 5px; font-size: 0.67rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #6B7280;
+}
+.qb-il-meta {
+  margin: 0; font-size: 0.82rem; font-weight: 600;
+  color: #9CA3AF; line-height: 1.45;
+}
+/* net luck hero band */
+.qb-il-net-hero {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 22px 24px 18px; text-align: center;
+  background: #F9FAFB; border-bottom: 1px solid #EEF0F3;
+}
+.qb-il-net-hero.is-lucky   { background: color-mix(in srgb, #16A34A 9%, #fff); }
+.qb-il-net-hero.is-unlucky { background: color-mix(in srgb, #DC2626 9%, #fff); }
+.qb-il-net-hero-num {
+  font-size: 3rem; font-weight: 900; line-height: 1;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: #6B7280;
+}
+.qb-il-net-hero.is-lucky   .qb-il-net-hero-num { color: #166534; }
+.qb-il-net-hero.is-unlucky .qb-il-net-hero-num { color: #991B1B; }
+.qb-il-net-hero-lbl {
+  margin-top: 5px; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase; color: #9CA3AF;
+}
+.qb-il-net-hero.is-lucky   .qb-il-net-hero-lbl { color: #16A34A; }
+.qb-il-net-hero.is-unlucky .qb-il-net-hero-lbl { color: #DC2626; }
+/* dumbbell panels */
+/* stacked bar panels */
+.qb-il-bar-panels {
+  display: flex; align-items: stretch;
+  padding: 20px 24px 18px; border-bottom: 1px solid #EEF0F3;
+  background: #FAFBFC; gap: 0;
+}
+.qb-il-bar-panel { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+.qb-il-bar-rows { display: flex; flex-direction: column; gap: 10px; }
+.qb-il-bar-row {
+  display: grid; grid-template-columns: 58px 1fr 32px;
+  align-items: center; gap: 10px;
+}
+.qb-il-bar-lbl {
+  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #9CA3AF; white-space: nowrap;
+}
+.qb-il-bar-track {
+  height: 10px; background: #F3F4F6; border-radius: 99px; overflow: hidden;
+}
+.qb-il-bar-track--actual { position: relative; }
+.qb-il-bar-track--actual::after {
+  content: ""; position: absolute; right: 0; top: -2px; bottom: -2px;
+  width: 2px; background: #D1D5DB; border-radius: 99px;
+}
+.qb-il-bar-fill {
+  height: 100%; border-radius: 99px;
+  transition: width 0.75s cubic-bezier(0.34, 1.1, 0.64, 1) 0.15s;
+}
+.qb-il-bar-num {
+  font-size: 0.82rem; font-weight: 900; font-variant-numeric: tabular-nums;
+  text-align: right; color: #374151; white-space: nowrap;
+}
+.qb-il-split-divider { width: 1px; background: #EEF0F3; margin: 0 20px; flex-shrink: 0; }
+.qb-il-split-title {
+  margin: 0 0 3px; font-size: 0.78rem; font-weight: 800; color: #111827;
+}
+.qb-il-methodology {
+  margin: 16px 20px 20px;
+  padding: 14px 18px 16px 20px;
+  border-radius: 12px;
+  border-left: 4px solid var(--accent, #006bff);
+  background: color-mix(in srgb, var(--accent, #006bff) 7%, #fff);
+}
+.qb-il-methodology-title {
+  margin: 0 0 6px; font-size: 0.67rem; font-weight: 900;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent, #006bff);
+}
+.qb-il-methodology-body {
+  margin: 0; font-size: 0.76rem; font-weight: 500;
+  color: #374151; line-height: 1.7;
+}
+.qb-il-methodology-link {
+  color: var(--accent, #006bff); font-weight: 800;
+  text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+.qb-il-compare { display: flex; flex-direction: column; gap: 9px; margin-bottom: 12px; }
+.qb-il-compare-row {
+  display: grid; grid-template-columns: 58px 1fr 36px;
+  align-items: center; gap: 8px;
+}
+.qb-il-compare-lbl {
+  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #9CA3AF;
+}
+.qb-il-bar-wrap { height: 9px; background: #F3F4F6; border-radius: 99px; overflow: hidden; }
+.qb-il-bar { height: 100%; border-radius: 99px; transition: width 0.75s cubic-bezier(0.34,1.2,0.64,1) 0.15s; }
+.qb-il-bar--exp { background: #D1D5DB; }
+.qb-il-bar--act { background: #374151; }
+.qb-il-compare-num {
+  font-size: 0.8rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  color: #374151; text-align: right;
+}
+.qb-il-split-result { margin: 0; font-size: 0.8rem; font-weight: 800; color: #374151; }
+.qb-il-split-result.is-lucky   { color: #166534; }
+.qb-il-split-result.is-unlucky { color: #991B1B; }
+/* Equation tiles */
+.qb-il-equation {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; padding: 20px 24px 18px;
+  border-bottom: 1px solid #EEF0F3;
+}
+.qb-il-eq-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 14px 22px; border-radius: 14px;
+  background: #F9FAFB; border: 1.5px solid #EEF0F3;
+  min-width: 90px; text-align: center;
+}
+.qb-il-eq-tile--net { border-color: transparent; }
+.qb-il-eq-tile--net.is-lucky   { background: #F0FDF4; border-color: #86EFAC; }
+.qb-il-eq-tile--net.is-unlucky { background: #FEF2F2; border-color: #FECACA; }
+.qb-il-eq-lbl {
+  font-size: 0.59rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: #9CA3AF;
+}
+.qb-il-eq-val {
+  font-size: 1.65rem; font-weight: 900; line-height: 1;
+  font-variant-numeric: tabular-nums; color: #111827;
+}
+.qb-il-eq-tile--net.is-lucky   .qb-il-eq-val { color: #166534; }
+.qb-il-eq-tile--net.is-unlucky .qb-il-eq-val { color: #991B1B; }
+.qb-il-eq-op {
+  font-size: 1.1rem; font-weight: 700; color: #D1D5DB;
+  padding: 0 12px; flex-shrink: 0;
+}
+/* Luck scale */
+.qb-il-scale {
+  padding: 18px 24px 20px;
+  border-bottom: 1px solid #EEF0F3;
+}
+.qb-il-scale-title {
+  margin: 0 0 14px; font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #9CA3AF;
+}
+.qb-il-scale-track {
+  position: relative; height: 10px; border-radius: 99px;
+  background: linear-gradient(90deg, #DC2626 0%, #F87171 22%, #D1D5DB 42%, #D1D5DB 58%, #4ADE80 78%, #16A34A 100%);
+  margin-top: 32px; /* clearance for the floating label + dot above the track */
+}
+.qb-il-scale-marker {
+  position: absolute;
+  left: var(--scale-pct, 50%);
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  animation: il-marker-appear 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 0.5s both;
+}
+@keyframes il-marker-appear {
+  from { opacity: 0; transform: translateX(-50%) translateY(-50%) scale(0.3); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(-50%) scale(1); }
+}
+.qb-il-scale-marker-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.qb-il-scale-marker-val {
+  font-size: 0.72rem; font-weight: 800; color: #111827;
+  background: #fff; border-radius: 6px; padding: 2px 6px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.13);
+  white-space: nowrap;
+}
+.qb-il-scale-ends {
+  display: flex; justify-content: space-between; margin-top: 8px;
+}
+.qb-il-scale-end {
+  font-size: 0.6rem; font-weight: 600; color: #9CA3AF;
+}
+.qb-il-scale-rank {
+  margin: 10px 0 0; font-size: 0.68rem; font-weight: 700;
+  color: #6B7280; text-align: center;
+}
+.qb-il-drops {
+  margin: 0; padding: 12px 24px 16px;
+  font-size: 0.8rem; font-weight: 600; color: #6B7280; line-height: 1.55;
+}
+.qb-il-drops strong { color: #92400E; font-weight: 800; }
+/* ---- end redesigned int luck ---- */
+.qb-int-luck-baselines {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 0;
+  background: #0a101a;
+  border-top: 1px solid #1e2a3a;
+  border-bottom: 1px solid #1e2a3a;
+}
+.qb-int-luck-baselines-eyebrow {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 13px 22px 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+}
+.qb-int-luck-baseline {
+  padding: 14px 22px 16px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.qb-int-luck-baseline:last-of-type { border-right: none; }
+.qb-int-luck-baseline-pct {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #f1f5f9;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 7px;
+  letter-spacing: -0.02em;
+}
+.qb-int-luck-baseline-lbl {
+  display: block;
+  font-size: 0.71rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.42);
+  line-height: 1.4;
+}
+.qb-int-luck-baselines-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0 22px 12px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.18);
+}
 
 .qb-depth {
   border: 1px solid #E5E7EB;
@@ -5291,11 +5564,9 @@ ${this.buildAccuracyCellSummary(cell)}
   .qb-compare-table-val {
     font-size: 0.82rem;
   }
-  .qb-rush-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .qb-rush-card-value {
-    font-size: 1.35rem;
+  .qb-rush-hero-layout {
+    flex-direction: column;
+    align-items: stretch;
   }
   .qb-int-luck-hero {
     grid-template-columns: 1fr;
