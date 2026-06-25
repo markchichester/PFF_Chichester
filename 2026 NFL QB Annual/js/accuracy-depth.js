@@ -36,10 +36,10 @@
     }
 
     const rows = [
+      ["Aimed passes", formatCount(cell.attempts)],
       ["Accuracy", formatPct(cell.accuracy)],
       ["League average", formatPct(cell.leagueAccuracy)],
       ["Vs league", formatDeltaPp(cell.deltaPp)],
-      ["Attempts", formatCount(cell.attempts)],
     ];
 
     return `<div class="qb-depth-detail-header"><span class="qb-depth-detail-pill">${escapeHtml(cell.label || "Zone")}</span></div><div class="qb-depth-detail-grid">${rows

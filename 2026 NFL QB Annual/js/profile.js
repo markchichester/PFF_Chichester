@@ -392,7 +392,7 @@ ${gridLines}${barEls}</svg></div>`;
           const delay = i * 55;
           return `<g class="qb-chart-bar" data-y="${y.toFixed(1)}" data-h="${h.toFixed(1)}" data-base="${baseY.toFixed(1)}" data-delay="${delay}">
   <rect x="${x.toFixed(1)}" y="${baseY.toFixed(1)}" width="${barW.toFixed(1)}" height="0" fill="${fill}" rx="2" />
-  <text class="qb-bar-value" x="${(x + barW / 2).toFixed(1)}" y="${(y - 8).toFixed(1)}" text-anchor="middle" opacity="0">${vol} (${pct}%)</text>
+  <text class="qb-bar-value" x="${(x + barW / 2).toFixed(1)}" y="${(y - 8).toFixed(1)}" text-anchor="middle" opacity="0">${pct}%</text>
   <text class="qb-axis-label" x="${(x + barW / 2).toFixed(1)}" y="${(baseY + 24).toFixed(1)}" text-anchor="middle">${escapeHtml(b.label)}</text>
 </g>`;
         })
@@ -1154,14 +1154,14 @@ ${xTickEls}${yTickEls}`;
 
     buildAllowedPressureSummaryKicker(allowedPressures) {
       const parts = [
-        this.formatAllowedPressureSummaryStat("pressures allowed", allowedPressures.pressuresAllowed),
         this.formatAllowedPressureSummaryStat(
-          "pressure dropbacks",
+          "total number of allowed pressures",
           allowedPressures.allowedPressureDropbacks
         ),
-        this.formatAllowedPressureSummaryStat("hits", allowedPressures.hitsAllowed),
-        this.formatAllowedPressureSummaryStat("hurries", allowedPressures.hurriesAllowed),
-        this.formatAllowedPressureSummaryStat("sacks", allowedPressures.sacksAllowed),
+        this.formatAllowedPressureSummaryStat("pressures QB allowed", allowedPressures.pressuresAllowed),
+        this.formatAllowedPressureSummaryStat("hits QB allowed", allowedPressures.hitsAllowed),
+        this.formatAllowedPressureSummaryStat("hurries QB allowed", allowedPressures.hurriesAllowed),
+        this.formatAllowedPressureSummaryStat("sacks QB allowed", allowedPressures.sacksAllowed),
       ].filter(Boolean);
       if (!parts.length) return "";
       return `<p class="qb-acc-table-kicker">${escapeHtml(parts.join(" · "))}</p>`;
@@ -1822,7 +1822,6 @@ ${xTickEls}${yTickEls}`;
     buildAccuracyCellSummary(cell) {
       if (!cell?.hasData) {
         return `<div class="qb-accuracy-cell-val is-empty">N/A</div>
-<div class="qb-dc-att">No attempts</div>
 <div class="qb-dc-stats">&nbsp;</div>
 <div class="qb-dc-rtg">&nbsp;</div>`;
       }
@@ -1830,7 +1829,6 @@ ${xTickEls}${yTickEls}`;
       const deltaClass = this.accuracyCellToneClass(cell.deltaPp);
       return `<div class="qb-accuracy-cell-val">${escapeHtml(this.formatAccuracyPct(cell.accuracy))}</div>
 <div class="qb-accuracy-cell-delta${deltaClass}">${escapeHtml(this.formatAccuracyDeltaPp(cell.deltaPp))}</div>
-<div class="qb-dc-att">${this.formatDepthCount(cell.attempts)} ATT</div>
 <div class="qb-dc-stats">League ${escapeHtml(this.formatAccuracyPct(cell.leagueAccuracy))}</div>
 <div class="qb-dc-rtg">&nbsp;</div>`;
     },
@@ -2658,7 +2656,7 @@ ${this.buildAccuracyCellSummary(cell)}
   ${this.buildSeasonGradesSection(profile, barColor)}
   ${this.buildEpaPerPlaySection(profile.epaPerPlay, profile, barColor)}
   ${this.buildCollapsibleSection({
-    title: `${profile.gameGradeSeason || "2025"} game grades`,
+    title: "PFF Passing Grade By Week",
     leadHtml: `<p class="qb-interactive-hint qb-animate-item">Click a bar for opponent and stat line</p>`,
     bodyHtml: this.buildGameGradesSvg(profile.gameGrades, barColor),
   })}
@@ -6762,6 +6760,8 @@ ${this.buildAccuracyCellSummary(cell)}
   .qb-target-map-tab { padding: 10px 12px !important; }
   .qb-target-map-tab[data-map-slide-target="scatter"] { display: none !important; }
   .qb-target-map-slide[data-map-slide="scatter"] { display: none !important; }
+  .qb-target-map-tab[data-map-slide-target="routes"] { display: none !important; }
+  .qb-target-map-slide[data-map-slide="routes"] { display: none !important; }
 
   /* ── Touch targets: tabs ── */
   .qb-scatter-tab, .qb-compare-tab { padding: 10px 12px !important; min-height: 44px !important; }

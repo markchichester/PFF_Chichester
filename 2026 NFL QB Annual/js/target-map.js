@@ -140,6 +140,28 @@
     return Number.isFinite(n) && n === 1;
   }
 
+  function isMobileTargetMap() {
+    return window.matchMedia("(max-width: 480px)").matches;
+  }
+
+  const MOBILE_HIDDEN_MAP_SLIDES = new Set(["scatter", "routes"]);
+
+  function isSlideHiddenOnMobile(slideId) {
+    return isMobileTargetMap() && MOBILE_HIDDEN_MAP_SLIDES.has(slideId);
+  }
+
+  function getVisibleMapSlides(track) {
+    if (!track) return [];
+    return [...track.querySelectorAll(".qb-target-map-slide")].filter(
+      (slide) => !isSlideHiddenOnMobile(slide.dataset.mapSlide)
+    );
+  }
+
+  function resolveMapSlide(slideId, track) {
+    if (!isSlideHiddenOnMobile(slideId)) return slideId;
+    return getVisibleMapSlides(track)[0]?.dataset.mapSlide || slideId;
+  }
+
   function getActiveMapSlide(widget) {
     return widget?.dataset?.activeMapSlide || "scatter";
   }
@@ -152,8 +174,9 @@
   }
 
   function scrollToMapSlide(track, slideId) {
-    const slides = [...track.querySelectorAll(".qb-target-map-slide")];
-    const idx = slides.findIndex((s) => s.dataset.mapSlide === slideId);
+    const slides = getVisibleMapSlides(track);
+    const resolved = resolveMapSlide(slideId, track);
+    const idx = slides.findIndex((s) => s.dataset.mapSlide === resolved);
     if (idx === -1) return;
     // Scroll only the carousel track — do not affect page scroll position
     track.scrollTo({ left: idx * track.clientWidth, behavior: "smooth" });
@@ -161,8 +184,10 @@
 
   function syncMapTabsFromScroll(widget) {
     const track = widget.querySelector(".qb-target-map-track");
-    const tabs = [...widget.querySelectorAll(".qb-target-map-tab")];
-    const slides = track ? [...track.querySelectorAll(".qb-target-map-slide")] : [];
+    const tabs = [...widget.querySelectorAll(".qb-target-map-tab")].filter(
+      (tab) => !isSlideHiddenOnMobile(tab.dataset.mapSlideTarget)
+    );
+    const slides = getVisibleMapSlides(track);
     if (!track || !slides.length) return;
 
     const index = Math.round(track.scrollLeft / Math.max(track.clientWidth, 1));
@@ -185,7 +210,7 @@
 
     widget.querySelectorAll(".qb-target-map-tab").forEach((tab) => {
       tab.addEventListener("click", () => {
-        const slideId = tab.dataset.mapSlideTarget;
+        const slideId = resolveMapSlide(tab.dataset.mapSlideTarget, track);
         scrollToMapSlide(track, slideId);
         widget.querySelectorAll(".qb-target-map-tab").forEach((btn) => {
           btn.setAttribute(
@@ -221,7 +246,7 @@
       }, 120);
     });
 
-    const defaultSlide = widget.dataset.defaultMapSlide || "depth";
+    const defaultSlide = resolveMapSlide(widget.dataset.defaultMapSlide || "depth", track);
     scrollToMapSlide(track, defaultSlide);
     setViewMode(widget, defaultSlide);
   }
@@ -728,7 +753,8 @@
 
     const model = readModel(widget);
     if (!model?.plays?.length) {
-      const defaultSlide = widget.dataset.defaultMapSlide || "depth";
+      const track = widget.querySelector(".qb-target-map-track");
+      const defaultSlide = resolveMapSlide(widget.dataset.defaultMapSlide || "depth", track);
       setViewMode(widget, defaultSlide);
       return;
     }
@@ -744,7 +770,7 @@
       rerender();
     });
 
-    const defaultSlide = widget.dataset.defaultMapSlide || "scatter";
+    const defaultSlide = resolveMapSlide(widget.dataset.defaultMapSlide || "scatter", track);
     setViewMode(widget, defaultSlide);
     if (defaultSlide === "scatter") {
       renderWidget(widget).catch((err) => {

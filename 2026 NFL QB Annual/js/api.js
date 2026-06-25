@@ -223,16 +223,16 @@
     { header: "standard-dropback grade", label: "Standard-dropback grade" },
     { header: "grade on first and second down", label: "Grade on 1st & 2nd down" },
     { header: "grade on plays with no play-action", label: "Grade with no play-action" },
+    { header: "grade on passes thrown at or beyond the first-down marker", label: "At/beyond the sticks grade" },
     { header: "negatively graded play rate", label: "Negatively graded play rate" },
+    { header: "sack rate", label: "Sack rate" },
   ];
   const UNSTABLE_METRIC_COLUMNS = [
-    { header: "positively graded throw rate", label: "Positively graded throw rate" },
     { header: "pressured-passing grade", label: "Pressured-passing grade" },
     { header: "grade on passes thrown from outside the pocket", label: "Outside-the-pocket grade" },
     { header: "grade on third and fourth down", label: "Grade on 3rd & 4th down" },
     { header: "grade on play-action plays", label: "Play-action grade" },
-    { header: "grade on passes thrown at or beyond the first-down marker", label: "At/beyond the sticks grade" },
-    { header: "sack rate", label: "Sack rate" },
+    { header: "positively graded throw rate", label: "Positively graded throw rate" },
   ];
   const SEASON_DONUT_YEARS = [2023, 2024, 2025];
   const GRADE_BUCKETS = [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2];

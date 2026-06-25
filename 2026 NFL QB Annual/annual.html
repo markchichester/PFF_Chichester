@@ -3924,11 +3924,11 @@
           rows.forEach((r) => { byId[r.id] = r; });
 
           const summary = [
-            [ap.pressuresAllowed, "Pressures allowed"],
-            [ap.allowedPressureDropbacks, "Pressure dropbacks"],
-            [ap.hitsAllowed, "Hits"],
-            [ap.hurriesAllowed, "Hurries"],
-            [ap.sacksAllowed, "Sacks"],
+            [ap.allowedPressureDropbacks, "Total number of allowed pressures"],
+            [ap.pressuresAllowed, "Pressures QB allowed"],
+            [ap.hitsAllowed, "Hits QB allowed"],
+            [ap.hurriesAllowed, "Hurries QB allowed"],
+            [ap.sacksAllowed, "Sacks QB allowed"],
           ].filter(([v]) => v != null && Number.isFinite(v))
             .map(([v, l]) => `<div class="prot-chip qb-animate-item"><span class="v">${escapeHtml(Math.round(v).toLocaleString("en-US"))}</span><span class="l">${escapeHtml(l)}</span></div>`)
             .join("");
@@ -4669,6 +4669,12 @@
         }
 
         function initAllCarouselChevrons(host) {
+          const visibleCarouselTabs = (tabList) =>
+            tabList.filter((t) => {
+              const style = window.getComputedStyle(t);
+              return style.display !== "none" && style.visibility !== "hidden";
+            });
+
           const defs = [
             { carSel: ".qb-compare-carousel", tabSel: ".qb-compare-tab",      trackSel: ".qb-compare-track"    },
             { carSel: ".qb-scatter-carousel", tabSel: ".qb-scatter-tab",       trackSel: ".qb-scatter-track"    },
@@ -4685,10 +4691,9 @@
             host.querySelectorAll(carSel).forEach((car) => {
               if (car.dataset.chevInit) return;
               car.dataset.chevInit = "1";
-              const tabs = Array.from(car.querySelectorAll(tabSel));
-              if (tabs.length <= 1) return;
+              const allTabs = Array.from(car.querySelectorAll(tabSel));
               const track = car.querySelector(trackSel);
-              if (!track) return;
+              if (!track || visibleCarouselTabs(allTabs).length <= 1) return;
 
               // Build nav row
               const nav = document.createElement("div");
@@ -4704,38 +4709,59 @@
 
               const dotRow = document.createElement("div");
               dotRow.className = "carousel-dot-row";
-              const dots = tabs.map((_, i) => {
-                const d = document.createElement("button");
-                d.className = "carousel-dot"; d.type = "button";
-                d.setAttribute("aria-label", `Slide ${i + 1}`);
-                d.addEventListener("click", () => tabs[i].click());
-                dotRow.appendChild(d);
-                return d;
-              });
+              const dots = [];
+
+              const rebuildDots = (tabs) => {
+                dotRow.innerHTML = "";
+                dots.length = 0;
+                tabs.forEach((tab, i) => {
+                  const d = document.createElement("button");
+                  d.className = "carousel-dot"; d.type = "button";
+                  d.setAttribute("aria-label", `Slide ${i + 1}`);
+                  d.addEventListener("click", () => tab.click());
+                  dotRow.appendChild(d);
+                  dots.push(d);
+                });
+              };
 
               nav.appendChild(prev); nav.appendChild(dotRow); nav.appendChild(next);
               track.insertAdjacentElement("afterend", nav);
 
               const sync = () => {
-                const idx = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
-                const active = idx < 0 ? 0 : idx;
+                const tabs = visibleCarouselTabs(allTabs);
+                if (tabs.length <= 1) {
+                  nav.hidden = true;
+                  return;
+                }
+                nav.hidden = false;
+                if (dots.length !== tabs.length) rebuildDots(tabs);
+
+                let active = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
+                if (active < 0) active = 0;
                 prev.disabled = active === 0;
                 next.disabled = active === tabs.length - 1;
                 dots.forEach((d, i) => d.classList.toggle("is-active", i === active));
               };
 
               prev.addEventListener("click", () => {
-                const idx = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
-                if (idx > 0) tabs[idx - 1].click();
+                const tabs = visibleCarouselTabs(allTabs);
+                const active = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
+                if (active > 0) tabs[active - 1].click();
               });
               next.addEventListener("click", () => {
-                const idx = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
-                if (idx < tabs.length - 1) tabs[idx + 1].click();
+                const tabs = visibleCarouselTabs(allTabs);
+                const active = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
+                if (active >= 0 && active < tabs.length - 1) tabs[active + 1].click();
               });
 
-              // Watch aria-pressed on all tabs
+              // Watch aria-pressed on all tabs (including CSS-hidden mobile slides)
               const mo = new MutationObserver(sync);
-              tabs.forEach((t) => mo.observe(t, { attributes: true, attributeFilter: ["aria-pressed"] }));
+              allTabs.forEach((t) => mo.observe(t, { attributes: true, attributeFilter: ["aria-pressed"] }));
+              track.addEventListener("scroll", () => window.requestAnimationFrame(sync), { passive: true });
+              if (carSel === ".qb-target-map") {
+                window.addEventListener("resize", () => window.requestAnimationFrame(sync));
+              }
+              rebuildDots(visibleCarouselTabs(allTabs));
               sync();
             });
           });
