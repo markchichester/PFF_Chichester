@@ -8,6 +8,7 @@
   let bodyEl = null;
   let closeBtn = null;
   let lastFocus = null;
+  let modalTrap = null;
 
   function formatGrade(n) {
     if (n == null || !Number.isFinite(Number(n))) return "—";
@@ -44,12 +45,26 @@
     if (e.key === "Escape" && backdrop && !backdrop.hidden) close();
   }
 
+  function activateModalTrap() {
+    modalTrap?.deactivate?.();
+    global.QbAnnualA11y?.setInert?.(backdrop);
+    modalTrap = global.QbAnnualA11y?.createFocusTrap?.(backdrop, { onEscape: close });
+    modalTrap?.activate();
+  }
+
+  function deactivateModalTrap() {
+    modalTrap?.deactivate?.();
+    modalTrap = null;
+    global.QbAnnualA11y?.clearInert?.();
+  }
+
   function open(titleHtml, contentHtml) {
     if (!bodyEl) return;
     bodyEl.innerHTML = `<h3 class="qb-modal-title" id="qbModalTitle">${titleHtml}</h3>${contentHtml}`;
     lastFocus = document.activeElement;
     backdrop.hidden = false;
     requestAnimationFrame(() => backdrop.classList.add("is-open"));
+    activateModalTrap();
     closeBtn?.focus();
   }
 
@@ -58,6 +73,7 @@
     backdrop.classList.remove("is-open");
     backdrop.hidden = true;
     bodyEl.innerHTML = "";
+    deactivateModalTrap();
     if (lastFocus?.focus) lastFocus.focus();
   }
 
@@ -169,13 +185,6 @@
     if (currentRow) currentRow.scrollIntoView({ block: "center" });
   }
 
-  function statValue(stats, key) {
-    if (!stats) return "—";
-    const val = stats[key];
-    if (val == null || val === "") return "—";
-    return String(val);
-  }
-
   function buildRushingRankModal(metricId, profile) {
     const rows =
       profile.rushingRankings?.[metricId] || profile.rushing?.rankings?.[metricId] || [];
@@ -223,8 +232,6 @@
 
     const weekLabel = game.weekLabel || `Week ${game.week}`;
     const opponentRaw = game.opponent || "";
-    const stats = game.gameStats || {};
-    const glossary = global.QbAnnualStatGlossary?.groups || [];
     const Teams = global.QbAnnualTeams;
 
     // Home/away + opponent name
@@ -256,33 +263,62 @@
       ? `<span class="qb-gm-pill qb-gm-pill--away">Away</span>`
       : `<span class="qb-gm-pill qb-gm-pill--home">Home</span>`;
 
-    const statBlocks = glossary
-      .map((group) => {
-        const items = group.stats
-          .map((stat) => {
-            let value = statValue(stats, stat.key);
-            if (value === "—") return "";
-            if (stat.format === "1dp") {
-              const n = parseFloat(value);
-              if (Number.isFinite(n)) value = n.toFixed(1);
-            }
-            return `<div class="qb-game-stat">
-  <span class="qb-game-stat-abbr" title="${escapeAttr(stat.label)}">${escapeHtml(stat.abbr)}</span>
-  <span class="qb-game-stat-value">${escapeHtml(value)}</span>
-</div>`;
-          })
-          .filter(Boolean)
-          .join("");
-        if (!items) return "";
-        return `<div class="qb-game-stat-group">
-  <h4 class="qb-game-stat-group-title">${escapeHtml(group.title)}</h4>
-  <div class="qb-game-stat-grid">${items}</div>
-</div>`;
-      })
-      .filter(Boolean)
-      .join("");
-
     const qbSec = qbTeam.secondary || "#ffffff";
+
+    // Build stats section from gameStats flat object
+    const s = game.gameStats || {};
+    const fmt = (v) => (v == null || v === "" || v === "null") ? "—" : v;
+    const STAT_GROUPS = [
+      {
+        title: "Passing",
+        stats: [
+          { abbr: "ATT",   label: "Attempts",    key: "att" },
+          { abbr: "COMP",  label: "Completions", key: "comp" },
+          { abbr: "YDS",   label: "Pass yards",  key: "pass yds" },
+          { abbr: "YPA",   label: "Yards/att",   key: "pass ypa" },
+          { abbr: "TD",    label: "Touchdowns",  key: "pass td" },
+          { abbr: "INT",   label: "Interceptions", key: "int" },
+          { abbr: "RTG",   label: "Passer rating", key: "rtg" },
+          { abbr: "SK",    label: "Sacked",      key: "sk" },
+        ],
+      },
+      {
+        title: "PFF Metrics",
+        stats: [
+          { abbr: "BTT",   label: "Big-time throws",      key: "btt" },
+          { abbr: "TWP",   label: "Turnover-worthy plays", key: "twp" },
+          { abbr: "BTT%",  label: "BTT rate",             key: "btt%" },
+          { abbr: "TWP%",  label: "TWP rate",             key: "twp%" },
+          { abbr: "ADOT",  label: "Avg depth of target",  key: "adot" },
+          { abbr: "TTT",   label: "Avg time to throw",    key: "avgttt" },
+          { abbr: "COMP%", label: "Completion %",         key: "comp%" },
+          { abbr: "aCOMP%",label: "Adj. comp %",          key: "acomp%" },
+        ],
+      },
+    ];
+
+    const statsHtml = STAT_GROUPS.map((group) => {
+      const cells = group.stats
+        .map((st) => {
+          const val = fmt(s[st.key]);
+          if (val === "—" && !s.hasOwnProperty(st.key)) return "";
+          return `<div class="qb-game-stat">
+  <span class="qb-game-stat-abbr">${escapeHtml(st.abbr)}</span>
+  <span class="qb-game-stat-value">${escapeHtml(val)}</span>
+</div>`;
+        })
+        .filter(Boolean)
+        .join("");
+      if (!cells) return "";
+      return `<div class="qb-game-stat-group">
+  <h4 class="qb-game-stat-group-title">${escapeHtml(group.title)}</h4>
+  <div class="qb-game-stat-grid">${cells}</div>
+</div>`;
+    }).filter(Boolean).join("");
+
+    const statsBody = statsHtml
+      ? `<div class="qb-gm-stats-body">${statsHtml}</div>`
+      : `<div class="qb-gm-stats-body"><p class="qb-gm-empty">No game stats available — upload opponents.csv to enable.</p></div>`;
 
     open(
       escapeHtml(weekLabel),
@@ -308,9 +344,7 @@
       <span class="qb-gm-grade-num">${escapeHtml(formatGrade(game.grade))}</span>
     </div>
   </div>
-  <div class="qb-gm-stats-body">
-    ${statBlocks || `<p class="qb-gm-empty">No stat line found in opponents.csv for this week.</p>`}
-  </div>
+  ${statsBody}
 </div>`
     );
   }
@@ -400,7 +434,7 @@
       });
     });
 
-    host.querySelectorAll(".qb-rush-card[data-rush-metric]").forEach((el) => {
+    host.querySelectorAll(".qb-rush-card[data-rush-metric], .qb-rush-row[data-rush-metric]").forEach((el) => {
       const openRank = (e) => {
         e.preventDefault();
         e.stopPropagation();

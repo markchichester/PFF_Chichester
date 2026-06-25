@@ -8,7 +8,6 @@ OUT = ROOT / "js" / "export-bundle-source.js"
 
 FILES = [
     ROOT / "js" / "utils.js",
-    ROOT / "js" / "stat-glossary.js",
     ROOT / "js" / "modals.js",
     ROOT / "js" / "animations.js",
     ROOT / "js" / "sections.js",

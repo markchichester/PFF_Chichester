@@ -14,8 +14,8 @@
   const SVG_TRANSLATE_Y = 26;
   const SVG_VIEW_MIN_Y = -44;
   const SVG_VIEW_H = 560;
-  const LABEL_FO_W = 62;
-  const LABEL_FO_H = 32;
+  const LABEL_FO_W = 80;
+  const LABEL_FO_H = 50;
   const LABEL_TIP_GAP = 2;
 
   function routeArrowGeometry(def) {
@@ -304,7 +304,7 @@ ${gradeHtml}
       .map((def) => {
         const route = routes[def.key];
         const name = route.label || route.routeName || def.label;
-        return `<button type="button" class="qb-route-tree-option" data-route-key="${escapeAttr(def.key)}" role="option">${escapeHtml(name)}</button>`;
+        return `<button type="button" class="qb-route-tree-option" data-route-key="${escapeAttr(def.key)}" role="option" aria-selected="false">${escapeHtml(name)}</button>`;
       })
       .join("");
   }
@@ -327,6 +327,7 @@ ${gradeHtml}
       (el) => el.classList.remove("is-active")
     );
     widget.querySelectorAll(".qb-route-tree-option").forEach((btn) => btn.classList.remove("is-active"));
+    widget.querySelectorAll(".qb-route-tree-option").forEach((btn) => btn.setAttribute("aria-selected", "false"));
     setSelectLabel(widget, "Select a route…");
   }
 
@@ -360,7 +361,9 @@ ${gradeHtml}
     }
 
     widget.querySelectorAll(".qb-route-tree-option").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.routeKey === key);
+      const active = btn.dataset.routeKey === key;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
     });
 
     setSelectLabel(widget, route.label || route.routeName || "Route");

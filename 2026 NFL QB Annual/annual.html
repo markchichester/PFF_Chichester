@@ -88,17 +88,22 @@
       .back-btn {
         display: flex; align-items: center; gap: 5px;
         font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
-        color: rgba(255,255,255,0.75);
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.18);
+        color: color-mix(in srgb, var(--hero-fg, #fff) 82%, transparent);
+        background: color-mix(in srgb, var(--hero-fg, #fff) 10%, transparent);
+        border: 1px solid color-mix(in srgb, var(--hero-fg, #fff) 24%, transparent);
         border-radius: 99px;
-        padding: 5px 13px 5px 10px;
+        padding: 8px 14px 8px 11px;
+        min-height: 44px;
         cursor: pointer; white-space: nowrap;
         transition: background 0.16s, color 0.16s, border-color 0.16s;
         font-family: inherit;
         flex-shrink: 0;
       }
-      .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+      .back-btn:hover {
+        background: color-mix(in srgb, var(--hero-fg, #fff) 18%, transparent);
+        color: var(--hero-fg, #fff);
+        border-color: color-mix(in srgb, var(--hero-fg, #fff) 34%, transparent);
+      }
       .topbar.is-stuck .back-btn {
         color: #374151; background: #fff; border-color: rgba(14,15,18,0.12);
         box-shadow: 0 1px 4px rgba(14,15,18,0.07);
@@ -107,7 +112,7 @@
 
       .qb-switch-btn {
         display: inline-flex; align-items: center; gap: 10px;
-        height: 40px; padding: 0 14px 0 6px;
+        height: 44px; min-height: 44px; padding: 0 14px 0 6px;
         border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.25);
         background: rgba(255, 255, 255, 0.12);
         color: var(--hero-fg, #fff);
@@ -134,14 +139,14 @@
 
       .nav-arrows { display: inline-flex; gap: 6px; }
       .nav-arrow, .season-select {
-        height: 40px; border-radius: 12px;
+        height: 44px; min-height: 44px; border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.25);
         background: rgba(255, 255, 255, 0.12); color: var(--hero-fg, #fff);
         font-family: inherit; font-weight: 800; font-size: 0.85rem;
         cursor: pointer; transition: all 0.25s ease;
         backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
       }
-      .nav-arrow { width: 40px; }
+      .nav-arrow { width: 44px; min-width: 44px; min-height: 44px; }
       .season-select { padding: 0 10px; appearance: none; -webkit-appearance: none; }
       .topbar.is-stuck .nav-arrow,
       .topbar.is-stuck .season-select {
@@ -161,16 +166,28 @@
         padding: calc(var(--bar-h) + clamp(26px, 5vh, 56px)) clamp(18px, 4vw, 40px) 0;
         transition: background 0.6s ease;
       }
-      .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; }
-
-      .hero-watermark {
-        position: absolute; right: -2%; top: 44%; transform: translateY(-50%);
-        font-size: clamp(90px, 17vw, 260px); font-weight: 900; letter-spacing: -0.04em;
-        text-transform: uppercase; white-space: nowrap;
-        color: transparent;
-        -webkit-text-stroke: 1.5px color-mix(in srgb, var(--hero-fg, #fff) 14%, transparent);
-        pointer-events: none; user-select: none; line-height: 1;
+      .hero::before {
+        content: "";
+        position: absolute; inset: 0;
+        pointer-events: none; z-index: 0;
       }
+      .hero.is-dark-hero::before {
+        background: linear-gradient(
+          108deg,
+          rgba(0, 0, 0, var(--hero-scrim, 0.42)) 0%,
+          rgba(0, 0, 0, calc(var(--hero-scrim, 0.42) * 0.72)) 42%,
+          rgba(0, 0, 0, calc(var(--hero-scrim, 0.42) * 0.24)) 100%
+        );
+      }
+      .hero.is-light-hero::before {
+        background: linear-gradient(
+          108deg,
+          rgba(255, 255, 255, var(--hero-scrim, 0.72)) 0%,
+          rgba(255, 255, 255, calc(var(--hero-scrim, 0.72) * 0.62)) 45%,
+          rgba(255, 255, 255, calc(var(--hero-scrim, 0.72) * 0.18)) 100%
+        );
+      }
+      .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
 
       .hero-grid {
         position: relative; display: flex; align-items: center;
@@ -191,11 +208,28 @@
         margin: 0; font-size: clamp(2.6rem, 7vw, 5.4rem);
         line-height: 0.96; font-weight: 900; letter-spacing: -0.03em; text-transform: uppercase;
         text-wrap: balance;
+        text-shadow: 0 2px 16px rgba(0, 0, 0, 0.28);
       }
-      .hero-sub {
-        margin: 14px 0 0; font-size: clamp(0.9rem, 1.6vw, 1.05rem);
-        font-weight: 600; opacity: 0.85; max-width: 540px;
+      .hero.is-light-hero .hero-name,
+      .hero.is-light-hero .hero-kicker {
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
       }
+      .hero-season-sub {
+        margin: 7px 0 0; padding: 0;
+        font-size: 0.68rem; font-weight: 700;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--hero-fg, #fff);
+        opacity: 0.62;
+        display: flex; align-items: center; gap: 10px;
+        white-space: nowrap;
+      }
+      .hero-season-sub::before,
+      .hero-season-sub::after {
+        content: ''; display: block;
+        width: 24px; height: 1px;
+        background: currentColor; flex-shrink: 0;
+      }
+      .hero.is-light-hero .hero-season-sub { opacity: 0.5; }
 
       .hero-photo-wrap { position: relative; flex: 0 0 auto; }
       .hero-photo {
@@ -253,6 +287,7 @@
         letter-spacing: 0.12em; text-transform: uppercase; color: #6b7280;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
+      .lbl-short { display: none; }
       .hero-stat .val {
         margin: 0; font-size: clamp(1.3rem, 2.4vw, 1.9rem);
         font-weight: 900; letter-spacing: -0.02em; line-height: 1;
@@ -265,14 +300,50 @@
         background: color-mix(in srgb, var(--paper) 86%, transparent);
         backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         border-bottom: 1px solid rgba(14, 15, 18, 0.06);
+        display: flex; align-items: center;
+      }
+      .rail-arrow {
+        flex: 0 0 auto;
+        width: 36px; height: 36px;
+        display: flex; align-items: center; justify-content: center;
+        background: #fff; border: 1px solid rgba(14,15,18,0.12);
+        border-radius: 50%; cursor: pointer;
+        font-size: 1.1rem; line-height: 1; color: #374151;
+        box-shadow: 0 2px 8px rgba(14,15,18,0.08);
+        transition: background 0.18s, border-color 0.18s, color 0.18s, opacity 0.2s, box-shadow 0.18s;
+        margin: 0 6px;
+        flex-shrink: 0;
+      }
+      .rail-arrow:hover {
+        background: var(--accent); border-color: var(--accent);
+        color: #fff;
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+      }
+      .rail-arrow[disabled] { opacity: 0.25; pointer-events: none; }
+      .rail-arrow-left { order: -1; }
+      .rail-arrow-right { order: 1; }
+      /* edge fades so chips tuck neatly under the arrows */
+      .rail-wrap::before, .rail-wrap::after {
+        content: ""; position: absolute; top: 0; bottom: 0; width: 48px;
+        pointer-events: none; z-index: 1;
+      }
+      .rail-wrap::before {
+        left: 48px;
+        background: linear-gradient(to right, color-mix(in srgb, var(--paper) 88%, transparent), transparent);
+      }
+      .rail-wrap::after {
+        right: 48px;
+        background: linear-gradient(to left, color-mix(in srgb, var(--paper) 88%, transparent), transparent);
       }
       .rail {
+        flex: 1 1 0; min-width: 0;
         display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
-        max-width: 1180px; margin: 0 auto; padding: 10px clamp(14px, 3vw, 28px);
+        padding: 10px 4px;
       }
       .rail::-webkit-scrollbar { display: none; }
       .rail-chip {
-        flex: 0 0 auto; padding: 8px 14px; border-radius: 999px;
+        flex: 0 0 auto; padding: 10px 16px; min-height: 44px;
+        border-radius: 999px;
         border: 1px solid rgba(14, 15, 18, 0.1); background: #fff;
         font-family: inherit; font-size: 0.74rem; font-weight: 800;
         letter-spacing: 0.05em; text-transform: uppercase; color: #4b5563;
@@ -309,6 +380,33 @@
         border-top: 1px solid rgba(14, 15, 18, 0.07);
       }
       .site-footer .f-brand { color: var(--ink); font-weight: 900; letter-spacing: 0.08em; }
+      .site-footer a { color: var(--accent); text-decoration: underline; }
+      .a11y-statement {
+        max-width: 1180px; margin: 0 auto;
+        padding: 28px clamp(14px, 3vw, 28px) 8px;
+        border-top: 1px solid rgba(14, 15, 18, 0.07);
+        color: #4b5563;
+      }
+      .a11y-statement h2 {
+        margin: 0 0 12px; font-size: 0.92rem; font-weight: 900;
+        letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);
+      }
+      .a11y-statement p,
+      .a11y-statement li {
+        margin: 0 0 10px; font-size: 0.82rem; font-weight: 600; line-height: 1.65;
+      }
+      .a11y-statement ul { margin: 0 0 12px; padding-left: 18px; }
+      .a11y-statement a { color: var(--accent); }
+      .qb-target-map-play-picker-wrap { margin-top: 12px; }
+      .qb-target-map-play-picker {
+        display: flex; flex-direction: column; gap: 6px;
+        font-size: 0.78rem; font-weight: 700; color: #4b5563;
+      }
+      .qb-target-map-play-picker select {
+        width: 100%; min-height: 44px; padding: 8px 12px;
+        border-radius: 12px; border: 1px solid rgba(14,15,18,0.12);
+        font: inherit; background: #fff;
+      }
 
       /* =========================================================
          RE-SKIN of the untouched profile renderers
@@ -357,6 +455,9 @@
       }
 
       .qb-collapsible-title { display: inline-flex; align-items: baseline; gap: 12px; font-size: 0.98rem !important; }
+      h2.qb-collapsible-title {
+        margin: 0; font: inherit; font-size: 0.98rem !important; font-weight: inherit;
+      }
       .qb-collapsible-title::before {
         counter-increment: qbsec;
         content: counter(qbsec, decimal-leading-zero);
@@ -445,7 +546,7 @@
         border: 1px solid rgba(255, 255, 255, 0.16);
         background: rgba(255, 255, 255, 0.07); color: #fff;
         font-family: inherit; font-size: 1rem; font-weight: 600;
-        outline: none; transition: all 0.25s ease;
+        transition: all 0.25s ease;
       }
       .switcher-search::placeholder { color: rgba(255, 255, 255, 0.4); }
       .switcher-search:focus {
@@ -465,11 +566,18 @@
         font-family: inherit; padding: 0; text-align: left; color: #fff;
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       }
-      .qb-card:hover, .qb-card:focus-visible {
+      .qb-card:hover {
         transform: translateY(-4px);
         border-color: color-mix(in srgb, var(--card-team, #888) 80%, #fff);
         box-shadow: 0 22px 50px color-mix(in srgb, var(--card-team, #000) 35%, transparent);
         outline: none;
+      }
+      .qb-card:focus-visible {
+        transform: translateY(-4px);
+        border-color: color-mix(in srgb, var(--card-team, #888) 80%, #fff);
+        box-shadow: 0 22px 50px color-mix(in srgb, var(--card-team, #000) 35%, transparent);
+        outline: 2px solid #fff;
+        outline-offset: 2px;
       }
       .qb-card-photo-wrap {
         position: relative; display: block; aspect-ratio: 1 / 0.92; overflow: hidden;
@@ -536,16 +644,21 @@
       /* phase 1 — hero image emerges */
       .loader-img {
         position: absolute; inset: 0;
-        background: url("Clutch_header.jpg") center / cover no-repeat;
+        background: center / cover no-repeat;
         opacity: 0;
-        animation: loaderImgIn 2.4s ease-out forwards,
-                   loaderKenBurns 10s ease-out forwards;
       }
       .loader-img::after {
         content: ""; position: absolute; inset: 0;
         background: linear-gradient(to bottom,
           rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.60) 100%);
       }
+      /* desktop: only frame 1 visible */
+      .loader-img-1 {
+        background-image: url("Clutch_header.jpg");
+        animation: loaderImgIn 2.4s ease-out forwards,
+                   loaderKenBurns 10s ease-out forwards;
+      }
+      .loader-img-2, .loader-img-3 { display: none; }
       @keyframes loaderImgIn {
         from { opacity: 0; }
         to   { opacity: 1; }
@@ -631,12 +744,12 @@
       @media (max-width: 920px) {
         .hero-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .hero-grade-card { grid-column: 1 / -1; justify-content: center; }
-        .hero-watermark { display: none; }
       }
       @media (max-width: 680px) {
         .hero-grid { flex-direction: column-reverse; align-items: flex-start; gap: 18px; }
         .hero-photo { width: 132px; height: 132px; }
         .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        /* Note: 768px mobile block overrides hero rules below 768px */
         .qb-switch-btn .hint-k, .qb-switch-btn .nm { display: none; }
         .qb-switch-btn { padding: 0 6px; }
         .qb-collapsible-panel-inner { padding: 16px !important; }
@@ -646,6 +759,82 @@
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
         .content, .qb-collapsible-details, .qb-card, .nav-arrow, .qb-switch-btn { transition: none !important; }
+        .loader-img, .loader-veil, .loader-brand, .loader-titles, .loader-bar::after { animation: none !important; }
+        .loader-img { opacity: 1; transform: none; }
+        .loader-veil { opacity: 0.96; }
+        .loader-brand, .loader-titles { opacity: 1; transform: none; }
+        .qb-modal { animation: none !important; }
+        .annual-pane.is-active { animation: none !important; }
+        .grade-ring .fg { transition: none !important; }
+        .align-ring .fg { transition: none !important; }
+      }
+
+      /* ---------- accessibility ---------- */
+      .skip-link {
+        position: absolute; left: 12px; top: -100px; z-index: 500;
+        padding: 10px 16px; border-radius: 999px;
+        background: #fff; color: #0e0f12;
+        font: inherit; font-size: 0.82rem; font-weight: 800;
+        text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      }
+      .skip-link:focus, .skip-link:focus-visible {
+        top: 12px; outline: 2px solid #006bff; outline-offset: 2px;
+      }
+      .sr-only {
+        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+      }
+      :where(
+        a, button, input, select, textarea,
+        .rail-chip, .mag-nav-chip, .mag-btn-primary, .mag-btn-secondary,
+        .idx-toggle, .idx-panel-close, .back-btn, .brand, .nav-arrow,
+        .qb-card, .mag-index-card, .mag-lb-row, .annual-tab,
+        .qb-compare-tab, .qb-scatter-tab, .qb-target-map-tab,
+        .zg-svgbar, .qb-donut-interactive, .qb-game-bar-hit
+      ):focus { outline: none; }
+      :where(
+        a, button, input, select, textarea,
+        .rail-chip, .mag-nav-chip, .mag-btn-primary, .mag-btn-secondary,
+        .idx-toggle, .idx-panel-close, .back-btn, .brand, .nav-arrow,
+        .qb-card, .mag-index-card, .mag-lb-row, .annual-tab,
+        .qb-compare-tab, .qb-scatter-tab, .qb-target-map-tab,
+        .zg-svgbar, .qb-donut-interactive, .qb-game-bar-hit
+      ):focus-visible {
+        outline: 2px solid #006bff; outline-offset: 2px;
+      }
+      button.mag-index-card,
+      button.mag-lb-row {
+        font: inherit; text-align: inherit; appearance: none; -webkit-appearance: none;
+      }
+      button.mag-lb-row {
+        border: 0; background: transparent; color: inherit; width: 100%;
+      }
+      .loader-skip {
+        position: absolute; bottom: 22px; right: 22px; z-index: 4;
+        padding: 10px 16px; border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.28);
+        background: rgba(0,0,0,0.35); color: rgba(255,255,255,0.82);
+        font: inherit; font-size: 0.72rem; font-weight: 800;
+        letter-spacing: 0.04em; cursor: pointer;
+        opacity: 0.42; transition: opacity 0.2s ease, background 0.2s ease;
+      }
+      .loader-skip:hover,
+      .loader-skip:focus-visible {
+        opacity: 1; background: rgba(0,0,0,0.55);
+        outline: 2px solid #fff; outline-offset: 2px;
+      }
+      .qb-target-map-a11y-table { margin-top: 14px; }
+      .qb-target-map-a11y-table summary {
+        cursor: pointer; font-size: 0.78rem; font-weight: 800;
+        color: var(--accent, #006bff); margin-bottom: 8px;
+      }
+      .qb-target-map-a11y-table table {
+        width: 100%; border-collapse: collapse; font-size: 0.72rem;
+      }
+      .qb-target-map-a11y-table th,
+      .qb-target-map-a11y-table td {
+        padding: 6px 8px; border-bottom: 1px solid rgba(14,15,18,0.08);
+        text-align: left;
       }
 
       /* =========================================================
@@ -776,7 +965,7 @@
       .qb-compare-tab, .qb-scatter-tab, .qb-target-map-tab {
         border: 0 !important; background: transparent !important;
         border-radius: 10px !important;
-        padding: 8px 14px !important;
+        padding: 8px 14px !important; min-height: 44px !important;
         color: #5b6470 !important; font-weight: 800 !important;
         transition: all 0.2s ease !important;
       }
@@ -945,6 +1134,7 @@
         padding: 9px 16px; font-family: inherit;
         font-size: 0.78rem; font-weight: 800; letter-spacing: 0.02em;
         color: #5b6470; cursor: pointer; transition: all 0.2s ease;
+        min-height: 44px;
       }
       .annual-tab:hover { color: var(--accent); }
       .annual-tab[aria-pressed="true"] {
@@ -1032,12 +1222,14 @@
       .vs-delta.is-pos { background: #156a3c; }
       .vs-delta.is-neg { background: #9b1c1c; }
 
-      .vs-bars { display: flex; flex-direction: column; gap: 10px; }
-      .vs-bar-row {
+      /* vs-bars is the grid so ALL rows share identical column widths */
+      .vs-bars {
         display: grid;
         grid-template-columns: 52px minmax(0, 1fr) minmax(86px, auto) minmax(0, 1fr) 52px;
-        gap: 10px; align-items: center;
+        column-gap: 10px; row-gap: 10px;
+        align-items: center;
       }
+      .vs-bar-row { display: contents; } /* cells flow directly into parent grid */
       .vs-bar-label {
         text-align: center; font-size: 0.68rem; font-weight: 800;
         letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280;
@@ -1215,7 +1407,7 @@
         .clutch-axis { display: none; }
       }
       @media (max-width: 680px) {
-        .vs-bar-row { grid-template-columns: 44px minmax(0, 1fr) minmax(64px, auto) minmax(0, 1fr) 44px; gap: 6px; }
+        .vs-bars { grid-template-columns: 44px minmax(0, 1fr) minmax(64px, auto) minmax(0, 1fr) 44px; column-gap: 6px; row-gap: 8px; }
         .vs-bar-label { font-size: 0.58rem; white-space: normal; }
         .prot-qb-row { gap: 12px; }
       }
@@ -1227,6 +1419,15 @@
       .qb-epa-bar--league:focus-within .qb-bar-value { opacity: 1 !important; }
 
       /* ----- accuracy → catch radius ----- */
+      .acc-stage--img {
+        background: #080b12;
+        padding: 0;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .acc-explainer-img {
+        width: 100%; height: auto; display: block;
+        border-radius: 16px;
+      }
       .acc-wrap {
         display: grid; grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
         gap: clamp(18px, 3vw, 36px); align-items: center;
@@ -1371,18 +1572,19 @@
       /* ── trigger button ── */
       .idx-toggle {
         display: flex; align-items: center; justify-content: center;
-        width: 36px; height: 36px; border-radius: 10px;
-        border: 1.5px solid rgba(14,15,18,0.12);
+        width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 10px;
+        border: 1.5px solid rgba(255,255,255,0.25);
         background: transparent; cursor: pointer;
-        color: #374151; margin-right: 10px;
+        color: #fff; margin-right: 10px;
         transition: background 0.18s, border-color 0.18s, color 0.18s;
-        flex: 0 0 36px;
+        flex: 0 0 44px;
       }
-      .idx-toggle:hover { background: #f3f4f6; border-color: #9ca3af; }
+      .idx-toggle:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.45); }
       .topbar.is-stuck .idx-toggle {
         border-color: rgba(14,15,18,0.15);
         color: #374151;
       }
+      .topbar.is-stuck .idx-toggle:hover { background: #f3f4f6; border-color: #9ca3af; }
       /* three-line icon */
       .idx-toggle-lines { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
       .idx-toggle-lines span {
@@ -1432,13 +1634,13 @@
       .idx-panel-brand {
         font-size: 0.68rem; font-weight: 900;
         letter-spacing: 0.2em; text-transform: uppercase;
-        color: rgba(255,255,255,0.3);
+        color: rgba(255,255,255,0.62);
       }
       .idx-panel-close {
-        width: 30px; height: 30px; border-radius: 8px;
+        width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 8px;
         border: 1px solid rgba(255,255,255,0.1);
         background: rgba(255,255,255,0.04);
-        color: rgba(255,255,255,0.5); font-size: 1rem;
+        color: rgba(255,255,255,0.72); font-size: 1rem;
         cursor: pointer; display: flex; align-items: center; justify-content: center;
         transition: background 0.16s, color 0.16s;
       }
@@ -1520,18 +1722,19 @@
       }
       .idx-qb-row:hover .idx-qb-grade { color: rgba(255,255,255,0.75); }
 
-      /* toggle button */
+      /* toggle button — white on dark (matches mobile style) */
       .idx-toggle {
         display: flex; align-items: center; justify-content: center;
-        width: 36px; height: 36px; border-radius: 10px;
-        border: 1.5px solid rgba(14,15,18,0.12);
+        width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 10px;
+        border: 1.5px solid rgba(255,255,255,0.25);
         background: transparent; cursor: pointer;
-        color: #374151; margin-right: 10px;
+        color: #fff; margin-right: 10px;
         transition: background 0.18s, border-color 0.18s, color 0.18s;
-        flex: 0 0 36px;
+        flex: 0 0 44px;
       }
-      .idx-toggle:hover { background: #f3f4f6; border-color: #9ca3af; }
+      .idx-toggle:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.45); }
       .topbar.is-stuck .idx-toggle { border-color: rgba(14,15,18,0.15); color: #374151; }
+      .topbar.is-stuck .idx-toggle:hover { background: #f3f4f6; border-color: #9ca3af; }
       .idx-toggle-lines { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
       .idx-toggle-lines span {
         display: block; height: 1.5px; background: currentColor;
@@ -1566,8 +1769,12 @@
         display: none;
         align-items: center;
         gap: 4px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
         transition: opacity 0.25s ease;
       }
+      .topbar-mag-nav::-webkit-scrollbar { display: none; }
       .topbar.is-mag-mode .topbar-profile-group {
         opacity: 0; pointer-events: none;
         position: absolute; right: -9999px;
@@ -1576,7 +1783,9 @@
         display: flex;
       }
       .mag-nav-chip {
-        padding: 6px 13px;
+        flex-shrink: 0;
+        padding: 10px 14px;
+        min-height: 44px;
         border-radius: 999px;
         border: 1px solid rgba(14,15,18,0.12);
         background: transparent;
@@ -1669,7 +1878,7 @@
         outline: none; transition: all 0.25s ease;
         box-sizing: border-box;
       }
-      .mag-index-search::placeholder { color: rgba(255,255,255,0.38); }
+      .mag-index-search::placeholder { color: rgba(255,255,255,0.55); }
       .mag-index-search:focus {
         border-color: rgba(255,255,255,0.35);
         background: rgba(255,255,255,0.12);
@@ -1708,9 +1917,9 @@
       }
       .mag-index-card-watermark {
         position: absolute; left: 50%; top: 44%;
-        width: 124%; height: auto;
-        transform: translate(-50%, -50%) rotate(-6deg);
-        opacity: 0.16; pointer-events: none;
+        width: 110%; height: auto;
+        transform: translate(-50%, -50%);
+        opacity: 0.18; pointer-events: none;
         transition: opacity 0.25s;
       }
       .mag-index-card:hover .mag-index-card-watermark { opacity: 0.26; }
@@ -1728,17 +1937,14 @@
         font-size: 0.88rem; font-weight: 800;
         color: #fff; line-height: 1.2; margin: 0 0 4px;
       }
+      .mag-index-fname { font-weight: 400; }
+      .mag-index-lname { font-weight: 800; }
       .mag-index-team {
         font-size: 0.66rem; font-weight: 700;
         color: rgba(255,255,255,0.5); text-transform: uppercase;
         letter-spacing: 0.07em;
       }
-      .mag-index-grade {
-        margin-top: 6px; font-size: 1.05rem; font-weight: 900;
-        color: #fff; font-variant-numeric: tabular-nums;
-        background: rgba(255,255,255,0.1); display: inline-block;
-        padding: 2px 8px; border-radius: 7px;
-      }
+      .mag-index-grade { display: none; }
       .mag-index-empty {
         grid-column: 1 / -1;
         padding: 32px; text-align: center;
@@ -1825,7 +2031,7 @@
       }
       .mag-cover-sub {
         font-size: clamp(0.88rem, 1.8vw, 1.05rem);
-        font-weight: 500; color: rgba(255,255,255,0.52);
+        font-weight: 500; color: rgba(255,255,255,0.72);
         max-width: 420px; line-height: 1.65; margin: 0;
       }
       .mag-cover-actions {
@@ -2078,6 +2284,70 @@
         display: flex; align-items: center; gap: 10px;
       }
       .mag-lb-icon { display: none; }
+
+      /* ── Expand button (mobile only) ── */
+      .lb-expand-btn {
+        display: none;
+        margin-left: auto; flex-shrink: 0;
+        width: 28px; height: 28px; border-radius: 6px;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+        color: rgba(255,255,255,0.65);
+        cursor: pointer;
+        align-items: center; justify-content: center;
+        transition: background 0.15s, color 0.15s;
+      }
+      .lb-expand-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+      /* ── Expanded fullscreen state ── */
+      .mag-lb-card.is-expanded {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 299 !important;
+        border-radius: 0 !important;
+        border-top: none !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+        padding-bottom: env(safe-area-inset-bottom, 24px);
+      }
+      .mag-lb-card.is-expanded .lb-expand-btn {
+        display: none !important;
+      }
+      .mag-lb-card.is-expanded .mag-lb-header {
+        position: fixed;
+        top: var(--bar-h);
+        left: 0; right: 0;
+        z-index: 301;
+        background: #141e2e;
+        border-bottom: 1px solid rgba(255,255,255,0.14);
+        padding: 14px 20px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      }
+      .mag-lb-card.is-expanded .mag-lb-rows {
+        padding-top: 130px;
+      }
+      .lb-topbar-close {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
+        color: #fff;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.22);
+        border-radius: 99px;
+        padding: 8px 16px;
+        min-height: 44px; cursor: pointer;
+        transition: background 0.18s;
+        white-space: nowrap;
+      }
+      .lb-topbar-close:hover { background: rgba(255,255,255,0.18); }
+      .lb-topbar-close[hidden] { display: none !important; }
+
+      /* ── Topbar: lb expanded mode — hide everything except close btn ── */
+      .topbar.lb-expanded-mode .idx-toggle,
+      .topbar.lb-expanded-mode .brand,
+      .topbar.lb-expanded-mode .topbar-spacer,
+      .topbar.lb-expanded-mode .back-btn,
+      .topbar.lb-expanded-mode .topbar-profile-group,
+      .topbar.lb-expanded-mode .topbar-mag-nav { display: none !important; }
       .mag-lb-title {
         font-size: 0.71rem; font-weight: 800;
         letter-spacing: 0.1em; text-transform: uppercase;
@@ -2094,11 +2364,11 @@
       .mag-lb-row:hover { background: rgba(255,255,255,0.05); }
       .mag-lb-rank {
         font-size: 0.7rem; font-weight: 800;
-        color: rgba(255,255,255,0.28); text-align: center; line-height: 1;
+        color: rgba(255,255,255,0.55); text-align: center; line-height: 1;
       }
       .mag-lb-row[data-rank="1"] .mag-lb-rank { font-size: 1rem; color: #f0b429; }
       .mag-lb-card.is-plain-ranks .mag-lb-row[data-rank="1"] .mag-lb-rank {
-        font-size: 0.7rem; color: rgba(255,255,255,0.28);
+        font-size: 0.7rem; color: rgba(255,255,255,0.55);
       }
       .mag-lb-logo-img {
         width: 26px; height: 26px; object-fit: contain; display: block;
@@ -2109,7 +2379,7 @@
       }
       .mag-lb-name small {
         display: block; font-size: 0.62rem; font-weight: 600;
-        color: rgba(255,255,255,0.36); text-transform: uppercase; letter-spacing: 0.05em;
+        color: rgba(255,255,255,0.62); text-transform: uppercase; letter-spacing: 0.05em;
       }
       .mag-lb-bar-wrap {
         height: 5px; background: rgba(255,255,255,0.1);
@@ -2132,7 +2402,7 @@
       .mag-lb-footer {
         padding: 8px 18px 12px;
         font-size: 0.62rem; font-weight: 700;
-        color: rgba(255,255,255,0.28); letter-spacing: 0.07em;
+        color: rgba(255,255,255,0.58); letter-spacing: 0.07em;
         text-transform: uppercase;
         border-top: 1px solid rgba(255,255,255,0.06);
         margin-top: 4px;
@@ -2191,6 +2461,68 @@
         max-height: 460px;
       }
 
+      /* ── Scatter leaderboard modal (mobile) ── */
+      .mag-scatter-modal {
+        display: none;
+        position: fixed; inset: 0; z-index: 9999;
+        background: #0d1520;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .mag-scatter-modal.is-open { display: block; }
+      .mag-scatter-modal-header {
+        position: sticky; top: 0; z-index: 2;
+        background: #0d1520;
+        padding: calc(var(--bar-h) + 12px) 16px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+      .mag-scatter-modal-title {
+        font-size: 0.78rem; font-weight: 800;
+        letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
+        padding-left: 4px;
+      }
+      /* Close button — fixed to viewport so it's always visible in portrait + landscape */
+      .mag-scatter-modal-close {
+        position: fixed;
+        top: 8px;
+        left: 14px;
+        z-index: 10001;
+        display: flex; align-items: center; gap: 5px;
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
+        color: #fff;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.22);
+        border-radius: 99px;
+        padding: 8px 16px;
+        min-height: 44px; cursor: pointer;
+        transition: background 0.18s;
+        white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .mag-scatter-modal-close:hover  { background: rgba(255,255,255,0.18); }
+      .mag-scatter-modal-close:active { background: rgba(255,255,255,0.22); }
+      .mag-scatter-modal-body { padding: 12px 8px 4px; }
+      .mag-scatter-modal-body svg { display: block; width: 100%; height: auto; }
+      .mag-scatter-modal-footer {
+        font-size: 0.68rem; color: rgba(255,255,255,0.45);
+        padding: 4px 16px 40px;
+        font-style: italic; text-transform: uppercase; letter-spacing: 0.04em;
+      }
+      /* Landscape: chart fills the whole screen */
+      @media (max-width: 1024px) and (orientation: landscape) {
+        .mag-scatter-modal.is-open {
+          display: flex; flex-direction: column; overflow: hidden;
+        }
+        .mag-scatter-modal-header,
+        .mag-scatter-modal-footer { display: none; }
+        .mag-scatter-modal-body {
+          flex: 1; min-height: 0; padding: 4px;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .mag-scatter-modal-body svg { width: 100%; height: 100%; }
+      }
+
       /* ---- YoY change cards ---- */
       .mag-lb-card.is-jump-card    { border-top: 3px solid #16a34a; }
       .mag-lb-card.is-decline-card { border-top: 3px solid #dc2626; }
@@ -2213,7 +2545,7 @@
         text-align: center; line-height: 1.5;
       }
 
-      /* ---------- zero-graded throw bar charts ---------- */
+      /* ---------- zero-graded throw section ---------- */
       .zg-explainer {
         font-size: 0.82rem; color: #6b7280; line-height: 1.6;
         margin: 0 0 18px;
@@ -2234,31 +2566,50 @@
       }
       .zg-stat-cards {
         display: grid; grid-template-columns: 1fr 1fr;
-        gap: 16px; margin-bottom: 24px;
+        gap: 14px; margin-bottom: 24px;
       }
       .zg-stat-card {
-        background: #f8f9fb; border-radius: 12px;
-        padding: 18px 20px; border: 1px solid #eceef2;
+        background: #f8f9fb; border-radius: 14px; border: 1px solid #eceef2;
+        padding: 12px; display: flex; flex-direction: column; gap: 8px;
+      }
+      /* Box 1 — label */
+      .zg-card-label-box {
+        background: #fff; border: 1px solid #eceef2; border-radius: 8px;
+        padding: 9px 12px; text-align: center;
       }
       .zg-stat-card-label {
         font-size: 0.64rem; font-weight: 800; letter-spacing: 0.09em;
-        text-transform: uppercase; color: #9ca3af; margin-bottom: 10px;
+        text-transform: uppercase; color: #374151;
       }
-      .zg-stat-card-row {
-        display: flex; align-items: baseline; gap: 12px; margin-bottom: 5px;
+      /* Box 2 — value + rank, centered */
+      .zg-card-metric-box {
+        background: #fff; border: 1px solid #eceef2; border-radius: 8px;
+        padding: 14px 12px 12px;
+        display: flex; flex-direction: column; align-items: center; gap: 6px;
       }
       .zg-stat-card-val {
-        font-size: 2.1rem; font-weight: 900;
-        font-variant-numeric: tabular-nums; line-height: 1;
+        font-size: 2.2rem; font-weight: 900; line-height: 1;
+        font-variant-numeric: tabular-nums;
       }
-      .zg-stat-card-rank {
-        font-size: 1rem; font-weight: 800; color: #9ca3af;
+      .zg-card-rank {
+        font-size: 0.8rem; font-weight: 900; color: #374151;
       }
-      .zg-stat-card-context {
-        font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 14px;
+      /* Box 3 — avg + strip, centered */
+      .zg-card-avg-box {
+        background: #fff; border: 1px solid #eceef2; border-radius: 8px;
+        padding: 10px 14px;
+        display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+        justify-content: center;
+      }
+      .zg-card-avg-label {
+        font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em;
+        text-transform: uppercase; color: #9ca3af;
+      }
+      .zg-card-avg-val {
+        font-size: 0.82rem; font-weight: 900; color: #374151;
       }
       .zg-stat-strip-wrap {
-        height: 5px; background: #e5e7eb; border-radius: 99px;
+        flex: 1 1 100%; height: 5px; background: #e5e7eb; border-radius: 99px;
         position: relative; overflow: visible;
       }
       .zg-stat-strip-fill {
@@ -2266,11 +2617,11 @@
         transition: width 0.8s cubic-bezier(0.34,1.2,0.64,1);
       }
       .zg-stat-strip-avg {
-        position: absolute; top: -4px;
-        width: 2px; height: 13px;
-        background: #9ca3af; border-radius: 1px;
-        transform: translateX(-50%);
+        position: absolute; top: -4px; width: 2px; height: 13px;
+        background: #9ca3af; border-radius: 1px; transform: translateX(-50%);
       }
+
+      /* Bar chart / tab remnants */
       .zg-tabs {
         display: flex; gap: 6px; margin-bottom: 10px;
       }
@@ -2305,9 +2656,21 @@
       /* -------- acknowledgements -------- */
       .mag-ack {
         position: relative;
-        background: #fff;
+        background: #f3f4f6;
         padding: 0;
         overflow: hidden;
+      }
+      .mag-ack-watermark {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: min(2800px, 175vw);
+        height: auto;
+        opacity: 0.12;
+        pointer-events: none;
+        z-index: 1;
+        user-select: none;
       }
       /* Player cutout side panels */
       .mag-ack-side {
@@ -2370,7 +2733,7 @@
         font-size: 0.88rem; font-weight: 700;
         color: #1a1d24;
         padding: 10px 14px;
-        background: #f5f6f8;
+        background: rgba(255, 255, 255, 0.82);
         border-left: 2px solid #006bff;
         border-radius: 0 8px 8px 0;
         /* animation initial state */
@@ -2384,7 +2747,7 @@
       }
       .mag-ack-name.is-revealed { opacity: 1; transform: translateY(0); }
       .mag-ack-name:hover {
-        background: #e8edf5;
+        background: rgba(255, 255, 255, 0.94);
         color: #006bff;
       }
       .mag-ack-footer {
@@ -2404,57 +2767,421 @@
           transparent
         );
       }
+
+      /* =====================================================
+         MOBILE LOADER — 768px and below (3-image crossfade)
+         ===================================================== */
+      @media (max-width: 768px) {
+        /* Keyframes for fade-in-hold-fadeout and fade-in-hold-stay */
+        @keyframes mobileImgSlide {
+          0%   { opacity: 0; }
+          12%  { opacity: 1; }
+          72%  { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        @keyframes mobileImgLast {
+          0%   { opacity: 0; }
+          15%  { opacity: 1; }
+          100% { opacity: 1; }
+        }
+
+        /* Show all three frames */
+        .loader-img-2, .loader-img-3 { display: block; }
+
+        /* Frame 1: Allen — 0s to ~4.2s */
+        .loader-img-1 {
+          background-image: url("Allen.png");
+          animation: mobileImgSlide 4.2s ease-in-out 0s forwards,
+                     loaderKenBurns 4.2s ease-out 0s forwards;
+        }
+        /* Frame 2: Daniels — 3.6s to ~7.8s */
+        .loader-img-2 {
+          background-image: url("Daniels.png");
+          animation: mobileImgSlide 4.2s ease-in-out 3.6s forwards,
+                     loaderKenBurns 4.2s ease-out 3.6s forwards;
+        }
+        /* Frame 3: Williams — 7.2s, stays until veil covers */
+        .loader-img-3 {
+          background-image: url("Williams.png");
+          animation: mobileImgLast 2.8s ease-in-out 7.2s forwards,
+                     loaderKenBurns 6s ease-out 7.2s forwards;
+        }
+
+        /* Push veil and brand back to match 3-image sequence */
+        .loader-veil {
+          animation: loaderVeilIn 2.6s cubic-bezier(0.4,0,0.6,1) 9.8s forwards;
+        }
+        .loader-brand {
+          animation: loaderBrandIn 1.6s cubic-bezier(0.22,1,0.36,1) 11.4s forwards;
+        }
+        .loader-titles {
+          animation: loaderTitlesIn 1.4s ease-out 12.2s forwards;
+        }
+
+        /* Show expand buttons on all mobile/tablet widths */
+        .lb-expand-btn { display: flex; }
+
+        /* Topbar always above expanded cards so Close button is tappable */
+        .topbar.lb-expanded-mode { z-index: 300; }
+
+        /* Scatter cards use the modal approach — no is-expanded styles needed */
+
+        /* PFF watermark — scale down so it fits the screen */
+        .mag-index::before {
+          width: 72vw;
+          height: 25vw;
+        }
+
+        /* ── Scatter carousel expanded — portrait ── */
+        .qb-scatter-carousel.is-expanded {
+          position: fixed !important;
+          inset: 0 !important;
+          z-index: 299 !important;
+          background: #f9fafb !important;
+          padding: 0 !important;
+          overflow-y: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+        .qb-scatter-carousel.is-expanded .qb-scatter-tabs {
+          position: sticky; top: 0; z-index: 2;
+          padding: calc(var(--bar-h) + 8px) 14px 10px;
+          background: #f9fafb;
+          border-bottom: 1px solid #e5e7eb;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          margin-bottom: 0;
+        }
+        .qb-scatter-carousel.is-expanded .qb-scatter-track {
+          border: none !important;
+          border-radius: 0 !important;
+          background: transparent !important;
+          height: auto !important;
+          overflow: visible !important;
+        }
+        .qb-scatter-carousel.is-expanded .qb-scatter-slide {
+          height: auto !important;
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+          padding: 12px 8px 32px !important;
+        }
+        /* Portrait: SVG scrollable at 500px wide */
+        .qb-scatter-carousel.is-expanded .qb-scatter-stage { height: auto !important; overflow: visible !important; }
+        .qb-scatter-carousel.is-expanded .qb-scatter-chart {
+          width: 500px !important; min-width: 500px !important; height: auto !important;
+        }
+
+        /* Rotate hint pill */
+        .scatter-rotate-hint {
+          position: fixed;
+          bottom: 28px; left: 50%;
+          transform: translateX(-50%);
+          z-index: 310;
+          background: rgba(0,0,0,0.72);
+          backdrop-filter: blur(8px);
+          color: #fff;
+          padding: 9px 18px;
+          border-radius: 99px;
+          font-size: 0.72rem; font-weight: 700;
+          white-space: nowrap;
+          pointer-events: none;
+          opacity: 0; transition: opacity 0.3s;
+        }
+        .scatter-rotate-hint.is-visible { opacity: 1; }
+      }
+
+      /* ── Scatter expanded in landscape — SVG fills full width ── */
+      @media (max-width: 1024px) and (orientation: landscape) {
+        .scatter-rotate-hint { opacity: 0 !important; pointer-events: none; }
+        .qb-scatter-carousel.is-expanded .qb-scatter-chart {
+          width: 100% !important;
+          min-width: unset !important;
+          height: auto !important;
+        }
+        .qb-scatter-carousel.is-expanded .qb-scatter-stage { height: auto !important; }
+        .qb-scatter-carousel.is-expanded .qb-scatter-slide {
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+        /* Scatter cards use the modal approach — no is-expanded styles needed */
+      }
+
+      /* =====================================================
+         MOBILE — 480px and below (iPhone-first)
+         ===================================================== */
+      @media (max-width: 480px) {
+
+        /* ── Topbar ── */
+        .topbar {
+          gap: 8px; padding: 0 12px;
+          background: rgba(10, 14, 28, 0.82) !important;
+          backdrop-filter: blur(12px) saturate(1.3);
+          -webkit-backdrop-filter: blur(12px) saturate(1.3);
+          border-bottom-color: rgba(255,255,255,0.06) !important;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.28) !important;
+        }
+        .topbar.is-stuck {
+          background: rgba(10, 14, 28, 0.92) !important;
+        }
+        .brand { font-size: 0.78rem; color: #fff !important; }
+        .brand .yr { color: #006bff !important; opacity: 1 !important; }
+        .topbar.is-stuck .brand { color: #fff !important; }
+        .back-btn { padding: 7px 12px 7px 9px; font-size: 0.76rem; }
+        .topbar-mag-nav { display: none !important; }
+        .idx-toggle { color: #fff !important; border-color: rgba(255,255,255,0.25) !important; }
+        .topbar.is-stuck .idx-toggle { color: #fff !important; border-color: rgba(255,255,255,0.25) !important; }
+
+        /* ── QB Index grid — compact 4-column ── */
+        .mag-index-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 8px;
+        }
+        .mag-index-card { border-radius: 12px; }
+        .mag-index-body { padding: 6px 6px 8px; }
+        .mag-index-name { font-size: 0.62rem; margin: 0; line-height: 1.3; text-align: center; }
+        .mag-index-fname { font-weight: 300; opacity: 0.75; display: block; font-size: 0.55rem; }
+        .mag-index-lname { font-weight: 800; display: block; }
+        .mag-index-team { display: none; }
+        .mag-index-grade { display: none; }
+        .mag-index-logo { width: 16px; height: 16px; bottom: 4px; right: 4px; }
+        .mag-index-card-watermark { opacity: 0.1; }
+
+        /* Acknowledgements watermark — fit within screen */
+        .mag-ack-watermark { width: min(520px, 88vw); }
+
+        /* ── Acknowledgements — compact single screen ── */
+        .mag-ack { padding: clamp(60px,10vw,80px) 20px 28px; }
+        .mag-ack h2 { font-size: clamp(1.5rem, 6.5vw, 2rem); margin-bottom: 6px; }
+        .mag-ack-intro { font-size: 0.7rem; margin-bottom: 12px; line-height: 1.45; }
+        .mag-ack-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 4px 8px;
+        }
+        .mag-ack-name {
+          font-size: 0.68rem;
+          padding: 4px 8px;
+          background: transparent;
+          border-left: 2px solid #006bff;
+          border-radius: 0;
+          box-shadow: none;
+          line-height: 1.35;
+          white-space: nowrap;
+        }
+        .mag-ack-name:hover { background: transparent; }
+        .mag-ack-footer { margin-top: 16px; padding-top: 12px; font-size: 0.68rem; }
+
+        /* ── Cover image — mobile portrait ── */
+        .mag-cover-bg { object-position: center center; }
+
+
+        /* ── Hero — centered portrait layout ── */
+        .hero-grid {
+          flex-direction: column-reverse;
+          align-items: center;
+          text-align: center;
+          gap: 16px;
+          padding-bottom: 56px;
+        }
+        .hero-copy { text-align: center; width: 100%; }
+        .hero-kicker { display: inline-flex; margin-left: auto; margin-right: auto; margin-bottom: 10px; }
+        .hero-season-sub { justify-content: center; }
+        .hero-name { font-size: clamp(2.2rem, 10vw, 3.4rem); }
+        .hero-photo { width: 160px; height: 160px; }
+
+        /* Stats: one unified white card — grade row + 5-stat scoreboard */
+        .hero-stats {
+          background: rgba(255,255,255,0.96);
+          backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(14,15,18,0.07);
+          border-radius: 20px;
+          box-shadow: 0 14px 40px rgba(0,0,0,0.20);
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: 0;
+          padding: 0;
+          overflow: hidden;
+          margin-top: -36px;
+        }
+        .hero-grade-card {
+          grid-column: 1 / -1;
+          background: transparent;
+          box-shadow: none;
+          border: none;
+          border-bottom: 1px solid rgba(14,15,18,0.07);
+          border-radius: 0;
+          padding: 14px 20px;
+          justify-content: flex-start;
+        }
+        .hero-stat {
+          background: transparent;
+          box-shadow: none;
+          border: none;
+          border-right: 1px solid rgba(14,15,18,0.07);
+          border-radius: 0;
+          padding: 10px 4px 12px;
+          text-align: center;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .hero-stat:last-child { border-right: none; }
+        .hero-stat .lbl { margin-bottom: 4px; }
+        .lbl-full { display: none; }
+        .lbl-short {
+          display: inline;
+          font-size: 0.58rem; font-weight: 800;
+          letter-spacing: 0.1em; text-transform: uppercase; color: #6b7280;
+        }
+        .hero-stat .val { font-size: 1rem; letter-spacing: -0.02em; }
+        .grade-meta .lbl { font-size: 0.64rem; }
+
+        /* ── Section/chapter headings ── */
+        .qb-collapsible-title { font-size: clamp(1rem, 4.5vw, 1.35rem) !important; }
+        .qb-collapsible-trigger { padding: 16px 14px 4px !important; }
+        .qb-collapsible-panel-inner { padding: 10px 12px 16px !important; }
+
+        /* ── Segmented tabs — more breathing room ── */
+        .annual-tabs { flex-wrap: wrap; gap: 4px; }
+        .annual-tab { padding: 10px 12px; font-size: 0.75rem; }
+        .qb-compare-tabs, .qb-scatter-tabs, .qb-target-map-tabs {
+          flex-wrap: wrap !important; gap: 4px !important;
+        }
+        .qb-compare-tab, .qb-scatter-tab, .qb-target-map-tab {
+          padding: 10px 12px !important; font-size: 0.75rem !important;
+        }
+
+        /* ── ZG tabs touch target ── */
+        .zg-tab { padding: 10px 14px; font-size: 0.76rem; min-height: 44px; }
+
+        /* ── Leaderboards ── */
+        .mag-lb-grid { grid-template-columns: 1fr; gap: 20px; }
+        .mag-lb-name small { font-size: 0.76rem; }
+        .mag-lb-rank { font-size: 0.76rem; }
+        .mag-lb-footer { font-size: 0.74rem; }
+        .mag-lb-card {
+          background: #141e2e;
+          border: 1px solid rgba(255,255,255,0.12);
+          border-top: 3px solid #006bff;
+          border-radius: 14px;
+          box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+        }
+        .mag-lb-card.is-jump-card  { border-top-color: #16a34a; }
+        .mag-lb-card.is-decline-card { border-top-color: #dc2626; }
+        .mag-seg-legend { font-size: 0.74rem; }
+        .mag-lb-yoy-pair { grid-template-columns: 1fr; gap: 8px; }
+
+        /* ── QB index ── */
+        .mag-index-team { font-size: 0.74rem; }
+        .mag-index-eyebrow { font-size: 0.76rem; }
+
+        /* ── Passing splits/vs board ── */
+        .vs-pane .lbl { font-size: 0.74rem; }
+        .vs-mid .vs { font-size: 0.72rem; }
+
+        /* ── Accuracy / incompletions ── */
+        .acc-hero-card .l { font-size: 0.74rem; }
+        .acc-legend span { font-size: 0.74rem; }
+
+        /* ── Grade board ── */
+        .gb-spot .tag { font-size: 0.68rem; }
+        .gb-label small { font-size: 0.72rem; }
+
+        /* ── Clutch ── */
+        .clutch-eyebrow { font-size: 0.72rem; }
+
+        /* ── Zero-graded ── */
+        .zg-stat-cards { grid-template-columns: 1fr; }
+        .zg-stat-card-val { font-size: 1.8rem; }
+        .zg-gauge-wrap { max-width: 180px; }
+        .zg-legend { font-size: 0.72rem; }
+
+        /* ── Loader ── */
+        .loader-annual { font-size: 0.76rem; }
+        .loader-year-num { font-size: 0.62rem; }
+      }
+
+      /* ---------- carousel chevron nav ---------- */
+      .carousel-bottom-nav {
+        display: flex; align-items: center; justify-content: center;
+        gap: 14px; padding: 10px 0 4px;
+      }
+      .carousel-chev {
+        width: 30px; height: 30px; border-radius: 50%;
+        border: 1.5px solid var(--accent, #006bff);
+        background: transparent; color: var(--accent, #006bff);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; flex-shrink: 0;
+        transition: background 0.15s, color 0.15s, opacity 0.2s;
+        padding: 0;
+      }
+      .carousel-chev:hover { background: var(--accent, #006bff); color: #fff; }
+      .carousel-chev:disabled { opacity: 0.18; pointer-events: none; }
+      .carousel-dot-row { display: flex; gap: 7px; align-items: center; }
+      .carousel-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #d1d5db; border: none; padding: 0; cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .carousel-dot.is-active {
+        background: var(--accent, #006bff); transform: scale(1.4);
+      }
+
+      /* ---------- scroll progress rail ---------- */
+      .scroll-progress-rail {
+        position: fixed; right: 0; top: 0; bottom: 0; width: 5px;
+        background: rgba(0,0,0,0.07); z-index: 500;
+        opacity: 0; transition: opacity 0.4s ease;
+        pointer-events: none;
+      }
+      .scroll-progress-rail.is-visible { opacity: 1; }
+      .scroll-progress-fill {
+        position: absolute; top: 0; left: 0; right: 0; height: 0%;
+        background: var(--accent, #006bff);
+        transition: height 0.08s linear;
+      }
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <script>window.__loaderStart = Date.now();</script>
     <!-- loader -->
-    <div class="loader" id="loader">
-      <div class="loader-img" aria-hidden="true"></div>
+    <div class="loader" id="loader" role="status" aria-live="polite" aria-label="Loading 2026 NFL QB Annual">
+      <div class="loader-img loader-img-1" aria-hidden="true"></div>
+      <div class="loader-img loader-img-2" aria-hidden="true"></div>
+      <div class="loader-img loader-img-3" aria-hidden="true"></div>
       <div class="loader-veil" aria-hidden="true"></div>
       <div class="loader-brand">
         <img class="loader-pff-logo"
           src="https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png"
-          alt="PFF+">
-        <div class="loader-rule"></div>
+          alt="">
+        <div class="loader-rule" aria-hidden="true"></div>
         <div class="loader-titles">
           <span class="loader-annual">QB Annual</span>
           <span class="loader-year-num">2026</span>
         </div>
       </div>
-      <div class="loader-bar"></div>
+      <button type="button" class="loader-skip" id="loaderSkip">Skip intro</button>
+      <div class="loader-bar" aria-hidden="true"></div>
     </div>
 
-    <div class="progress" id="progress"></div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
 
     <!-- ====== MAGAZINE FRONT MATTER ====== -->
     <div id="magFront">
 
       <!-- COVER -->
       <section class="mag-cover" id="magCover">
-        <!--
-          When the cover image is ready, replace the .mag-cover-placeholder div with:
-          <img class="mag-cover-bg" src="cover.jpg" alt="2026 NFL QB Annual cover">
-          Recommended image size: 1920 × 1080 px (or 3840 × 2160 px at 2x for retina).
-          Use JPG or PNG. The image will be cropped to fill the full viewport.
-        -->
-        <div class="mag-cover-placeholder" id="magCoverPlaceholder">
-          <div class="mag-cover-placeholder-box">📷</div>
-          <span>Cover image placeholder · 1920 × 1080 px</span>
-          <span style="opacity:0.6;font-weight:600;letter-spacing:0.06em;font-size:0.65rem">Replace with &lt;img class="mag-cover-bg" src="cover.jpg"&gt;</span>
-        </div>
+        <picture>
+          <source media="(max-width: 768px)" srcset="Mobile%20cover.png" />
+          <img class="mag-cover-bg" src="QB_email.jpg" alt="2026 NFL QB Annual cover" />
+        </picture>
         <div class="mag-cover-overlay"></div>
         <div class="mag-cover-content">
-          <p class="mag-cover-eyebrow">PFF · 2025 regular season &amp; postseason</p>
           <h1 class="mag-cover-title">NFL<br>QB<br><em>Annual</em></h1>
-          <p class="mag-cover-sub">The definitive quarterback evaluation — grades, splits, accuracy, pressure, clutch play and more for every NFL passer.</p>
+          <p class="mag-cover-sub">PFF · 2025 regular season &amp; postseason</p>
           <div class="mag-cover-actions">
             <button class="mag-btn-primary" id="magBrowseQbsBtn">Browse quarterbacks</button>
             <button class="mag-btn-secondary" id="magReadBtn">Read the annual ↓</button>
           </div>
         </div>
-        <div class="mag-cover-scroll">
-          <svg class="mag-cover-scroll-icon" width="16" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="mag-cover-scroll" aria-hidden="true">
+          <svg class="mag-cover-scroll-icon" width="16" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <rect x="1" y="1" width="14" height="20" rx="7" stroke="currentColor" stroke-width="1.6"/>
             <rect x="7" y="5" width="2" height="5" rx="1" fill="currentColor"/>
           </svg>
@@ -2498,6 +3225,7 @@
 
       <!-- ACKNOWLEDGEMENTS -->
       <section class="mag-ack" id="magAck">
+        <img class="mag-ack-watermark" src="pff-logo-23.png" alt="" aria-hidden="true" loading="lazy" />
         <div class="mag-ack-inner">
           <p class="mag-eyebrow">Acknowledgements</p>
           <h2>Made possible by the people behind the data</h2>
@@ -2566,7 +3294,8 @@
               <circle cx="6.5" cy="6.5" r="5" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
               <path d="M10.5 10.5L14 14" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
-            <input class="mag-index-search" id="magIndexSearch" type="search" placeholder="Search quarterbacks…" autocomplete="off" />
+          <label class="sr-only" for="magIndexSearch">Search quarterbacks in the annual index</label>
+            <input class="mag-index-search" id="magIndexSearch" type="search" placeholder="Search quarterbacks…" autocomplete="off" aria-label="Search quarterbacks in the annual index" />
           </div>
         </div>
         <div class="mag-index-inner">
@@ -2581,7 +3310,7 @@
         <div class="mag-summary-inner">
           <p class="mag-eyebrow">2025 season at a glance</p>
           <h2>The numbers that matter</h2>
-          <p class="mag-summary-sub">Qualifying passers only · regular season &amp; postseason · click any row to open the full quarterback profile</p>
+          <p class="mag-summary-sub">Qualifying passers only · regular season &amp; postseason · select any row to open the full quarterback profile</p>
           <div class="mag-lb-grid" id="magLbGrid">
             <p class="mag-lb-empty">Loading leaderboard data…</p>
           </div>
@@ -2595,12 +3324,12 @@
 
     <!-- top bar -->
     <header class="topbar" id="topbar">
-      <button class="idx-toggle" id="idxToggle" type="button" title="Open index" aria-expanded="false" aria-controls="idxPanel">
+      <button class="idx-toggle" id="idxToggle" type="button" aria-label="Open site index" aria-expanded="false" aria-controls="idxPanel">
         <span class="idx-toggle-lines" aria-hidden="true">
           <span></span><span></span><span></span>
         </span>
       </button>
-      <button class="brand" id="brandBtn" type="button" title="Browse all quarterbacks">
+      <button class="brand" id="brandBtn" type="button" aria-label="Return to annual cover">
         QB&nbsp;ANNUAL <span class="yr">/ 2026</span>
       </button>
       <div class="topbar-spacer"></div>
@@ -2613,36 +3342,36 @@
         <button class="mag-nav-chip" data-mag-target="magSummary">Top 5</button>
       </nav>
       <!-- Profile controls — shown when in QB profile zone -->
-      <button class="back-btn" id="backBtn" type="button" hidden>‹ Leaderboards</button>
+      <button class="lb-topbar-close" id="lbTopbarClose" type="button" hidden aria-label="Close expanded table">✕ Close</button>
+      <button class="back-btn" id="backBtn" type="button" hidden aria-label="Return to leaderboards">‹ Leaderboards</button>
       <div class="topbar-profile-group" id="topbarProfileGroup">
-        <button class="qb-switch-btn" id="qbSwitchBtn" type="button" title="Switch quarterback">
+        <button class="qb-switch-btn" id="qbSwitchBtn" type="button" aria-label="Switch quarterback">
           <img id="qbSwitchImg" alt="" />
           <span class="nm" id="qbSwitchName">Select QB</span>
           <img class="switch-logo" id="qbSwitchLogo" alt="" />
           <span class="hint-k">/</span>
         </button>
-        <select class="season-select" id="seasonSelect" title="Hero stat season">
+        <select class="season-select" id="seasonSelect" aria-label="Hero stat season">
           <option value="2025">2025</option>
           <option value="2024">2024</option>
           <option value="2023">2023</option>
         </select>
         <span class="nav-arrows">
-          <button class="nav-arrow" id="prevQb" type="button" title="Previous QB">‹</button>
-          <button class="nav-arrow" id="nextQb" type="button" title="Next QB">›</button>
+          <button class="nav-arrow" id="prevQb" type="button" aria-label="Previous quarterback">‹</button>
+          <button class="nav-arrow" id="nextQb" type="button" aria-label="Next quarterback">›</button>
         </span>
       </div>
     </header>
 
     <!-- hero -->
-    <section class="hero" id="hero">
+    <section class="hero" id="hero" aria-label="Quarterback profile hero">
       <div class="hero-inner">
-        <div class="hero-watermark" id="heroWatermark"></div>
         <img class="hero-logo-ghost" id="heroLogo" alt="" aria-hidden="true" />
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="hero-kicker" id="heroKicker"><img class="kicker-logo" id="kickerLogo" alt="" /><span id="heroKickerText"></span></p>
-            <h1 class="hero-name" id="heroName"></h1>
-            <p class="hero-sub" id="heroSub"></p>
+            <h2 class="hero-name" id="heroName"></h2>
+            <p class="hero-season-sub" id="heroSeasonSub"></p>
           </div>
           <div class="hero-photo-wrap">
             <img class="hero-photo" id="heroPhoto" alt="" />
@@ -2657,61 +3386,72 @@
     </div>
 
     <!-- section nav -->
-    <div class="rail-wrap"><nav class="rail" id="rail" aria-label="Profile sections"></nav></div>
+    <div class="rail-wrap" id="railWrap">
+      <button class="rail-arrow rail-arrow-left" id="railPrev" type="button" aria-label="Scroll sections left" disabled>‹</button>
+      <nav class="rail" id="rail" aria-label="Profile sections"></nav>
+      <button class="rail-arrow rail-arrow-right" id="railNext" type="button" aria-label="Scroll sections right">›</button>
+    </div>
+
+    <!-- scroll progress rail -->
+    <div class="scroll-progress-rail" id="scrollProgressRail" aria-hidden="true">
+      <div class="scroll-progress-fill" id="scrollProgressFill"></div>
+    </div>
 
     <!-- profile content -->
-    <main class="content" id="content">
+    <main class="content" id="main">
       <p class="data-notes" id="dataNotes" hidden></p>
       <div id="profileMount"></div>
     </main>
 
-    <footer class="site-footer">
+
+    <footer class="site-footer" id="siteFooter">
       <span class="f-brand">2026 NFL QB ANNUAL</span>
       <span>All grades, splits, and metrics are the property of PFF. Not for redistribution without permission.</span>
     </footer>
 
     <!-- switcher / cover -->
-    <div class="switcher" id="switcher" hidden>
-      <button class="switcher-close" id="switcherClose" type="button" aria-label="Close">×</button>
+    <div class="switcher" id="switcher" hidden role="dialog" aria-modal="true" aria-labelledby="switcherTitle">
+      <button class="switcher-close" id="switcherClose" type="button" aria-label="Close quarterback picker">×</button>
       <div class="switcher-head">
-        <img class="switcher-logo" src="https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png" alt="PFF+" onerror="this.style.display='none'" />
+        <img class="switcher-logo" src="https://media.pff.com/2025/07/PFF_Plus_Main_LogoSuite_White.png" alt="" onerror="this.style.display='none'" />
         <p class="switcher-eyebrow">The definitive quarterback evaluation</p>
-        <h2 class="switcher-title">2026 NFL <span class="accent">QB Annual</span></h2>
+        <h2 class="switcher-title" id="switcherTitle">2026 NFL <span class="accent">QB Annual</span></h2>
         <p class="switcher-sub">Every passer. Every split. Grades, accuracy, pressure, clutch play and more — pick a quarterback to open the full profile.</p>
       </div>
       <div class="switcher-search-wrap">
-        <input class="switcher-search" id="switcherSearch" type="search" placeholder="Search quarterbacks…" autocomplete="off" />
+        <label class="sr-only" for="switcherSearch">Search quarterbacks</label>
+        <input class="switcher-search" id="switcherSearch" type="search" placeholder="Search quarterbacks…" autocomplete="off" aria-label="Search quarterbacks" />
       </div>
       <div class="switcher-grid" id="switcherGrid"></div>
     </div>
 
     <!-- ============ untouched data + render pipeline ============ -->
     <script src="js/utils.js"></script>
+    <script src="js/a11y.js"></script>
     <script src="js/teams.js"></script>
     <script src="js/seed.js"></script>
     <script src="js/bundled-data.js"></script>
-    <script src="js/stat-glossary.js"></script>
     <script src="js/api.js"></script>
     <script src="js/target-map-api.js"></script>
     <script src="js/route-tree-api.js?v=20260623c"></script>
-    <script src="js/profile.js?v=20260623x"></script>
-    <script src="js/modals.js"></script>
+    <script src="js/profile.js?v=20260624m"></script>
+    <script src="js/modals.js?v=20260624a"></script>
     <script src="js/sections.js"></script>
     <script src="js/grading-profile.js"></script>
     <script src="js/passing-splits.js"></script>
     <script src="js/interception-luck.js"></script>
     <script src="js/target-depth.js"></script>
     <script src="js/accuracy-depth.js"></script>
-    <script src="js/target-map.js?v=20260623j"></script>
+    <script src="js/target-map.js?v=20260624g"></script>
     <script src="js/route-tree.js?v=20260623j"></script>
     <script src="js/animations.js"></script>
 
     <!-- ============ Annual reader app ============ -->
     <!-- ====== SLIDING INDEX PANEL ====== -->
     <div class="idx-backdrop" id="idxBackdrop"></div>
-    <aside class="idx-panel" id="idxPanel" aria-hidden="true" aria-label="QB Annual index">
+    <aside class="idx-panel" id="idxPanel" aria-hidden="true" aria-labelledby="idxPanelTitle" role="dialog" aria-modal="true">
       <div class="idx-panel-head">
-        <span class="idx-panel-brand">2026 QB Annual</span>
+        <span class="idx-panel-brand" id="idxPanelTitle">2026 QB Annual</span>
         <button class="idx-panel-close" id="idxClose" aria-label="Close">&#x2715;</button>
       </div>
       <div class="idx-panel-body" id="idxPanelBody">
@@ -2743,9 +3483,9 @@
           brandBtn: $("brandBtn"), qbSwitchBtn: $("qbSwitchBtn"), qbSwitchImg: $("qbSwitchImg"),
           qbSwitchName: $("qbSwitchName"), seasonSelect: $("seasonSelect"),
           prevQb: $("prevQb"), nextQb: $("nextQb"),
-          hero: $("hero"), heroWatermark: $("heroWatermark"), heroKickerText: $("heroKickerText"),
-          heroName: $("heroName"), heroSub: $("heroSub"), heroPhoto: $("heroPhoto"), heroStats: $("heroStats"),
-          rail: $("rail"), content: $("content"), mount: $("profileMount"), dataNotes: $("dataNotes"),
+          hero: $("hero"), heroKickerText: $("heroKickerText"),
+          heroName: $("heroName"), heroPhoto: $("heroPhoto"), heroStats: $("heroStats"),
+          rail: $("rail"), content: $("main"), mount: $("profileMount"), dataNotes: $("dataNotes"),
           switcher: $("switcher"), switcherClose: $("switcherClose"),
           switcherSearch: $("switcherSearch"), switcherGrid: $("switcherGrid"),
           backBtn: $("backBtn"),
@@ -2757,43 +3497,43 @@
         /* Corrected franchise_id → team mapping (verified against passing-summary
            team_name abbreviations: 1=ARZ, 2=ATL, 3=BLT … 32=WAS). Patched at runtime
            so js/teams.js and the builder remain untouched. */
+        const _PFF_SVG = "https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/";
         window.QbAnnualTeams.byId = {
-          1: { nickname: "Cardinals", primary: "#97233F", espn: "ari" },
-          2: { nickname: "Falcons", primary: "#A71930", espn: "atl" },
-          3: { nickname: "Ravens", primary: "#241773", espn: "bal" },
-          4: { nickname: "Bills", primary: "#00338D", espn: "buf" },
-          5: { nickname: "Panthers", primary: "#0085CA", espn: "car" },
-          6: { nickname: "Bears", primary: "#0B162A", espn: "chi" },
-          7: { nickname: "Bengals", primary: "#FB4F14", espn: "cin" },
-          8: { nickname: "Browns", primary: "#FF3C00", espn: "cle" },
-          9: { nickname: "Cowboys", primary: "#003594", espn: "dal" },
-          10: { nickname: "Broncos", primary: "#FB4F14", espn: "den" },
-          11: { nickname: "Lions", primary: "#0076B6", espn: "det" },
-          12: { nickname: "Packers", primary: "#203731", espn: "gb" },
-          13: { nickname: "Texans", primary: "#03202F", espn: "hou" },
-          14: { nickname: "Colts", primary: "#002C5F", espn: "ind" },
-          15: { nickname: "Jaguars", primary: "#006778", espn: "jax" },
-          16: { nickname: "Chiefs", primary: "#E31837", espn: "kc" },
-          17: { nickname: "Dolphins", primary: "#008E97", espn: "mia" },
-          18: { nickname: "Vikings", primary: "#4F2683", espn: "min" },
-          19: { nickname: "Patriots", primary: "#002244", espn: "ne" },
-          20: { nickname: "Saints", primary: "#D3BC8D", espn: "no" },
-          21: { nickname: "Giants", primary: "#0B2265", espn: "nyg" },
-          22: { nickname: "Jets", primary: "#125740", espn: "nyj" },
-          23: { nickname: "Raiders", primary: "#000000", espn: "lv" },
-          24: { nickname: "Eagles", primary: "#004C54", espn: "phi" },
-          25: { nickname: "Steelers", primary: "#FFB612", espn: "pit" },
-          26: { nickname: "Rams", primary: "#003594", espn: "lar" },
-          27: { nickname: "Chargers", primary: "#0080C6", espn: "lac" },
-          28: { nickname: "49ers", primary: "#AA0000", espn: "sf" },
-          29: { nickname: "Seahawks", primary: "#002244", espn: "sea" },
-          30: { nickname: "Buccaneers", primary: "#D50A0A", espn: "tb" },
-          31: { nickname: "Titans", primary: "#0C2340", espn: "ten" },
-          32: { nickname: "Commanders", primary: "#5A1414", espn: "wsh" },
+          1:  { nickname: "Cardinals",  primary: "#97233F", logo: _PFF_SVG + "arizona-cardinals.svg" },
+          2:  { nickname: "Falcons",    primary: "#A71930", logo: _PFF_SVG + "atlanta-falcons.svg" },
+          3:  { nickname: "Ravens",     primary: "#241773", logo: _PFF_SVG + "baltimore-ravens.svg" },
+          4:  { nickname: "Bills",      primary: "#00338D", logo: _PFF_SVG + "buffalo-bills.svg" },
+          5:  { nickname: "Panthers",   primary: "#0085CA", logo: _PFF_SVG + "carolina-panthers.svg" },
+          6:  { nickname: "Bears",      primary: "#0B162A", logo: _PFF_SVG + "chicago-bears.svg" },
+          7:  { nickname: "Bengals",    primary: "#FB4F14", logo: _PFF_SVG + "cincinnati-bengals.svg" },
+          8:  { nickname: "Browns",     primary: "#FF3C00", logo: _PFF_SVG + "cleveland-browns.svg" },
+          9:  { nickname: "Cowboys",    primary: "#003594", logo: _PFF_SVG + "dallas-cowboys.svg" },
+          10: { nickname: "Broncos",    primary: "#FB4F14", logo: _PFF_SVG + "denver-broncos.svg" },
+          11: { nickname: "Lions",      primary: "#0076B6", logo: _PFF_SVG + "detroit-lions.svg" },
+          12: { nickname: "Packers",    primary: "#203731", logo: _PFF_SVG + "green-bay-packers.svg" },
+          13: { nickname: "Texans",     primary: "#03202F", logo: _PFF_SVG + "houston-texans.svg" },
+          14: { nickname: "Colts",      primary: "#002C5F", logo: _PFF_SVG + "indianapolis-colts.svg" },
+          15: { nickname: "Jaguars",    primary: "#006778", logo: _PFF_SVG + "jacksonville-jaguars.svg" },
+          16: { nickname: "Chiefs",     primary: "#E31837", logo: _PFF_SVG + "kansas-city-chiefs.svg" },
+          17: { nickname: "Dolphins",   primary: "#008E97", logo: _PFF_SVG + "miami-dolphins.svg" },
+          18: { nickname: "Vikings",    primary: "#4F2683", logo: _PFF_SVG + "minnesota-vikings.svg" },
+          19: { nickname: "Patriots",   primary: "#002244", logo: "https://media.pff.com/2026/06/Patriots.png" },
+          20: { nickname: "Saints",     primary: "#D3BC8D", logo: _PFF_SVG + "new-orleans-saints.svg" },
+          21: { nickname: "Giants",     primary: "#0B2265", logo: "https://media.pff.com/2026/06/Giants.png" },
+          22: { nickname: "Jets",       primary: "#125740", logo: "https://media.pff.com/2026/06/Jets-scaled.png" },
+          23: { nickname: "Raiders",    primary: "#000000", logo: _PFF_SVG + "las-vegas-raiders.svg" },
+          24: { nickname: "Eagles",     primary: "#004C54", logo: _PFF_SVG + "philadelphia-eagles.svg" },
+          25: { nickname: "Steelers",   primary: "#FFB612", logo: _PFF_SVG + "pittsburgh-steelers.svg" },
+          26: { nickname: "Rams",       primary: "#003594", logo: "https://media.pff.com/2026/06/Rams.png" },
+          27: { nickname: "Chargers",   primary: "#0080C6", logo: _PFF_SVG + "los-angeles-chargers.svg" },
+          28: { nickname: "49ers",      primary: "#AA0000", logo: _PFF_SVG + "san-francisco-49ers.svg" },
+          29: { nickname: "Seahawks",   primary: "#002244", logo: _PFF_SVG + "seattle-seahawks.svg" },
+          30: { nickname: "Buccaneers", primary: "#D50A0A", logo: _PFF_SVG + "tampa-bay-buccaneers.svg" },
+          31: { nickname: "Titans",     primary: "#0C2340", logo: _PFF_SVG + "tennessee-titans.svg" },
+          32: { nickname: "Commanders", primary: "#5A1414", logo: _PFF_SVG + "washington-commanders.svg" },
         };
         function teamLogoUrl(franchiseId) {
-          const abbr = window.QbAnnualTeams.byId[String(franchiseId || "").trim()]?.espn;
-          return abbr ? "https://a.espncdn.com/i/teamlogos/nfl/500/" + abbr + ".png" : "";
+          return window.QbAnnualTeams.resolve(franchiseId).logo || "";
         }
 
         let qbOrder = [];        // [{playerId, playerName, franchiseId, teamName, grade, rank, rankTotal}]
@@ -2801,6 +3541,39 @@
         let season = "2025";
         let railObserver = null;
         let lastLoadErrors = [];
+        let switcherTrap = null;
+        let idxPanelTrap = null;
+        let loaderDismissed = false;
+
+        const LOADER_CINEMATIC_MS = window.innerWidth <= 768 ? 15000 : 9000;
+
+        function dismissLoader() {
+          if (loaderDismissed) return;
+          loaderDismissed = true;
+          const loader = els.loader;
+          if (!loader || loader.classList.contains("is-done")) return;
+          loader.classList.add("is-done");
+          const fadeMs = window.QbAnnualA11y?.prefersReducedMotion?.() ? 0 : 1100;
+          setTimeout(() => loader.remove(), fadeMs);
+        }
+
+        function setMagazineHidden(hidden) {
+          const mag = document.getElementById("magFront");
+          if (!mag) return;
+          if (hidden) mag.setAttribute("aria-hidden", "true");
+          else mag.removeAttribute("aria-hidden");
+        }
+
+        function promoteProfileHeadings() {
+          els.mount.querySelectorAll(".qb-collapsible-title").forEach((node) => {
+            if (node.tagName === "H2") return;
+            const h2 = document.createElement("h2");
+            h2.className = node.className;
+            h2.id = node.id;
+            h2.innerHTML = node.innerHTML;
+            node.replaceWith(h2);
+          });
+        }
 
         /* ---------------- color utilities ---------------- */
         function hexToRgb(hex) {
@@ -2815,36 +3588,8 @@
           const a = hexToRgb(hexA), b = hexToRgb(hexB);
           return rgbToHex(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t);
         }
-        function luminance(hex) {
-          const [r, g, b] = hexToRgb(hex).map((v) => {
-            const s = v / 255;
-            return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-          });
-          return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        }
-        function buildTheme(primary) {
-          let accent = primary;
-          // darken very light team colors (Steelers gold, Saints) until usable on white
-          let guard = 0;
-          while (luminance(accent) > 0.32 && guard < 24) { accent = mix(accent, "#000000", 0.12); guard++; }
-          const lum = luminance(primary);
-          return {
-            team: primary,
-            teamDeep: mix(primary, "#000000", lum > 0.5 ? 0.55 : 0.45),
-            accent,
-            heroFg: lum > 0.45 ? "#101114" : "#ffffff",
-            accentInk: luminance(accent) > 0.45 ? "#101114" : "#ffffff",
-          };
-        }
         function applyTheme(primary) {
-          const t = buildTheme(primary);
-          const r = document.documentElement.style;
-          r.setProperty("--team", t.team);
-          r.setProperty("--team-deep", t.teamDeep);
-          r.setProperty("--accent", t.accent);
-          r.setProperty("--accent-ink", t.accentInk);
-          r.setProperty("--hero-fg", t.heroFg);
-          return t;
+          return window.QbAnnualA11y.applyTheme(primary, { heroEl: els.hero });
         }
 
         function headshotUrl(playerId) {
@@ -2979,12 +3724,12 @@
           const C = 2 * Math.PI * 32;
           const dash = (C * Math.max(0, Math.min(1, pct))).toFixed(1);
           return `<div class="${sizeClass}" style="--cc:${escapeAttr(color)}">
-            <svg viewBox="0 0 74 74">
+            <svg viewBox="0 0 74 74" aria-hidden="true">
               <circle class="bg" cx="37" cy="37" r="32" fill="none" stroke-width="7"></circle>
               <circle class="fg" cx="37" cy="37" r="32" fill="none" stroke-width="7" stroke="${escapeAttr(color)}"
                 stroke-dasharray="0 ${C.toFixed(1)}" data-ring-dash="${dash}" data-ring-circ="${C.toFixed(1)}"></circle>
             </svg>
-            <span class="${sizeClass === "align-ring" ? "pct" : "val"}">${label}</span>
+            <span class="${sizeClass === "align-ring" ? "pct" : "val"}" aria-hidden="true">${label}</span>
           </div>`;
         }
         function armRings(scope) {
@@ -3019,15 +3764,15 @@
           return `<section class="qb-section qb-collapsible qb-animate-section">
   <details class="qb-collapsible-details" open>
     <summary class="qb-collapsible-trigger">
-      <span class="qb-collapsible-heading"><span class="qb-collapsible-title">${escapeHtml(title)}</span></span>
+      <span class="qb-collapsible-heading"><h2 class="qb-collapsible-title">${escapeHtml(title)}</h2></span>
       <span class="qb-collapsible-chevron" aria-hidden="true"></span>
     </summary>
     <div class="qb-collapsible-panel"><div class="qb-collapsible-panel-inner">${bodyHtml}</div></div>
   </details>
 </section>`;
         }
-        function annualTabsHtml(labels) {
-          return `<div class="annual-tabs" role="tablist">${labels
+        function annualTabsHtml(labels, groupLabel) {
+          return `<div class="annual-tabs" role="group" aria-label="${escapeAttr(groupLabel || "Section views")}">${labels
             .map((l, i) => `<button type="button" class="annual-tab" data-annual-tab="${i}" aria-pressed="${i === 0 ? "true" : "false"}">${escapeHtml(l)}</button>`)
             .join("")}</div>`;
         }
@@ -3349,13 +4094,8 @@
               ...extras.map((r) => rowCard(r, "other")),
             ].join("");
             panes.push(`<div class="acc-wrap">
-              <div class="acc-stage qb-animate-item">
-                ${receiverSvg(theme, ringVals)}
-                <div class="acc-legend">
-                  ${ringVals.acc != null ? `<span><i style="background:${escapeAttr(theme.accent)}"></i>Accurate</span>` : ""}
-                  ${ringVals.catchable != null ? `<span><i style="background:#E8A020"></i>Catchable miss</span>` : ""}
-                  ${ringVals.uncatchable != null ? `<span><i style="background:#D04040"></i>Uncatchable</span>` : ""}
-                </div>
+              <div class="acc-stage acc-stage--img qb-animate-item">
+                <img src="Accuracy%20explainer.png" alt="Accuracy rings: accurate throw (inner), catchable miss (middle), uncatchable (outer)" class="acc-explainer-img" />
               </div>
               <div class="acc-metrics">${metricRows}</div>
             </div>`);
@@ -3506,7 +4246,8 @@
             }
 
             const stroke = isCurrent ? `stroke="#fff" stroke-width="2"` : "";
-            ps.push(`<rect x="${bx.toFixed(1)}" y="${barY.toFixed(1)}" width="${BAR_W}" height="${barH.toFixed(1)}" rx="2" fill="${escapeAttr(fill)}" ${stroke} class="zg-svgbar" data-id="${escapeAttr(String(r.playerId || ""))}" data-name="${escapeAttr(r.player || "")}"/>`);
+            const barLabel = escapeAttr(`Open ${r.player || "quarterback"} profile`);
+            ps.push(`<rect x="${bx.toFixed(1)}" y="${barY.toFixed(1)}" width="${BAR_W}" height="${barH.toFixed(1)}" rx="2" fill="${escapeAttr(fill)}" ${stroke} class="zg-svgbar" tabindex="0" role="button" aria-label="${barLabel}" data-id="${escapeAttr(String(r.playerId || ""))}" data-name="${escapeAttr(r.player || "")}"/>`);
 
             if (isCurrent) {
               const valStr = isEpa ? ((val >= 0 ? "+" : "") + val.toFixed(3)) : val.toFixed(2);
@@ -3520,7 +4261,7 @@
           });
 
           return {
-            svg: `<svg viewBox="0 0 ${totalW} ${totalH}" width="${totalW}" height="${totalH}" xmlns="http://www.w3.org/2000/svg" class="zg-bar-svg">${ps.join("")}</svg>`,
+            svg: `<svg viewBox="0 0 ${totalW} ${totalH}" width="${totalW}" height="${totalH}" xmlns="http://www.w3.org/2000/svg" class="zg-bar-svg" role="img" aria-label="${escapeAttr(metric.label + ' leaderboard bar chart')}">${ps.join("")}</svg>`,
             totalW
           };
         }
@@ -3574,35 +4315,83 @@
           const ypaPct = pctStrip(myRow.ypa, ypaVals);
           const epaPct = pctStrip(myRow.epaPerAtt, epaVals);
 
+          function ordinal(n) {
+            if (!n) return "";
+            const s = ["th","st","nd","rd"], v = n % 100;
+            return n + (s[(v-20)%10] || s[v] || s[0]);
+          }
+
+          const ypaStr = myRow.ypa != null ? myRow.ypa.toFixed(2) : "—";
+          const epaStr = myRow.epaPerAtt != null ? (myRow.epaPerAtt >= 0 ? "+" : "") + myRow.epaPerAtt.toFixed(3) : "—";
+
+          function zgGaugeSvg(fillPct, avgPct, accentColor, minLabel, maxLabel) {
+            const cx = 80, cy = 86, r = 66;
+            // Arc endpoint for fill
+            const fp = Math.min(0.992, Math.max(0.008, fillPct / 100));
+            const theta = fp * Math.PI;
+            const ex = (cx - r * Math.cos(theta)).toFixed(1);
+            const ey = (cy - r * Math.sin(theta)).toFixed(1);
+            const la = fp > 0.5 ? 1 : 0;
+            // Needle & avg marker rotation: 0% = -90deg, 50% = 0deg, 100% = +90deg
+            const needleRot = (fillPct / 100 * 180 - 90).toFixed(1);
+            const avgRot    = (avgPct  / 100 * 180 - 90).toFixed(1);
+            // Tick marks: 9 positions every 22.5deg
+            const ticks = [-90,-67.5,-45,-22.5,0,22.5,45,67.5,90].map((a, i) => {
+              const major = i % 2 === 0;
+              const y1 = cy - r - 4, y2 = cy - r - (major ? 12 : 8);
+              return `<line x1="${cx}" y1="${y1}" x2="${cx}" y2="${y2}" transform="rotate(${a} ${cx} ${cy})" stroke="#d1d5db" stroke-width="${major ? 1.5 : 1}"/>`;
+            }).join("");
+            return `<svg viewBox="0 0 160 92" width="100%" height="92" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="#e5e7eb" stroke-width="10" stroke-linecap="round"/>
+              <path d="M ${cx-r} ${cy} A ${r} ${r} 0 ${la} 1 ${ex} ${ey}" fill="none" stroke="${escapeAttr(accentColor)}" stroke-width="10" stroke-linecap="round"/>
+              ${ticks}
+              <line x1="${cx}" y1="${cy-r-3}" x2="${cx}" y2="${cy-r-14}" transform="rotate(${avgRot} ${cx} ${cy})" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+              <line x1="${cx}" y1="${cy-10}" x2="${cx}" y2="${cy-r+6}" transform="rotate(${needleRot} ${cx} ${cy})" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="${cx}" cy="${cy}" r="5" fill="white" stroke="#d1d5db" stroke-width="1.5"/>
+              <text x="${cx-r-3}" y="${cy+4}" font-size="9" fill="#9ca3af" font-family="sans-serif" text-anchor="end">${minLabel}</text>
+              <text x="${cx+r+3}" y="${cy+4}" font-size="9" fill="#9ca3af" font-family="sans-serif" text-anchor="start">${maxLabel}</text>
+              <text x="${cx}" y="8" font-size="8" fill="#9ca3af" font-family="sans-serif" text-anchor="middle">avg</text>
+            </svg>`;
+          }
+
+          function zgCard(label, sublabel, valStr, rank, total, pct, accentColor, minV, maxV) {
+            const rankStr = rank ? `${ordinal(rank)} of ${total}` : "—";
+            const isYpa = sublabel === "YPA";
+            const fmtV = v => isYpa ? v.toFixed(1) : (v >= 0 ? "+" : "") + v.toFixed(2);
+            const minLabel = minV != null ? fmtV(minV) : "";
+            const maxLabel = maxV != null ? fmtV(maxV) : "";
+            const gauge = valStr !== "—" ? zgGaugeSvg(pct.fillPct, pct.avgPct, accentColor, minLabel, maxLabel) : "";
+            const avgStr = pct.avg != null
+              ? (sublabel === "YPA" ? pct.avg.toFixed(2) : (pct.avg >= 0 ? "+" : "") + pct.avg.toFixed(3))
+              : null;
+            const strip = valStr !== "—"
+              ? `<div class="zg-stat-strip-wrap">
+                   <div class="zg-stat-strip-fill" style="width:${pct.fillPct.toFixed(1)}%;background:${escapeAttr(accentColor)}"></div>
+                   <div class="zg-stat-strip-avg" style="left:${pct.avgPct.toFixed(1)}%"></div>
+                 </div>` : "";
+            return `<div class="zg-stat-card">
+              <div class="zg-card-label-box">
+                <span class="zg-stat-card-label">${label}</span>
+              </div>
+              <div class="zg-card-metric-box">
+                <span class="zg-stat-card-val" style="color:${escapeAttr(accentColor)}">${valStr}</span>
+                <span class="zg-card-rank">${rankStr}</span>
+              </div>
+              ${avgStr ? `<div class="zg-card-avg-box">
+                <span class="zg-card-avg-label">League avg</span>
+                <span class="zg-card-avg-val">${avgStr}</span>
+                ${strip}
+              </div>` : ""}
+            </div>`;
+          }
+
           const statCards = `<div class="zg-stat-cards">
-            <div class="zg-stat-card">
-              <div class="zg-stat-card-label">YPA on 0-Graded Throws</div>
-              <div class="zg-stat-card-row">
-                <span class="zg-stat-card-val" style="color:${escapeAttr(accent)}">${myRow.ypa != null ? myRow.ypa.toFixed(2) : "—"}</span>
-                ${ypaRank ? `<span class="zg-stat-card-rank">#${ypaRank} of ${qualByYpa.length}</span>` : ""}
-              </div>
-              ${ypaPct.avg != null ? `<div class="zg-stat-card-context">League avg: ${ypaPct.avg.toFixed(2)} · ${qualByYpa.length} qualifiers</div>` : ""}
-              ${myRow.ypa != null ? `<div class="zg-stat-strip-wrap">
-                <div class="zg-stat-strip-fill" style="width:${ypaPct.fillPct.toFixed(1)}%;background:${escapeAttr(accent)}"></div>
-                <div class="zg-stat-strip-avg" style="left:${ypaPct.avgPct.toFixed(1)}%"></div>
-              </div>` : ""}
-            </div>
-            <div class="zg-stat-card">
-              <div class="zg-stat-card-label">EPA / Att on 0-Graded Throws</div>
-              <div class="zg-stat-card-row">
-                <span class="zg-stat-card-val" style="color:${escapeAttr(accent)}">${myRow.epaPerAtt != null ? (myRow.epaPerAtt >= 0 ? "+" : "") + myRow.epaPerAtt.toFixed(3) : "—"}</span>
-                ${epaRank ? `<span class="zg-stat-card-rank">#${epaRank} of ${qualByEpa.length}</span>` : ""}
-              </div>
-              ${epaPct.avg != null ? `<div class="zg-stat-card-context">League avg: ${epaPct.avg >= 0 ? "+" : ""}${epaPct.avg.toFixed(3)} · ${qualByEpa.length} qualifiers</div>` : ""}
-              ${myRow.epaPerAtt != null ? `<div class="zg-stat-strip-wrap">
-                <div class="zg-stat-strip-fill" style="width:${epaPct.fillPct.toFixed(1)}%;background:${escapeAttr(accent)}"></div>
-                <div class="zg-stat-strip-avg" style="left:${epaPct.avgPct.toFixed(1)}%"></div>
-              </div>` : ""}
-            </div>
+            ${zgCard("Yards per attempt", "YPA", ypaStr, ypaRank, qualByYpa.length, ypaPct, accent)}
+            ${zgCard("EPA per attempt", "EPA / ATT", epaStr, epaRank, qualByEpa.length, epaPct, accent)}
           </div>`;
 
           const sectionHtml = chapterShell("Zero-graded throw production",
-            `<p class="zg-explainer">The PFF grading scale ranges from -2 to +2 in 0.5-point increments, with a zero-graded throw representing an expected NFL pass. Looking at yards per attempt and EPA per attempt on those throws helps quantify the production generated when the quarterback simply does what is asked of him. Put another way, it offers a glimpse into how much value is being created by the offense around the quarterback rather than by the quarterback himself.</p>
+            `<p class="zg-explainer">The PFF grading scale ranges from -2 to +2 in 0.5-point increments, with a zero-graded throw representing an expected NFL pass. Looking at yards per attempt and EPA per attempt on those throws helps quantify the production generated when the quarterback simply does what is asked of him.</p>
             <div class="zg-attempts-row">
               <span class="zg-attempts-label">Zero-Graded Attempts</span>
               <span class="zg-attempts-val">${escapeHtml(String(myRow.attempts ?? "—"))}</span>
@@ -3654,10 +4443,19 @@
             });
           });
 
-          // SVG bar click → open QB profile
+          // SVG bar click / keyboard → open QB profile
           newSec.addEventListener("click", e => {
             const bar = e.target.closest(".zg-svgbar");
             if (!bar) return;
+            const id = bar.dataset.id, name = bar.dataset.name;
+            const qb = qbOrder.find(p => String(p.playerId) === id) || qbOrder.find(p => p.playerName === name);
+            if (qb) showQb(qb, { backTo: 'leaderboards' });
+          });
+          newSec.addEventListener("keydown", e => {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            const bar = e.target.closest(".zg-svgbar");
+            if (!bar) return;
+            e.preventDefault();
             const id = bar.dataset.id, name = bar.dataset.name;
             const qb = qbOrder.find(p => String(p.playerId) === id) || qbOrder.find(p => p.playerName === name);
             if (qb) showQb(qb, { backTo: 'leaderboards' });
@@ -3679,8 +4477,6 @@
         }
 
         function renderHero(profile, theme) {
-          const lastName = (profile.playerName || "").trim().split(/\s+/).slice(-1)[0] || "";
-          els.heroWatermark.textContent = lastName;
           els.heroKickerText.textContent = (profile.teamName || "") + " · " + season + " season";
           const logo = teamLogoUrl(current?.franchiseId);
           [["heroLogo", logo], ["kickerLogo", logo]].forEach(([id, src]) => {
@@ -3690,11 +4486,9 @@
             if (src) { img.onerror = () => { img.style.display = "none"; }; img.src = src; }
           });
           els.heroName.textContent = profile.playerName || "";
+          const subEl = document.getElementById("heroSeasonSub");
+          if (subEl) subEl.textContent = season + " Regular Season & Postseason";
           const gradeEntry = (profile.seasonGrades || []).find((g) => String(g.season) === String(season));
-          const rankBit = gradeEntry && gradeEntry.rank != null
-            ? gradeEntry.rankLabel + " of " + gradeEntry.rankTotal + " qualifying passers"
-            : "full charting profile";
-          els.heroSub.textContent = "The complete " + season + " evaluation — " + rankBit + ", every split, every throw.";
           els.heroPhoto.src = profile.headshotUrl || headshotUrl(profile.playerId);
           els.heroPhoto.alt = (profile.playerName || "QB") + " headshot";
           els.heroPhoto.onerror = () => { els.heroPhoto.removeAttribute("src"); };
@@ -3703,16 +4497,17 @@
           const grade = gradeEntry?.grade;
           const C = 2 * Math.PI * 32;
           const pct = grade != null ? Math.max(0, Math.min(1, grade / 100)) : 0;
+          const STAT_SHORT = { "Attempts":"ATT", "Completions":"CMP", "Yards":"YDS", "Touchdowns":"TD", "Interceptions":"INT" };
           const stats = (profile.heroStats || []).filter((s) => s.label !== "Overall grade");
           els.heroStats.innerHTML = `
             <div class="hero-grade-card">
               <div class="grade-ring">
-                <svg viewBox="0 0 74 74">
+                <svg viewBox="0 0 74 74" aria-hidden="true">
                   <circle class="bg" cx="37" cy="37" r="32" fill="none" stroke-width="7"></circle>
                   <circle class="fg" cx="37" cy="37" r="32" fill="none" stroke-width="7"
                     stroke-dasharray="0 ${C.toFixed(1)}" data-dash="${(C * pct).toFixed(1)}" data-circ="${C.toFixed(1)}"></circle>
                 </svg>
-                <span class="val">${grade != null ? Number(grade).toFixed(1) : "—"}</span>
+                <span class="val" aria-hidden="true">${grade != null ? Number(grade).toFixed(1) : "—"}</span>
               </div>
               <div class="grade-meta">
                 <p class="lbl">${escapeHtml(season)} pass grade</p>
@@ -3723,7 +4518,7 @@
             </div>
             ${stats.map((s) => `
               <div class="hero-stat">
-                <p class="lbl">${escapeHtml(s.label)}</p>
+                <p class="lbl"><span class="lbl-full">${escapeHtml(s.label)}</span><span class="lbl-short">${escapeHtml(STAT_SHORT[s.label] || s.label)}</span></p>
                 <p class="val">${escapeHtml(String(s.value ?? "—"))}</p>
               </div>`).join("")}
           `;
@@ -3748,6 +4543,21 @@
           els.rail.innerHTML = chips.map((c) =>
             `<button type="button" class="rail-chip" data-target="${escapeAttr(c.id)}">${escapeHtml(c.title)}</button>`
           ).join("");
+
+          // arrow nav
+          const prevBtn = document.getElementById("railPrev");
+          const nextBtn = document.getElementById("railNext");
+          const SCROLL_AMT = 280;
+          const updateArrows = () => {
+            const atStart = els.rail.scrollLeft <= 2;
+            const atEnd = els.rail.scrollLeft + els.rail.clientWidth >= els.rail.scrollWidth - 2;
+            if (prevBtn) prevBtn.disabled = atStart;
+            if (nextBtn) nextBtn.disabled = atEnd;
+          };
+          if (prevBtn) { prevBtn.onclick = () => { els.rail.scrollBy({ left: -SCROLL_AMT, behavior: "smooth" }); }; }
+          if (nextBtn) { nextBtn.onclick = () => { els.rail.scrollBy({ left: SCROLL_AMT, behavior: "smooth" }); }; }
+          els.rail.addEventListener("scroll", updateArrows, { passive: true });
+          updateArrows();
 
           // scrollspy
           const chipById = {};
@@ -3816,10 +4626,12 @@
             (window.QbAnnualProfile.buildExportModalCss ? window.QbAnnualProfile.buildExportModalCss() : "");
           els.mount.innerHTML = window.QbAnnualProfile.buildMarkup(profile, options);
           customizeSections(profile, theme);
+          promoteProfileHeadings();
 
           renderHero(profile, theme);
           renderRail();
           renderDataNotes(profile);
+          setMagazineHidden(true);
 
           const profileEl = els.mount.querySelector(".qb-profile");
           safe(() => window.QbAnnualAnimations?.init(null, profileEl), "animations");
@@ -3836,6 +4648,8 @@
           safe(() => window.QbAnnualAccuracyDepth?.init(host), "accuracy depth");
           safe(() => window.QbAnnualTargetMap?.init(host), "target map");
           safe(() => window.QbAnnualRouteTree?.init(host), "route tree");
+          safe(() => initAllCarouselChevrons(host), "carousel chevrons");
+          safe(() => initScatterExpandButtons(host), "scatter expand");
 
           els.content.classList.remove("is-swapping");
           if (scrollTop) els.hero.scrollIntoView({ behavior: "instant" });
@@ -3851,7 +4665,93 @@
           }
           writeHash();
           persist();
+          updateScrollRail(true);
         }
+
+        function initAllCarouselChevrons(host) {
+          const defs = [
+            { carSel: ".qb-compare-carousel", tabSel: ".qb-compare-tab",      trackSel: ".qb-compare-track"    },
+            { carSel: ".qb-scatter-carousel", tabSel: ".qb-scatter-tab",       trackSel: ".qb-scatter-track"    },
+            { carSel: ".qb-target-map",       tabSel: ".qb-target-map-tab",    trackSel: ".qb-target-map-track" },
+          ];
+          const chevSvg = (dir) =>
+            `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">` +
+            (dir === "prev"
+              ? `<path d="M7 2L4 5.5 7 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`
+              : `<path d="M4 2l3 3.5-3 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`) +
+            `</svg>`;
+
+          defs.forEach(({ carSel, tabSel, trackSel }) => {
+            host.querySelectorAll(carSel).forEach((car) => {
+              if (car.dataset.chevInit) return;
+              car.dataset.chevInit = "1";
+              const tabs = Array.from(car.querySelectorAll(tabSel));
+              if (tabs.length <= 1) return;
+              const track = car.querySelector(trackSel);
+              if (!track) return;
+
+              // Build nav row
+              const nav = document.createElement("div");
+              nav.className = "carousel-bottom-nav";
+
+              const prev = document.createElement("button");
+              prev.className = "carousel-chev"; prev.type = "button";
+              prev.setAttribute("aria-label", "Previous"); prev.innerHTML = chevSvg("prev");
+
+              const next = document.createElement("button");
+              next.className = "carousel-chev"; next.type = "button";
+              next.setAttribute("aria-label", "Next"); next.innerHTML = chevSvg("next");
+
+              const dotRow = document.createElement("div");
+              dotRow.className = "carousel-dot-row";
+              const dots = tabs.map((_, i) => {
+                const d = document.createElement("button");
+                d.className = "carousel-dot"; d.type = "button";
+                d.setAttribute("aria-label", `Slide ${i + 1}`);
+                d.addEventListener("click", () => tabs[i].click());
+                dotRow.appendChild(d);
+                return d;
+              });
+
+              nav.appendChild(prev); nav.appendChild(dotRow); nav.appendChild(next);
+              track.insertAdjacentElement("afterend", nav);
+
+              const sync = () => {
+                const idx = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
+                const active = idx < 0 ? 0 : idx;
+                prev.disabled = active === 0;
+                next.disabled = active === tabs.length - 1;
+                dots.forEach((d, i) => d.classList.toggle("is-active", i === active));
+              };
+
+              prev.addEventListener("click", () => {
+                const idx = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
+                if (idx > 0) tabs[idx - 1].click();
+              });
+              next.addEventListener("click", () => {
+                const idx = tabs.findIndex((t) => t.getAttribute("aria-pressed") === "true");
+                if (idx < tabs.length - 1) tabs[idx + 1].click();
+              });
+
+              // Watch aria-pressed on all tabs
+              const mo = new MutationObserver(sync);
+              tabs.forEach((t) => mo.observe(t, { attributes: true, attributeFilter: ["aria-pressed"] }));
+              sync();
+            });
+          });
+        }
+
+        function updateScrollRail(reset) {
+          const rail = document.getElementById("scrollProgressRail");
+          const fill = document.getElementById("scrollProgressFill");
+          if (!rail || !fill) return;
+          rail.classList.add("is-visible");
+          if (reset) { fill.style.height = "0%"; return; }
+          const total = document.body.scrollHeight - window.innerHeight;
+          const pct = total > 0 ? Math.min(100, (window.scrollY / total) * 100) : 0;
+          fill.style.height = pct.toFixed(1) + "%";
+        }
+        window.addEventListener("scroll", () => updateScrollRail(false), { passive: true });
 
         /* ---------------- switcher ---------------- */
         function renderSwitcherGrid(filter) {
@@ -3870,7 +4770,7 @@
             const logoBit = logo ? `<img src="${escapeAttr(logo)}" alt="" loading="lazy" onerror="this.style.display='none'" />` : "";
             const gradeBit = p.grade != null
               ? `<span class="qb-card-grade">${Number(p.grade).toFixed(1)}</span>` : "";
-            return `<button type="button" class="qb-card" data-id="${escapeAttr(p.playerId)}" style="--card-team:${escapeAttr(team.primary)}">
+            return `<button type="button" class="qb-card" data-id="${escapeAttr(p.playerId)}" style="--card-team:${escapeAttr(team.primary)}" aria-label="${escapeAttr(`Open ${p.playerName} profile`)}">
               <span class="qb-card-photo-wrap">
                 ${logo ? `<img class="qb-card-watermark" src="${escapeAttr(logo)}" alt="" loading="lazy" onerror="this.style.display='none'" />` : ""}
                 <img class="qb-card-photo" loading="lazy" src="${escapeAttr(headshotUrl(p.playerId))}" alt="" onerror="this.style.visibility='hidden'" />
@@ -3886,17 +4786,26 @@
         let coverMode = false;
         function openSwitcher({ cover = false } = {}) {
           coverMode = cover;
+          els.switcherClose.hidden = cover;
           els.switcherClose.style.display = cover ? "none" : "";
           els.switcher.hidden = false;
           els.switcher.classList.remove("is-leaving");
           document.body.style.overflow = "hidden";
           renderSwitcherGrid("");
           els.switcherSearch.value = "";
-          setTimeout(() => els.switcherSearch.focus(), 60);
+          window.QbAnnualA11y?.setInert?.(els.switcher);
+          switcherTrap?.deactivate?.();
+          switcherTrap = window.QbAnnualA11y?.createFocusTrap?.(els.switcher, { onEscape: closeSwitcher });
+          switcherTrap?.activate();
+          setTimeout(() => switcherTrap?.focusFirst("#switcherSearch"), 60);
         }
         function closeSwitcher() {
           els.switcher.classList.add("is-leaving");
           document.body.style.overflow = "";
+          switcherTrap?.deactivate?.();
+          switcherTrap = null;
+          window.QbAnnualA11y?.clearInert?.();
+          coverMode = false;
           setTimeout(() => { els.switcher.hidden = true; }, 360);
         }
 
@@ -3914,6 +4823,7 @@
           els.qbSwitchBtn.addEventListener("click", () => openSwitcher());
           els.brandBtn.addEventListener("click", () => {
             const mag = document.getElementById("magCover");
+            setMagazineHidden(false);
             if (mag) mag.scrollIntoView({ behavior: "smooth" });
             else openSwitcher();
           });
@@ -3922,6 +4832,7 @@
             const el = document.getElementById(targetId);
             if (el) el.scrollIntoView({ behavior: "smooth" });
             els.backBtn.hidden = true;
+            setMagazineHidden(false);
           });
           els.switcherClose.addEventListener("click", closeSwitcher);
           els.switcherSearch.addEventListener("input", () => renderSwitcherGrid(els.switcherSearch.value));
@@ -3939,7 +4850,7 @@
           });
 
           document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && !els.switcher.hidden && !coverMode) closeSwitcher();
+            if (e.key === "Escape" && !els.switcher.hidden) closeSwitcher();
             if (e.key === "/" && els.switcher.hidden && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "")) {
               e.preventDefault();
               openSwitcher();
@@ -4014,6 +4925,10 @@
             const pt = e.target.closest?.(".qb-scatter-point");
             if (pt) safe(() => scatterPanel(pt.closest(".qb-scatter-stage"), pt), "scatter hover");
           });
+          els.mount.addEventListener("focusin", (e) => {
+            const pt = e.target.closest?.(".qb-scatter-point");
+            if (pt) safe(() => scatterPanel(pt.closest(".qb-scatter-stage"), pt), "scatter focus");
+          });
           els.mount.addEventListener("mouseout", (e) => {
             const pt = e.target.closest?.(".qb-scatter-point");
             if (!pt) return;
@@ -4067,7 +4982,7 @@
           if (!current || !qbOrder.length) return;
           const i = qbOrder.findIndex((p) => String(p.playerId) === String(current.playerId));
           const next = qbOrder[(i + dir + qbOrder.length) % qbOrder.length];
-          showQb(next, { scrollTop: false });
+          showQb(next, { scrollTop: true });
         }
 
         /* -------- index panel -------- */
@@ -4095,6 +5010,11 @@
             backdrop.classList.add("is-open");
             toggle.setAttribute("aria-expanded", "true");
             document.body.style.overflow = "hidden";
+            window.QbAnnualA11y?.setInert?.(panel);
+            idxPanelTrap?.deactivate?.();
+            idxPanelTrap = window.QbAnnualA11y?.createFocusTrap?.(panel, { onEscape: close });
+            idxPanelTrap?.activate();
+            idxPanelTrap?.focusFirst("#idxClose, .idx-nav-row, .idx-qb-row");
             animateRows();
           }
 
@@ -4105,6 +5025,9 @@
             backdrop.classList.remove("is-open");
             toggle.setAttribute("aria-expanded", "false");
             document.body.style.overflow = "";
+            idxPanelTrap?.deactivate?.();
+            idxPanelTrap = null;
+            window.QbAnnualA11y?.clearInert?.();
           }
 
           toggle.addEventListener("click", () => isOpen ? close() : open());
@@ -4154,6 +5077,13 @@
           const rail   = document.getElementById("introRail");
           const paras  = Array.from(section.querySelectorAll(".mag-intro-body p"));
           const sig    = document.getElementById("introSig");
+
+          if (window.QbAnnualA11y?.prefersReducedMotion?.()) {
+            section.querySelectorAll(".mag-intro-side-img, .mag-intro-body p, #introSig").forEach((el) => {
+              el.classList.add("is-revealed");
+            });
+            return;
+          }
 
           // --- Side images: fade in on entry ---
           section.querySelectorAll(".mag-intro-side-img").forEach((img) => {
@@ -4250,8 +5180,13 @@
           const section = document.getElementById("magAck");
           if (!section) return;
 
-          // Stagger name cards in as the grid scrolls into view
           const names = Array.from(section.querySelectorAll(".mag-ack-name"));
+          if (window.QbAnnualA11y?.prefersReducedMotion?.()) {
+            names.forEach((n) => n.classList.add("is-revealed"));
+            return;
+          }
+
+          // Stagger name cards in as the grid scrolls into view
           names.forEach((n, i) => {
             n.style.setProperty("--nd", (i * 0.028).toFixed(3) + "s");
           });
@@ -4294,24 +5229,24 @@
             }
             grid.innerHTML = list.map((p) => {
               const team = window.QbAnnualTeams.resolve(p.franchiseId);
-              const logo = teamLogoUrl(p.franchiseId);
+              const logo = team.logo;
               const logoBit = logo
                 ? `<img class="mag-index-logo" src="${escapeAttr(logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`
                 : "";
               const grade = p.grade != null
                 ? `<span class="mag-index-grade">${Number(p.grade).toFixed(1)}</span>` : "";
-              return `<div class="mag-index-card" data-id="${escapeAttr(String(p.playerId))}" style="--card-team:${escapeAttr(team.primary || "#006bff")}">
+              return `<button type="button" class="mag-index-card" data-id="${escapeAttr(String(p.playerId))}" style="--card-team:${escapeAttr(team.primary || "#006bff")}" aria-label="${escapeAttr(`Open ${p.playerName} profile`)}">
   <div class="mag-index-photo-wrap">
     ${logo ? `<img class="mag-index-card-watermark" src="${escapeAttr(logo)}" alt="" aria-hidden="true" loading="lazy">` : ""}
-    <img class="mag-index-photo" src="${escapeAttr(headshotUrl(p.playerId))}" alt="${escapeAttr(p.playerName)}" loading="lazy" onerror="this.style.visibility='hidden'">
+    <img class="mag-index-photo" src="${escapeAttr(headshotUrl(p.playerId))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
     ${logoBit}
   </div>
   <div class="mag-index-body">
-    <div class="mag-index-name">${escapeHtml(p.playerName)}</div>
+    <div class="mag-index-name">${(() => { const parts = p.playerName.trim().split(" "); const last = parts.pop(); const first = parts.join(" "); return first ? `<span class="mag-index-fname">${escapeHtml(first)}</span> <span class="mag-index-lname">${escapeHtml(last)}</span>` : `<span class="mag-index-lname">${escapeHtml(last)}</span>`; })()}</div>
     <div class="mag-index-team">${escapeHtml(team.nickname || p.teamName || "")}</div>
     ${grade}
   </div>
-</div>`;
+</button>`;
             }).join("");
             grid.querySelectorAll(".mag-index-card[data-id]").forEach((card) => {
               card.addEventListener("click", () => {
@@ -4365,6 +5300,200 @@
           magSections.forEach((s) => magSpy.observe(s));
         }
 
+        /* -------- scatter carousel expand buttons (mobile) -------- */
+        function initScatterExpandButtons(host) {
+          if (window.innerWidth > 768) return;
+          const expandSvg = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 5V1h4M8 1h4v4M12 8v4H8M5 12H1V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+          const topbarClose = document.getElementById("lbTopbarClose");
+          const topbar = document.querySelector(".topbar");
+
+          let hint = document.getElementById("scatterRotateHint");
+          if (!hint) {
+            hint = document.createElement("div");
+            hint.id = "scatterRotateHint";
+            hint.className = "scatter-rotate-hint";
+            hint.innerHTML = `↻ &nbsp;Rotate for landscape view`;
+            document.body.appendChild(hint);
+          }
+
+          const collapse = () => {
+            const expanded = host.querySelectorAll(".qb-scatter-carousel.is-expanded");
+            if (!expanded.length) return;  // not our expand — don't touch scroll
+            expanded.forEach(c => c.classList.remove("is-expanded"));
+            if (topbarClose) topbarClose.hidden = true;
+            if (topbar) topbar.classList.remove("lb-expanded-mode");
+            hint.classList.remove("is-visible");
+            // iOS scroll lock release
+            const scrollY = parseInt(document.body.style.top || "0") * -1;
+            document.body.style.position = "";
+            document.body.style.top = "";
+            document.body.style.width = "";
+            document.body.style.overflow = "";
+            window.scrollTo(0, scrollY);
+          };
+
+          if (topbarClose && !topbarClose.dataset.scatterCloseInit) {
+            topbarClose.dataset.scatterCloseInit = "1";
+            topbarClose.addEventListener("click", collapse);
+          }
+
+          host.querySelectorAll(".qb-scatter-carousel").forEach(carousel => {
+            if (carousel.dataset.scatterExpandInit) return;
+            carousel.dataset.scatterExpandInit = "1";
+            const tabsRow = carousel.querySelector(".qb-scatter-tabs");
+            if (!tabsRow) return;
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "lb-expand-btn";
+            btn.setAttribute("aria-label", "Expand chart");
+            btn.innerHTML = expandSvg;
+            tabsRow.appendChild(btn);
+            btn.addEventListener("click", e => {
+              e.stopPropagation();
+              const expanded = carousel.classList.toggle("is-expanded");
+              if (expanded) {
+                if (topbarClose) topbarClose.hidden = false;
+                if (topbar) topbar.classList.add("lb-expanded-mode");
+                // iOS-safe scroll lock
+                const scrollY = window.scrollY;
+                document.body.style.position = "fixed";
+                document.body.style.top = `-${scrollY}px`;
+                document.body.style.width = "100%";
+                hint.classList.add("is-visible");
+                setTimeout(() => hint.classList.remove("is-visible"), 3000);
+              } else {
+                collapse();
+              }
+            });
+          });
+        }
+
+        window.addEventListener("orientationchange", () => {
+          setTimeout(() => window.dispatchEvent(new Event("resize")), 300);
+        });
+
+        /* -------- leaderboard expand buttons (mobile) -------- */
+        function initLbExpandButtons(host) {
+          if (window.innerWidth > 768) return;
+          const expandSvg = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 5V1h4M8 1h4v4M12 8v4H8M5 12H1V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+          const topbarClose = document.getElementById("lbTopbarClose");
+          const topbar = document.querySelector(".topbar");
+
+          // Rotate hint (shared with QB scatter expand)
+          let hint = document.getElementById("scatterRotateHint");
+          if (!hint) {
+            hint = document.createElement("div");
+            hint.id = "scatterRotateHint";
+            hint.className = "scatter-rotate-hint";
+            hint.innerHTML = `↻ &nbsp;Rotate for landscape view`;
+            document.body.appendChild(hint);
+          }
+
+          const collapse = () => {
+            const modal = document.getElementById("magScatterModal");
+            const cards = host.querySelectorAll(".mag-lb-card.is-expanded");
+            if (!modal && !cards.length) return;
+
+            if (modal) {
+              // Restore body scroll before removing modal (no flash)
+              const scrollY = parseInt(document.body.style.top || "0") * -1;
+              document.body.style.position = "";
+              document.body.style.top = "";
+              document.body.style.width = "";
+              window.scrollTo({ top: scrollY, behavior: "instant" });
+              modal.remove();
+            }
+
+            cards.forEach(c => c.classList.remove("is-expanded"));
+            if (topbarClose) topbarClose.hidden = true;
+            if (topbar) topbar.classList.remove("lb-expanded-mode");
+            hint.classList.remove("is-visible");
+          };
+
+          if (topbarClose && !topbarClose.dataset.closeInit) {
+            topbarClose.dataset.closeInit = "1";
+            topbarClose.addEventListener("click", collapse);
+          }
+
+          host.querySelectorAll(".mag-lb-card").forEach(card => {
+            if (card.dataset.expandInit) return;
+            card.dataset.expandInit = "1";
+            const header = card.querySelector(".mag-lb-header");
+            if (!header) return;
+            const isScatter = card.classList.contains("is-scatter-card");
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "lb-expand-btn";
+            btn.setAttribute("aria-label", isScatter ? "Expand chart" : "Expand table");
+            btn.innerHTML = expandSvg;
+            header.appendChild(btn);
+            btn.addEventListener("click", e => {
+              e.stopPropagation();
+              if (isScatter) {
+                // Build a fresh modal appended to <body> — bypasses all stacking contexts
+                const titleEl  = card.querySelector(".mag-lb-title");
+                const footerEl = card.querySelector(".mag-lb-footer");
+                const svgEl    = card.querySelector(".mag-scatter-svg");
+
+                const modal = document.createElement("div");
+                modal.id = "magScatterModal";
+                modal.className = "mag-scatter-modal is-open";
+
+                // Close button — fixed to viewport, visible in both portrait & landscape
+                const closeBtn = document.createElement("button");
+                closeBtn.type = "button";
+                closeBtn.className = "mag-scatter-modal-close";
+                closeBtn.setAttribute("aria-label", "Close chart");
+                closeBtn.textContent = "✕ Close";
+                closeBtn.addEventListener("click", collapse);
+
+                const modalHeader = document.createElement("div");
+                modalHeader.className = "mag-scatter-modal-header";
+                const modalTitle = document.createElement("span");
+                modalTitle.className = "mag-scatter-modal-title";
+                modalTitle.textContent = titleEl ? titleEl.textContent : "";
+                modalHeader.appendChild(modalTitle);
+
+                const modalBody = document.createElement("div");
+                modalBody.className = "mag-scatter-modal-body";
+                if (svgEl) modalBody.appendChild(svgEl.cloneNode(true));
+
+                const modalFooter = document.createElement("div");
+                modalFooter.className = "mag-scatter-modal-footer";
+                modalFooter.textContent = footerEl ? footerEl.textContent : "";
+
+                modal.appendChild(closeBtn);
+                modal.appendChild(modalHeader);
+                modal.appendChild(modalBody);
+                modal.appendChild(modalFooter);
+                document.body.appendChild(modal);
+
+                if (topbarClose) topbarClose.hidden = false;
+                if (topbar) topbar.classList.add("lb-expanded-mode");
+
+                // Lock body scroll while modal is open
+                const scrollY = window.scrollY;
+                document.body.style.position = "fixed";
+                document.body.style.top = `-${scrollY}px`;
+                document.body.style.width = "100%";
+
+                hint.classList.add("is-visible");
+                setTimeout(() => hint.classList.remove("is-visible"), 3000);
+              } else {
+                // Regular table card — toggle is-expanded
+                const expanded = card.classList.toggle("is-expanded");
+                if (expanded) {
+                  if (topbarClose) topbarClose.hidden = false;
+                  if (topbar) topbar.classList.add("lb-expanded-mode");
+                  card.scrollTop = 0;
+                } else {
+                  collapse();
+                }
+              }
+            });
+          });
+        }
+
         /* -------- magazine: leaderboards -------- */
         function buildMagazineSummary() {
           const grid = document.getElementById("magLbGrid");
@@ -4392,6 +5521,8 @@
             return;
           }
 
+          const lbRank = (rank) => window.QbAnnualA11y?.lbRankHtml?.(rank) || `<span class="mag-lb-rank">${rank}</span>`;
+
           /* ---- shared helpers ---- */
           function lbLogo(franchiseId) {
             const team = window.QbAnnualTeams.resolve(franchiseId);
@@ -4414,13 +5545,13 @@
                 ? Math.min(100, Math.round((topVal / Math.max(val, 0.001)) * 100))
                 : Math.min(100, Math.round((val / mv) * 100));
               const { last, first } = lbNameParts(r.player);
-              return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
-                <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+              return `<button type="button" class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}" aria-label="${escapeAttr(`Open ${r.player || "quarterback"} profile`)}">
+                ${lbRank(i + 1)}
                 ${lbLogo(r.franchiseId)}
                 <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
                 <div class="mag-lb-bar-wrap"><div class="mag-lb-bar${cls ? " "+cls : ""}" style="width:${barPct}%"></div></div>
                 <span class="mag-lb-val">${escapeHtml(String(display(r)))}</span>
-              </div>`;
+              </button>`;
             }).join("");
             return `<div class="mag-lb-card">
               <div class="mag-lb-header"><div class="mag-lb-icon">${icon}</div><span class="mag-lb-title">${escapeHtml(title)}</span></div>
@@ -4437,13 +5568,13 @@
               const barPct = Math.round((Math.abs(d.delta) / maxAbs) * 100);
               const { last, first } = lbNameParts(d.player);
               const deltaStr = (d.delta > 0 ? "+" : "") + d.delta.toFixed(1);
-              return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(d.playerId||""))}" data-name="${escapeAttr(d.player||"")}">
-                <span class="mag-lb-rank">${i+1}</span>
+              return `<button type="button" class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(d.playerId||""))}" data-name="${escapeAttr(d.player||"")}" aria-label="${escapeAttr(`Open ${d.player || "quarterback"} profile`)}">
+                ${lbRank(i + 1)}
                 ${lbLogo(d.franchiseId)}
                 <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
                 <div class="mag-lb-bar-wrap"><div class="mag-lb-bar ${isDecline ? "is-decline" : "is-jump"}" style="width:${barPct}%"></div></div>
                 <span class="mag-lb-val ${isDecline ? "mag-lb-delta--neg" : "mag-lb-delta--pos"}">${escapeHtml(deltaStr)}</span>
-              </div>`;
+              </button>`;
             }).join("");
             return `<div class="mag-lb-card is-plain-ranks ${isDecline ? "is-decline-card" : "is-jump-card"}">
               <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
@@ -4465,8 +5596,8 @@
               const dPct = ((r.designedYards||0) / maxYards * 100).toFixed(1);
               const sPct = ((r.scrambleYards||0) / maxYards * 100).toFixed(1);
               const { last, first } = lbNameParts(r.player);
-              return `<div class="mag-lb-row mag-lb-row--rush" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
-                <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+              return `<button type="button" class="mag-lb-row mag-lb-row--rush" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}" aria-label="${escapeAttr(`Open ${r.player || "quarterback"} profile`)}">
+                ${lbRank(i + 1)}
                 ${lbLogo(r.franchiseId)}
                 <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
                 <div class="mag-seg-wrap">
@@ -4474,7 +5605,7 @@
                   <div class="mag-seg-scramble" style="width:${sPct}%"></div>
                 </div>
                 <span class="mag-lb-val">${Math.round(r.yards||0)}</span>
-              </div>`;
+              </button>`;
             }).join("");
             return `<div class="mag-lb-card is-full">
               <div class="mag-lb-header"><div class="mag-lb-icon">🏃</div><span class="mag-lb-title">QB Rushing Yards</span>${legend}</div>
@@ -4544,10 +5675,10 @@
             const axSvg = `<text x="${(mx.l+pw/2).toFixed(1)}" y="${(H-5).toFixed(1)}" text-anchor="middle" font-size="11" fill="#94a3b8" font-weight="700">${xLabel}</text>
 <text transform="rotate(-90)" x="${(-(mx.t+ph/2)).toFixed(1)}" y="13" text-anchor="middle" font-size="11" fill="#94a3b8" font-weight="700">${yLabel}</text>`;
 
-            return `<div class="mag-lb-card is-full">
+            return `<div class="mag-lb-card is-full is-scatter-card">
               <div class="mag-lb-header"><div class="mag-lb-icon">📊</div><span class="mag-lb-title">${escapeHtml(title)}</span></div>
               <div class="mag-scatter-wrap">
-                <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="mag-scatter-svg" preserveAspectRatio="xMidYMid meet">
+                <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="mag-scatter-svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeAttr(title + ': scatter chart showing ' + xLabel + ' vs ' + yLabel + ' for qualifying quarterbacks')}">
                   ${gridSvg}${diagSvg}${avgSvg}${dotsSvg}${axSvg}
                 </svg>
               </div>
@@ -4647,7 +5778,7 @@
             }),
             top5Card({
               icon: "🎯", title: "Adj. Completion %",
-              note: "Accuracy % — excl. drops, throwaways & spikes · higher = better",
+              note: "Adj. completion % excl. drops, throwaways, spikes and instances of QB being hit as he threw · higher = better",
               rows: [...season2025].filter(r => r.accuracyPercent != null).sort((a,b) => b.accuracyPercent - a.accuracyPercent).slice(0,5),
               raw: r => r.accuracyPercent || 0,
               display: r => (r.accuracyPercent||0).toFixed(1) + "%",
@@ -4730,13 +5861,13 @@
                   const t = window.QbAnnualTeams?.resolve(r.franchiseId);
                   const rowAccent = (t && t.primary) ? t.primary : "#006bff";
                   const { last, first } = lbNameParts(r.player);
-                  return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}">
-                    <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+                  return `<button type="button" class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(String(r.playerId||""))}" data-name="${escapeAttr(r.player||"")}" aria-label="${escapeAttr(`Open ${r.player || "quarterback"} profile`)}">
+                    ${lbRank(i + 1)}
                     ${lbLogo(r.franchiseId)}
                     <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
                     <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%;background:linear-gradient(90deg,#0050c8,#006bff)"></div></div>
                     <span class="mag-lb-val">${escapeHtml(valStr)}</span>
-                  </div>`;
+                  </button>`;
                 }).join("");
                 return `<div class="mag-lb-card">
                   <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
@@ -4766,13 +5897,13 @@
                   const { last, first } = lbNameParts(r.player);
                   const t = window.QbAnnualTeams?.resolve(r.franchiseId);
                   const bar = (t && t.primary) ? t.primary : "#006bff";
-                  return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(r.playerId)}" data-name="${escapeAttr(r.player||"")}">
-                    <span class="mag-lb-rank">${i === 0 ? "🥇" : i+1}</span>
+                  return `<button type="button" class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(r.playerId)}" data-name="${escapeAttr(r.player||"")}" aria-label="${escapeAttr(`Open ${r.player || "quarterback"} profile`)}">
+                    ${lbRank(i + 1)}
                     ${lbLogo(r.franchiseId)}
                     <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
                     <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%;background:${escapeAttr(bar)}"></div></div>
                     <span class="mag-lb-val">${escapeHtml(fmt(r.value))}</span>
-                  </div>`;
+                  </button>`;
                 }).join("");
                 return `<div class="mag-lb-card">
                   <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
@@ -4780,9 +5911,9 @@
                   <div class="mag-lb-footer">${escapeHtml(note)}</div>
                 </div>`;
               }
-              const gradeCard = clutchCard("passGrd", "Clutch moments: Passing grade", "PFF passing grade · 4th qtr or OT, ≤8 pts · qualifying passers", v => v.toFixed(1));
-              const ypaCard   = clutchCard("ypa",     "Clutch moments: Yards / attempt", "Yards per pass attempt · 4th qtr or OT, ≤8 pts · qualifying passers", v => v.toFixed(2));
-              const bttCard   = clutchCard("bttPct",  "Clutch moments: Big-time throw %", "BTT rate · 4th qtr or OT, ≤8 pts · qualifying passers", v => v.toFixed(1) + "%");
+              const gradeCard = clutchCard("passGrd", "Clutch moments: Passing grade", "PFF passing grade · clutch situations · qualifying passers", v => v.toFixed(1));
+              const ypaCard   = clutchCard("ypa",     "Clutch moments: Yards / attempt", "Yards per pass attempt · clutch situations · qualifying passers", v => v.toFixed(2));
+              const bttCard   = clutchCard("bttPct",  "Clutch moments: Big-time throw %", "BTT rate · clutch situations · qualifying passers", v => v.toFixed(1) + "%");
               return gradeCard + ypaCard + bttCard;
             })(),
 
@@ -4813,13 +5944,13 @@
                   const barPct = Math.min(100, (Math.abs(r.netLuck) / maxAbs) * 100).toFixed(1);
                   const sign = r.netLuck >= 0 ? "+" : "";
                   const { last, first } = lbNameParts(r.player);
-                  return `<div class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(r.playerId)}" data-name="${escapeAttr(r.player||"")}">
-                    <span class="mag-lb-rank">${i+1}</span>
+                  return `<button type="button" class="mag-lb-row" data-rank="${i+1}" data-id="${escapeAttr(r.playerId)}" data-name="${escapeAttr(r.player||"")}" aria-label="${escapeAttr(`Open ${r.player || "quarterback"} profile`)}">
+                    ${lbRank(i + 1)}
                     ${lbLogo(r.franchiseId)}
                     <span class="mag-lb-name">${escapeHtml(last)}<small>${escapeHtml(first)}</small></span>
                     <div class="mag-lb-bar-wrap"><div class="mag-lb-bar" style="width:${barPct}%;background:${barColor}"></div></div>
                     <span class="mag-lb-val" style="color:${barColor}">${escapeHtml(sign + r.netLuck.toFixed(1))}</span>
-                  </div>`;
+                  </button>`;
                 }).join("");
                 return `<div class="mag-lb-card is-plain-ranks">
                   <div class="mag-lb-header"><span class="mag-lb-title">${escapeHtml(title)}</span></div>
@@ -4879,6 +6010,9 @@
             if (qb) showQb(qb, { backTo: 'leaderboards' });
           });
 
+          // Expand buttons (mobile)
+          initLbExpandButtons(grid);
+
           // Zero-graded leaderboard tab toggles
           grid.querySelectorAll("[data-zg-lb-tab]").forEach(tab => {
             tab.addEventListener("click", () => {
@@ -4917,13 +6051,10 @@
             const wantedId = hash.qb || saved.playerId || "";
             const qb = qbOrder.find((p) => String(p.playerId) === String(wantedId));
 
-            const loaderMinMs = 7500;
+            const loaderMinMs = window.QbAnnualA11y?.prefersReducedMotion?.() ? 0 : LOADER_CINEMATIC_MS;
             const loaderAge = Date.now() - (window.__loaderStart || Date.now());
             const loaderWait = Math.max(0, loaderMinMs - loaderAge);
-            setTimeout(() => {
-              els.loader.classList.add("is-done");
-              setTimeout(() => els.loader.remove(), 1100);
-            }, loaderWait);
+            setTimeout(dismissLoader, loaderWait);
 
             if (qb) {
               showQb(qb, { scrollTop: false });
@@ -4942,6 +6073,7 @@
         }
 
         // Panel HTML is above the script, so elements exist — wire immediately
+        document.getElementById("loaderSkip")?.addEventListener("click", dismissLoader);
         wireIndexPanel();
         wireEditorLetter();
         wireAckSection();

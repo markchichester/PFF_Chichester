@@ -314,6 +314,10 @@
     };
   }
 
+  function fieldRectShape(x0, y0, x1, y1, fillcolor) {
+    return { type: "rect", xref: "x", yref: "y", x0, y0, x1, y1, fillcolor, line: { width: 0 }, layer: "below" };
+  }
+
   function buildFieldDecor() {
     const fieldLeft = 0;
     const fieldRight = 53.33;
@@ -326,10 +330,21 @@
     const losGlowColor = "rgba(120,210,255,0.28)";
     const labelColor = "rgba(255,255,255,0.86)";
     const losLabelColor = "rgba(120,210,255,0.98)";
+    const marginLabelColor = "rgba(255,255,255,0.38)";
     const hashColumns = [23.58, 29.75];
     const majorYards = [-10, 0, 10, 20, 30, 40, 50, 60];
     const shapes = [];
     const annotations = [];
+
+    // Field background
+    shapes.push(fieldRectShape(fieldLeft, -10, fieldRight, 60, "rgba(8,12,18,.68)"));
+    // End zone background
+    shapes.push(fieldRectShape(fieldLeft, -10, fieldRight, 0, "rgba(6,10,16,.82)"));
+    // Subtle depth-zone tints
+    shapes.push(fieldRectShape(fieldLeft, 20, fieldRight, 60, "rgba(60,120,255,.03)"));
+    // Out-of-bounds strips (intentional margin feel)
+    shapes.push(fieldRectShape(-5.8, -10, fieldLeft, 60, "rgba(255,255,255,.018)"));
+    shapes.push(fieldRectShape(fieldRight, -10, 59.1, 60, "rgba(255,255,255,.018)"));
 
     shapes.push(fieldLineShape(fieldLeft, -10, fieldLeft, 60, sidelineColor, 2.4));
     shapes.push(fieldLineShape(fieldRight, -10, fieldRight, 60, sidelineColor, 2.4));
@@ -359,11 +374,32 @@
       });
     }
 
+    // Yard numbers (inside margins)
     [10, 20, 30, 40, 50].forEach((y) => {
       annotations.push(fieldLabelAnnotation(-1.6, y, String(y), labelColor));
       annotations.push(fieldLabelAnnotation(54.93, y, String(y), labelColor));
     });
     annotations.push(fieldLabelAnnotation(-1.6, 0, "LOS", losLabelColor, 11));
+
+    // Depth zone labels — right OOB margin
+    const zoneFont = { size: 8.5, color: marginLabelColor, family: "Archivo, sans-serif" };
+    [
+      [40, "DEEP"],
+      [15, "MEDIUM"],
+      [5,  "SHORT"],
+      [-5, "BEHIND"],
+    ].forEach(([y, label]) => {
+      annotations.push({ x: 57.2, y, text: label, showarrow: false, xref: "x", yref: "y", font: zoneFont, textangle: -90 });
+    });
+
+    // QB position marker
+    annotations.push({
+      x: 26.67, y: -9,
+      text: "▲  QB",
+      showarrow: false, xref: "x", yref: "y",
+      font: { size: 9, color: "rgba(120,210,255,.6)", family: "Archivo, sans-serif" },
+      xanchor: "center",
+    });
 
     return { shapes, annotations };
   }
@@ -434,7 +470,7 @@
       shapes: field.shapes,
       annotations: field.annotations,
       xaxis: {
-        range: [-1.9, 55.2],
+        range: [-5.8, 59.1],
         showgrid: false,
         zeroline: false,
         showticklabels: false,
@@ -486,7 +522,7 @@
             ? "Accuracy percentage vs league average by field zone"
             : slide === "routes"
               ? "Click a route branch for passing stats by concept"
-              : "Click a dot for play details";
+              : "Use the table below or activate a throw point for play details";
     }
 
     const hover = widget.querySelector(".qb-target-map-hover");
@@ -495,6 +531,11 @@
     if (slide === "routes") {
       global.QbAnnualRouteTree?.renderWidget(widget.querySelector(".qb-route-tree"));
     }
+  }
+
+  function toTitleCase(str) {
+    if (!str || str === "—") return str;
+    return String(str).toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   function renderHoverPanel(widget, data) {
@@ -529,18 +570,18 @@
       ["Target", data.target_name],
       ["Coverage Player", data.coverage_name],
       ["Result", data.result],
-      ["Accuracy Category", data.pass_location],
+      ["Accuracy Category", toTitleCase(data.pass_location)],
       ["Dropback Type", data.dropback_type],
-      ["Route", data.route],
+      ["Route", toTitleCase(data.route)],
       ["Receiver Alignment Pre-Snap", data.target_play_position],
-      ["Receiver Separation", data.separation],
+      ["Receiver Separation", toTitleCase(data.separation)],
       ["QB Decision", data.qb_decision],
       ["Time To Throw", data.time_to_throw],
       ["Targeted Depth", data.targeted_depth],
       ["Yards Gained", data.yards_gained],
       ["Yards After Catch", data.yards_after_catch],
       ["Dropback Steps", data.step_drop],
-      ["Coverage", data.coverage],
+      ["Coverage", toTitleCase(data.coverage)],
       ["Coverage Type", data.coverage_type],
       ["EPA", data.epa],
     ]
@@ -594,6 +635,10 @@
     });
   }
 
+  function renderAccessibleAlternatives(/* widget, plays */) {
+    // play picker and accessible table removed
+  }
+
   function updateStatline(widget, plays) {
     const statline = Api().buildTargetMapStatline(plays);
     widget.querySelector('[data-stat="attempts"]')?.replaceChildren(
@@ -629,6 +674,7 @@
     widget._targetMapFilteredPlays = filteredPlays;
 
     updateStatline(widget, filteredPlays);
+    renderAccessibleAlternatives(widget, filteredPlays);
     updateFilterCount(widget, filteredPlays.length, model.plays.length);
     updateActiveFilterBadge(widget);
     setViewMode(widget, slide);

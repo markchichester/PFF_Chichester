@@ -91,14 +91,11 @@
     const yardNum = (y, n, x) =>
       `<text class="qb-grid-ynum" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 ${x} ${y})">${n}</text>`;
     const yardNums = [
-      ["short", 10],
-      ["medium", 20],
-      ["deep", 30],
+      [F.yardLines[0], 10],
+      [F.yardLines[1], 20],
+      [F.los,          30],
     ]
-      .map(([key, n]) => {
-        const y = F.rowCenter(key);
-        return yardNum(y, n, F.sl + 4.5) + yardNum(y, n, F.sr - 4.5);
-      })
+      .map(([y, n]) => yardNum(y, n, F.sl + 4.5) + yardNum(y, n, F.sr - 4.5))
       .join("");
 
     return `<svg class="qb-depth-grid-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -264,7 +261,7 @@
         .join("");
 
       const carouselSlides = [
-        { id: "grade", label: "PFF grade", html: donuts },
+        { id: "grade", label: "Passing grade", html: donuts },
         profile.warSeasons?.length
           ? {
               id: "war",
@@ -276,7 +273,7 @@
 
       if (carouselSlides.length <= 1) {
         return this.buildCollapsibleSection({
-          title: "PFF grade by season",
+          title: "PFF Passing Grade & PFF WAR",
           sectionClass: "qb-section-donuts",
           leadHtml: `<p class="qb-interactive-hint qb-animate-item">Click a donut center for full season rankings</p>`,
           bodyHtml: `<div class="qb-donut-row">${donuts}</div>`,
@@ -303,7 +300,7 @@
         sectionClass: "qb-section-donuts",
         leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap for WAR · click a donut center for season rankings</p>`,
         bodyHtml: `<div class="qb-compare-carousel qb-compare-carousel--donuts qb-animate-item" data-default-split="${escapeAttr(carouselSlides[0].id)}">
-    <div class="qb-compare-tabs" role="tablist">${tabs}</div>
+    <div class="qb-compare-tabs" role="group" aria-label="Passing split views">${tabs}</div>
     <div class="qb-compare-track">${slides}</div>
   </div>`,
       });
@@ -338,6 +335,9 @@
 
       const baseY = padT + plotH;
 
+      const PLAYOFF_LABELS = { 28: "WC", 29: "DIV", 30: "CC", 31: "SB", 32: "SB" };
+      const weekLabel = (w) => PLAYOFF_LABELS[w] || String(w);
+
       const barEls = bars
         .map((bar, i) => {
           const x = padL + i * xStep + (xStep - barW) / 2;
@@ -345,18 +345,19 @@
           const h = baseY - y;
           const delay = i * 45;
           const opponentHint = bar.opponent ? ` · ${bar.opponent}` : "";
+          const wLabel = weekLabel(bar.week);
           return `<g class="qb-chart-bar qb-chart-bar--game" data-y="${y.toFixed(1)}" data-h="${h.toFixed(1)}" data-base="${baseY.toFixed(1)}" data-delay="${delay}">
   <rect class="qb-game-bar-fill" x="${x.toFixed(1)}" y="${baseY.toFixed(1)}" width="${barW.toFixed(1)}" height="0" fill="${color}" rx="2" />
   <rect class="qb-game-bar-hit" x="${(x - 4).toFixed(1)}" y="${padT.toFixed(1)}" width="${(barW + 8).toFixed(1)}" height="${plotH.toFixed(1)}"
     fill="transparent" data-game-week="${bar.week}" role="button" tabindex="0"
-    aria-label="${escapeAttr(`Week ${bar.week}${opponentHint}: grade ${this.formatGrade(bar.grade)}`)}"/>
+    aria-label="${escapeAttr(`${wLabel}${opponentHint}: grade ${this.formatGrade(bar.grade)}`)}"/>
   <text class="qb-bar-value" x="${(x + barW / 2).toFixed(1)}" y="${(y - 6).toFixed(1)}" text-anchor="middle" opacity="0" pointer-events="none">${this.formatGrade(bar.grade)}</text>
-  <text class="qb-axis-label qb-game-week-label" x="${(x + barW / 2).toFixed(1)}" y="${(baseY + 22).toFixed(1)}" text-anchor="middle" pointer-events="none">${escapeHtml(String(bar.week))}</text>
+  <text class="qb-axis-label qb-game-week-label" x="${(x + barW / 2).toFixed(1)}" y="${(baseY + 22).toFixed(1)}" text-anchor="middle" pointer-events="none">${escapeHtml(wLabel)}</text>
 </g>`;
         })
         .join("");
 
-      return `<div class="qb-chart-wrap qb-chart-wrap--interactive qb-animate-item"><svg class="qb-game-chart" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="2025 game passing grades by week">
+      return `<div class="qb-chart-wrap qb-chart-wrap--interactive qb-animate-item"><svg class="qb-game-chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="2025 game passing grades by week">
 ${gridLines}${barEls}</svg></div>`;
     },
 
@@ -397,7 +398,7 @@ ${gridLines}${barEls}</svg></div>`;
         })
         .join("");
 
-      return `<div class="qb-chart-wrap qb-animate-item"><svg class="qb-dist-chart" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="Play-level grade distribution">${bars}</svg></div>`;
+      return `<div class="qb-chart-wrap qb-chart-wrap--dist qb-animate-item"><svg class="qb-dist-chart" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="Play-level grade distribution">${bars}</svg></div>`;
     },
 
     statCountAttrs(label, value) {
@@ -427,7 +428,7 @@ ${gridLines}${barEls}</svg></div>`;
     </div>
     <div class="qb-hero-copy qb-animate-item" style="--delay: 100ms">
       <p class="qb-hero-kicker">${escapeHtml(profile.teamName)} · ${escapeHtml(profile.displaySeason)}</p>
-      <h1 class="qb-hero-name">${escapeHtml(profile.playerName)}</h1>
+      <h1 class="qb-hero-name" aria-hidden="true">${escapeHtml(profile.playerName)}</h1>
       <p class="qb-hero-position">${escapeHtml(profile.position || "QB")}</p>
     </div>
   </div>
@@ -508,7 +509,7 @@ ${gridLines}${barEls}</svg></div>`;
   <details class="qb-collapsible-details"${openAttr}>
     <summary class="qb-collapsible-trigger">
       <span class="qb-collapsible-heading">
-        <span class="qb-collapsible-title">${escapeHtml(title)}</span>
+        <h2 class="qb-collapsible-title">${escapeHtml(title)}</h2>
       </span>
       <span class="qb-collapsible-chevron" aria-hidden="true"></span>
     </summary>
@@ -535,13 +536,7 @@ ${gridLines}${barEls}</svg></div>`;
       return rangeMin + ((value - min) / (max - min)) * (rangeMax - rangeMin);
     },
 
-    buildScatterChartSlide(chart, accent, featuredPlayerId) {
-      const W = PROFILE_MAX;
-      const H = SCATTER_CHART_HEIGHT;
-      const padL = 80;
-      const padR = 32;
-      const padT = 32;
-      const padB = 72;
+    _buildScatterSvgContent(chart, accent, featuredPlayerId, W, H, padL, padR, padT, padB) {
       const plotW = W - padL - padR;
       const plotH = H - padT - padB;
       const fill = normalizeHex(accent, "#2D6A4F");
@@ -588,18 +583,32 @@ ${gridLines}${barEls}</svg></div>`;
         })
         .join("");
 
+      return `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FAFBFC" rx="8" />
+<line class="qb-scatter-avg-line" x1="${avgX.toFixed(1)}" y1="${padT}" x2="${avgX.toFixed(1)}" y2="${(padT + plotH).toFixed(1)}" />
+<line class="qb-scatter-avg-line" x1="${padL}" y1="${avgY.toFixed(1)}" x2="${(padL + plotW).toFixed(1)}" y2="${avgY.toFixed(1)}" />
+${pointEls}
+<text class="qb-scatter-axis-title" x="${(padL + plotW / 2).toFixed(1)}" y="${(H - 12).toFixed(1)}" text-anchor="middle">${escapeHtml(chart.xLabel)}</text>
+<text class="qb-scatter-axis-title" transform="translate(20 ${(padT + plotH / 2).toFixed(1)}) rotate(-90)" text-anchor="middle">${escapeHtml(chart.yLabel)}</text>
+${xTickEls}${yTickEls}`;
+    },
+
+    buildScatterChartSlide(chart, accent, featuredPlayerId) {
+      // Desktop: landscape 1100×560
+      const DW = PROFILE_MAX, DH = SCATTER_CHART_HEIGHT;
+      const desktopInner = this._buildScatterSvgContent(chart, accent, featuredPlayerId, DW, DH, 80, 32, 32, 72);
+
+      // Mobile: portrait 340×500 — fills a phone screen
+      const MW = 340, MH = 500;
+      const mobileInner = this._buildScatterSvgContent(chart, accent, featuredPlayerId, MW, MH, 72, 16, 28, 64);
+
       return `<div class="qb-scatter-slide" data-chart-id="${escapeAttr(chart.id)}" aria-label="${escapeAttr(chart.title)}">
   <h3 class="qb-scatter-chart-title">${escapeHtml(chart.title)}</h3>
-  <div class="qb-scatter-stage" style="height:${H}px">
-    <svg class="qb-scatter-chart" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-hidden="true">
-      <rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FAFBFC" rx="8" />
-      <line class="qb-scatter-avg-line" x1="${avgX.toFixed(1)}" y1="${padT}" x2="${avgX.toFixed(1)}" y2="${(padT + plotH).toFixed(1)}" />
-      <line class="qb-scatter-avg-line" x1="${padL}" y1="${avgY.toFixed(1)}" x2="${(padL + plotW).toFixed(1)}" y2="${avgY.toFixed(1)}" />
-      ${pointEls}
-      <text class="qb-scatter-axis-title" x="${(padL + plotW / 2).toFixed(1)}" y="${(H - 12).toFixed(1)}" text-anchor="middle">${escapeHtml(chart.xLabel)}</text>
-      <text class="qb-scatter-axis-title" transform="translate(20 ${(padT + plotH / 2).toFixed(1)}) rotate(-90)" text-anchor="middle">${escapeHtml(chart.yLabel)}</text>
-      ${xTickEls}${yTickEls}
-    </svg>
+  <div class="qb-scatter-stage qb-scatter-stage--desktop" style="height:${DH}px">
+    <svg class="qb-scatter-chart" viewBox="0 0 ${DW} ${DH}" width="100%" height="${DH}" role="img" aria-hidden="true">${desktopInner}</svg>
+    <div class="qb-scatter-panel-wrap qb-scatter-panel-wrap--hover" hidden></div>
+  </div>
+  <div class="qb-scatter-stage qb-scatter-stage--mobile" style="height:${MH}px">
+    <svg class="qb-scatter-chart" viewBox="0 0 ${MW} ${MH}" width="${MW}" height="${MH}" role="img" aria-hidden="true">${mobileInner}</svg>
     <div class="qb-scatter-panel-wrap qb-scatter-panel-wrap--hover" hidden></div>
   </div>
 </div>`;
@@ -627,10 +636,10 @@ ${gridLines}${barEls}</svg></div>`;
 
       return this.buildCollapsibleSection({
         title: "Grading profile",
-        leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap to compare charts · hover points for details</p>`,
+        leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap to compare charts · focus or hover points for details</p>`,
         bodyHtml: `<div class="qb-chart-card qb-animate-item">
   <div class="qb-scatter-carousel" data-default-chart="btt-twp">
-    <div class="qb-scatter-tabs" role="tablist">${tabs}</div>
+    <div class="qb-scatter-tabs" role="group" aria-label="Scatter chart views">${tabs}</div>
     <div class="qb-scatter-track">${slides}</div>
   </div>
 </div>`,
@@ -640,8 +649,8 @@ ${gridLines}${barEls}</svg></div>`;
     gradeColorFor(value) {
       const g = parseFloat(value);
       if (Number.isNaN(g)) return "#9CA3AF";
-      if (g >= 90) return "#1b7a2b";
-      if (g >= 80) return "#2e9e3e";
+      if (g >= 90) return "#20e050";
+      if (g >= 80) return "#38d45e";
       if (g >= 70) return "#6abf4b";
       if (g >= 60) return "#c8c828";
       if (g >= 50) return "#e8a020";
@@ -844,7 +853,7 @@ ${gridLines}${barEls}</svg></div>`;
         sectionClass: "qb-section-pass-tables",
         leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap between situation, throw type, reads, coverage, and alignment · ranks vs qualifying QBs</p>`,
         bodyHtml: `<div class="qb-compare-carousel qb-compare-carousel--pass-tables qb-animate-item" data-default-split="${escapeAttr(tables[0]?.id || "situation")}">
-    <div class="qb-compare-tabs" role="tablist">${tabs}</div>
+    <div class="qb-compare-tabs" role="group" aria-label="Passing split views">${tabs}</div>
     <div class="qb-compare-track">${slides}</div>
   </div>`,
       });
@@ -973,9 +982,17 @@ ${gridLines}${barEls}</svg></div>`;
       return this.buildCollapsibleSection({
         title: "Accuracy",
         sectionClass: "qb-section-accuracy",
-        leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap between accuracy rates and incompletion breakdown · ranks vs qualifying QBs</p>`,
+        leadHtml: `<div class="qb-acc-explainer qb-animate-item" aria-hidden="true">
+  <img class="qb-acc-explainer-img" src="Accuracy%20explainer.png" alt="" />
+  <div class="qb-acc-explainer-legend">
+    <span class="qb-acc-explainer-item"><span class="qb-acc-explainer-dot is-accurate"></span>Accurate</span>
+    <span class="qb-acc-explainer-item"><span class="qb-acc-explainer-dot is-catchable"></span>Catchable miss</span>
+    <span class="qb-acc-explainer-item"><span class="qb-acc-explainer-dot is-uncatchable"></span>Uncatchable</span>
+  </div>
+</div>
+<p class="qb-interactive-hint qb-animate-item">Swipe or tap between accuracy rates and incompletion breakdown · ranks vs qualifying QBs</p>`,
         bodyHtml: `<div class="qb-compare-carousel qb-compare-carousel--accuracy qb-animate-item" data-default-split="${escapeAttr(tables[0]?.id || "accuracy-rates")}">
-    <div class="qb-compare-tabs" role="tablist">${tabs}</div>
+    <div class="qb-compare-tabs" role="group" aria-label="Passing split views">${tabs}</div>
     <div class="qb-compare-track">${slides}</div>
   </div>`,
       });
@@ -1458,20 +1475,21 @@ ${gridLines}${barEls}</svg></div>`;
       }
 
       const poolSize = rushing.rankPoolSize || 0;
-      const tabs = windows
+      const filteredWindows = windows.filter(w => w.type !== "gapZone");
+      const tabs = filteredWindows
         .map(
           (window, i) =>
             `<button type="button" class="qb-compare-tab" data-split-target="${escapeAttr(window.id)}" aria-pressed="${i === 0 ? "true" : "false"}">${escapeHtml(window.shortTitle || window.title)}</button>`
         )
         .join("");
-      const slides = windows.map((window) => this.buildRushingWindowSlide(window, accent)).join("");
+      const slides = filteredWindows.map((window) => this.buildRushingWindowSlide(window, accent)).join("");
 
       return this.buildCollapsibleSection({
         title: "Rushing",
         sectionClass: "qb-section-rushing",
         leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap through production, designed vs scramble, elusiveness, explosiveness, and scheme · click a card for full rankings${poolSize ? ` · ${poolSize} qualified QBs` : ""}</p>`,
         bodyHtml: `<div class="qb-compare-carousel qb-compare-carousel--rushing qb-animate-item" data-default-split="${escapeAttr(windows[0]?.id || "overview")}">
-    <div class="qb-compare-tabs" role="tablist">${tabs}</div>
+    <div class="qb-compare-tabs" role="group" aria-label="Passing split views">${tabs}</div>
     <div class="qb-compare-track">${slides}</div>
   </div>`,
       });
@@ -1619,7 +1637,7 @@ ${gridLines}${barEls}</svg></div>`;
         title: "Passing splits",
         leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap to compare pressure, blitz, play-action, screen, and time-in-pocket situations</p>`,
         bodyHtml: `<div class="qb-compare-carousel qb-animate-item" data-default-split="${escapeAttr(splits[0]?.id || "pressure")}">
-    <div class="qb-compare-tabs" role="tablist">${tabs}</div>
+    <div class="qb-compare-tabs" role="group" aria-label="Passing split views">${tabs}</div>
     <div class="qb-compare-track">${slides}</div>
   </div>`,
       });
@@ -1693,17 +1711,20 @@ ${gridLines}${barEls}</svg></div>`;
           const colName = COL_NAMES[ci] || "mid";
           const i = zoneIdx++;
           const st = `left:${F.colL[ci]}%;top:${layout.t}%;width:${F.colW}%;height:${layout.h}%;--grade:${gc};--vol:${vol.toFixed(3)};--i:${i};`;
-          return `<button type="button" class="qb-depth-cell" data-col="${colName}" data-depth-col="${escapeAttr(col.key)}" data-depth-row="${escapeAttr(rowDef.key)}" data-depth-label="${escapeAttr(cell.label || `${col.label} — ${rowDef.desc}`)}" style="${st}" aria-label="${escapeAttr(`${cell.label || col.label}: ${this.formatDepthCount(att)} attempts`)}"><div class="qb-dc-grade">${escapeHtml(gradeStr)}</div><div class="qb-dc-att">${this.formatDepthCount(att)} ATT</div><div class="qb-dc-stats">${this.formatDepthCount(yds)} YDS · ${this.formatDepthCount(td)} TD · ${this.formatDepthCount(int)} INT</div><div class="qb-dc-rtg">${escapeHtml(qbrStr)} RTG</div></button>`;
+          const intWord = int === 1 ? 'interception' : 'interceptions';
+          const tdWord  = td  === 1 ? 'touchdown'    : 'touchdowns';
+          const fullLabel = `${col.label}, ${rowDef.desc}: PFF Grade ${gradeStr}, ${att} attempt${att===1?'':'s'}, ${yds} yards, ${td} ${tdWord}, ${int} ${intWord}, passer rating ${qbrStr}`;
+          return `<button type="button" class="qb-depth-cell" data-col="${colName}" data-depth-col="${escapeAttr(col.key)}" data-depth-row="${escapeAttr(rowDef.key)}" data-depth-label="${escapeAttr(cell.label || `${col.label} — ${rowDef.desc}`)}" style="${st}" aria-label="${escapeAttr(fullLabel)}"><div class="qb-dc-grade" aria-hidden="true">${escapeHtml(gradeStr)}</div><div class="qb-dc-att" aria-hidden="true">${this.formatDepthCount(att)} ATT</div><div class="qb-dc-stats" aria-hidden="true">${this.formatDepthCount(yds)} YDS · ${this.formatDepthCount(td)} TD · ${this.formatDepthCount(int)} INT</div><div class="qb-dc-rtg" aria-hidden="true">${escapeHtml(qbrStr)} RTG</div></button>`;
         }).join("");
       }).join("");
 
       const fieldSvg = buildDepthFieldSvg(F);
       const stackVars = `--fd-sl:${F.sl}%;--fd-sr:${F.sr}%;--fd-ez:${F.ezH}%;--fd-goal:${F.goal}%;--fd-bf:${F.backTop}%;--fd-los:${F.los}%;`;
 
-      // Column headers — split "LEFT BOUNDARY" → <strong>LEFT</strong><span>BOUNDARY</span>
+      // Column headers — split "LEFT BOUNDARY" → <span class="qb-dc-col-hdr-word1">LEFT</span><span>BOUNDARY</span>
       const colHdrsHtml = cols.map((col) => {
         const parts = col.label.split(/\s+/);
-        return `<div class="qb-dc-col-hdr"><strong>${escapeHtml(parts[0])}</strong>${parts.length > 1 ? `<span>${escapeHtml(parts.slice(1).join(" "))}</span>` : ""}</div>`;
+        return `<div class="qb-dc-col-hdr"><span class="qb-dc-col-hdr-primary">${escapeHtml(parts[0])}</span>${parts.length > 1 ? `<span>${escapeHtml(parts.slice(1).join(" "))}</span>` : ""}</div>`;
       }).join("");
 
       // Depth labels — external rail (includes LOS aligned to teal line)
@@ -1720,6 +1741,7 @@ ${gridLines}${barEls}</svg></div>`;
       const dataJson  = JSON.stringify(storeData).replace(/<\//g, "<\\/");
 
       return `<div class="qb-depth" style="--qb-depth-accent:${accentColor}">
+<p class="qb-depth-sr-desc">Target depth profile for ${escapeHtml(profile.playerName || 'this quarterback')} in ${escapeHtml(String(season))}. Passing statistics organized by field position (Outside Left, Between Numbers, Outside Right) and target depth (20 or more yards, 10 to 19 yards, 0 to 9 yards, and behind the line of scrimmage).${totalAttempts ? ' ' + totalAttempts + ' total attempts.' : ''}</p>
 <div class="qb-depth-stage">
   <div class="qb-depth-noise" aria-hidden="true"></div>
   <div class="qb-depth-chrome">
@@ -1849,7 +1871,7 @@ ${this.buildAccuracyCellSummary(cell)}
 
       const colHdrsHtml = cols.map((col) => {
         const parts = col.label.split(/\s+/);
-        return `<div class="qb-dc-col-hdr"><strong>${escapeHtml(parts[0])}</strong>${parts.length > 1 ? `<span>${escapeHtml(parts.slice(1).join(" "))}</span>` : ""}</div>`;
+        return `<div class="qb-dc-col-hdr"><span class="qb-dc-col-hdr-primary">${escapeHtml(parts[0])}</span>${parts.length > 1 ? `<span>${escapeHtml(parts.slice(1).join(" "))}</span>` : ""}</div>`;
       }).join("");
 
       const rowLblsHtml = rows.map((r) => {
@@ -1919,7 +1941,7 @@ ${this.buildAccuracyCellSummary(cell)}
 
       return `<div class="qb-route-tree qb-animate-item" style="--qb-route-accent:${ringColor}">
 <div class="qb-route-tree-select-wrap">
-  <button type="button" class="qb-route-tree-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+  <button type="button" class="qb-route-tree-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Select route concept">
     <span class="qb-route-tree-select-label">Select a route…</span>
     <span class="qb-route-tree-select-chevron" aria-hidden="true"></span>
   </button>
@@ -2074,7 +2096,7 @@ ${this.buildAccuracyCellSummary(cell)}
 
       const bodyHtml = `<div class="qb-target-map qb-target-maps-hub qb-animate-item${hasDepth && !hasMap && !hasRoutes ? " is-depth-only" : ""}" style="--qb-map-accent:${ringColor}" data-default-map-slide="${escapeAttr(defaultSlide)}">
   ${headHtml}
-  <div class="qb-target-map-tabs" role="tablist">${tabsHtml}</div>
+  <div class="qb-target-map-tabs" role="group" aria-label="Target map views">${tabsHtml}</div>
   ${mapToolsHtml}
   <div class="qb-target-map-track">${depthSlideHtml}${accuracySlideHtml}${routesSlideHtml}${scatterSlideHtml}</div>
   ${mapDataHtml}
@@ -2221,6 +2243,7 @@ ${this.buildAccuracyCellSummary(cell)}
 
     buildIntLuckCompareTable(expected, actual, luck) {
       return `<table class="qb-int-luck-table">
+  <caption class="sr-only">Interception luck — expected vs actual interceptions</caption>
   <thead>
     <tr>
       <th scope="col"></th>
@@ -2481,7 +2504,7 @@ ${this.buildAccuracyCellSummary(cell)}
     <span class="qb-epa-legend-item"><span class="qb-epa-legend-swatch" style="background:${leagueColor}"></span>NFL avg · 200+ dropbacks</span>
     <span class="qb-epa-legend-unit">EPA per dropback</span>
   </div>
-  <svg class="qb-epa-chart" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="EPA per dropback by season compared with NFL average">
+  <svg class="qb-epa-chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="EPA per dropback by season compared with NFL average">
     ${gridLines}${yLabels}${bars}
     <text class="qb-epa-axis-title" x="${(padL + plotW / 2).toFixed(1)}" y="${(H - 8).toFixed(1)}" text-anchor="middle">Season</text>
   </svg>
@@ -2616,7 +2639,7 @@ ${this.buildAccuracyCellSummary(cell)}
         sectionClass: "qb-section-epa",
         leadHtml: `<p class="qb-interactive-hint qb-animate-item">Swipe or tap to compare season and career EPA per dropback</p>`,
         bodyHtml: `<div class="qb-compare-carousel qb-animate-item" data-default-split="season">
-    <div class="qb-compare-tabs" role="tablist">
+    <div class="qb-compare-tabs" role="group" aria-label="EPA views">
       <button type="button" class="qb-compare-tab" data-split-target="season" aria-pressed="true">By season</button>
       <button type="button" class="qb-compare-tab" data-split-target="career" aria-pressed="false">Career</button>
     </div>
@@ -2715,6 +2738,11 @@ ${this.buildAccuracyCellSummary(cell)}
 }
 .qb-epa-chart-wrap {
   margin-top: 6px;
+}
+.qb-epa-chart {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .qb-chart-card,
 .qb-epa-season-card {
@@ -2957,29 +2985,33 @@ ${this.buildAccuracyCellSummary(cell)}
 .epa-rank-card.is-active .epa-rank-val { color: #fff; border-top-color: rgba(255,255,255,0.2); }
 .qb-collapsible-details {
   border: 1px solid #E5E7EB;
+  border-top: 4px solid color-mix(in srgb, var(--accent, #2d6a4f) 52%, #c8d0da);
   border-radius: 14px;
   overflow: hidden;
   background: #FFFFFF;
   transition: box-shadow 0.28s ease, border-color 0.28s ease, transform 0.28s ease;
 }
 .qb-collapsible-details[open] {
-  border-color: #D1D5DB;
+  border-top-color: var(--accent, #2d6a4f);
+  border-color: color-mix(in srgb, var(--accent, #2d6a4f) 22%, #d1d5db);
   box-shadow: 0 14px 36px rgba(15, 15, 16, 0.07);
 }
 .qb-collapsible-details.is-opening {
-  border-color: #BFDBFE;
-  box-shadow: 0 16px 40px rgba(0, 107, 255, 0.08);
+  border-top-color: var(--accent, #2d6a4f);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--accent, #2d6a4f) 12%, transparent);
 }
 .qb-collapsible-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 20px;
+  padding: 18px 20px 18px 24px;
   cursor: pointer;
   list-style: none;
   user-select: none;
-  transition: background 0.2s ease;
+  background: #f7f8f9;
+  border-left: 4px solid color-mix(in srgb, var(--accent, #2d6a4f) 42%, #c8d0da);
+  transition: background 0.18s ease, border-color 0.18s ease;
 }
 .qb-collapsible-trigger::-webkit-details-marker {
   display: none;
@@ -2988,48 +3020,59 @@ ${this.buildAccuracyCellSummary(cell)}
   content: "";
 }
 .qb-collapsible-trigger:hover {
-  background: #FAFBFC;
+  background: color-mix(in srgb, var(--accent, #2d6a4f) 7%, #f3f4f5);
+  border-left-color: color-mix(in srgb, var(--accent, #2d6a4f) 78%, #c8d0da);
+}
+.qb-collapsible-trigger:focus-visible {
+  outline: 2px solid var(--accent, #2d6a4f);
+  outline-offset: -2px;
 }
 .qb-collapsible-details[open] > .qb-collapsible-trigger {
-  border-bottom: 1px solid #EEF0F3;
-  background: #FAFBFC;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent, #2d6a4f) 14%, #e5e7eb);
+  background: color-mix(in srgb, var(--accent, #2d6a4f) 8%, #f5f6f7);
+  border-left-color: var(--accent, #2d6a4f);
 }
 .qb-collapsible-title {
-  font-size: 0.92rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.055em;
   text-transform: uppercase;
-  color: #111827;
+  color: #0d1117;
+  line-height: 1.15;
+  transition: color 0.18s ease;
+}
+.qb-collapsible-details[open] .qb-collapsible-title {
+  color: color-mix(in srgb, var(--accent, #2d6a4f) 82%, #0d1117);
 }
 .qb-collapsible-chevron {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
-  border: 1px solid #E5E7EB;
-  background: #FFFFFF;
+  border: 1.5px solid #e5e7eb;
+  background: #f9fafb;
   flex-shrink: 0;
   position: relative;
-  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), background 0.18s ease, border-color 0.18s ease;
 }
 .qb-collapsible-chevron::before {
   content: "";
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 8px;
-  height: 8px;
-  border-right: 2px solid #6B7280;
-  border-bottom: 2px solid #6B7280;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid #9ca3af;
+  border-bottom: 2px solid #9ca3af;
   transform: rotate(45deg) translate(-1px, -1px);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.18s ease;
 }
 .qb-collapsible-details[open] .qb-collapsible-chevron {
   transform: rotate(180deg);
-  background: #EEF4FF;
-  border-color: #BFDBFE;
+  background: color-mix(in srgb, var(--accent, #2d6a4f) 12%, #ffffff);
+  border-color: color-mix(in srgb, var(--accent, #2d6a4f) 50%, transparent);
 }
 .qb-collapsible-details[open] .qb-collapsible-chevron::before {
-  border-color: #006BFF;
+  border-color: var(--accent, #2d6a4f);
 }
 .qb-collapsible-panel {
   overflow: hidden;
@@ -3165,6 +3208,9 @@ ${this.buildAccuracyCellSummary(cell)}
 }
 .qb-scatter-stage {
   position: relative;
+}
+.qb-scatter-stage--mobile {
+  display: none;
 }
 .qb-scatter-chart {
   display: block;
@@ -3517,6 +3563,50 @@ ${this.buildAccuracyCellSummary(cell)}
     radial-gradient(circle at top right, color-mix(in srgb, var(--compare-accent, #2D6A4F) 10%, transparent), transparent 42%),
     linear-gradient(180deg, #FAFBFC 0%, #FFFFFF 100%);
 }
+/* ── Accuracy explainer image ── */
+.qb-acc-explainer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #0a0c12;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.qb-acc-explainer-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+.qb-acc-explainer-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qb-acc-explainer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.82);
+}
+.qb-acc-explainer-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.qb-acc-explainer-dot.is-accurate   { background: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.7); }
+.qb-acc-explainer-dot.is-catchable  { background: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.7); }
+.qb-acc-explainer-dot.is-uncatchable{ background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.7); }
+@media (max-width: 480px) {
+  .qb-acc-explainer { flex-direction: row; padding: 12px 16px; gap: 14px; }
+  .qb-acc-explainer-img { width: 80px; height: 80px; }
+  .qb-acc-explainer-item { font-size: 0.7rem; }
+}
 .qb-section-accuracy .qb-compare-carousel--accuracy .qb-compare-track {
   background:
     radial-gradient(circle at top left, color-mix(in srgb, var(--compare-accent, #2D6A4F) 10%, transparent), transparent 42%),
@@ -3788,7 +3878,7 @@ ${this.buildAccuracyCellSummary(cell)}
 }
 .qb-rush-row {
   display: grid;
-  grid-template-columns: minmax(100px, 0.85fr) minmax(0, 1fr) auto auto;
+  grid-template-columns: 120px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 10px;
   padding: 9px 14px;
@@ -4289,13 +4379,14 @@ ${this.buildAccuracyCellSummary(cell)}
   position: absolute;
   left: var(--scale-pct, 50%);
   top: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  /* translateY(-100%) puts the bottom at track center; +11px (half dot height) pulls dot center onto the track */
+  transform: translateX(-50%) translateY(calc(-100% + 11px));
   display: flex; flex-direction: column; align-items: center; gap: 4px;
   animation: il-marker-appear 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 0.5s both;
 }
 @keyframes il-marker-appear {
-  from { opacity: 0; transform: translateX(-50%) translateY(-50%) scale(0.3); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(-50%) scale(1); }
+  from { opacity: 0; transform: translateX(-50%) translateY(calc(-100% + 11px)) scale(0.3); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(calc(-100% + 11px)) scale(1); }
 }
 .qb-il-scale-marker-dot {
   width: 22px; height: 22px; border-radius: 50%;
@@ -4594,7 +4685,7 @@ ${this.buildAccuracyCellSummary(cell)}
   align-items: center;
   gap: 2px;
 }
-.qb-dc-col-hdr strong {
+.qb-dc-col-hdr-primary {
   font-size: clamp(10px, 1.05vw, 14px);
   letter-spacing: .16em;
   font-weight: 900;
@@ -4739,6 +4830,12 @@ ${this.buildAccuracyCellSummary(cell)}
   filter: drop-shadow(0 0 6px rgba(92,190,255,.75));
   vector-effect: non-scaling-stroke;
 }
+/* Screen-reader only description for target depth section */
+.qb-depth-sr-desc {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
 /* Zones container */
 .qb-depth-zones {
   position: absolute; inset: 0;
@@ -4747,6 +4844,7 @@ ${this.buildAccuracyCellSummary(cell)}
 /* Zone cells — styled cards on dark field */
 .qb-depth-cell {
   position: absolute;
+  box-sizing: border-box;
   appearance: none;
   font: inherit;
   cursor: pointer;
@@ -4755,7 +4853,8 @@ ${this.buildAccuracyCellSummary(cell)}
   background:
     linear-gradient(165deg,
       color-mix(in srgb, var(--grade) calc(16% + var(--vol) * 24%), rgba(14,20,32,.82)) 0%,
-      color-mix(in srgb, var(--grade) calc(8% + var(--vol) * 14%), rgba(8,12,20,.88)) 100%);
+      color-mix(in srgb, var(--grade) calc(8% + var(--vol) * 14%), rgba(8,12,20,.88)) 100%),
+    rgba(4,12,6,.28);
   box-shadow:
     0 4px 14px rgba(0,0,0,.28),
     0 0 calc(4px + var(--vol) * 14px) color-mix(in srgb, var(--grade) calc(18% + var(--vol) * 40%), transparent),
@@ -4809,8 +4908,7 @@ ${this.buildAccuracyCellSummary(cell)}
   z-index: 1;
   opacity: calc(0.55 + var(--vol) * 0.45);
 }
-.qb-depth-cell:hover,
-.qb-depth-cell:focus-visible {
+.qb-depth-cell:hover {
   filter: brightness(1.18);
   transform: translateY(-2px) scale(1.01);
   z-index: 20;
@@ -4818,6 +4916,19 @@ ${this.buildAccuracyCellSummary(cell)}
   border-color: color-mix(in srgb, var(--grade) 65%, rgba(255,255,255,.35));
   box-shadow:
     0 8px 22px rgba(0,0,0,.35),
+    0 0 calc(8px + var(--vol) * 20px) color-mix(in srgb, var(--grade) calc(28% + var(--vol) * 45%), transparent),
+    inset 0 1px 0 rgba(255,255,255,.14);
+}
+.qb-depth-cell:focus-visible {
+  filter: brightness(1.18);
+  transform: translateY(-2px) scale(1.01);
+  z-index: 20;
+  outline: 2px solid rgba(255,255,255,.9);
+  outline-offset: 2px;
+  border-color: color-mix(in srgb, var(--grade) 65%, rgba(255,255,255,.35));
+  box-shadow:
+    0 8px 22px rgba(0,0,0,.35),
+    0 0 0 4px rgba(79,168,245,.4),
     0 0 calc(8px + var(--vol) * 20px) color-mix(in srgb, var(--grade) calc(28% + var(--vol) * 45%), transparent),
     inset 0 1px 0 rgba(255,255,255,.14);
 }
@@ -4840,13 +4951,15 @@ ${this.buildAccuracyCellSummary(cell)}
   letter-spacing: .01em;
   color: var(--grade);
   text-shadow:
+    0 1px 3px rgba(0,0,0,.85),
+    0 0 5px rgba(0,0,0,.7),
     0 0 18px color-mix(in srgb, var(--grade) 70%, transparent),
     0 0 2px rgba(255,255,255,.35);
 }
 /* Attempt count */
 .qb-dc-att {
   position: relative; z-index: 2;
-  font-size: clamp(7px, .72vw, 10px);
+  font-size: clamp(9px, .72vw, 11px);
   letter-spacing: .12em;
   font-weight: 900;
   color: rgba(255,255,255,.78);
@@ -4855,7 +4968,7 @@ ${this.buildAccuracyCellSummary(cell)}
 .qb-dc-stats {
   position: relative; z-index: 2;
   color: rgba(212,221,229,.62);
-  font-size: clamp(5px, .56vw, 8px);
+  font-size: clamp(9px, .56vw, 11px);
   letter-spacing: .03em;
   line-height: 1.35;
   white-space: nowrap;
@@ -4863,7 +4976,7 @@ ${this.buildAccuracyCellSummary(cell)}
 .qb-dc-rtg {
   position: relative; z-index: 2;
   color: rgba(190,212,235,.52);
-  font-size: clamp(5px, .54vw, 7.5px);
+  font-size: clamp(9px, .54vw, 11px);
   font-weight: 600;
   letter-spacing: .06em;
   line-height: 1.2;
@@ -5413,7 +5526,9 @@ ${this.buildAccuracyCellSummary(cell)}
 .qb-target-map-scatter-stage {
   position: relative;
   flex: 1 1 auto;
-  min-height: clamp(540px, 62vh, 780px);
+  aspect-ratio: 1.12;
+  min-height: 380px;
+  max-height: 720px;
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(255,255,255,.14);
@@ -5525,41 +5640,46 @@ ${this.buildAccuracyCellSummary(cell)}
 .qb-target-map-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 .qb-target-map-pill {
-  display: inline-flex;
+  flex: 1 1 0;
+  min-width: 52px;
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  gap: 3px;
-  min-width: 0;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.07);
+  gap: 4px;
+  padding: 9px 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.09);
   border: 1px solid rgba(255,255,255,.14);
-  text-align: left;
+  text-align: center;
 }
 .qb-target-map-pill-label {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.01em;
-  color: rgba(255,255,255,.48);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  white-space: nowrap;
 }
 .qb-target-map-pill-value {
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 800;
-  color: rgba(255,255,255,.88);
+  color: rgba(255,255,255,.92);
   line-height: 1.2;
+  white-space: nowrap;
 }
 .qb-target-map-pill.is-flag {
-  min-width: 0;
-  padding: 5px 10px;
+  padding: 9px 8px;
 }
 .qb-target-map-pill.is-flag .qb-target-map-pill-label {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  color: rgba(255,255,255,.8);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: rgba(255,255,255,.85);
 }
 .qb-target-map-hover-grid {
   display: grid;
@@ -6400,6 +6520,9 @@ ${this.buildAccuracyCellSummary(cell)}
   .qb-donut-interactive:focus-visible .qb-donut-inner {
     transform: none;
   }
+  .qb-depth-cell { animation: none !important; opacity: 1 !important; }
+  .qb-depth-cell:hover, .qb-depth-cell:focus-visible { transform: none; }
+  .qb-depth-qb-ring { animation: none !important; }
 }
 
 @media (max-width: 900px) {
@@ -6460,7 +6583,7 @@ ${this.buildAccuracyCellSummary(cell)}
   }
   .qb-rush-hero-layout {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
   }
   .qb-int-luck-hero {
     grid-template-columns: 1fr;
@@ -6558,6 +6681,131 @@ ${this.buildAccuracyCellSummary(cell)}
   .qb-target-map-hover-grid {
     grid-template-columns: 1fr;
   }
+}
+/* =====================================================
+   MOBILE — 480px and below
+   ===================================================== */
+@media (max-width: 480px) {
+
+  /* ── Donuts: compact 2-col grid, last item centred ── */
+  .qb-donut-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    gap: 16px 8px;
+    overflow: visible;
+    flex-wrap: unset;
+    padding: 4px 0 8px;
+  }
+  .qb-donut-row .qb-donut:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  .qb-donut { transform: none; flex: unset; width: 100%; max-width: 180px; }
+  .qb-donut svg { width: 100%; height: auto; display: block; }
+
+  /* ── Hero ── */
+  .qb-hero-main { flex-direction: column; gap: 14px; }
+  .qb-hero-stats { grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+  /* ── Depth field: tighten depth rail ── */
+  .qb-depth-depth-rail { flex: 0 0 28px; }
+  .qb-dc-col-hdrs { margin-left: calc(28px + 1.2%); }
+  .qb-depth-stack { transform: rotateX(10deg); }
+
+  /* ── Depth cell text ── */
+  .qb-dc-grade { font-size: clamp(18px, 5vw, 28px); }
+  .qb-dc-att { font-size: 10px; letter-spacing: 0.08em; }
+  .qb-dc-stats, .qb-dc-rtg { display: none; }
+
+  /* ── Accuracy cell text ── */
+  .qb-accuracy-cell-val { font-size: clamp(17px, 4.5vw, 26px); }
+  .qb-accuracy-cell-delta { font-size: 9px; }
+
+  /* ── Column + row labels ── */
+  .qb-dc-col-hdr-primary { font-size: 12px; letter-spacing: 0.1em; }
+  .qb-dc-col-hdr span { font-size: 9px; }
+  .qb-dc-row-lbl span { font-size: 8px; padding-right: 4px; }
+
+  /* ── Depth stage height: smaller min-height at mobile ── */
+  .qb-target-map-slide[data-map-slide="depth"],
+  .qb-target-map-slide[data-map-slide="accuracy"],
+  .qb-target-map-slide[data-map-slide="routes"],
+  .qb-target-map-slide[data-map-slide="scatter"] { min-height: 400px; }
+  .qb-target-map-slide[data-map-slide="depth"] .qb-depth-stage,
+  .qb-target-map-slide[data-map-slide="accuracy"] .qb-depth-stage,
+  .qb-target-map-slide[data-map-slide="routes"] .qb-route-tree-stage { min-height: clamp(360px, 50vh, 480px); }
+  .qb-route-tree-label-grade { font-size: 20px !important; }
+  .qb-route-tree-label-grade.is-empty { font-size: 17px !important; }
+  .qb-route-tree-label-name { font-size: 9px !important; }
+  .qb-depth-stage { aspect-ratio: 4/3; min-height: 260px; }
+
+  /* ── Scatter chart: portrait mobile version ── */
+  .qb-scatter-stage--desktop { display: none !important; }
+  .qb-scatter-stage--mobile { display: block !important; }
+  .qb-scatter-stage--mobile .qb-scatter-chart { width: 100% !important; height: auto !important; }
+
+  /* ── Grade distribution: taller bars, horizontal scroll, fixed window height ── */
+  .qb-chart-wrap--dist { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .qb-dist-chart { min-width: 1100px; width: 1100px; height: 340px !important; }
+
+  /* ── Game grades chart: horizontal scroll ── */
+  .qb-chart-wrap--interactive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .qb-game-chart { min-width: 1100px; width: 1100px; height: 320px !important; }
+
+  /* ── EPA season chart: horizontal scroll, tall enough to read ── */
+  .qb-epa-season-card { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 14px 14px 10px; }
+  .qb-epa-chart { min-width: 960px; width: 960px; height: 420px !important; max-height: none; }
+  .qb-section-epa .qb-compare-slide { height: auto !important; padding-bottom: 8px; }
+
+  /* ── Target-map tab bar: wrappable ── */
+  .qb-target-map-tabs { flex-wrap: wrap !important; }
+  .qb-target-map-tab { padding: 10px 12px !important; }
+  .qb-target-map-tab[data-map-slide-target="scatter"] { display: none !important; }
+  .qb-target-map-slide[data-map-slide="scatter"] { display: none !important; }
+
+  /* ── Touch targets: tabs ── */
+  .qb-scatter-tab, .qb-compare-tab { padding: 10px 12px !important; min-height: 44px !important; }
+
+  /* ── Modal close button ── */
+  .qb-modal-close { width: 44px !important; height: 44px !important; min-width: 44px; }
+
+  /* ── Route-tree select trigger ── */
+  .qb-route-tree-select-trigger { min-height: 44px; padding: 10px 14px; }
+
+  /* ── Int-luck font fixes ── */
+  .qb-il-scale-end { font-size: 0.66rem; }
+  .qb-il-bar-lbl { font-size: 0.72rem; }
+  .qb-il-bar-num { font-size: 0.82rem; }
+
+  /* ── Collapsible section heading ── */
+  .qb-collapsible-title { font-size: 1.1rem !important; }
+
+  /* ── Metric bars ── */
+  .qb-metric-label { font-size: 0.78rem; }
+  .qb-metric-val { font-size: 0.82rem; }
+
+  /* ── Compare ── */
+  .qb-compare-pane-label { font-size: 0.72rem; }
+  .qb-compare-hero-vs { font-size: 0.72rem; }
+
+  /* ── Game modal ── */
+  .qb-gm-pill { font-size: 0.68rem; }
+  .qb-gm-vs-col { font-size: 0.72rem; }
+  .qb-gm-grade-eyebrow { font-size: 0.68rem; }
+  .qb-game-stat-abbr { font-size: 0.72rem; }
+
+  /* ── Gen accuracy widget ── */
+  .qb-gen-acc-legend-item { font-size: 0.72rem; }
+  .qb-gen-acc-col-label { font-size: 0.72rem; }
+
+  /* ── Rushing ring: constrain width ── */
+  .qb-rush-ring-wrap svg { max-width: 180px; height: auto; }
+}
+
+@media (forced-colors: active) {
+  .qb-depth-cell { border: 2px solid ButtonText; background: Canvas; forced-color-adjust: auto; }
+  .qb-dc-grade { color: ButtonText; text-shadow: none; }
+  .qb-depth-cell:focus-visible { outline: 3px solid Highlight; }
 }`;
     },
 
