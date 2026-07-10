@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#7eb8e8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Baby Tracker" />
+  <title>Baby Tracker</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Cinematic opening -->
+  <div id="intro" class="intro" aria-hidden="false">
+    <div class="intro__glow intro__glow--pink"></div>
+    <div class="intro__glow intro__glow--blue"></div>
+    <div class="intro__orbs" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="intro__content">
+      <p class="intro__eyebrow">Welcome</p>
+      <h1 class="intro__title">Baby Tracker</h1>
+      <p class="intro__sub">Feeds · Naps · Diapers · Care</p>
+    </div>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <header class="top">
+      <div>
+        <p class="top__eyebrow">Today</p>
+        <h1 class="top__title">Baby Tracker</h1>
+      </div>
+      <button type="button" id="notify-btn" class="ghost-btn" aria-label="Enable reminders">
+        Reminders
+      </button>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab is-active" data-tab="home" role="tab" aria-selected="true">Home</button>
+      <button class="tab" data-tab="feed" role="tab" aria-selected="false">Feed</button>
+      <button class="tab" data-tab="nap" role="tab" aria-selected="false">Nap</button>
+      <button class="tab" data-tab="diaper" role="tab" aria-selected="false">Diaper</button>
+      <button class="tab" data-tab="meds" role="tab" aria-selected="false">Meds</button>
+    </nav>
+
+    <main class="panels">
+      <!-- HOME -->
+      <section id="panel-home" class="panel is-active" role="tabpanel">
+        <div class="status-grid">
+          <article class="status status--feed">
+            <p class="status__label">Since last feed</p>
+            <p class="status__value" data-since="feed">—</p>
+            <p class="status__meta" data-meta="feed">No feeds yet</p>
+          </article>
+          <article class="status status--nap">
+            <p class="status__label">Since last nap</p>
+            <p class="status__value" data-since="nap">—</p>
+            <p class="status__meta" data-meta="nap">No naps yet</p>
+          </article>
+          <article class="status status--poop">
+            <p class="status__label">Since last poop</p>
+            <p class="status__value" data-since="poop">—</p>
+            <p class="status__meta" data-meta="poop">No poops yet</p>
+          </article>
+          <article class="status status--pee">
+            <p class="status__label">Since last pee</p>
+            <p class="status__value" data-since="pee">—</p>
+            <p class="status__meta" data-meta="pee">No pees yet</p>
+          </article>
+        </div>
+
+        <section class="quick">
+          <h2 class="section-title">Quick actions</h2>
+          <div class="quick__row">
+            <button type="button" class="action action--feed" data-action="feed-toggle">
+              <span class="action__label" data-feed-label>Start feed</span>
+              <span class="action__hint" data-feed-hint>Tap to begin</span>
+            </button>
+            <button type="button" class="action action--nap" data-action="nap-toggle">
+              <span class="action__label" data-nap-label>Start nap</span>
+              <span class="action__hint" data-nap-hint>Tap to begin</span>
+            </button>
+          </div>
+          <div class="quick__row">
+            <button type="button" class="action action--poop" data-action="log-poop">
+              <span class="action__label">Poop</span>
+              <span class="action__hint">One tap</span>
+            </button>
+            <button type="button" class="action action--pee" data-action="log-pee">
+              <span class="action__label">Pee</span>
+              <span class="action__hint">One tap</span>
+            </button>
+          </div>
+          <div class="manual-row">
+            <button type="button" class="link-btn" data-open="manual-med">Forgot a dose?</button>
+          </div>
+        </section>
+
+        <section class="meds-preview">
+          <h2 class="section-title">Medication</h2>
+          <div id="meds-home" class="meds-list"></div>
+        </section>
+      </section>
+
+      <!-- FEED -->
+      <section id="panel-feed" class="panel" role="tabpanel" hidden>
+        <div class="hero-stat">
+          <p class="hero-stat__label">Time since last feed</p>
+          <p class="hero-stat__value" data-since="feed">—</p>
+          <p class="hero-stat__meta" data-meta="feed">No feeds yet</p>
+        </div>
+
+        <button type="button" class="primary-btn primary-btn--feed" data-action="feed-toggle">
+          <span data-feed-label>Start feed</span>
+          <small data-feed-timer class="live-timer" hidden>00:00</small>
+        </button>
+
+        <button type="button" class="secondary-btn" data-open="manual-feed">Add feed manually</button>
+
+        <section class="history">
+          <h2 class="section-title">Recent feeds</h2>
+          <ul id="feed-history" class="history-list"></ul>
+        </section>
+      </section>
+
+      <!-- NAP -->
+      <section id="panel-nap" class="panel" role="tabpanel" hidden>
+        <div class="hero-stat">
+          <p class="hero-stat__label">Time since last nap</p>
+          <p class="hero-stat__value" data-since="nap">—</p>
+          <p class="hero-stat__meta" data-meta="nap">No naps yet</p>
+        </div>
+
+        <button type="button" class="primary-btn primary-btn--nap" data-action="nap-toggle">
+          <span data-nap-label>Start nap</span>
+          <small data-nap-timer class="live-timer" hidden>00:00</small>
+        </button>
+
+        <button type="button" class="secondary-btn" data-open="manual-nap">Add nap manually</button>
+
+        <section class="history">
+          <h2 class="section-title">Recent naps</h2>
+          <ul id="nap-history" class="history-list"></ul>
+        </section>
+      </section>
+
+      <!-- DIAPER -->
+      <section id="panel-diaper" class="panel" role="tabpanel" hidden>
+        <div class="diaper-stats">
+          <div class="hero-stat hero-stat--compact">
+            <p class="hero-stat__label">Since last poop</p>
+            <p class="hero-stat__value" data-since="poop">—</p>
+          </div>
+          <div class="hero-stat hero-stat--compact">
+            <p class="hero-stat__label">Since last pee</p>
+            <p class="hero-stat__value" data-since="pee">—</p>
+          </div>
+        </div>
+
+        <div class="quick__row">
+          <button type="button" class="action action--poop action--tall" data-action="log-poop">
+            <span class="action__label">Poop</span>
+            <span class="action__hint">Log now</span>
+          </button>
+          <button type="button" class="action action--pee action--tall" data-action="log-pee">
+            <span class="action__label">Pee</span>
+            <span class="action__hint">Log now</span>
+          </button>
+        </div>
+
+        <button type="button" class="secondary-btn" data-open="manual-diaper">Add manually</button>
+
+        <section class="history">
+          <h2 class="section-title">Recent diapers</h2>
+          <ul id="diaper-history" class="history-list"></ul>
+        </section>
+      </section>
+
+      <!-- MEDS -->
+      <section id="panel-meds" class="panel" role="tabpanel" hidden>
+        <p class="panel-lead">Tap <strong>Take now</strong> when she takes it, or <strong>Log past dose</strong> if you forgot and need to backdate.</p>
+        <button type="button" class="secondary-btn" data-open="manual-med">Log a past dose</button>
+        <div id="meds-full" class="meds-list meds-list--full"></div>
+        <section class="history">
+          <h2 class="section-title">Recent doses</h2>
+          <ul id="med-history" class="history-list"></ul>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" hidden role="status"></div>
+
+  <!-- Manual feed modal -->
+  <dialog id="manual-feed" class="modal">
+    <form method="dialog" class="modal__form" id="manual-feed-form">
+      <h2>Add feed</h2>
+      <label>Ended at
+        <input type="datetime-local" name="endedAt" required />
+      </label>
+      <label>Duration (minutes)
+        <input type="number" name="durationMin" min="1" max="120" value="15" required />
+      </label>
+      <div class="modal__actions">
+        <button type="submit" class="primary-btn" value="save">Save</button>
+        <button type="button" class="secondary-btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Manual nap modal -->
+  <dialog id="manual-nap" class="modal">
+    <form method="dialog" class="modal__form" id="manual-nap-form">
+      <h2>Add nap</h2>
+      <label>Ended at
+        <input type="datetime-local" name="endedAt" required />
+      </label>
+      <label>Duration (minutes)
+        <input type="number" name="durationMin" min="1" max="300" value="45" required />
+      </label>
+      <div class="modal__actions">
+        <button type="submit" class="primary-btn" value="save">Save</button>
+        <button type="button" class="secondary-btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Manual diaper modal -->
+  <dialog id="manual-diaper" class="modal">
+    <form method="dialog" class="modal__form" id="manual-diaper-form">
+      <h2>Add diaper</h2>
+      <label>Type
+        <select name="type" required>
+          <option value="poop">Poop</option>
+          <option value="pee">Pee</option>
+          <option value="both">Both</option>
+        </select>
+      </label>
+      <label>When
+        <input type="datetime-local" name="at" required />
+      </label>
+      <div class="modal__actions">
+        <button type="submit" class="primary-btn" value="save">Save</button>
+        <button type="button" class="secondary-btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Manual med modal -->
+  <dialog id="manual-med" class="modal">
+    <form method="dialog" class="modal__form" id="manual-med-form">
+      <h2>Log past dose</h2>
+      <p class="modal__hint">Use this when a dose was taken earlier but wasn’t checked off.</p>
+      <label>Medication
+        <select name="medId" id="manual-med-select" required>
+          <option value="ibuprofen">Ibuprofen 600 mg</option>
+          <option value="acetaminophen">Acetaminophen 650 mg</option>
+          <option value="colace">Colace</option>
+          <option value="prenatal">Prenatal</option>
+        </select>
+      </label>
+      <label>Taken at
+        <input type="datetime-local" name="at" required />
+      </label>
+      <div class="modal__actions">
+        <button type="submit" class="primary-btn" value="save">Save</button>
+        <button type="button" class="secondary-btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

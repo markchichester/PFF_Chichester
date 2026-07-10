@@ -1,0 +1,11 @@
+{
+  "name": "Baby Tracker",
+  "short_name": "Baby",
+  "description": "Track feeds, naps, diapers, and medication — locally on your phone.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffe4ef",
+  "theme_color": "#7eb8e8",
+  "orientation": "portrait",
+  "icons": []
+}
