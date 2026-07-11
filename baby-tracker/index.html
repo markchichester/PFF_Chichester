@@ -19,6 +19,7 @@
 <body>
   <!-- Cinematic opening -->
   <div id="intro" class="intro" aria-hidden="false">
+    <div class="intro__photo" id="intro-photo" hidden></div>
     <div class="intro__glow intro__glow--pink"></div>
     <div class="intro__glow intro__glow--blue"></div>
     <div class="intro__orbs" aria-hidden="true">
@@ -27,7 +28,7 @@
     <div class="intro__content">
       <p class="intro__eyebrow">Welcome</p>
       <h1 class="intro__title">Baby Tracker</h1>
-      <p class="intro__sub">Feeds · Naps · Diapers · Care</p>
+      <p class="intro__sub">Feeds · Naps · Diapers · Growth · Care</p>
     </div>
   </div>
 
@@ -48,11 +49,32 @@
       <button class="tab" data-tab="nap" role="tab" aria-selected="false">Nap</button>
       <button class="tab" data-tab="diaper" role="tab" aria-selected="false">Diaper</button>
       <button class="tab" data-tab="meds" role="tab" aria-selected="false">Meds</button>
+      <button class="tab" data-tab="growth" role="tab" aria-selected="false">Growth</button>
     </nav>
 
     <main class="panels">
       <!-- HOME -->
       <section id="panel-home" class="panel is-active" role="tabpanel">
+        <div class="baby-hero" id="baby-hero">
+          <div class="baby-hero__media" id="baby-hero-media">
+            <img id="baby-hero-img" alt="" hidden />
+            <div class="baby-hero__placeholder" id="baby-hero-placeholder">
+              <p class="baby-hero__placeholder-title">Add a hero photo</p>
+              <p class="baby-hero__placeholder-sub">Stays on this phone only</p>
+            </div>
+          </div>
+          <div class="baby-hero__veil"></div>
+          <div class="baby-hero__copy">
+            <p class="baby-hero__brand">Baby Tracker</p>
+            <p class="baby-hero__line">Your little one’s day, at a glance</p>
+          </div>
+          <div class="baby-hero__actions">
+            <button type="button" class="ghost-btn ghost-btn--light" id="hero-photo-btn">Add photo</button>
+            <button type="button" class="ghost-btn ghost-btn--light" id="hero-photo-remove" hidden>Remove</button>
+          </div>
+          <input type="file" id="hero-photo-input" accept="image/*" capture="environment" hidden />
+        </div>
+
         <div class="status-grid">
           <article class="status status--feed">
             <p class="status__label">Since last feed</p>
@@ -106,6 +128,7 @@
         <section class="meds-preview">
           <h2 class="section-title">Medication</h2>
           <div id="meds-home" class="meds-list"></div>
+          <button type="button" class="link-btn" data-open="add-med">+ Add medication</button>
         </section>
       </section>
 
@@ -185,13 +208,69 @@
 
       <!-- MEDS -->
       <section id="panel-meds" class="panel" role="tabpanel" hidden>
-        <p class="panel-lead">Tap <strong>Take now</strong> when she takes it, or <strong>Log past dose</strong> if you forgot and need to backdate.</p>
+        <p class="panel-lead">Add any prescribed med, then tap <strong>Take now</strong> or <strong>Log past dose</strong>.</p>
+        <button type="button" class="primary-btn" data-open="add-med">Add medication</button>
         <button type="button" class="secondary-btn" data-open="manual-med">Log a past dose</button>
         <div id="meds-full" class="meds-list meds-list--full"></div>
         <section class="history">
           <h2 class="section-title">Recent doses</h2>
           <ul id="med-history" class="history-list"></ul>
         </section>
+      </section>
+
+      <!-- GROWTH -->
+      <section id="panel-growth" class="panel" role="tabpanel" hidden>
+        <div id="growth-setup">
+          <p class="panel-lead">Enter birth weight &amp; length once. Then log checkup measurements to see WHO percentiles — the same scale pediatricians use for 0–24 months.</p>
+          <form id="birth-form" class="stack-form">
+            <label>Birth date
+              <input type="date" name="birthDate" required />
+            </label>
+            <label>Sex (for growth chart)
+              <select name="sex" required>
+                <option value="male">Boy</option>
+                <option value="female">Girl</option>
+              </select>
+            </label>
+            <div class="field-row">
+              <label>Weight (lb)
+                <input type="number" name="lb" min="0" max="20" step="1" required />
+              </label>
+              <label>oz
+                <input type="number" name="oz" min="0" max="15" step="1" value="0" required />
+              </label>
+            </div>
+            <label>Length (inches)
+              <input type="number" name="inches" min="10" max="30" step="0.1" required />
+            </label>
+            <button type="submit" class="primary-btn">Save birth stats</button>
+          </form>
+        </div>
+
+        <div id="growth-body" hidden>
+          <p id="growth-birth-summary" class="panel-lead"></p>
+          <div class="diaper-stats">
+            <div class="hero-stat hero-stat--compact">
+              <p class="hero-stat__label">Weight percentile</p>
+              <p class="hero-stat__value" id="growth-weight-pct">—</p>
+            </div>
+            <div class="hero-stat hero-stat--compact">
+              <p class="hero-stat__label">Length percentile</p>
+              <p class="hero-stat__value" id="growth-length-pct">—</p>
+            </div>
+          </div>
+          <p id="growth-latest-meta" class="muted-center"></p>
+          <div class="chart-card">
+            <svg id="growth-chart" class="growth-chart" role="img" aria-label="WHO weight-for-age growth chart"></svg>
+            <p class="chart-caption">Curves show WHO 3rd, 15th, 50th, 85th &amp; 97th percentiles</p>
+          </div>
+          <button type="button" class="primary-btn" data-open="add-measurement">Log checkup</button>
+          <button type="button" class="secondary-btn" data-open="edit-birth">Edit birth info</button>
+          <section class="history">
+            <h2 class="section-title">Measurement history</h2>
+            <ul id="growth-history" class="history-list"></ul>
+          </section>
+        </div>
       </section>
     </main>
   </div>
@@ -260,12 +339,7 @@
       <h2>Log past dose</h2>
       <p class="modal__hint">Use this when a dose was taken earlier but wasn’t checked off.</p>
       <label>Medication
-        <select name="medId" id="manual-med-select" required>
-          <option value="ibuprofen">Ibuprofen 600 mg</option>
-          <option value="acetaminophen">Acetaminophen 650 mg</option>
-          <option value="colace">Colace</option>
-          <option value="prenatal">Prenatal</option>
-        </select>
+        <select name="medId" id="manual-med-select" required></select>
       </label>
       <label>Taken at
         <input type="datetime-local" name="at" required />
@@ -277,6 +351,105 @@
     </form>
   </dialog>
 
+  <!-- Add medication modal -->
+  <dialog id="add-med" class="modal">
+    <form method="dialog" class="modal__form" id="add-med-form">
+      <h2>Add medication</h2>
+      <label>Name
+        <input type="text" name="name" placeholder="e.g. Amoxicillin" required />
+      </label>
+      <label>Dose
+        <input type="text" name="dose" placeholder="e.g. 250 mg" />
+      </label>
+      <label>Schedule
+        <select name="kind" id="med-kind-select" required>
+          <option value="interval">Every X hours</option>
+          <option value="daily">Once daily at a time</option>
+          <option value="as-needed">As needed</option>
+        </select>
+      </label>
+      <div id="med-fields-interval">
+        <label>Every how many hours?
+          <input type="number" name="everyHours" min="1" max="48" value="6" />
+        </label>
+      </div>
+      <div id="med-fields-daily" hidden>
+        <div class="field-row">
+          <label>Hour (0–23)
+            <input type="number" name="hour" min="0" max="23" value="9" />
+          </label>
+          <label>Minute
+            <input type="number" name="minute" min="0" max="59" value="0" />
+          </label>
+        </div>
+      </div>
+      <div class="modal__actions">
+        <button type="submit" class="primary-btn" value="save">Add</button>
+        <button type="button" class="secondary-btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Edit birth modal -->
+  <dialog id="edit-birth" class="modal">
+    <form method="dialog" class="modal__form" id="edit-birth-form">
+      <h2>Edit birth info</h2>
+      <label>Birth date
+        <input type="date" name="birthDate" required />
+      </label>
+      <label>Sex (for growth chart)
+        <select name="sex" required>
+          <option value="male">Boy</option>
+          <option value="female">Girl</option>
+        </select>
+      </label>
+      <div class="field-row">
+        <label>Weight (lb)
+          <input type="number" name="lb" min="0" max="20" step="1" required />
+        </label>
+        <label>oz
+          <input type="number" name="oz" min="0" max="15" step="1" value="0" required />
+        </label>
+      </div>
+      <label>Length (inches)
+        <input type="number" name="inches" min="10" max="30" step="0.1" required />
+      </label>
+      <div class="modal__actions">
+        <button type="submit" class="primary-btn" value="save">Save</button>
+        <button type="button" class="secondary-btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Add measurement modal -->
+  <dialog id="add-measurement" class="modal">
+    <form method="dialog" class="modal__form" id="add-measurement-form">
+      <h2>Log checkup</h2>
+      <label>Date
+        <input type="date" name="date" required />
+      </label>
+      <div class="field-row">
+        <label>Weight (lb)
+          <input type="number" name="lb" min="0" max="40" step="1" required />
+        </label>
+        <label>oz
+          <input type="number" name="oz" min="0" max="15" step="1" value="0" required />
+        </label>
+      </div>
+      <label>Length (inches)
+        <input type="number" name="inches" min="10" max="40" step="0.1" required />
+      </label>
+      <label>Note (optional)
+        <input type="text" name="note" placeholder="e.g. 2-month visit" />
+      </label>
+      <div class="modal__actions">
+        <button type="submit" class="primary-btn" value="save">Save</button>
+        <button type="button" class="secondary-btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="who-growth.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

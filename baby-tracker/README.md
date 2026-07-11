@@ -32,7 +32,8 @@ Notes:
 - **Cinematic opening** — soft pink/blue intro
 - **Feeds / Naps** — Start / End, live timer, time since last, manual add, lock-screen end action
 - **Diapers** — one-tap poop / pee, time since last
-- **Meds** — Ibuprofen 600mg / 6h, Acetaminophen 650mg / 4h, Colace 8pm, Prenatal 9am; check off or log past doses; optional reminders
+- **Meds** — add any prescription as you go; Take now / log past dose; interval, daily, or as-needed
+- **Growth** — birth weight/length, checkup logs, WHO weight- & length-for-age percentiles (0–24 months, same scale pediatricians use)
 
 ## Privacy
 

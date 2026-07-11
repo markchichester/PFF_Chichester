@@ -4,8 +4,9 @@
   const IDB_NAME = "baby-tracker-sw";
   const IDB_STORE = "kv";
   const PENDING_END_KEY = "pendingEnd";
+  const HERO_PHOTO_KEY = "heroPhoto";
 
-  const MEDS = [
+  const DEFAULT_MEDS = [
     {
       id: "ibuprofen",
       name: "Ibuprofen",
@@ -42,15 +43,32 @@
     feeds: [],
     naps: [],
     diapers: [],
+    medications: DEFAULT_MEDS.map((m) => ({ ...m })),
     medDoses: [],
     activeFeed: null,
     activeNap: null,
+    growth: {
+      birthDate: null,
+      sex: "male",
+      birthWeightKg: null,
+      birthLengthCm: null,
+    },
+    measurements: [],
   });
+
+  function getMeds() {
+    return state.medications || [];
+  }
+
+  function findMed(id) {
+    return getMeds().find((m) => m.id === id);
+  }
 
   let state = load();
   let toastTimer = null;
   let tickTimer = null;
   let sessionNotifyTimer = null;
+  let heroPhotoDataUrl = null;
   const notified = new Set();
   const sessionNotifyShown = { feed: false, nap: false };
 
@@ -59,7 +77,14 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return defaultState();
-      return { ...defaultState(), ...JSON.parse(raw) };
+      const parsed = JSON.parse(raw);
+      const base = defaultState();
+      const merged = { ...base, ...parsed, growth: { ...base.growth, ...(parsed.growth || {}) } };
+      if (!Array.isArray(merged.medications) || !merged.medications.length) {
+        merged.medications = DEFAULT_MEDS.map((m) => ({ ...m }));
+      }
+      if (!Array.isArray(merged.measurements)) merged.measurements = [];
+      return merged;
     } catch {
       return defaultState();
     }
@@ -109,11 +134,113 @@
     }
   }
 
+  async function idbSet(key, value) {
+    try {
+      const db = await openIdb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, "readwrite");
+        tx.objectStore(IDB_STORE).put(value, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (err) {
+      console.warn("idbSet failed", err);
+      throw err;
+    }
+  }
+
+  // ——— Hero photo ———
+  function compressImage(file, maxWidth = 1400, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Could not read image"));
+      };
+      img.src = url;
+    });
+  }
+
+  async function loadHeroPhoto() {
+    const data = await idbGet(HERO_PHOTO_KEY);
+    heroPhotoDataUrl = typeof data === "string" ? data : null;
+    applyHeroPhoto();
+  }
+
+  function applyHeroPhoto() {
+    const has = !!heroPhotoDataUrl;
+    const intro = document.getElementById("intro");
+    const introPhoto = document.getElementById("intro-photo");
+    const hero = document.getElementById("baby-hero");
+    const img = document.getElementById("baby-hero-img");
+    const placeholder = document.getElementById("baby-hero-placeholder");
+    const btn = document.getElementById("hero-photo-btn");
+    const removeBtn = document.getElementById("hero-photo-remove");
+
+    if (intro && introPhoto) {
+      intro.classList.toggle("has-photo", has);
+      if (has) {
+        introPhoto.hidden = false;
+        introPhoto.style.backgroundImage = `url("${heroPhotoDataUrl}")`;
+      } else {
+        introPhoto.hidden = true;
+        introPhoto.style.backgroundImage = "";
+      }
+    }
+
+    if (hero && img && placeholder && btn && removeBtn) {
+      hero.classList.toggle("has-photo", has);
+      if (has) {
+        img.hidden = false;
+        img.src = heroPhotoDataUrl;
+        img.alt = "Baby hero photo";
+        placeholder.hidden = true;
+        btn.textContent = "Change photo";
+        removeBtn.hidden = false;
+      } else {
+        img.hidden = true;
+        img.removeAttribute("src");
+        img.alt = "";
+        placeholder.hidden = false;
+        btn.textContent = "Add photo";
+        removeBtn.hidden = true;
+      }
+    }
+  }
+
+  async function saveHeroPhoto(dataUrl) {
+    await idbSet(HERO_PHOTO_KEY, dataUrl);
+    heroPhotoDataUrl = dataUrl;
+    applyHeroPhoto();
+    toast("Hero photo saved");
+  }
+
+  async function removeHeroPhoto() {
+    await idbDel(HERO_PHOTO_KEY);
+    heroPhotoDataUrl = null;
+    applyHeroPhoto();
+    toast("Photo removed");
+  }
+
   function sortByTime() {
     state.feeds.sort((a, b) => b.endedAt - a.endedAt);
     state.naps.sort((a, b) => b.endedAt - a.endedAt);
     state.diapers.sort((a, b) => b.at - a.at);
     state.medDoses.sort((a, b) => b.at - a.at);
+    state.measurements.sort((a, b) => b.at - a.at);
   }
 
   // ——— Helpers ———
@@ -276,12 +403,15 @@
 
   function nextDue(med) {
     const last = lastDose(med.id);
+    if (med.kind === "as-needed") return null;
     if (med.kind === "interval") {
       if (!last) return now();
-      return last + med.everyHours * 3600000;
+      return last + (Number(med.everyHours) || 0) * 3600000;
     }
+    const hour = Number(med.hour) || 0;
+    const minute = Number(med.minute) || 0;
     const scheduleToday = new Date();
-    scheduleToday.setHours(med.hour, med.minute, 0, 0);
+    scheduleToday.setHours(hour, minute, 0, 0);
     const takenToday = last && dateKey(new Date(last)) === dateKey(new Date());
     if (takenToday) {
       const tomorrow = new Date(scheduleToday);
@@ -296,7 +426,9 @@
   }
 
   function isDue(med) {
-    return now() >= nextDue(med);
+    if (med.kind === "as-needed") return false;
+    const due = nextDue(med);
+    return due != null && now() >= due;
   }
 
   function takeMed(medId, at = now(), manual = false) {
@@ -305,19 +437,169 @@
     sortByTime();
     save();
     render();
-    const med = MEDS.find((m) => m.id === medId);
-    toast(`${med.name} taken`);
+    const med = findMed(medId);
+    toast(`${med ? med.name : "Medication"} taken`);
+  }
+
+  function medScheduleLabel(med) {
+    if (med.kind === "interval") return `every ${med.everyHours}h`;
+    if (med.kind === "daily") return formatClock(new Date().setHours(med.hour || 0, med.minute || 0, 0, 0));
+    return "as needed";
   }
 
   function medStatusText(med) {
-    const due = nextDue(med);
     const last = lastDose(med.id);
+    if (med.kind === "as-needed") {
+      return last ? `Last ${formatClock(last)}` : "As needed · not taken yet";
+    }
+    const due = nextDue(med);
     if (isDue(med)) {
       if (!last) return "Due now · never taken";
       return `Due now · last ${formatClock(last)}`;
     }
     const until = due - now();
     return `Next in ${formatDuration(until)} · ${formatClock(due)}`;
+  }
+
+  function addMedication(data) {
+    const med = {
+      id: uid(),
+      name: data.name.trim(),
+      dose: (data.dose || "").trim() || "—",
+      kind: data.kind,
+      everyHours: data.kind === "interval" ? Number(data.everyHours) || 4 : undefined,
+      hour: data.kind === "daily" ? Number(data.hour) : undefined,
+      minute: data.kind === "daily" ? Number(data.minute) || 0 : undefined,
+    };
+    state.medications.push(med);
+    save();
+    render();
+    toast(`${med.name} added`);
+  }
+
+  function removeMedication(id) {
+    state.medications = state.medications.filter((m) => m.id !== id);
+    save();
+    render();
+    toast("Medication removed");
+  }
+
+  // ——— Growth / measurements ———
+  function lbOzToKg(lb, oz) {
+    return (Number(lb) || 0) * 0.45359237 + (Number(oz) || 0) * 0.0283495231;
+  }
+
+  function kgToLbOz(kg) {
+    const totalOz = kg / 0.0283495231;
+    let lb = Math.floor(totalOz / 16);
+    let oz = Math.round(totalOz - lb * 16);
+    if (oz === 16) {
+      lb += 1;
+      oz = 0;
+    }
+    return { lb, oz };
+  }
+
+  function inToCm(inches) {
+    return (Number(inches) || 0) * 2.54;
+  }
+
+  function cmToIn(cm) {
+    return cm / 2.54;
+  }
+
+  function formatWeight(kg) {
+    if (kg == null) return "—";
+    const { lb, oz } = kgToLbOz(kg);
+    return `${lb} lb ${oz} oz`;
+  }
+
+  function formatLength(cm) {
+    if (cm == null) return "—";
+    const inches = cmToIn(cm);
+    return `${inches.toFixed(1)} in`;
+  }
+
+  function ageMonthsAt(ts) {
+    const birth = state.growth?.birthDate;
+    if (!birth) return null;
+    const b = new Date(birth + "T12:00:00");
+    const d = new Date(ts);
+    const days = (d - b) / 86400000;
+    if (days < 0) return null;
+    return days / 30.4375; // WHO mean month length
+  }
+
+  function ageLabel(ts) {
+    const months = ageMonthsAt(ts);
+    if (months == null) return "";
+    if (months < 1) {
+      const birth = new Date(state.growth.birthDate + "T12:00:00");
+      const days = Math.round((ts - birth.getTime()) / 86400000);
+      return `${days}d old`;
+    }
+    const m = Math.floor(months);
+    const remDays = Math.round((months - m) * 30.4375);
+    return remDays ? `${m} mo ${remDays}d` : `${m} mo`;
+  }
+
+  function percentilesFor(m) {
+    const who = window.WHOGrowth;
+    if (!who || !state.growth?.birthDate) return { weightPct: null, lengthPct: null };
+    return who.calc({
+      sex: state.growth.sex || "male",
+      ageMonths: ageMonthsAt(m.at),
+      weightKg: m.weightKg,
+      lengthCm: m.lengthCm,
+    });
+  }
+
+  function allGrowthPoints() {
+    const points = [];
+    const g = state.growth || {};
+    if (g.birthDate && (g.birthWeightKg != null || g.birthLengthCm != null)) {
+      points.push({
+        id: "birth",
+        at: new Date(g.birthDate + "T12:00:00").getTime(),
+        weightKg: g.birthWeightKg,
+        lengthCm: g.birthLengthCm,
+        isBirth: true,
+      });
+    }
+    state.measurements.forEach((m) => points.push(m));
+    points.sort((a, b) => a.at - b.at);
+    return points;
+  }
+
+  function latestMeasurement() {
+    const pts = allGrowthPoints();
+    return pts.length ? pts[pts.length - 1] : null;
+  }
+
+  function saveGrowthProfile(data) {
+    state.growth = {
+      birthDate: data.birthDate,
+      sex: data.sex,
+      birthWeightKg: data.birthWeightKg,
+      birthLengthCm: data.birthLengthCm,
+    };
+    save();
+    render();
+    toast("Birth info saved");
+  }
+
+  function addMeasurement(data) {
+    state.measurements.unshift({
+      id: uid(),
+      at: data.at,
+      weightKg: data.weightKg,
+      lengthCm: data.lengthCm,
+      note: data.note || "",
+    });
+    sortByTime();
+    save();
+    render();
+    toast("Measurement logged");
   }
 
   // ——— Notifications ———
@@ -362,7 +644,7 @@
   function checkMedNotifications(force = false) {
     if (!notificationsEnabled() && !force) return;
     if (!notificationsEnabled()) return;
-    MEDS.forEach((med) => {
+    getMeds().forEach((med) => {
       if (isDue(med) && !notified.has(med.id)) {
         notified.add(med.id);
         try {
@@ -619,7 +901,7 @@
 
     medEl.innerHTML = listOrEmpty(
       state.medDoses.slice(0, 16).map((d) => {
-        const med = MEDS.find((m) => m.id === d.medId);
+        const med = findMed(d.medId);
         return `
         <li>
           <div>
@@ -637,18 +919,35 @@
     return items.join("");
   }
 
+  function populateMedSelect(selectedId) {
+    const select = document.getElementById("manual-med-select");
+    if (!select) return;
+    const meds = getMeds();
+    if (!meds.length) {
+      select.innerHTML = `<option value="">Add a medication first</option>`;
+      return;
+    }
+    select.innerHTML = meds
+      .map(
+        (m) =>
+          `<option value="${m.id}" ${m.id === selectedId ? "selected" : ""}>${m.name}${
+            m.dose && m.dose !== "—" ? " · " + m.dose : ""
+          }</option>`
+      )
+      .join("");
+  }
+
   function renderMeds() {
-    const html = MEDS.map((med) => {
-      const due = isDue(med);
-      const schedule =
-        med.kind === "interval"
-          ? `every ${med.everyHours}h`
-          : formatClock(new Date().setHours(med.hour, med.minute, 0, 0));
-      return `
+    const meds = getMeds();
+    const html = meds.length
+      ? meds
+          .map((med) => {
+            const due = isDue(med);
+            return `
         <article class="med-card ${due ? "is-due" : ""}">
           <div>
             <p class="med-card__name">${med.name}</p>
-            <p class="med-card__dose">${med.dose} · ${schedule}</p>
+            <p class="med-card__dose">${med.dose} · ${medScheduleLabel(med)}</p>
           </div>
           <div class="med-card__actions">
             <button type="button" class="med-card__btn" data-take-med="${med.id}">
@@ -657,13 +956,163 @@
             <button type="button" class="med-card__btn med-card__btn--ghost" data-open="manual-med" data-med-id="${med.id}">
               Log past dose
             </button>
+            <button type="button" class="link-btn" data-remove-med="${med.id}">Remove</button>
           </div>
           <p class="med-card__status">${medStatusText(med)}</p>
         </article>`;
-    }).join("");
+          })
+          .join("")
+      : `<p class="empty-hint">No medications yet. Add one when prescribed.</p>`;
 
     document.getElementById("meds-home").innerHTML = html;
     document.getElementById("meds-full").innerHTML = html;
+  }
+
+  function renderGrowth() {
+    const setup = document.getElementById("growth-setup");
+    const body = document.getElementById("growth-body");
+    const g = state.growth || {};
+    const hasBirth = !!g.birthDate;
+
+    if (setup) setup.hidden = hasBirth;
+    if (body) body.hidden = !hasBirth;
+    if (!hasBirth) return;
+
+    const latest = latestMeasurement();
+    const who = window.WHOGrowth;
+    let weightPct = "—";
+    let lengthPct = "—";
+    let latestMeta = "Add a checkup measurement";
+    if (latest && who) {
+      const p = percentilesFor(latest);
+      weightPct = who.formatPercentile(p.weightPct);
+      lengthPct = who.formatPercentile(p.lengthPct);
+      latestMeta = `${formatDateTime(latest.at)} · ${ageLabel(latest.at)}`;
+    }
+
+    const wEl = document.getElementById("growth-weight-pct");
+    const lEl = document.getElementById("growth-length-pct");
+    const metaEl = document.getElementById("growth-latest-meta");
+    const birthEl = document.getElementById("growth-birth-summary");
+    if (wEl) wEl.textContent = weightPct;
+    if (lEl) lEl.textContent = lengthPct;
+    if (metaEl) metaEl.textContent = latestMeta;
+    if (birthEl) {
+      birthEl.textContent = `Born ${g.birthDate} · ${g.sex === "female" ? "Girl" : "Boy"} · ${formatWeight(
+        g.birthWeightKg
+      )} · ${formatLength(g.birthLengthCm)}`;
+    }
+
+    const list = document.getElementById("growth-history");
+    if (list) {
+      const pts = allGrowthPoints().slice().reverse();
+      list.innerHTML = listOrEmpty(
+        pts.map((m) => {
+          const p = percentilesFor(m);
+          const whoFmt = window.WHOGrowth;
+          const wp = whoFmt ? whoFmt.formatPercentile(p.weightPct) : "—";
+          const lp = whoFmt ? whoFmt.formatPercentile(p.lengthPct) : "—";
+          return `
+          <li>
+            <div>
+              <div>${m.isBirth ? "Birth" : formatDateTime(m.at)} · ${ageLabel(m.at)}</div>
+              <div class="muted">${formatWeight(m.weightKg)} (${wp}) · ${formatLength(m.lengthCm)} (${lp})</div>
+            </div>
+            ${
+              m.isBirth
+                ? ""
+                : `<button type="button" class="delete-btn" data-delete="measurement" data-id="${m.id}">Delete</button>`
+            }
+          </li>`;
+        })
+      );
+    }
+
+    renderGrowthChart();
+  }
+
+  function renderGrowthChart() {
+    const svg = document.getElementById("growth-chart");
+    if (!svg || !window.WHOGrowth) return;
+    const pts = allGrowthPoints().filter((p) => p.weightKg != null);
+    const sex = state.growth?.sex === "female" ? "female" : "male";
+    const W = 320;
+    const H = 180;
+    const pad = { t: 16, r: 12, b: 28, l: 36 };
+    const maxAge = Math.max(6, ...pts.map((p) => ageMonthsAt(p.at) || 0), 1);
+    const xMax = Math.min(24, Math.ceil(maxAge + 1));
+
+    const refAges = [];
+    for (let m = 0; m <= xMax; m += xMax > 12 ? 2 : 1) refAges.push(m);
+
+    function weightAtPct(months, z) {
+      const { L, M, S } = window.WHOGrowth.lmsAt(window.WHOGrowth.weight[sex], months);
+      if (Math.abs(L) < 1e-7) return M * Math.exp(S * z);
+      return M * Math.pow(1 + L * S * z, 1 / L);
+    }
+
+    const bands = [
+      { z: -1.881, cls: "p3" },
+      { z: -1.036, cls: "p15" },
+      { z: 0, cls: "p50" },
+      { z: 1.036, cls: "p85" },
+      { z: 1.881, cls: "p97" },
+    ];
+
+    let yMin = Infinity;
+    let yMax = -Infinity;
+    bands.forEach((b) => {
+      refAges.forEach((a) => {
+        const w = weightAtPct(a, b.z);
+        yMin = Math.min(yMin, w);
+        yMax = Math.max(yMax, w);
+      });
+    });
+    pts.forEach((p) => {
+      yMin = Math.min(yMin, p.weightKg);
+      yMax = Math.max(yMax, p.weightKg);
+    });
+    const yPad = (yMax - yMin) * 0.08 || 0.5;
+    yMin -= yPad;
+    yMax += yPad;
+
+    const xScale = (m) => pad.l + ((m - 0) / xMax) * (W - pad.l - pad.r);
+    const yScale = (kg) => pad.t + (1 - (kg - yMin) / (yMax - yMin)) * (H - pad.t - pad.b);
+
+    function pathFor(z) {
+      return refAges
+        .map((a, i) => {
+          const x = xScale(a);
+          const y = yScale(weightAtPct(a, z));
+          return `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
+        })
+        .join(" ");
+    }
+
+    const curves = bands
+      .map((b) => `<path class="chart-band chart-band--${b.cls}" d="${pathFor(b.z)}" fill="none" />`)
+      .join("");
+
+    const dots = pts
+      .map((p) => {
+        const m = ageMonthsAt(p.at);
+        if (m == null) return "";
+        return `<circle class="chart-point" cx="${xScale(m).toFixed(1)}" cy="${yScale(p.weightKg).toFixed(
+          1
+        )}" r="5" />`;
+      })
+      .join("");
+
+    const labels = `
+      <text class="chart-axis" x="${pad.l}" y="${H - 8}">0 mo</text>
+      <text class="chart-axis" x="${W - pad.r}" y="${H - 8}" text-anchor="end">${xMax} mo</text>
+      <text class="chart-axis" x="4" y="${yScale(yMax) + 4}">${yMax.toFixed(1)}</text>
+      <text class="chart-axis" x="4" y="${yScale(yMin) + 4}">${yMin.toFixed(1)}</text>
+      <text class="chart-legend" x="${W / 2}" y="12" text-anchor="middle">Weight · WHO 3rd–97th</text>
+    `;
+
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = curves + dots + labels;
   }
 
   function render() {
@@ -672,6 +1121,8 @@
     renderSessionControls("nap");
     renderHistory();
     renderMeds();
+    renderGrowth();
+    applyHeroPhoto();
     updateNotifyBtn();
   }
 
@@ -694,6 +1145,35 @@
     document.querySelectorAll(".tab").forEach((tab) => {
       tab.addEventListener("click", () => switchTab(tab.dataset.tab));
     });
+
+    const heroBtn = document.getElementById("hero-photo-btn");
+    const heroInput = document.getElementById("hero-photo-input");
+    const heroRemove = document.getElementById("hero-photo-remove");
+    const heroPlaceholder = document.getElementById("baby-hero-placeholder");
+
+    if (heroBtn && heroInput) {
+      heroBtn.addEventListener("click", () => heroInput.click());
+      if (heroPlaceholder) {
+        heroPlaceholder.addEventListener("click", () => heroInput.click());
+      }
+      heroInput.addEventListener("change", async () => {
+        const file = heroInput.files && heroInput.files[0];
+        heroInput.value = "";
+        if (!file) return;
+        try {
+          toast("Saving photo…");
+          const dataUrl = await compressImage(file);
+          await saveHeroPhoto(dataUrl);
+        } catch {
+          toast("Couldn’t save that photo");
+        }
+      });
+    }
+    if (heroRemove) {
+      heroRemove.addEventListener("click", () => {
+        if (confirm("Remove the hero photo?")) removeHeroPhoto();
+      });
+    }
 
     document.body.addEventListener("click", (e) => {
       const t = e.target.closest("[data-action]");
@@ -718,6 +1198,13 @@
       const take = e.target.closest("[data-take-med]");
       if (take) takeMed(take.dataset.takeMed);
 
+      const removeMed = e.target.closest("[data-remove-med]");
+      if (removeMed) {
+        if (confirm("Remove this medication from the list?")) {
+          removeMedication(removeMed.dataset.removeMed);
+        }
+      }
+
       const del = e.target.closest("[data-delete]");
       if (del) {
         const { delete: kind, id } = del.dataset;
@@ -725,6 +1212,7 @@
         if (kind === "nap") state.naps = state.naps.filter((x) => x.id !== id);
         if (kind === "diaper") state.diapers = state.diapers.filter((x) => x.id !== id);
         if (kind === "med") state.medDoses = state.medDoses.filter((x) => x.id !== id);
+        if (kind === "measurement") state.measurements = state.measurements.filter((x) => x.id !== id);
         save();
         render();
         toast("Deleted");
@@ -732,6 +1220,15 @@
     });
 
     document.getElementById("notify-btn").addEventListener("click", enableNotifications);
+
+    const kindSelect = document.getElementById("med-kind-select");
+    if (kindSelect) {
+      kindSelect.addEventListener("change", () => {
+        const kind = kindSelect.value;
+        document.getElementById("med-fields-interval").hidden = kind !== "interval";
+        document.getElementById("med-fields-daily").hidden = kind !== "daily";
+      });
+    }
 
     document.getElementById("manual-feed-form").addEventListener("submit", (e) => {
       e.preventDefault();
@@ -764,16 +1261,88 @@
       takeMed(fd.get("medId"), new Date(fd.get("at")).getTime(), true);
       document.getElementById("manual-med").close();
     });
+
+    document.getElementById("add-med-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const kind = fd.get("kind");
+      addMedication({
+        name: fd.get("name"),
+        dose: fd.get("dose"),
+        kind,
+        everyHours: fd.get("everyHours"),
+        hour: fd.get("hour"),
+        minute: fd.get("minute"),
+      });
+      e.target.reset();
+      document.getElementById("med-fields-interval").hidden = false;
+      document.getElementById("med-fields-daily").hidden = true;
+      document.getElementById("add-med").close();
+    });
+
+    document.getElementById("birth-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      saveGrowthProfile({
+        birthDate: fd.get("birthDate"),
+        sex: fd.get("sex"),
+        birthWeightKg: lbOzToKg(fd.get("lb"), fd.get("oz")),
+        birthLengthCm: inToCm(fd.get("inches")),
+      });
+    });
+
+    document.getElementById("edit-birth-form")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      saveGrowthProfile({
+        birthDate: fd.get("birthDate"),
+        sex: fd.get("sex"),
+        birthWeightKg: lbOzToKg(fd.get("lb"), fd.get("oz")),
+        birthLengthCm: inToCm(fd.get("inches")),
+      });
+      document.getElementById("edit-birth").close();
+    });
+
+    document.getElementById("add-measurement-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const dateStr = fd.get("date");
+      const at = new Date(dateStr + "T12:00:00").getTime();
+      addMeasurement({
+        at,
+        weightKg: lbOzToKg(fd.get("lb"), fd.get("oz")),
+        lengthCm: inToCm(fd.get("inches")),
+        note: fd.get("note") || "",
+      });
+      document.getElementById("add-measurement").close();
+    });
   }
 
   function prepModal(id, medId) {
     const dlg = document.getElementById(id);
+    if (!dlg) return;
     const ended = dlg.querySelector('[name="endedAt"]');
     const at = dlg.querySelector('[name="at"]');
-    const medSelect = dlg.querySelector('[name="medId"]');
     if (ended) ended.value = toLocalInputValue();
     if (at) at.value = toLocalInputValue();
-    if (medSelect && medId) medSelect.value = medId;
+    if (id === "manual-med") populateMedSelect(medId);
+    if (id === "add-measurement") {
+      const date = dlg.querySelector('[name="date"]');
+      if (date) date.value = new Date().toISOString().slice(0, 10);
+    }
+    if (id === "edit-birth") {
+      const g = state.growth || {};
+      if (g.birthDate) dlg.querySelector('[name="birthDate"]').value = g.birthDate;
+      if (g.sex) dlg.querySelector('[name="sex"]').value = g.sex;
+      if (g.birthWeightKg != null) {
+        const { lb, oz } = kgToLbOz(g.birthWeightKg);
+        dlg.querySelector('[name="lb"]').value = lb;
+        dlg.querySelector('[name="oz"]').value = oz;
+      }
+      if (g.birthLengthCm != null) {
+        dlg.querySelector('[name="inches"]').value = cmToIn(g.birthLengthCm).toFixed(1);
+      }
+    }
   }
 
   // ——— Intro ———
@@ -794,6 +1363,7 @@
     bind();
     bindServiceWorkerMessages();
     await registerServiceWorker();
+    await loadHeroPhoto();
     await consumePendingEnd();
     render();
     runIntro();
