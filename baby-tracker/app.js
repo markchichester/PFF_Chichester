@@ -1,6 +1,9 @@
 (() => {
   const STORAGE_KEY = "baby-tracker-v1";
   const NOTIFY_KEY = "baby-tracker-notify";
+  const IDB_NAME = "baby-tracker-sw";
+  const IDB_STORE = "kv";
+  const PENDING_END_KEY = "pendingEnd";
 
   const MEDS = [
     {
@@ -47,7 +50,9 @@
   let state = load();
   let toastTimer = null;
   let tickTimer = null;
+  let sessionNotifyTimer = null;
   const notified = new Set();
+  const sessionNotifyShown = { feed: false, nap: false };
 
   // ——— Storage ———
   function load() {
@@ -62,6 +67,46 @@
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function openIdb() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function idbGet(key) {
+    try {
+      const db = await openIdb();
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, "readonly");
+        const req = tx.objectStore(IDB_STORE).get(key);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    } catch {
+      return undefined;
+    }
+  }
+
+  async function idbDel(key) {
+    try {
+      const db = await openIdb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, "readwrite");
+        tx.objectStore(IDB_STORE).delete(key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch {
+      /* ignore */
+    }
   }
 
   function sortByTime() {
@@ -145,8 +190,10 @@
   function startSession(kind) {
     if (getActive(kind)) return;
     setActive(kind, { id: uid(), startedAt: now() });
+    sessionNotifyShown[kind] = false;
     save();
     render();
+    ensureSessionNotifications(true);
     toast(kind === "feed" ? "Feed started" : "Nap started");
   }
 
@@ -162,9 +209,11 @@
     };
     getList(kind).unshift(entry);
     setActive(kind, null);
+    sessionNotifyShown[kind] = false;
     sortByTime();
     save();
     render();
+    clearSessionNotification(kind);
     toast(
       kind === "feed"
         ? `Feed ended · ${formatDuration(entry.durationMs)}`
@@ -285,11 +334,13 @@
       toast("Notifications not supported here");
       return;
     }
+    await registerServiceWorker();
     const perm = await Notification.requestPermission();
     if (perm === "granted") {
       localStorage.setItem(NOTIFY_KEY, "1");
-      toast("Reminders on");
+      toast("Lock-screen reminders on");
       checkMedNotifications(true);
+      ensureSessionNotifications(true);
     } else {
       localStorage.setItem(NOTIFY_KEY, "0");
       toast("Reminders blocked");
@@ -322,6 +373,137 @@
           });
         } catch {
           /* ignore */
+        }
+      }
+    });
+  }
+
+  async function registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) return null;
+    try {
+      return await navigator.serviceWorker.register("./sw.js");
+    } catch {
+      return null;
+    }
+  }
+
+  async function getSwRegistration() {
+    if (!("serviceWorker" in navigator)) return null;
+    try {
+      return await navigator.serviceWorker.ready;
+    } catch {
+      return null;
+    }
+  }
+
+  async function clearSessionNotification(kind) {
+    try {
+      const reg = await getSwRegistration();
+      if (!reg?.getNotifications) return;
+      const list = await reg.getNotifications({ tag: `active-${kind}` });
+      list.forEach((n) => n.close());
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function ensureSessionNotifications(fromStart = false) {
+    if (!notificationsEnabled()) {
+      if (fromStart && (state.activeFeed || state.activeNap)) {
+        // Soft prompt once per start if reminders are off
+        const btn = document.getElementById("notify-btn");
+        if (btn && !btn.classList.contains("is-on")) {
+          btn.classList.add("pulse-hint");
+          setTimeout(() => btn.classList.remove("pulse-hint"), 2400);
+        }
+      }
+      return;
+    }
+
+    const reg = await getSwRegistration();
+    if (!reg?.showNotification) return;
+
+    for (const kind of ["feed", "nap"]) {
+      const active = getActive(kind);
+      const tag = `active-${kind}`;
+      if (!active) {
+        await clearSessionNotification(kind);
+        continue;
+      }
+
+      const elapsed = formatDuration(now() - active.startedAt);
+      const isFeed = kind === "feed";
+      const title = isFeed ? "Feeding in progress" : "Nap in progress";
+      const body = `${elapsed} · Tap End when finished`;
+      const firstShow = !sessionNotifyShown[kind];
+      sessionNotifyShown[kind] = true;
+
+      try {
+        await reg.showNotification(title, {
+          body,
+          tag,
+          renotify: firstShow,
+          requireInteraction: true,
+          silent: !firstShow && !fromStart,
+          badge: "./icon.svg",
+          icon: "./icon.svg",
+          actions: [
+            {
+              action: "end",
+              title: isFeed ? "End feed" : "End nap",
+            },
+          ],
+          data: { type: "active-session", kind },
+        });
+      } catch {
+        /* Some browsers reject actions / icons — retry minimal */
+        try {
+          await reg.showNotification(title, {
+            body,
+            tag,
+            requireInteraction: true,
+            silent: !firstShow,
+            data: { type: "active-session", kind },
+          });
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  }
+
+  function startSessionNotifyLoop() {
+    clearInterval(sessionNotifyTimer);
+    sessionNotifyTimer = setInterval(() => {
+      if (state.activeFeed || state.activeNap) ensureSessionNotifications(false);
+    }, 15000);
+  }
+
+  async function consumePendingEnd() {
+    const pending = await idbGet(PENDING_END_KEY);
+    if (pending?.kind) {
+      await idbDel(PENDING_END_KEY);
+      if (getActive(pending.kind)) endSession(pending.kind);
+    }
+
+    const params = new URLSearchParams(location.search);
+    const endKind = params.get("end");
+    if (endKind === "feed" || endKind === "nap") {
+      if (getActive(endKind)) endSession(endKind);
+      const url = new URL(location.href);
+      url.searchParams.delete("end");
+      history.replaceState({}, "", url.pathname + url.search + url.hash);
+    }
+  }
+
+  function bindServiceWorkerMessages() {
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data?.type === "END_SESSION") {
+        const kind = event.data.kind;
+        if (kind === "feed" || kind === "nap") {
+          idbDel(PENDING_END_KEY);
+          if (getActive(kind)) endSession(kind);
         }
       }
     });
@@ -607,11 +789,17 @@
   }
 
   // ——— Boot ———
-  function boot() {
+  async function boot() {
     sortByTime();
     bind();
+    bindServiceWorkerMessages();
+    await registerServiceWorker();
+    await consumePendingEnd();
     render();
     runIntro();
+    startSessionNotifyLoop();
+    ensureSessionNotifications(!!(state.activeFeed || state.activeNap));
+
     tickTimer = setInterval(() => {
       renderSince();
       renderSessionControls("feed");
@@ -619,11 +807,22 @@
       renderMeds();
       checkMedNotifications();
     }, 1000);
+
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) {
-        render();
-        checkMedNotifications();
+      if (document.hidden) {
+        // Phone likely locking / app backgrounded — refresh lock-screen banner
+        ensureSessionNotifications(true);
+      } else {
+        consumePendingEnd().then(() => {
+          render();
+          checkMedNotifications();
+          ensureSessionNotifications(false);
+        });
       }
+    });
+
+    window.addEventListener("pageshow", () => {
+      consumePendingEnd().then(() => ensureSessionNotifications(false));
     });
   }
 

@@ -4,23 +4,35 @@ Mobile-first web app for tracking feeds, naps, diapers, and medication. All data
 
 ## Open on a phone
 
-From this folder:
+Serve over HTTP (needed for lock-screen notifications):
 
 ```bash
+cd ~/Desktop/baby-tracker
 python3 -m http.server 8080
 ```
 
-Then on your phone (same Wi‑Fi), open `http://YOUR-COMPUTER-IP:8080`.
+On your phone (same Wi‑Fi), open `http://YOUR-COMPUTER-IP:8080`.
 
-Or open `index.html` directly in a mobile browser / add to Home Screen.
+**Add to Home Screen** for the best experience (especially on iPhone).
+
+## Lock-screen feed / nap reminder
+
+1. Tap **Reminders** once and allow notifications.
+2. Start a feed or nap.
+3. When the phone locks, a persistent notification stays on the lock screen with the live duration.
+4. Tap **End feed** / **End nap** (Android) or tap the notification (iPhone) to complete it.
+
+Notes:
+- Works best on **Android Chrome**.
+- On **iPhone**, install to Home Screen and allow notifications; action buttons are limited, but tapping the banner opens the app and ends the session.
+- Must be opened via `http://` or `https://` (not a raw `file://` link) for the service worker.
 
 ## Features
 
 - **Cinematic opening** — soft pink/blue intro
-- **Feeds** — Start / End, live timer, time since last feed, manual add
-- **Naps** — same UX as feeds
+- **Feeds / Naps** — Start / End, live timer, time since last, manual add, lock-screen end action
 - **Diapers** — one-tap poop / pee, time since last
-- **Meds** — Ibuprofen 600mg / 6h, Acetaminophen 650mg / 4h, Colace 8pm, Prenatal 9am; check off doses; optional browser reminders
+- **Meds** — Ibuprofen 600mg / 6h, Acetaminophen 650mg / 4h, Colace 8pm, Prenatal 9am; check off or log past doses; optional reminders
 
 ## Privacy
 

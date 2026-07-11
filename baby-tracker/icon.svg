@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Baby Tracker">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e878a0"/>
+      <stop offset="100%" stop-color="#4a93d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <circle cx="256" cy="230" r="96" fill="#fff" opacity="0.95"/>
+  <circle cx="222" cy="220" r="12" fill="#4a93d4"/>
+  <circle cx="290" cy="220" r="12" fill="#4a93d4"/>
+  <path d="M220 268c18 22 54 22 72 0" fill="none" stroke="#e878a0" stroke-width="14" stroke-linecap="round"/>
+</svg>

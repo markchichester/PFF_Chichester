@@ -230,6 +230,15 @@ select {
   border-color: var(--blue);
 }
 
+.ghost-btn.pulse-hint {
+  animation: pulseHint 0.7s ease-in-out 3;
+}
+
+@keyframes pulseHint {
+  0%, 100% { transform: scale(1); box-shadow: none; }
+  50% { transform: scale(1.06); box-shadow: 0 0 0 4px rgba(232, 120, 160, 0.35); }
+}
+
 .tabs {
   display: flex;
   gap: 0.35rem;
