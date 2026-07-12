@@ -405,65 +405,99 @@
       let hour = med.hour != null ? Number(med.hour) : undefined;
       let minute = med.minute != null ? Number(med.minute) : undefined;
 
-      // Repair known starter meds if fields were lost
+      // Starter meds: always restore the correct schedule (repairs bad "daily" saves)
       if (fallback) {
-        if (!kind) kind = fallback.kind;
-        if (kind === "interval" && !(everyHours > 0)) everyHours = fallback.everyHours;
-        if (kind === "daily") {
-          if (hour == null || Number.isNaN(hour)) hour = fallback.hour;
-          if (minute == null || Number.isNaN(minute)) minute = fallback.minute;
-        }
+        kind = fallback.kind;
+        everyHours = fallback.everyHours;
+        hour = fallback.hour;
+        minute = fallback.minute;
+      } else {
+        // Custom meds: infer safely
+        if (everyHours > 0) kind = "interval";
+        else if (kind === "daily" || hour != null) kind = "daily";
+        else if (kind === "as-needed") kind = "as-needed";
+        else if (!kind) kind = "as-needed";
       }
 
-      // Infer interval when everyHours is present but kind is missing/wrong
-      if ((!kind || kind === "daily") && everyHours > 0 && fallback?.kind === "interval") {
-        kind = "interval";
+      if (kind === "interval") {
+        if (!(everyHours > 0)) everyHours = 4;
+        return { ...med, kind: "interval", everyHours, hour: undefined, minute: undefined };
       }
-      if (!kind && everyHours > 0) kind = "interval";
-      if (!kind && hour != null) kind = "daily";
-      if (!kind) kind = "as-needed";
-
+      if (kind === "daily") {
+        return {
+          ...med,
+          kind: "daily",
+          everyHours: undefined,
+          hour: Number.isFinite(hour) ? hour : 9,
+          minute: Number.isFinite(minute) ? minute : 0,
+        };
+      }
       return {
         ...med,
-        kind,
-        everyHours: kind === "interval" ? everyHours || 4 : undefined,
-        hour: kind === "daily" ? (hour ?? 9) : undefined,
-        minute: kind === "daily" ? (minute ?? 0) : undefined,
+        kind: "as-needed",
+        everyHours: undefined,
+        hour: undefined,
+        minute: undefined,
       };
     });
   }
 
   function lastDose(medId) {
-    const hit = state.medDoses.find((d) => d.medId === medId);
+    const hit = state.medDoses.find((d) => d.medId === medId && typeof d.at === "number");
     return hit ? hit.at : null;
   }
 
-  function nextDue(med) {
-    const last = lastDose(med.id);
-    const kind = med.kind;
-    const everyHours = Number(med.everyHours);
+  /** Parse datetime-local as local wall time (avoid UTC misreads). */
+  function parseLocalDateTime(value) {
+    if (value instanceof Date) return value.getTime();
+    if (typeof value === "number") return value;
+    const str = String(value || "");
+    const m = str.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/);
+    if (m) {
+      return new Date(
+        Number(m[1]),
+        Number(m[2]) - 1,
+        Number(m[3]),
+        Number(m[4]),
+        Number(m[5]),
+        Number(m[6] || 0)
+      ).getTime();
+    }
+    const t = new Date(str).getTime();
+    return Number.isFinite(t) ? t : Date.now();
+  }
 
-    // Interval: next dose = last taken + everyHours (never treat as daily)
-    if (kind === "interval" || (kind !== "daily" && kind !== "as-needed" && everyHours > 0)) {
-      const hours = everyHours > 0 ? everyHours : 4;
+  function nextDue(med) {
+    let last = lastDose(med.id);
+    // Ignore future-dated last doses (bad manual entry / timezone glitch)
+    if (last != null && last > now()) last = now();
+
+    const kind = med.kind;
+
+    if (kind === "interval") {
+      const hours = Number(med.everyHours) > 0 ? Number(med.everyHours) : 4;
       if (!last) return now();
       return last + hours * 3600000;
     }
 
     if (kind === "as-needed") return null;
 
-    // Daily at a fixed clock time — only when explicitly daily
     if (kind === "daily") {
       const hour = Number(med.hour);
       const minute = Number(med.minute) || 0;
       const scheduleToday = new Date();
       scheduleToday.setHours(Number.isFinite(hour) ? hour : 9, minute, 0, 0);
       const takenToday = last && dateKey(new Date(last)) === dateKey(new Date());
-      if (takenToday) {
-        const tomorrow = new Date(scheduleToday);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        return tomorrow.getTime();
+      if (takenToday || now() < scheduleToday.getTime()) {
+        // If already taken today → tomorrow; if before today's time and not taken → today
+        if (takenToday) {
+          const tomorrow = new Date(scheduleToday);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          return tomorrow.getTime();
+        }
+        return scheduleToday.getTime();
       }
+      // Past today's time and not taken → due now (return today's slot)
       return scheduleToday.getTime();
     }
 
@@ -481,7 +515,8 @@
   }
 
   function takeMed(medId, at = now(), manual = false) {
-    state.medDoses.unshift({ id: uid(), medId, at, manual });
+    const when = typeof at === "number" ? at : parseLocalDateTime(at);
+    state.medDoses.unshift({ id: uid(), medId, at: when, manual });
     notified.delete(medId);
     sortByTime();
     save();
@@ -493,7 +528,7 @@
   function medScheduleLabel(med) {
     if (med.kind === "interval") return `every ${med.everyHours}h`;
     if (med.kind === "daily") {
-      return formatClock(new Date().setHours(med.hour || 0, med.minute || 0, 0, 0));
+      return `daily · ${formatClock(new Date().setHours(med.hour || 0, med.minute || 0, 0, 0))}`;
     }
     return "as needed";
   }
@@ -509,7 +544,10 @@
       if (!last) return "Due now · never taken";
       return `Due now · last ${formatClock(last)}`;
     }
-    const until = due - now();
+    const until = Math.max(0, due - now());
+    if (med.kind === "interval") {
+      return `Next in ${formatDuration(until)} (every ${med.everyHours}h)`;
+    }
     return `Next in ${formatDuration(until)} · ${formatClock(due)}`;
   }
 
@@ -1310,7 +1348,7 @@
     document.getElementById("manual-med-form").addEventListener("submit", (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
-      takeMed(fd.get("medId"), new Date(fd.get("at")).getTime(), true);
+      takeMed(fd.get("medId"), parseLocalDateTime(fd.get("at")), true);
       document.getElementById("manual-med").close();
     });
 
