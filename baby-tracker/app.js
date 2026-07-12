@@ -396,6 +396,43 @@
   }
 
   // ——— Meds ———
+  function normalizeMedications() {
+    const byId = Object.fromEntries(DEFAULT_MEDS.map((m) => [m.id, m]));
+    state.medications = (state.medications || []).map((med) => {
+      const fallback = byId[med.id];
+      let kind = med.kind;
+      let everyHours = med.everyHours != null ? Number(med.everyHours) : undefined;
+      let hour = med.hour != null ? Number(med.hour) : undefined;
+      let minute = med.minute != null ? Number(med.minute) : undefined;
+
+      // Repair known starter meds if fields were lost
+      if (fallback) {
+        if (!kind) kind = fallback.kind;
+        if (kind === "interval" && !(everyHours > 0)) everyHours = fallback.everyHours;
+        if (kind === "daily") {
+          if (hour == null || Number.isNaN(hour)) hour = fallback.hour;
+          if (minute == null || Number.isNaN(minute)) minute = fallback.minute;
+        }
+      }
+
+      // Infer interval when everyHours is present but kind is missing/wrong
+      if ((!kind || kind === "daily") && everyHours > 0 && fallback?.kind === "interval") {
+        kind = "interval";
+      }
+      if (!kind && everyHours > 0) kind = "interval";
+      if (!kind && hour != null) kind = "daily";
+      if (!kind) kind = "as-needed";
+
+      return {
+        ...med,
+        kind,
+        everyHours: kind === "interval" ? everyHours || 4 : undefined,
+        hour: kind === "daily" ? (hour ?? 9) : undefined,
+        minute: kind === "daily" ? (minute ?? 0) : undefined,
+      };
+    });
+  }
+
   function lastDose(medId) {
     const hit = state.medDoses.find((d) => d.medId === medId);
     return hit ? hit.at : null;
@@ -403,22 +440,34 @@
 
   function nextDue(med) {
     const last = lastDose(med.id);
-    if (med.kind === "as-needed") return null;
-    if (med.kind === "interval") {
+    const kind = med.kind;
+    const everyHours = Number(med.everyHours);
+
+    // Interval: next dose = last taken + everyHours (never treat as daily)
+    if (kind === "interval" || (kind !== "daily" && kind !== "as-needed" && everyHours > 0)) {
+      const hours = everyHours > 0 ? everyHours : 4;
       if (!last) return now();
-      return last + (Number(med.everyHours) || 0) * 3600000;
+      return last + hours * 3600000;
     }
-    const hour = Number(med.hour) || 0;
-    const minute = Number(med.minute) || 0;
-    const scheduleToday = new Date();
-    scheduleToday.setHours(hour, minute, 0, 0);
-    const takenToday = last && dateKey(new Date(last)) === dateKey(new Date());
-    if (takenToday) {
-      const tomorrow = new Date(scheduleToday);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      return tomorrow.getTime();
+
+    if (kind === "as-needed") return null;
+
+    // Daily at a fixed clock time — only when explicitly daily
+    if (kind === "daily") {
+      const hour = Number(med.hour);
+      const minute = Number(med.minute) || 0;
+      const scheduleToday = new Date();
+      scheduleToday.setHours(Number.isFinite(hour) ? hour : 9, minute, 0, 0);
+      const takenToday = last && dateKey(new Date(last)) === dateKey(new Date());
+      if (takenToday) {
+        const tomorrow = new Date(scheduleToday);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.getTime();
+      }
+      return scheduleToday.getTime();
     }
-    return scheduleToday.getTime();
+
+    return null;
   }
 
   function dateKey(d) {
@@ -443,7 +492,9 @@
 
   function medScheduleLabel(med) {
     if (med.kind === "interval") return `every ${med.everyHours}h`;
-    if (med.kind === "daily") return formatClock(new Date().setHours(med.hour || 0, med.minute || 0, 0, 0));
+    if (med.kind === "daily") {
+      return formatClock(new Date().setHours(med.hour || 0, med.minute || 0, 0, 0));
+    }
     return "as needed";
   }
 
@@ -453,6 +504,7 @@
       return last ? `Last ${formatClock(last)}` : "As needed · not taken yet";
     }
     const due = nextDue(med);
+    if (due == null) return last ? `Last ${formatClock(last)}` : "Not scheduled";
     if (isDue(med)) {
       if (!last) return "Due now · never taken";
       return `Due now · last ${formatClock(last)}`;
@@ -1359,6 +1411,8 @@
 
   // ——— Boot ———
   async function boot() {
+    normalizeMedications();
+    save();
     sortByTime();
     bind();
     bindServiceWorkerMessages();
