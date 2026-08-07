@@ -568,6 +568,11 @@
         .container #playerPool .stat-tile--snaps { --stat-accent: #d97706; }
         .container #playerPool .stat-tile--adp { --stat-accent: #ea580c; }
 
+        /* Compact embed — PPR full width, remaining stats 2×2 */
+        .container #playerPool .stat-tile--ppr {
+            grid-column: 1 / -1;
+        }
+
         .container #playerPool .player-row-analysis {
             border-top: 1px solid var(--row-border);
             padding: 0.5rem 0.75rem 0.625rem;
@@ -606,6 +611,10 @@
                 grid-template-columns: repeat(5, minmax(0, 1fr));
                 gap: 0.5rem;
                 padding: 0.75rem 0.875rem;
+            }
+
+            .container #playerPool .stat-tile--ppr {
+                grid-column: auto;
             }
 
             .container #playerPool .stat-tile-label {
@@ -783,6 +792,14 @@
             grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 0.5rem;
             padding: 0.75rem 0.875rem;
+        }
+
+        html:fullscreen #playerPool .stat-tile--ppr,
+        html:-webkit-full-screen #playerPool .stat-tile--ppr,
+        #ff-rankings-root:fullscreen #playerPool .stat-tile--ppr,
+        #ff-rankings-root:-webkit-full-screen #playerPool .stat-tile--ppr,
+        #ff-rankings-root.ff-fullscreen-active #playerPool .stat-tile--ppr {
+            grid-column: auto;
         }
 
         html:fullscreen #playerPool .stat-tile,
@@ -1133,8 +1150,37 @@
         }
         
         /* Fullscreen button - styled to match other header buttons */
+        @keyframes ff-fullscreen-pulse {
+            0%, 100% {
+                border-color: rgba(0, 107, 255, 0.35);
+                box-shadow: 0 0 0 0 rgba(0, 107, 255, 0.2);
+            }
+            50% {
+                border-color: rgba(0, 107, 255, 0.9);
+                box-shadow: 0 0 0 6px rgba(0, 107, 255, 0);
+            }
+        }
+
         #fullscreen-btn {
             position: relative;
+            border: 1px solid rgba(0, 107, 255, 0.35);
+            animation: ff-fullscreen-pulse 2.25s ease-in-out infinite;
+        }
+
+        html:fullscreen #fullscreen-btn,
+        html:-webkit-full-screen #fullscreen-btn,
+        #ff-rankings-root:fullscreen #fullscreen-btn,
+        #ff-rankings-root:-webkit-full-screen #fullscreen-btn,
+        #ff-rankings-root.ff-fullscreen-active #fullscreen-btn {
+            animation: none;
+            border-color: transparent;
+            box-shadow: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #fullscreen-btn {
+                animation: none;
+            }
         }
 
         /* Native browser fullscreen (GitHub Pages, direct visits) */
