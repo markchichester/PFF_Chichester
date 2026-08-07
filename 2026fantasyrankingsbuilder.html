@@ -151,6 +151,16 @@
             overflow-y: auto;
             padding: 0.5rem 0.625rem;
         }
+
+        .container .embed-panel-pool {
+            background-color: #ffffff;
+            container-type: inline-size;
+            container-name: player-pool;
+        }
+
+        .container #playerPool {
+            background-color: #ffffff;
+        }
         
         .container .embed-panel-pool #playerPool {
             flex: 1 1 auto;
@@ -159,7 +169,7 @@
         
         .container .embed-filters-wrap {
             flex-shrink: 0;
-            padding: 0.5rem 0.625rem;
+            padding: 0.375rem 0.5rem;
         }
         
         .container .embed-filters {
@@ -203,8 +213,12 @@
         }
         
         .container .embed-sort-wrap {
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
+            margin-top: 0.375rem;
+            padding-top: 0.375rem;
+        }
+
+        .container .embed-sort-wrap label {
+            margin-bottom: 0.25rem !important;
         }
         
         .container .player-card {
@@ -241,6 +255,435 @@
         
         .container .grade-box-label {
             font-size: 0.5625rem !important;
+        }
+
+        /* Player pool — stacked row: identity top, stats bottom */
+        .container #playerPool .player-row {
+            --team-color: #006bff;
+            --row-border: #e5e7eb;
+            --row-text: #111827;
+            --row-muted: #6b7280;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 0 !important;
+            margin-bottom: 0.625rem !important;
+            border: 1px solid var(--row-border) !important;
+            border-radius: 1rem !important;
+            background: #ffffff !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .container #playerPool .player-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--team-color);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 2;
+        }
+
+        .container #playerPool .player-row:hover,
+        .container #playerPool .player-row:focus-visible {
+            border-color: color-mix(in srgb, var(--team-color) 35%, var(--row-border)) !important;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .container #playerPool .player-row:hover::before,
+        .container #playerPool .player-row:focus-visible::before {
+            opacity: 1;
+        }
+
+        .container #playerPool .player-row:focus-visible {
+            outline: 2px solid var(--team-color);
+            outline-offset: 2px;
+        }
+
+        /* Top band — headshot clipped at bottom border */
+        .container #playerPool .player-identity {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 0.5rem 0.625rem;
+            padding: 0.625rem 0.75rem 0;
+            min-height: 4.875rem;
+            border-bottom: 1px solid var(--row-border);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container #playerPool .player-visual {
+            position: relative;
+            width: 4.75rem;
+            height: 6.5rem;
+            flex-shrink: 0;
+            align-self: end;
+            margin-bottom: 0;
+        }
+
+        .container #playerPool .player-visual-accent {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 3rem;
+            height: 5.5rem;
+            background: color-mix(in srgb, var(--team-color) 20%, transparent);
+            transform: skewX(-10deg);
+            border-radius: 0.25rem;
+            z-index: 0;
+        }
+
+        .container #playerPool .team-watermark {
+            position: absolute;
+            left: -0.375rem;
+            bottom: 0;
+            width: 4.25rem;
+            height: 4.25rem;
+            object-fit: contain;
+            opacity: 0.09;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container #playerPool .player-headshot-frame {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .container #playerPool .player-headshot {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: bottom center;
+        }
+
+        .container #playerPool .player-info {
+            min-width: 0;
+            align-self: center;
+            padding: 0.25rem 0;
+        }
+
+        .container #playerPool .player-name {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: none;
+            text-align: left;
+            font-family: inherit;
+            cursor: inherit;
+            color: var(--row-text);
+            line-height: 0.95;
+            letter-spacing: 0.02em;
+        }
+
+        .container #playerPool button.player-name {
+            cursor: pointer;
+        }
+
+        .container #playerPool button.player-name:hover .player-name-line {
+            color: var(--team-color);
+        }
+
+        .container #playerPool .player-name-line {
+            display: block;
+            font-size: 0.9375rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .container #playerPool .player-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.375rem;
+            margin-top: 0.375rem;
+        }
+
+        .container #playerPool .player-meta .position {
+            font-size: 0.8125rem;
+            font-weight: 800;
+            color: var(--team-color);
+            letter-spacing: 0.04em;
+        }
+
+        .container #playerPool .player-meta .meta-divider {
+            width: 1px;
+            height: 0.875rem;
+            background: #d1d5db;
+            flex-shrink: 0;
+        }
+
+        .container #playerPool .team-logo {
+            width: 1.125rem;
+            height: 1.125rem;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .container #playerPool .team-name {
+            font-size: 0.625rem;
+            font-weight: 600;
+            color: var(--row-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            line-height: 1.2;
+        }
+
+        .container #playerPool .bye-week {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.4375rem;
+            padding: 0.4375rem 0.6875rem;
+            border: 1px solid color-mix(in srgb, var(--team-color) 22%, var(--row-border));
+            border-radius: 0.5625rem;
+            background: #ffffff;
+            flex-shrink: 0;
+            align-self: center;
+        }
+
+        .container #playerPool .bye-week-icon {
+            width: 1.125rem;
+            height: 1.125rem;
+            color: var(--team-color);
+            flex-shrink: 0;
+        }
+
+        .container #playerPool .bye-week-text {
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--row-text);
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        /* Bottom band — stat tiles */
+        .container #playerPool .player-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.4375rem;
+            padding: 0.625rem 0.75rem;
+            min-width: 0;
+        }
+
+        .container #playerPool .stat-tile {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0.4375rem 0.375rem 0.4375rem;
+            border: 1px solid var(--row-border);
+            border-radius: 0.625rem;
+            background: #ffffff;
+            min-width: 0;
+        }
+
+        .container #playerPool .stat-tile-head {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            padding-bottom: 0.3125rem;
+            margin-bottom: 0.3125rem;
+            border-bottom: 1px dotted #e5e7eb;
+            text-align: center;
+        }
+
+        .container #playerPool .stat-tile-icon {
+            display: inline-flex;
+            flex-shrink: 0;
+            width: 0.875rem;
+            height: 0.875rem;
+            color: var(--stat-accent, #6b7280);
+        }
+
+        .container #playerPool .stat-tile-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container #playerPool .stat-tile-label {
+            font-size: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: var(--stat-accent, #6b7280);
+            line-height: 1.15;
+            text-align: center;
+        }
+
+        .container #playerPool .stat-tile-value {
+            font-size: 1.125rem;
+            font-weight: 800;
+            color: var(--row-text);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container #playerPool .stat-tile--empty .stat-tile-value {
+            color: #9ca3af;
+        }
+
+        .container #playerPool .stat-tile--empty {
+            opacity: 0.72;
+        }
+
+        .container #playerPool .stat-tile-accent {
+            display: block;
+            width: 1.5rem;
+            height: 3px;
+            margin: 0.3125rem auto 0;
+            border-radius: 9999px;
+            background: var(--stat-accent, #6b7280);
+        }
+
+        .container #playerPool .stat-tile--ppr { --stat-accent: #7c3aed; }
+        .container #playerPool .stat-tile--projection { --stat-accent: #2563eb; }
+        .container #playerPool .stat-tile--grade { --stat-accent: #059669; }
+        .container #playerPool .stat-tile--snaps { --stat-accent: #d97706; }
+        .container #playerPool .stat-tile--adp { --stat-accent: #ea580c; }
+
+        .container #playerPool .player-row-analysis {
+            border-top: 1px solid var(--row-border);
+            padding: 0.5rem 0.75rem 0.625rem;
+        }
+
+        @container player-pool (min-width: 520px) {
+            .container #playerPool .player-identity {
+                min-height: 5.25rem;
+                padding: 0.75rem 0.875rem 0;
+            }
+
+            .container #playerPool .player-visual {
+                width: 5.5rem;
+                height: 7.25rem;
+            }
+
+            .container #playerPool .player-visual-accent {
+                width: 3.5rem;
+                height: 6.25rem;
+            }
+
+            .container #playerPool .team-watermark {
+                width: 5rem;
+                height: 5rem;
+            }
+
+            .container #playerPool .player-name-line {
+                font-size: 1.125rem;
+            }
+
+            .container #playerPool .team-name {
+                font-size: 0.6875rem;
+            }
+
+            .container #playerPool .player-stats {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 0.5rem;
+                padding: 0.75rem 0.875rem;
+            }
+
+            .container #playerPool .stat-tile-label {
+                font-size: 0.5625rem;
+            }
+
+            .container #playerPool .bye-week {
+                padding: 0.5rem 0.75rem;
+                gap: 0.5rem;
+            }
+
+            .container #playerPool .bye-week-icon {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+
+            .container #playerPool .bye-week-text {
+                font-size: 0.6875rem;
+            }
+
+            .container #playerPool .stat-tile-value {
+                font-size: 1.375rem;
+            }
+        }
+
+        @container player-pool (min-width: 820px) {
+            .container #playerPool .player-identity {
+                min-height: 5.75rem;
+            }
+
+            .container #playerPool .player-visual {
+                width: 6.25rem;
+                height: 8rem;
+            }
+
+            .container #playerPool .player-name-line {
+                font-size: 1.375rem;
+            }
+
+            .container #playerPool .stat-tile-value {
+                font-size: 1.625rem;
+            }
+        }
+
+        html:fullscreen #playerPool .player-row,
+        html:-webkit-full-screen #playerPool .player-row,
+        #ff-rankings-root:fullscreen #playerPool .player-row,
+        #ff-rankings-root:-webkit-full-screen #playerPool .player-row,
+        #ff-rankings-root.ff-fullscreen-active #playerPool .player-row {
+            min-height: 0;
+        }
+
+        html:fullscreen #playerPool .stat-tile-value,
+        html:-webkit-full-screen #playerPool .stat-tile-value,
+        #ff-rankings-root:fullscreen #playerPool .stat-tile-value,
+        #ff-rankings-root:-webkit-full-screen #playerPool .stat-tile-value,
+        #ff-rankings-root.ff-fullscreen-active #playerPool .stat-tile-value {
+            font-size: 1.75rem;
+        }
+
+        .container #playerPool .player-row.player-card:hover {
+            transform: translateY(-1px);
+        }
+
+        .container #playerPool .player-meta .pool-meta-chip--value {
+            font-size: 0.5625rem;
+            font-weight: 700;
+            color: #15803d;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.25rem;
+            padding: 0.0625rem 0.3125rem;
+        }
+
+        .container #playerPool .player-meta .pool-meta-chip--value.pool-meta-chip--neg {
+            color: #dc2626;
+            background: #fef2f2;
+            border-color: #fecaca;
         }
         
         .meta-pill {
@@ -329,7 +772,7 @@
         /* Custom sleek scrollbar for player pool */
         .scrollbar-sleek {
             scrollbar-width: thin;
-            scrollbar-color: rgba(0, 107, 255, 0.35) rgba(241, 245, 249, 1);
+            scrollbar-color: rgba(0, 107, 255, 0.35) transparent;
         }
         
         .scrollbar-sleek::-webkit-scrollbar {
@@ -337,7 +780,7 @@
         }
         
         .scrollbar-sleek::-webkit-scrollbar-track {
-            background: rgba(241, 245, 249, 1);
+            background: transparent;
             border-radius: 4px;
         }
         
@@ -520,7 +963,35 @@
             position: relative;
         }
 
-        /* CSS fullscreen overlay - works in WP embeds and iframes where the Fullscreen API is blocked */
+        /* Native browser fullscreen (GitHub Pages, direct visits) */
+        html:fullscreen,
+        html:-webkit-full-screen {
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        html:fullscreen #ff-rankings-root,
+        html:-webkit-full-screen #ff-rankings-root,
+        #ff-rankings-root:fullscreen,
+        #ff-rankings-root:-webkit-full-screen,
+        #ff-rankings-root:-moz-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            max-height: none !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+        }
+
+        html:fullscreen #ff-rankings-root .embed-main,
+        html:-webkit-full-screen #ff-rankings-root .embed-main,
+        #ff-rankings-root:fullscreen .embed-main,
+        #ff-rankings-root:-webkit-full-screen .embed-main {
+            height: calc(100vh - 132px) !important;
+            min-height: 0 !important;
+        }
+
+        /* CSS overlay fallback - only when the Fullscreen API is blocked (e.g. some iframe embeds) */
         #ff-rankings-root.ff-fullscreen-active {
             position: fixed !important;
             top: 0 !important;
@@ -1196,7 +1667,7 @@
                     </div>
                     
                     <!-- Filter Section -->
-                    <div class="bg-slate-50 border-b border-slate-200 embed-filters-wrap">
+                    <div class="bg-white border-b border-slate-200 embed-filters-wrap">
                     <div class="embed-search-wrap">
                         <div class="relative">
                             <svg class="text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1433,7 +1904,7 @@
             profileUrl:  ['player profile', 'profile', 'profile url', 'link'],
             analysis:    ['analysis', 'blurb', 'writeup', 'summary', 'outlook'],
             // ---- optional columns: add any of these and the tool uses them ----
-            adp:         ['adp', 'average draft position', 'avg draft position', 'market adp'],
+            adp:         ['adp', 'average draft position', 'avg draft position', 'market adp', '2026 adp'],
             ceiling:     ['ceiling', 'high', 'best case', 'ceiling points'],
             floor:       ['floor', 'low', 'worst case', 'floor points'],
             games2025:   ['2025 games', 'games played', 'games', 'gp', '2025 gp'],
@@ -1491,7 +1962,7 @@
             p.position = p.position.toUpperCase();
             if (['D/ST', 'DEF', 'DST', 'D-ST'].indexOf(p.position) !== -1) p.position = 'DST';
             if (p.position === 'PK') p.position = 'K';
-            p.team = p.team.toUpperCase();
+            p.team = normalizeTeamAbbr(p.team);
             if (!p.age && p.dob) {
                 const derived = ageFromDob(p.dob);
                 if (derived !== null) p.age = String(derived);
@@ -1708,79 +2179,112 @@
             store.set('ff_tiers', JSON.stringify(tiers));
         }
         
-        // Team names mapping
-        const teamNames = {
-            'ALL': 'All Players',
-            'ARI': 'Arizona Cardinals',
-            'ATL': 'Atlanta Falcons',
-            'BAL': 'Baltimore Ravens',
-            'BUF': 'Buffalo Bills',
-            'CAR': 'Carolina Panthers',
-            'CHI': 'Chicago Bears',
-            'CIN': 'Cincinnati Bengals',
-            'CLE': 'Cleveland Browns',
-            'DAL': 'Dallas Cowboys',
-            'DEN': 'Denver Broncos',
-            'DET': 'Detroit Lions',
-            'GB': 'Green Bay Packers',
-            'HOU': 'Houston Texans',
-            'IND': 'Indianapolis Colts',
-            'JAX': 'Jacksonville Jaguars',
-            'KC': 'Kansas City Chiefs',
-            'LV': 'Las Vegas Raiders',
-            'LAC': 'Los Angeles Chargers',
-            'LAR': 'Los Angeles Rams',
-            'MIA': 'Miami Dolphins',
-            'MIN': 'Minnesota Vikings',
-            'NE': 'New England Patriots',
-            'NO': 'New Orleans Saints',
-            'NYG': 'New York Giants',
-            'NYJ': 'New York Jets',
-            'PHI': 'Philadelphia Eagles',
-            'PIT': 'Pittsburgh Steelers',
-            'SF': 'San Francisco 49ers',
-            'SEA': 'Seattle Seahawks',
-            'TB': 'Tampa Bay Buccaneers',
-            'TEN': 'Tennessee Titans',
-            'WAS': 'Washington Commanders'
+        // Team logos, colors, and names — PFF Gravity assets (teams_colors_logos.csv)
+        const PFF_TEAMS = [
+            { abbr: 'ARZ', name: 'Arizona Cardinals', nick: 'Cardinals', color: '#97233F', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/arizona-cardinals.svg' },
+            { abbr: 'ATL', name: 'Atlanta Falcons', nick: 'Falcons', color: '#A71930', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/atlanta-falcons.svg' },
+            { abbr: 'BLT', name: 'Baltimore Ravens', nick: 'Ravens', color: '#241773', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/baltimore-ravens.svg' },
+            { abbr: 'BUF', name: 'Buffalo Bills', nick: 'Bills', color: '#00338D', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/buffalo-bills.svg' },
+            { abbr: 'CAR', name: 'Carolina Panthers', nick: 'Panthers', color: '#0085CA', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/carolina-panthers.svg' },
+            { abbr: 'CHI', name: 'Chicago Bears', nick: 'Bears', color: '#E64100', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/chicago-bears.svg' },
+            { abbr: 'CIN', name: 'Cincinnati Bengals', nick: 'Bengals', color: '#FB4F14', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/cincinnati-bengals.svg' },
+            { abbr: 'CLV', name: 'Cleveland Browns', nick: 'Browns', color: '#FF3C00', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/cleveland-browns.svg' },
+            { abbr: 'DAL', name: 'Dallas Cowboys', nick: 'Cowboys', color: '#B0B7BC', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/dallas-cowboys.svg' },
+            { abbr: 'DEN', name: 'Denver Broncos', nick: 'Broncos', color: '#FB4F14', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/denver-broncos.svg' },
+            { abbr: 'DET', name: 'Detroit Lions', nick: 'Lions', color: '#0076B6', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/detroit-lions.svg' },
+            { abbr: 'GB', name: 'Green Bay Packers', nick: 'Packers', color: '#FFB612', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/green-bay-packers.svg' },
+            { abbr: 'HST', name: 'Houston Texans', nick: 'Texans', color: '#A71930', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/houston-texans.svg' },
+            { abbr: 'IND', name: 'Indianapolis Colts', nick: 'Colts', color: '#a5acaf', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/indianapolis-colts.svg' },
+            { abbr: 'JAX', name: 'Jacksonville Jaguars', nick: 'Jaguars', color: '#006778', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/jacksonville-jaguars.svg' },
+            { abbr: 'KC', name: 'Kansas City Chiefs', nick: 'Chiefs', color: '#E31837', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/kansas-city-chiefs.svg' },
+            { abbr: 'LAR', name: 'Los Angeles Rams', nick: 'Rams', color: '#003594', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-rams.svg' },
+            { abbr: 'LAC', name: 'Los Angeles Chargers', nick: 'Chargers', color: '#007BC7', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg' },
+            { abbr: 'LV', name: 'Las Vegas Raiders', nick: 'Raiders', color: '#A5ACAF', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/las-vegas-raiders.svg' },
+            { abbr: 'MIA', name: 'Miami Dolphins', nick: 'Dolphins', color: '#008E97', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/miami-dolphins.svg' },
+            { abbr: 'MIN', name: 'Minnesota Vikings', nick: 'Vikings', color: '#4F2683', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/minnesota-vikings.svg' },
+            { abbr: 'NE', name: 'New England Patriots', nick: 'Patriots', color: '#C60C30', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/new-england-patriots.svg' },
+            { abbr: 'NO', name: 'New Orleans Saints', nick: 'Saints', color: '#D3BC8D', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/new-orleans-saints.svg' },
+            { abbr: 'NYG', name: 'New York Giants', nick: 'Giants', color: '#0B2265', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/new-york-giants.svg' },
+            { abbr: 'NYJ', name: 'New York Jets', nick: 'Jets', color: '#000000', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/new-york-jets.svg' },
+            { abbr: 'PHI', name: 'Philadelphia Eagles', nick: 'Eagles', color: '#004C54', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/philadelphia-eagles.svg' },
+            { abbr: 'PIT', name: 'Pittsburgh Steelers', nick: 'Steelers', color: '#FFB612', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/pittsburgh-steelers.svg' },
+            { abbr: 'SEA', name: 'Seattle Seahawks', nick: 'Seahawks', color: '#69be28', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/seattle-seahawks.svg' },
+            { abbr: 'SF', name: 'San Francisco 49ers', nick: '49ers', color: '#AA0000', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg' },
+            { abbr: 'TB', name: 'Tampa Bay Buccaneers', nick: 'Buccaneers', color: '#A71930', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/tampa-bay-buccaneers.svg' },
+            { abbr: 'TEN', name: 'Tennessee Titans', nick: 'Titans', color: '#4B92DB', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/tennessee-titans.svg' },
+            { abbr: 'WAS', name: 'Washington Commanders', nick: 'Commanders', color: '#5A1414', logo: 'https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/washington-commanders.svg' }
+        ];
+
+        const NFL_TO_PFF_ABBR = {
+            ARI: 'ARZ', BAL: 'BLT', CLE: 'CLV', HOU: 'HST', LA: 'LAR'
         };
-        
-        // Team logo URLs (using ESPN CDN)
-        const teamLogos = {
-            'ALL': 'https://a.espncdn.com/i/teamlogos/nfl/500/default.png',
-            'ARI': 'https://a.espncdn.com/i/teamlogos/nfl/500/ari.png',
-            'ATL': 'https://a.espncdn.com/i/teamlogos/nfl/500/atl.png',
-            'BAL': 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png',
-            'BUF': 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png',
-            'CAR': 'https://a.espncdn.com/i/teamlogos/nfl/500/car.png',
-            'CHI': 'https://a.espncdn.com/i/teamlogos/nfl/500/chi.png',
-            'CIN': 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png',
-            'CLE': 'https://a.espncdn.com/i/teamlogos/nfl/500/cle.png',
-            'DAL': 'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png',
-            'DEN': 'https://a.espncdn.com/i/teamlogos/nfl/500/den.png',
-            'DET': 'https://a.espncdn.com/i/teamlogos/nfl/500/det.png',
-            'GB': 'https://a.espncdn.com/i/teamlogos/nfl/500/gb.png',
-            'HOU': 'https://a.espncdn.com/i/teamlogos/nfl/500/hou.png',
-            'IND': 'https://a.espncdn.com/i/teamlogos/nfl/500/ind.png',
-            'JAX': 'https://a.espncdn.com/i/teamlogos/nfl/500/jax.png',
-            'KC': 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png',
-            'LV': 'https://a.espncdn.com/i/teamlogos/nfl/500/lv.png',
-            'LAC': 'https://a.espncdn.com/i/teamlogos/nfl/500/lac.png',
-            'LAR': 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png',
-            'MIA': 'https://a.espncdn.com/i/teamlogos/nfl/500/mia.png',
-            'MIN': 'https://a.espncdn.com/i/teamlogos/nfl/500/min.png',
-            'NE': 'https://a.espncdn.com/i/teamlogos/nfl/500/ne.png',
-            'NO': 'https://a.espncdn.com/i/teamlogos/nfl/500/no.png',
-            'NYG': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png',
-            'NYJ': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png',
-            'PHI': 'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png',
-            'PIT': 'https://a.espncdn.com/i/teamlogos/nfl/500/pit.png',
-            'SF': 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png',
-            'SEA': 'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png',
-            'TB': 'https://a.espncdn.com/i/teamlogos/nfl/500/tb.png',
-            'TEN': 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png',
-            'WAS': 'https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png'
-        };
+
+        const teamLogos = {};
+        const TEAM_COLORS = {};
+        const TEAM_NAMES = {};
+        const teamNames = { ALL: 'All Players' };
+        const TEAM_NAME_TO_ABBR = {};
+
+        PFF_TEAMS.forEach(t => {
+            teamLogos[t.abbr] = t.logo;
+            TEAM_COLORS[t.abbr] = t.color;
+            TEAM_NAMES[t.abbr] = t.name;
+            teamNames[t.abbr] = t.name;
+            TEAM_NAME_TO_ABBR[t.abbr] = t.abbr;
+            TEAM_NAME_TO_ABBR[t.nick.toUpperCase()] = t.abbr;
+            TEAM_NAME_TO_ABBR[t.name.toUpperCase()] = t.abbr;
+        });
+
+        Object.entries(NFL_TO_PFF_ABBR).forEach(([nfl, pff]) => {
+            TEAM_NAME_TO_ABBR[nfl] = pff;
+            teamLogos[nfl] = teamLogos[pff];
+            TEAM_COLORS[nfl] = TEAM_COLORS[pff];
+            TEAM_NAMES[nfl] = TEAM_NAMES[pff];
+            teamNames[nfl] = teamNames[pff];
+        });
+
+        TEAM_NAME_TO_ABBR['49ERS'] = 'SF';
+        TEAM_NAME_TO_ABBR['NINERS'] = 'SF';
+        TEAM_NAME_TO_ABBR['SAN FRANCISCO'] = 'SF';
+        TEAM_NAME_TO_ABBR['GREEN BAY'] = 'GB';
+        TEAM_NAME_TO_ABBR['KANSAS CITY'] = 'KC';
+        TEAM_NAME_TO_ABBR['LAS VEGAS'] = 'LV';
+        TEAM_NAME_TO_ABBR['LOS ANGELES RAMS'] = 'LAR';
+        TEAM_NAME_TO_ABBR['LOS ANGELES CHARGERS'] = 'LAC';
+        TEAM_NAME_TO_ABBR['NEW ENGLAND'] = 'NE';
+        TEAM_NAME_TO_ABBR['NEW ORLEANS'] = 'NO';
+        TEAM_NAME_TO_ABBR['NEW YORK GIANTS'] = 'NYG';
+        TEAM_NAME_TO_ABBR['NEW YORK JETS'] = 'NYJ';
+        TEAM_NAME_TO_ABBR['TAMPA BAY'] = 'TB';
+        TEAM_NAME_TO_ABBR['TAMPA'] = 'TB';
+        TEAM_NAME_TO_ABBR['BUCS'] = 'TB';
+        TEAM_NAME_TO_ABBR['JAC'] = 'JAX';
+        TEAM_NAME_TO_ABBR['WSH'] = 'WAS';
+        TEAM_NAME_TO_ABBR['OAK'] = 'LV';
+        TEAM_NAME_TO_ABBR['OAKLAND'] = 'LV';
+        TEAM_NAME_TO_ABBR['DST'] = 'DST';
+        TEAM_NAME_TO_ABBR['DEF'] = 'DST';
+        TEAM_NAME_TO_ABBR['D/ST'] = 'DST';
+
+        function normalizeTeamAbbr(team) {
+            const raw = String(team || '').trim();
+            if (!raw) return '';
+            const key = raw.toUpperCase().replace(/\./g, '');
+            if (TEAM_COLORS[key]) return key;
+            if (TEAM_NAME_TO_ABBR[key]) return TEAM_NAME_TO_ABBR[key];
+            const parts = key.split(/\s+/);
+            const last = parts[parts.length - 1];
+            if (TEAM_NAME_TO_ABBR[last]) return TEAM_NAME_TO_ABBR[last];
+            return key;
+        }
+
+        const POOL_STAT_TILES = [
+            { key: 'pprRank', label: '2026 PPR Rank', css: 'ppr', icon: 'bar-chart' },
+            { key: 'projection', label: '2026 Projected Points', css: 'projection', icon: 'trending-up' },
+            { key: 'grade2025', label: '2025 Grade', css: 'grade', icon: 'shield' },
+            { key: 'snaps2025', label: '2025 Snaps', css: 'snaps', icon: 'users' },
+            { key: 'adp', label: '2026 ADP', css: 'adp', icon: 'target' }
+        ];
         
         // ---- position tabs -------------------------------------------------
         const POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'DST'];
@@ -2256,6 +2760,24 @@
             return document.getElementById('ff-rankings-root');
         }
 
+        function getFullscreenElement() {
+            return document.fullscreenElement ||
+                   document.webkitFullscreenElement ||
+                   document.mozFullScreenElement ||
+                   document.msFullscreenElement ||
+                   null;
+        }
+
+        function isNativeFullscreenActive() {
+            const root = getBuilderRoot();
+            const fs = getFullscreenElement();
+            if (!fs) return false;
+            return fs === document.documentElement ||
+                   fs === document.body ||
+                   fs === root ||
+                   (root && fs.contains && fs.contains(root));
+        }
+
         function isEmbeddedFrame() {
             try { return window.self !== window.top; } catch (e) { return true; }
         }
@@ -2289,67 +2811,103 @@
             updateFullscreenButton();
         }
 
+        function requestNativeFullscreen() {
+            const root = getBuilderRoot();
+            const html = document.documentElement;
+            if (html.requestFullscreen) {
+                return html.requestFullscreen();
+            }
+            if (html.webkitRequestFullscreen) {
+                html.webkitRequestFullscreen();
+                return Promise.resolve();
+            }
+            if (root && root.requestFullscreen) {
+                return root.requestFullscreen();
+            }
+            if (root && root.webkitRequestFullscreen) {
+                root.webkitRequestFullscreen();
+                return Promise.resolve();
+            }
+            if (root && root.mozRequestFullScreen) {
+                root.mozRequestFullScreen();
+                return Promise.resolve();
+            }
+            if (root && root.msRequestFullscreen) {
+                root.msRequestFullscreen();
+                return Promise.resolve();
+            }
+            return Promise.reject(new Error('Fullscreen API unavailable'));
+        }
+
+        function exitNativeFullscreen() {
+            if (document.exitFullscreen) {
+                return document.exitFullscreen();
+            }
+            if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+                return Promise.resolve();
+            }
+            if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+                return Promise.resolve();
+            }
+            if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+                return Promise.resolve();
+            }
+            return Promise.resolve();
+        }
+
+        function handleFullscreenFailure() {
+            if (isEmbeddedFrame()) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('fullscreen', '1');
+                window.open(url.toString(), '_blank', 'noopener,noreferrer');
+                announceToScreenReader('Opened in a new tab for full screen');
+                return;
+            }
+            useFullscreenFallback();
+        }
+
+        function maybeAutoFullscreen() {
+            if (new URLSearchParams(window.location.search).get('fullscreen') !== '1') return;
+            if (isEmbeddedFrame()) return;
+            setTimeout(() => {
+                requestNativeFullscreen().then(() => updateFullscreenButton()).catch(() => {});
+            }, 400);
+        }
+
         function toggleFullscreen() {
             const container = getBuilderRoot();
             if (!container) return;
 
             const isMobile = window.innerWidth < 800 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            const isFullscreen = isCssFullscreenActive() ||
-                                 document.fullscreenElement === container ||
-                                 document.webkitFullscreenElement === container ||
-                                 document.mozFullScreenElement === container ||
-                                 document.msFullscreenElement === container;
-            
+            const isFullscreen = isCssFullscreenActive() || isNativeFullscreenActive();
+
             shouldMaintainFullscreen = false;
-            
+
             if (isFullscreen) {
                 if (isCssFullscreenActive()) {
                     exitFullscreenFallback();
                 } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen().catch(() => exitFullscreenFallback());
-                    } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
-                    } else if (document.mozCancelFullScreen) {
-                        document.mozCancelFullScreen();
-                    } else if (document.msExitFullscreen) {
-                        document.msExitFullscreen();
-                    } else {
-                        exitFullscreenFallback();
-                    }
-                    
+                    exitNativeFullscreen().catch(() => exitFullscreenFallback());
                     if (isMobile && screen.orientation && screen.orientation.unlock) {
                         try { screen.orientation.unlock(); } catch (e) {}
                     }
                 }
+                return;
+            }
+
+            const enter = () => {
+                requestNativeFullscreen()
+                    .then(() => updateFullscreenButton())
+                    .catch(handleFullscreenFailure);
+            };
+
+            if (isMobile && screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').then(enter).catch(enter);
             } else {
-                const enterNativeFullscreen = () => {
-                    const onFail = () => useFullscreenFallback();
-                    if (container.requestFullscreen) {
-                        container.requestFullscreen().catch(onFail);
-                    } else if (container.webkitRequestFullscreen) {
-                        container.webkitRequestFullscreen().catch(onFail);
-                    } else if (container.mozRequestFullScreen) {
-                        container.mozRequestFullScreen().catch(onFail);
-                    } else if (container.msRequestFullscreen) {
-                        container.msRequestFullscreen().catch(onFail);
-                    } else {
-                        useFullscreenFallback();
-                    }
-                };
-
-                // WP article embeds and iframes usually block the Fullscreen API - use CSS overlay instead
-                if (isEmbeddedFrame()) {
-                    useFullscreenFallback();
-                    return;
-                }
-
-                if (isMobile && screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').then(enterNativeFullscreen).catch(enterNativeFullscreen);
-                } else {
-                    enterNativeFullscreen();
-                }
+                enter();
             }
         }
         
@@ -2386,11 +2944,7 @@
             const container = getBuilderRoot();
             if (!btnText || !container) return;
 
-            const isFullscreen = isCssFullscreenActive() ||
-                                 document.fullscreenElement === container ||
-                                 document.webkitFullscreenElement === container ||
-                                 document.mozFullScreenElement === container ||
-                                 document.msFullscreenElement === container;
+            const isFullscreen = isCssFullscreenActive() || isNativeFullscreenActive();
             
             if (isFullscreen) {
                 btnText.textContent = 'Minimize';
@@ -2786,6 +3340,187 @@
             `;
         }
 
+        function getTeamPrimaryColor(team) {
+            return TEAM_COLORS[String(team || '').toUpperCase()] || '#006bff';
+        }
+
+        function getTeamDisplayName(team) {
+            const abbr = String(team || '').toUpperCase();
+            return TEAM_NAMES[abbr] || abbr;
+        }
+
+        function splitPlayerName(name) {
+            const parts = String(name || 'Player').trim().split(/\s+/);
+            if (parts.length <= 1) return { line1: parts[0].toUpperCase(), line2: '' };
+            return {
+                line1: parts[0].toUpperCase(),
+                line2: parts.slice(1).join(' ').toUpperCase()
+            };
+        }
+
+        function formatPoolGrade(value) {
+            const raw = String(value ?? '').trim();
+            if (!raw) return '—';
+            if (/^[A-F][+-]?$/i.test(raw)) return raw.toUpperCase();
+            const n = parseFloat(raw);
+            if (isNaN(n)) return raw;
+            return n.toFixed(1);
+        }
+
+        function formatPoolSnaps(value) {
+            const n = parseFloat(value);
+            if (isNaN(n)) return String(value ?? '—');
+            return Math.round(n).toLocaleString('en-US');
+        }
+
+        function poolStatIcon(name) {
+            const icons = {
+                'bar-chart': '<path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/>',
+                'trending-up': '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+                'shield': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+                'users': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+                'target': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+                'calendar': '<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>'
+            };
+            const body = icons[name] || icons['bar-chart'];
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+        }
+
+        function formatPoolStatValue(key, raw) {
+            if (raw === null || raw === undefined || String(raw).trim() === '') return '—';
+            if (key === 'grade2025') return formatPoolGrade(raw);
+            if (key === 'snaps2025') return formatPoolSnaps(raw);
+            if (key === 'projection' || key === 'adp') return fmtNum(raw, 1);
+            if (key === 'pprRank') {
+                const n = parseFloat(raw);
+                return isNaN(n) ? String(raw) : String(Math.round(n));
+            }
+            return String(raw);
+        }
+
+        function renderPoolPlayerName(player) {
+            const { line1, line2 } = splitPlayerName(player.name);
+            const profileUrl = player.profileUrl || '';
+            const inner = `<span class="player-name-line">${line1}</span>${line2 ? `<span class="player-name-line">${line2}</span>` : ''}`;
+            if (profileUrl && profileUrl !== '#N/A') {
+                return `
+                    <button
+                        type="button"
+                        class="player-name"
+                        onclick="event.stopPropagation(); openPlayerProfile('${profileUrl}')"
+                        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openPlayerProfile('${profileUrl}');}"
+                        aria-label="View profile for ${(player.name || 'player').replace(/"/g, '&quot;')}"
+                    >${inner}</button>
+                `;
+            }
+            return `<h2 class="player-name">${inner}</h2>`;
+        }
+
+        function renderPoolStatTile(player, tile) {
+            const raw = player[tile.key];
+            const hasValue = String(raw ?? '').trim() !== '';
+            const value = formatPoolStatValue(tile.key, raw);
+            return `
+                <div class="stat-tile stat-tile--${tile.css}${hasValue ? '' : ' stat-tile--empty'}" data-stat="${tile.key}">
+                    <div class="stat-tile-head">
+                        <span class="stat-tile-icon">${poolStatIcon(tile.icon)}</span>
+                        <span class="stat-tile-label">${tile.label}</span>
+                    </div>
+                    <div class="stat-tile-value">${value}</div>
+                    <span class="stat-tile-accent" aria-hidden="true"></span>
+                </div>
+            `;
+        }
+
+        function renderPoolPlayerRow(player, opts) {
+            const options = opts || {};
+            const team = String(player.team || '').toUpperCase();
+            const teamColor = getTeamPrimaryColor(team);
+            const teamLogo = teamLogos[team] || '';
+            const teamName = getTeamDisplayName(team);
+            const headshotUrl = getHeadshotUrl(player);
+            const playerName = (player.name || 'Player').replace(/"/g, '&quot;');
+            const statTiles = POOL_STAT_TILES.map(t => renderPoolStatTile(player, t)).join('');
+            const byeWeek = player.byeWeek ? String(player.byeWeek) : '';
+            const blendChip = renderPoolBlendChip(player);
+
+            const byeHtml = byeWeek ? `
+                <div class="bye-week" aria-label="Bye week ${byeWeek}">
+                    <span class="bye-week-icon">${poolStatIcon('calendar')}</span>
+                    <span class="bye-week-text">Bye Week ${byeWeek}</span>
+                </div>
+            ` : '';
+
+            const analysisHtml = options.hasAnalysis ? `
+                <div class="player-row-analysis">
+                    <button
+                        type="button"
+                        onclick="event.stopPropagation(); togglePlayerAnalysis('${player.id}')"
+                        aria-label="${options.isExpanded ? 'Collapse' : 'Expand'} analysis for ${playerName}"
+                        aria-expanded="${options.isExpanded}"
+                        class="w-full flex items-center justify-between p-2 text-left text-slate-500 hover:text-brand transition-colors rounded-lg hover:bg-slate-50"
+                    >
+                        <span class="text-sm font-medium">Analysis</span>
+                        <svg class="w-4 h-4 transform transition-transform ${options.isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    ${options.isExpanded ? `
+                        <div class="mt-2 pt-2 border-t border-slate-200">
+                            <p class="text-sm text-slate-600 leading-relaxed">${player.analysis}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            ` : '';
+
+            return `
+                <article
+                    class="player-card player-row"
+                    style="--team-color: ${teamColor};"
+                    role="listitem"
+                    tabindex="0"
+                    aria-label="Add ${playerName} to my rankings"
+                    onclick="addToBigBoard('${player.id}')"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();addToBigBoard('${player.id}');}"
+                >
+                    <section class="player-identity" aria-label="Player information">
+                        <div class="player-visual">
+                            <div class="player-visual-accent" aria-hidden="true"></div>
+                            ${teamLogo ? `<img class="team-watermark" src="${teamLogo}" alt="" loading="lazy" onerror="this.style.display='none'" />` : ''}
+                            <div class="player-headshot-frame">
+                                <img
+                                    class="player-headshot"
+                                    src="${headshotUrl}"
+                                    alt="${playerName} headshot"
+                                    loading="lazy"
+                                    onerror="${HEADSHOT_FALLBACK}"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="player-info">
+                            ${renderPoolPlayerName(player)}
+                            <div class="player-meta">
+                                ${player.position ? `<span class="position">${player.position}</span>` : ''}
+                                ${player.position && (teamLogo || teamName) ? '<span class="meta-divider" aria-hidden="true"></span>' : ''}
+                                ${teamLogo ? `<img class="team-logo" src="${teamLogo}" alt="" loading="lazy" onerror="this.style.display='none'" />` : ''}
+                                ${teamName ? `<span class="team-name">${teamName}</span>` : ''}
+                                ${blendChip}
+                            </div>
+                        </div>
+
+                        ${byeHtml}
+                    </section>
+
+                    <section class="player-stats" aria-label="Player statistics">
+                        ${statTiles}
+                    </section>
+
+                    ${analysisHtml}
+                </article>
+            `;
+        }
+
         function renderRankedAvatar(player, rankNumber) {
             return `
                 <div class="avatar-wrap">
@@ -2820,17 +3555,29 @@
 
         function renderStatBoxes(player, size) {
             const big = size === 'md';
+            const pool = size === 'pool';
             const present = STAT_DEFS.filter(d => String(player[d.key] || '') !== '');
-            const defs = big ? present : present.slice(0, SLIM_STAT_LIMIT);
-            const pad = big ? 'px-3 py-2' : 'px-2.5 py-1.5';
-            const minW = big ? 'min-w-[64px]' : 'min-w-[58px]';
-            const valSize = big ? 'text-lg' : 'text-base';
+            const defs = (big || pool) ? present : present.slice(0, SLIM_STAT_LIMIT);
+            const poolLabels = {
+                pprRank: '2026 PPR Rank',
+                projection: '2026 Projected Points',
+                grade2025: '2025 Grade',
+                snaps2025: '2025 Snaps',
+                adp: '2026 ADP'
+            };
+            const pad = pool ? '' : big ? 'px-3 py-2' : 'px-2.5 py-1.5';
+            const minW = pool ? '' : big ? 'min-w-[64px]' : 'min-w-[58px]';
+            const valSize = pool ? '' : big ? 'text-lg' : 'text-base';
+            const lblSize = pool ? '' : 'text-xs';
+            const poolClass = pool ? 'pool-stat-item' : 'bg-brand/8 border border-brand/25 rounded-lg';
+            const poolPad = pool ? '' : pad;
             return defs.map(d => {
                 const raw = player[d.key];
+                const label = pool ? (poolLabels[d.key] || d.label) : d.label;
                 return `
-                    <div class="grade-box bg-brand/8 border border-brand/25 rounded-lg ${pad} text-center ${minW}">
+                    <div class="grade-box ${poolClass} ${poolPad} text-center ${minW}"${pool ? ` data-stat="${d.key}"` : ''}>
                         <div class="grade-box-value text-brand font-bold ${valSize}">${d.fmt(raw)}</div>
-                        <div class="grade-box-label text-brand/70 text-xs font-medium">${d.label}</div>
+                        <div class="grade-box-label text-brand/70 ${lblSize} font-medium leading-none">${label}</div>
                     </div>
                 `;
             }).join('');
@@ -2860,6 +3607,35 @@
                 chips.push(metaPill(`BYE ${player.byeWeek}`, 'muted'));
             }
             return chips.join('');
+        }
+
+        function renderPoolMeta(player) {
+            const parts = [];
+            if (player.position) {
+                parts.push(`<span class="pool-meta-chip pool-meta-chip--pos">${player.position}</span>`);
+            }
+            if (player.team) {
+                parts.push(`<span class="pool-meta-chip pool-meta-chip--team">${player.team}</span>`);
+            }
+            if (player.byeWeek) {
+                parts.push(`<span class="pool-meta-chip pool-meta-chip--bye">Bye ${player.byeWeek}</span>`);
+            }
+            return parts.join('');
+        }
+
+        function renderPoolBlendChip(player) {
+            if (!blendEnabled) return '';
+            const br = blendRanks[player.id];
+            if (!br) return '';
+            const c = blendScope === 'global'
+                ? (isNaN(parseFloat(player.pprRank)) ? null : parseFloat(player.pprRank))
+                : (consensusPosRank[player.id] != null ? consensusPosRank[player.id] : null);
+            if (c === null) return '';
+            const delta = Math.round(c - br);
+            if (delta === 0) return '';
+            const sign = delta > 0 ? '+' : '';
+            const neg = delta < 0 ? ' pool-meta-chip--neg' : '';
+            return `<span class="pool-meta-chip pool-meta-chip--value${neg}" title="Your blend ranks him ${br}, PFF ranks him ${c}">${sign}${delta} blend</span>`;
         }
 
         /* =====================================================================
@@ -3831,56 +4607,7 @@
             const hasAnalysis = player.analysis && player.analysis.trim() !== '';
             const isExpanded = expandedPlayers.has(player.id);
 
-            return `
-                <div
-                    class="player-card bg-white rounded-xl p-4 mb-3 border border-slate-200 hover:border-brand cursor-pointer"
-                    role="listitem"
-                    tabindex="0"
-                    aria-label="Add ${(player.name || 'player').replace(/"/g, '&quot;')} to my rankings"
-                    onclick="addToBigBoard('${player.id}')"
-                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();addToBigBoard('${player.id}');}"
-                >
-                    <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
-                        ${renderHeadshot(player, 'player-image')}
-
-                        <div class="flex-1 min-w-[150px]">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                ${renderNameBlock(player, 'text-lg md:text-xl')}
-                            </div>
-                            <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                                ${renderMetaChips(player)}
-                                ${renderBlendValueChip(player)}
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 items-center grade-boxes-container" style="flex-wrap: wrap;">
-                            ${renderStatBoxes(player, 'md')}
-                            ${renderBlendBox(player, 'md')}
-                        </div>
-                    </div>
-
-                    ${hasAnalysis ? `
-                        <div class="mt-3">
-                            <button
-                                onclick="event.stopPropagation(); togglePlayerAnalysis('${player.id}')"
-                                aria-label="${isExpanded ? 'Collapse' : 'Expand'} analysis"
-                                aria-expanded="${isExpanded}"
-                                class="w-full flex items-center justify-between p-2 text-left text-slate-500 hover:text-brand transition-colors rounded-lg hover:bg-slate-100"
-                            >
-                                <span class="text-sm font-medium">Analysis</span>
-                                <svg class="analysis-chevron transform transition-transform ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            ${isExpanded ? `
-                                <div class="mt-2 pt-2 border-t border-slate-200">
-                                    <p class="text-sm text-slate-600 leading-relaxed">${player.analysis}</p>
-                                </div>
-                            ` : ''}
-                        </div>
-                    ` : ''}
-                </div>
-            `;
+            return renderPoolPlayerRow(player, { hasAnalysis, isExpanded });
         }
 
         // ---- rankings list, with tier dividers woven in ---------------------
@@ -4268,43 +4995,13 @@
 
         // Helper function to check if we're in fullscreen
         function isInFullscreen() {
-            const container = getBuilderRoot();
-            if (!container) return false;
-            return isCssFullscreenActive() ||
-                   document.fullscreenElement === container ||
-                   document.webkitFullscreenElement === container ||
-                   document.mozFullScreenElement === container ||
-                   document.msFullscreenElement === container;
+            return isCssFullscreenActive() || isNativeFullscreenActive();
         }
         
         // Helper function to restore fullscreen
         function restoreFullscreen() {
-            if (isEmbeddedFrame()) {
-                useFullscreenFallback();
-                return;
-            }
-            const container = getBuilderRoot();
-            if (!container) return;
-
-            if (!document.fullscreenElement &&
-                !document.webkitFullscreenElement &&
-                !document.mozFullScreenElement &&
-                !document.msFullscreenElement) {
-                const onFail = () => useFullscreenFallback();
-                if (container.requestFullscreen) {
-                    container.requestFullscreen().catch(onFail);
-                } else if (container.webkitRequestFullscreen) {
-                    container.webkitRequestFullscreen().catch(onFail);
-                } else if (container.mozRequestFullScreen) {
-                    container.mozRequestFullScreen().catch(onFail);
-                } else if (container.msRequestFullscreen) {
-                    container.msRequestFullscreen().catch(onFail);
-                } else {
-                    useFullscreenFallback();
-                }
-            } else if (!isCssFullscreenActive()) {
-                useFullscreenFallback();
-            }
+            if (isInFullscreen()) return;
+            requestNativeFullscreen().catch(handleFullscreenFailure);
         }
         
         // Store the current profile URL for fallback
@@ -4843,6 +5540,7 @@
         // Initialize on page load (wrapped so a late parse error still surfaces in UI)
         try {
             loadPlayers();
+            maybeAutoFullscreen();
         } catch (initErr) {
             console.error('Rankings builder failed to start:', initErr);
             const loadingState = document.getElementById('loadingState');
