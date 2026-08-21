@@ -1,0 +1,1636 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>San Francisco 49ers at Los Angeles Chargers — Game Recap</title>
+<meta name="description" content="PFF game recap — score, team efficiency, quarterback comparison, PFF grades, snap counts and the full box score.">
+<meta name="theme-color" content="#FBFAF8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>/* ============================================================
+   PFF GAME RECAP -- light editorial design system
+   650px column - card carousels
+   ============================================================ */
+:root{
+  color-scheme: light;
+
+  --paper:#FFFFFF;
+  --surface:#FFFFFF;
+  --surface-2:#F5F6F8;
+  --surface-3:#EBEDF1;
+
+  --ink:#14161B;
+  --ink-2:#3E434E;
+  --ink-3:#6B7180;
+  --ink-4:#9AA0AB;
+
+  --rule:#E6E8EC;
+  --rule-2:#D4D8DE;
+
+  --pff:#0A66FF;
+  --pff-press:#0653D4;
+
+  /* chart-safe series inks (validated pair: CVD delta E 14.7 / normal 23.3, both >=3:1) */
+  --away-ink:#1E5C3F;
+  --home-ink:#B07400;
+  --away-brand:#203731;
+  --home-brand:#FFB612;
+
+  --col:min(100% - 32px, 650px);
+  --r:14px;
+  --r-lg:22px;
+  --card-h:clamp(482px, 76vh, 604px);
+
+  --shadow-1:0 1px 2px rgba(20,22,27,.04), 0 8px 24px -14px rgba(20,22,27,.12);
+  --shadow-2:0 1px 2px rgba(20,22,27,.05), 0 24px 60px -26px rgba(20,22,27,.20);
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.45; letter-spacing:-.005em;
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1;
+  overflow-x:hidden;
+}
+img{max-width:100%; display:block}
+a{color:inherit}
+button{font:inherit; color:inherit; background:none; border:0; cursor:pointer}
+:where(a,button,[tabindex]):focus-visible{outline:2px solid var(--pff); outline-offset:3px; border-radius:8px}
+
+.display{
+  font-family:"Archivo",system-ui,sans-serif;
+  font-weight:800; letter-spacing:-.035em; line-height:1.04;
+}
+.eyebrow{font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
+.num{font-variant-numeric:tabular-nums; letter-spacing:-.02em; font-weight:800}
+
+.wrap{width:var(--col); margin-inline:auto}
+.sr{position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0,0,0,0)}
+
+/* ---------- sticky bar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:60;
+  background:rgba(255,255,255,.88); backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid transparent; transition:border-color .25s var(--ease);
+}
+.topbar.stuck{border-bottom-color:var(--rule)}
+.topbar-in{display:flex; align-items:center; gap:12px; height:52px; overflow:hidden}
+.tb-brand{display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap}
+.tb-brand .dot{width:7px; height:7px; border-radius:50%; background:var(--pff)}
+.tb-score{
+  display:flex; align-items:center; gap:8px; margin-left:auto; white-space:nowrap;
+  opacity:0; transform:translateY(4px); transition:opacity .3s var(--ease), transform .3s var(--ease);
+  font-size:14px; font-weight:800;
+}
+.topbar.stuck .tb-score{opacity:1; transform:none}
+.tb-score .tsn{color:var(--ink-3); font-weight:700; font-size:12px; letter-spacing:.06em; text-transform:uppercase}
+.tb-score .sep{color:var(--rule-2)}
+.tb-final{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-4)}
+@media (max-width:400px){.tb-final{display:none}.tb-brand{font-size:10px; letter-spacing:.06em}}
+
+/* ---------- hero ---------- */
+.hero{position:relative; overflow:hidden; padding:26px 0 6px}
+.hero::before{
+  content:""; position:absolute; inset:-46% -14% auto -14%; height:min(520px,86vw);
+  background:
+    radial-gradient(58% 68% at 16% 30%, color-mix(in srgb, var(--away-brand) 14%, transparent), transparent 70%),
+    radial-gradient(58% 68% at 84% 26%, color-mix(in srgb, var(--home-brand) 22%, transparent), transparent 70%);
+  filter:blur(6px); pointer-events:none; opacity:.9;
+  -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,.3), #000 45%, transparent 100%);
+  mask-image:linear-gradient(180deg, rgba(0,0,0,.3), #000 45%, transparent 100%);
+}
+.hero-in{position:relative; display:grid; gap:22px}
+.hero-in > *{min-width:0}
+.hero-meta{display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+.chip{
+  display:inline-flex; align-items:center; gap:7px; padding:6px 11px;
+  border:1px solid var(--rule-2); border-radius:999px; background:var(--surface);
+  font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2);
+}
+
+.scoreline{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:clamp(6px,3vw,20px)}
+.sl-team{display:grid; justify-items:center; gap:10px; text-align:center; min-width:0}
+.sl-logo{
+  width:clamp(56px,15vw,80px); aspect-ratio:1; display:grid; place-items:center;
+  border-radius:18px; background:var(--surface); border:1px solid var(--rule);
+  box-shadow:var(--shadow-1); padding:9px;
+}
+.sl-logo img{width:100%; height:100%; object-fit:contain}
+.sl-logo .mono{font-weight:800; font-size:clamp(19px,5vw,26px); letter-spacing:-.02em}
+.sl-city{font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.sl-nick{font-weight:800; font-size:clamp(18px,4.6vw,24px); letter-spacing:-.03em; line-height:1.05; margin-top:2px}
+.sl-score{font-size:clamp(52px,15vw,84px); font-weight:800; line-height:.86; letter-spacing:-.045em}
+.sl-mid{display:grid; justify-items:center; gap:6px}
+.sl-dash{width:22px; height:2px; background:var(--rule-2); border-radius:2px}
+.sl-final{font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-4)}
+.loser .sl-score, .loser .sl-nick{color:var(--ink-3)}
+.loser .sl-logo{opacity:.74}
+.winner-tick{display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase}
+.winner-tick::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--ink)}
+.tick-space{height:14px}
+
+.hero-actions{display:flex; flex-wrap:wrap; gap:10px}
+.btn{
+  display:inline-flex; align-items:center; gap:9px; padding:12px 18px; border-radius:999px;
+  font-size:13px; font-weight:800; text-decoration:none;
+  transition:transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--ink); color:#fff; box-shadow:var(--shadow-1)}
+.btn-primary:hover{background:#000}
+.btn-ghost{border:1px solid var(--rule-2); color:var(--ink); background:var(--surface)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn .arr{transition:transform .2s var(--ease)}
+.btn:hover .arr{transform:translateX(3px)}
+
+.qtr{border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); overflow-x:auto}
+table.qtable{width:100%; border-collapse:collapse; min-width:0}
+table.qtable th, table.qtable td{padding:11px 8px; text-align:center; font-size:14px}
+table.qtable th{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+table.qtable td{font-weight:700}
+table.qtable .tcell{text-align:left; white-space:nowrap}
+table.qtable .tcell .tc{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800}
+table.qtable .tcell img{width:19px; height:19px; object-fit:contain}
+table.qtable .tot{font-weight:800; font-size:15.5px}
+table.qtable tbody tr + tr td{border-top:1px solid var(--rule)}
+table.qtable td.qmax{position:relative}
+table.qtable td.qmax::after{content:""; position:absolute; left:50%; bottom:5px; transform:translateX(-50%); width:13px; height:2px; border-radius:2px; background:var(--accent,var(--ink))}
+
+/* ============================================================
+   SECTION + CAROUSEL
+   ============================================================ */
+section.band{padding:34px 0 6px; scroll-margin-top:66px}
+.sec-head{margin:0 0 14px}
+.sec-head h2{margin:0; font-size:clamp(22px,5.2vw,29px)}
+
+.carousel{position:relative}
+.track{
+  display:flex; gap:14px; overflow-x:auto; overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  padding-bottom:2px;
+}
+.track::-webkit-scrollbar{display:none}
+.track.dragging{scroll-snap-type:none; cursor:grabbing}
+.slide{flex:0 0 100%; scroll-snap-align:center; min-width:0}
+
+.card{
+  height:var(--card-h); background:var(--surface); border:1px solid var(--rule);
+  border-radius:var(--r-lg); box-shadow:var(--shadow-1); overflow:hidden;
+  display:grid; grid-template-rows:auto minmax(0,1fr) auto;
+  transition:box-shadow .25s var(--ease);
+}
+.card:hover{box-shadow:var(--shadow-2)}
+.card-head{
+  display:flex; align-items:center; gap:10px; padding:12px 16px; min-height:48px;
+  border-bottom:1px solid var(--rule); background:linear-gradient(180deg,var(--surface-2),var(--surface));
+}
+.badge{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; letter-spacing:-.005em; min-width:0}
+.badge img{width:20px; height:20px; object-fit:contain; flex:none}
+.badge .bn{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.card-head .sep{color:var(--rule-2); font-weight:800}
+.card-head .pill{
+  margin-left:auto; font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 9px; border-radius:999px; background:var(--surface-3); color:var(--ink-2); white-space:nowrap;
+}
+.card-body{overflow:auto; padding:14px 16px; -webkit-overflow-scrolling:touch; scrollbar-width:thin}
+.card-body.flush{padding:0}
+.card-body.center{display:grid; align-content:center; gap:14px}
+.card-body.fill{display:grid; gap:14px; grid-template-rows:minmax(0,1fr)}
+.card-meta{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 16px; border-top:1px solid var(--rule); background:var(--surface-2);
+  font-size:11.5px; color:var(--ink-3);
+}
+.card-meta .cnt{font-weight:800; color:var(--ink-4); letter-spacing:.04em}
+
+/* controls */
+.cbar{display:flex; align-items:center; justify-content:center; gap:14px; padding:14px 0 4px}
+.cbtn{
+  width:34px; height:34px; border-radius:50%; border:1px solid var(--rule-2); background:var(--surface);
+  display:grid; place-items:center; color:var(--ink-2);
+  transition:border-color .18s var(--ease), color .18s var(--ease), background .18s var(--ease), opacity .18s var(--ease);
+}
+.cbtn:hover{border-color:var(--ink); color:var(--ink)}
+.cbtn[disabled]{opacity:.32; cursor:default; border-color:var(--rule)}
+.dots{display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:center; max-width:320px}
+.dot{width:7px; height:7px; border-radius:50%; background:var(--rule-2); transition:background .2s var(--ease), transform .2s var(--ease)}
+.dot[aria-current="true"]{background:var(--ink); transform:scale(1.35)}
+.dot:hover{background:var(--ink-3)}
+/* desktop side arrows */
+.sidebtn{
+  position:absolute; top:calc(var(--card-h)/2); transform:translateY(-50%); z-index:5;
+  width:40px; height:40px; border-radius:50%; background:var(--surface);
+  border:1px solid var(--rule-2); box-shadow:var(--shadow-1); display:none; place-items:center;
+  color:var(--ink-2); transition:transform .18s var(--ease), color .18s var(--ease), opacity .18s var(--ease);
+}
+.sidebtn:hover{color:var(--ink); transform:translateY(-50%) scale(1.06)}
+.sidebtn.prev{left:-54px} .sidebtn.next{right:-54px}
+.sidebtn[disabled]{opacity:.25; cursor:default}
+@media (min-width:800px) and (hover:hover){.sidebtn{display:grid}}
+
+/* ---------- comparison rows inside cards ---------- */
+.rows{display:grid; gap:2px; align-content:space-evenly; min-height:100%}
+.crow{padding:7px 0; border-bottom:1px solid var(--rule)}
+.crow:last-child{border-bottom:0}
+.crow .clab{font-size:11.5px; font-weight:800; color:var(--ink-2); letter-spacing:-.005em; margin-bottom:4px; display:flex; align-items:center; gap:7px; line-height:1.25}
+.crow .tag{font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:2px 6px; border-radius:4px; background:var(--surface-2); color:var(--ink-3); border:1px solid var(--rule)}
+.vsrow{display:grid; grid-template-columns:32px 54px minmax(0,1fr); align-items:center; gap:9px; padding:2px 0}
+.vsrow .abbr{font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.vsrow .val{font-size:14.5px; font-weight:800; line-height:1.25; text-align:center}
+.vsrow.behind .val{color:var(--ink-3)}
+.vsrow.behind .meter > span{opacity:.45}
+.meter{height:8px; border-radius:4px; background:var(--surface-3); overflow:hidden}
+.meter > span{display:block; height:100%; border-radius:4px; width:0; transition:width .85s var(--ease)}
+.meter > span.neg{background-image:repeating-linear-gradient(45deg, rgba(255,255,255,.55) 0 2px, transparent 2px 5px)}
+
+/* ---------- big paired tiles ---------- */
+.pair{display:grid; grid-template-columns:1fr 1fr; gap:12px; height:100%}
+.tile{
+  border:1px solid var(--rule); border-radius:var(--r); padding:16px 14px; background:var(--surface);
+  display:grid; align-content:center; justify-items:center; gap:10px; text-align:center;
+  position:relative; overflow:hidden; min-width:0;
+}
+.tile::before{content:""; position:absolute; inset:0 0 auto; height:3px; background:var(--accent)}
+.tile .tteam{display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:800; min-width:0}
+.tile .tteam img{width:18px; height:18px; object-fit:contain; flex:none}
+.tile .tval{font-size:clamp(34px,9vw,50px); font-weight:800; line-height:.95; letter-spacing:-.04em}
+.tile .tsub{font-size:11.5px; color:var(--ink-3); line-height:1.35}
+.tile .tsub b{color:var(--ink)}
+.tile.wide{grid-column:1/-1}
+.tile.spread{align-content:space-between; padding:18px 14px}
+.pair.quad{grid-template-rows:1fr 1fr}
+.pair.quad .tile{padding:12px 10px; gap:8px}
+.pair.quad .donut{width:clamp(84px,20vw,104px)}
+@media (max-width:460px){.pair.quad{grid-template-columns:1fr 1fr}}
+@media (max-width:460px){
+  .pair{grid-template-columns:1fr}
+  .tile .tval{font-size:44px}
+}
+/* percentile scale */
+.pscale{position:relative; height:30px; width:100%}
+.ptrack{position:absolute; inset:auto 0 14px; height:8px; border-radius:5px; background:var(--surface-3)}
+.ptrack::after{content:""; position:absolute; left:50%; top:-4px; bottom:-4px; width:1px; background:var(--rule-2)}
+.pfill{position:absolute; left:0; bottom:14px; height:8px; border-radius:5px; background:var(--accent); width:0; transition:width 1s var(--ease)}
+.pknob{position:absolute; bottom:10px; width:16px; height:16px; border-radius:50%; background:var(--surface); border:2.5px solid var(--accent); transform:translateX(-50%); left:0; transition:left 1s var(--ease); box-shadow:var(--shadow-1)}
+.pmarks{position:absolute; inset:auto 0 0; display:flex; justify-content:space-between; font-size:9.5px; font-weight:700; color:var(--ink-4)}
+/* donut */
+.donut{position:relative; width:clamp(112px,30vw,140px); aspect-ratio:1}
+.donut svg{width:100%; height:100%; transform:rotate(-90deg)}
+.donut .dv{
+  position:absolute; inset:16%; display:grid; place-content:center; text-align:center; gap:1px;
+}
+.donut .dv b{font-size:clamp(19px,5vw,25px); font-weight:800; letter-spacing:-.03em; line-height:1}
+.donut .dv span{font-size:8.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); line-height:1.1}
+
+/* ---------- chart ---------- */
+.card-body.tlbody{display:grid; grid-template-rows:minmax(0,1fr) auto; gap:6px}
+.chart-shell{position:relative; min-height:0; height:100%}
+.chart-shell svg.tl{display:block; width:100%; height:100%; overflow:visible}
+.tt{
+  position:absolute; pointer-events:none; z-index:20; min-width:146px;
+  background:var(--ink); color:#fff; border-radius:12px; padding:10px 11px;
+  box-shadow:var(--shadow-2); font-size:12px; opacity:0; transform:translateY(4px);
+  transition:opacity .14s var(--ease), transform .14s var(--ease);
+}
+.tt.on{opacity:1; transform:none}
+.tt .tt-h{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.65; margin-bottom:6px}
+.tt .tt-r{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:2px 0}
+.tt .tt-r .k{display:flex; align-items:center; gap:7px; opacity:.9}
+.tt .tt-r .sw{width:9px; height:9px; border-radius:2px}
+.tt .tt-r .v{font-weight:800}
+.legend{display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:11.5px; font-weight:700; color:var(--ink-2)}
+.legend .sw{width:10px; height:10px; border-radius:3px; display:inline-block; margin-right:6px; vertical-align:-1px}
+.legend .k{display:inline-flex; align-items:center}
+
+/* ---------- headshots ---------- */
+.ph{
+  width:64px; aspect-ratio:1; border-radius:50%; overflow:hidden; flex:none;
+  background:var(--surface-2); border:2px solid var(--accent,#D4D8DE); display:grid; place-items:center;
+  position:relative; box-shadow:var(--shadow-1);
+}
+.ph img{width:100%; height:100%; object-fit:cover; object-position:top center}
+.ph .init{font-weight:800; font-size:19px; letter-spacing:-.02em; color:var(--ink-2); line-height:1}
+.pcell .ph .init{font-size:10px}
+.grow .ph .init, .leader .ph .init{font-size:12.5px}
+.so .ph .init{font-size:16px}
+.gcard .ph .init{font-size:30px}
+
+/* ---------- QB duel ---------- */
+.duel-head{display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--rule)}
+.qbc{display:grid; justify-items:center; gap:8px; text-align:center; min-width:0}
+.qbc .ph{width:clamp(52px,14vw,64px)}
+.qbc .qn{font-weight:800; font-size:clamp(14px,3.8vw,17px); line-height:1.1; letter-spacing:-.03em}
+.qbc .qt{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.duel-vs{font-size:10.5px; font-weight:800; color:var(--ink-4); letter-spacing:.14em; text-transform:uppercase}
+.card-body.duel{display:grid; grid-template-rows:auto minmax(0,1fr); gap:6px}
+.drows{display:grid; align-content:space-evenly}
+.drow{display:grid; grid-template-columns:1fr 150px 1fr; align-items:center; gap:8px; padding:9px 0; border-bottom:1px solid var(--rule)}
+.drow:last-child{border-bottom:0}
+.drow .dl{text-align:center; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); line-height:1.25}
+.drow .dv{font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px}
+.drow .dv.a, .drow .dv.b{justify-content:center}
+/* dot slot reserved on both sides so the numbers stay optically centred */
+.drow .dv.a::after, .drow .dv.b::before{content:""; width:7px; height:7px; border-radius:50%; background:transparent; flex:none}
+.drow .dv.a.win::after, .drow .dv.b.win::before{background:var(--accent)}
+.drow .dv:not(.win){color:var(--ink-3)}
+
+/* ---------- BTT / TWP ----------
+   Each metric is a block with its denominator named in the title, so BTT (per attempt)
+   and TWP (per dropback) are never read off the same base. Bars are uniform width --
+   the denominator is stated, not encoded in the length. */
+.pmw{display:grid; align-content:center; gap:14px; width:100%}
+.pmblock{display:grid; gap:12px; padding:16px 4px 18px; border-top:1px solid var(--rule)}
+.pmblock:first-child{border-top:0; padding-top:6px}
+.pmttl{display:grid; gap:3px; justify-items:center; text-align:center}
+.pmttl b{display:flex; align-items:center; gap:8px;
+  font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2)}
+.pmttl b i{font-style:normal; width:7px; height:7px; border-radius:2px; background:var(--accent); flex:none}
+.pmttl em{font-style:normal; font-size:10px; font-weight:800; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-4)}
+.pmpair{display:grid; grid-template-columns:1fr 1px 1fr; gap:16px; align-items:start}
+.pmrule{background:var(--rule); align-self:stretch}
+.pmside{display:grid; justify-items:center; gap:9px; min-width:0}
+.pmside > b{font-size:clamp(28px,7vw,36px); font-weight:800; letter-spacing:-.045em; line-height:1;
+  color:var(--accent)}
+.pmside > b.none{color:var(--ink-4)}
+.pmbar{display:block; width:100%; height:8px; border-radius:4px; background:var(--surface-3); overflow:hidden}
+.pmbar i{display:block; height:100%; border-radius:4px; background:var(--accent);
+  transition:width .6s var(--ease)}
+.pmcount{font-size:11.5px; font-weight:700; color:var(--ink-3); text-align:center; line-height:1.35}
+.pmcount b{color:var(--ink-2); font-weight:800}
+@media (max-width:460px){
+  .pmblock{padding:13px 2px 15px; gap:10px}
+  .pmpair{gap:11px}
+  .pmside > b{font-size:27px}
+  .pmcount{font-size:10.5px}
+  .pmttl b{font-size:10px; letter-spacing:.09em}
+}
+
+/* ---------- standout / leader cards ---------- */
+.solist{display:grid; gap:8px}
+.so{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px;
+  border:1px solid var(--rule); border-radius:var(--r); padding:10px 12px; background:var(--surface);
+  text-decoration:none; position:relative; overflow:hidden;
+  transition:border-color .2s var(--ease), transform .2s var(--ease);
+}
+.so::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent)}
+.so:hover{border-color:var(--rule-2); transform:translateX(2px)}
+.so .ph{width:40px; border-width:2px}
+.so .si{min-width:0; display:grid; gap:1px}
+.so .sr-role{display:block; font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+.so .sn{display:block; font-size:14.5px; font-weight:800; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.so .sm{display:block; font-size:10.5px; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.so .sv{text-align:right}
+.so .sv b{display:block; font-size:20px; font-weight:800; letter-spacing:-.025em; line-height:1}
+.so .sv span{font-size:9.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3)}
+
+@media (max-height:700px){
+  .pil:nth-child(n+4){display:none}
+  .bxt{padding:6px 5px}
+  .drow{padding:7px 0}
+  .solist{gap:6px}
+  .so{padding:8px 10px; gap:10px}
+  .so .ph{width:34px}
+  .so .sn{font-size:13.5px}
+  .so .sv b{font-size:18px}
+  .crow{padding:6px 0}
+}
+/* ---------- grade card ---------- */
+.gcard{display:grid; justify-items:center; align-content:center; gap:12px; text-align:center; height:100%; padding:6px}
+.gcard .ph{width:clamp(84px,24vw,104px); border-width:3px}
+.gcard .gn{font-weight:800; font-size:clamp(19px,5vw,25px); letter-spacing:-.032em; line-height:1.1}
+.gcard .gmeta{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; font-size:11px; font-weight:700; color:var(--ink-3)}
+.gcard .gbig{font-size:clamp(52px,14vw,72px); font-weight:800; line-height:.9; letter-spacing:-.045em}
+.gcard .glab{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.g-elite{background:#0B4F8F} .g-high{background:#1B7FBF} .g-good{background:#0F8A5F}
+.g-avg{background:#8A7A2E} .g-low{background:#B04A2E}
+.tag{font-size:9.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:3px 7px; border-radius:5px; background:var(--surface-2); color:var(--ink-2); border:1px solid var(--rule)}
+
+/* grade leaderboard */
+.glist{display:grid; gap:8px}
+.grow{display:grid; grid-template-columns:20px auto 1fr auto; align-items:center; gap:11px; padding:9px 4px; border-bottom:1px solid var(--rule)}
+.grow:last-child{border-bottom:0}
+.grow .gr{font-weight:800; font-size:13px; color:var(--ink-4); text-align:center}
+.grow .ph{width:34px; border-width:1.5px}
+.grow .gi{min-width:0; display:grid; gap:1px}
+.grow .gnm{display:block; font-size:13.5px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.grow .gsub{display:block; font-size:10.5px; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.gchip{min-width:52px; text-align:center; padding:6px 8px; border-radius:9px; font-size:15px; font-weight:800; color:#fff; letter-spacing:-.02em}
+
+/* ---------- tables ---------- */
+.tzone{position:relative; height:100%; min-height:0}
+.xfade{position:absolute; top:0; right:0; bottom:0; width:26px; pointer-events:none;
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95))}
+.tscroll{overflow:auto; height:100%; -webkit-overflow-scrolling:touch}
+table.data{width:100%; border-collapse:separate; border-spacing:0}
+table.data th, table.data td{padding:9px 12px; text-align:right; white-space:nowrap; font-size:13px}
+table.data th{
+  position:sticky; top:0; z-index:2; background:var(--surface-2);
+  font-size:9.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:1px solid var(--rule); cursor:pointer; user-select:none;
+}
+table.data th:hover{color:var(--ink)}
+table.data th .sortcue{opacity:0; margin-left:4px; font-size:8px}
+table.data th[aria-sort] .sortcue{opacity:1}
+table.data th.pl, table.data td.pl{text-align:left; position:sticky; left:0; background:var(--surface)}
+table.data th.pl{z-index:3; background:var(--surface-2)}
+table.data td.pl{border-right:1px solid var(--rule)}
+table.data tbody tr:nth-child(even) td{background:#FAFBFC}
+table.data tbody tr:hover td{background:#F2F5FA}
+table.data tbody td{border-bottom:1px solid var(--rule)}
+table.data td.lead{font-weight:800}
+table.data td{font-weight:700; color:var(--ink-2)}
+table.data td.pl{font-weight:800; color:var(--ink)}
+.pcell{display:flex; align-items:center; gap:9px}
+.pcell .ph{width:26px; border-width:1.5px}
+.pcell .pi{display:grid; gap:0; min-width:0}
+.pcell .pn{font-size:13px; font-weight:800; line-height:1.25}
+.pcell .pp{font-size:9.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)}
+.snapbar{display:flex; align-items:center; gap:9px; justify-content:flex-end}
+.snapbar .sb{width:clamp(56px,22vw,120px); height:7px; border-radius:4px; background:var(--surface-3); overflow:hidden}
+.snapbar .sb > span{display:block; height:100%; border-radius:4px; background:var(--accent); width:0; transition:width .8s var(--ease)}
+.snapbar .sv{font-weight:800; min-width:24px; text-align:right; color:var(--ink)}
+
+/* ---------- box score: one card per player, scrollable ----------
+   Every player gets the same card -- one visual language, no featured/rest split --
+   and the list scrolls inside the slide, the way v3 did. */
+/* the fade sits on the body, not the scroller, so it stays put while the list moves */
+.card-body.blbody{padding:0; overflow:hidden; position:relative}
+.card-body.blbody::after{content:""; position:absolute; left:0; right:0; bottom:0; height:26px;
+  background:linear-gradient(180deg, rgba(255,255,255,0), var(--surface)); pointer-events:none}
+.bxscroll{overflow-y:auto; overflow-x:hidden; height:100%; padding:14px 16px 16px;
+  -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain; touch-action:pan-y;
+  scrollbar-width:thin; scrollbar-color:var(--rule-2) transparent}
+.bxscroll::-webkit-scrollbar{width:8px}
+.bxscroll::-webkit-scrollbar-thumb{background:var(--rule-2); border-radius:4px;
+  border:2px solid var(--surface)}
+.bxscroll::-webkit-scrollbar-track{background:transparent}
+.bxcards{display:grid; grid-template-columns:repeat(auto-fit,minmax(262px,1fr)); gap:10px}
+
+.bxc{border:1px solid var(--rule); border-radius:14px; padding:12px 13px 13px;
+  display:grid; gap:10px; background:var(--surface); position:relative;
+  transition:border-color .2s var(--ease), box-shadow .2s var(--ease)}
+.bxc:hover{border-color:color-mix(in srgb, var(--accent) 34%, var(--rule)); box-shadow:var(--shadow-1)}
+.bxhd{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:10px}
+.bxn{min-width:0; display:grid; gap:3px}
+.bxnm{font-size:14.5px; font-weight:800; letter-spacing:-.025em; line-height:1.15;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.bxpos{justify-self:start; font-size:8.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--accent); background:color-mix(in srgb, var(--accent) 9%, #fff);
+  border:1px solid color-mix(in srgb, var(--accent) 24%, var(--rule)); border-radius:999px; padding:2px 7px}
+.bxc .ph{width:38px}
+
+/* headline number sits on its own line, no box around it */
+.bxlead{display:flex; align-items:baseline; gap:7px; padding-bottom:1px;
+  border-bottom:1px solid var(--rule)}
+.bxlead b{font-size:28px; font-weight:800; letter-spacing:-.045em; line-height:1; color:var(--accent)}
+.bxlead span{font-size:8.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3)}
+
+/* dividers come from the gap, so there are no nested boxes */
+.bxg{display:grid; grid-template-columns:repeat(var(--bcols,3), minmax(0,1fr));
+  gap:1px; background:var(--rule); border-radius:10px; overflow:hidden}
+.bxt{background:var(--surface-2); padding:7px 5px; display:grid; justify-items:center; gap:2px; min-width:0}
+.bxt span{font-size:7.5px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+.bxt b{font-size:13.5px; font-weight:800; letter-spacing:-.02em; line-height:1.1; color:var(--ink)}
+.bxt.zero b{color:var(--ink-4); font-weight:700}
+.empty{margin:0; text-align:center; color:var(--ink-3); font-size:13px}
+@media (max-width:520px){
+  .bxscroll{padding:12px 13px 14px}
+  .bxcards{grid-template-columns:1fr; gap:9px}
+  .bxnm{font-size:14px}
+  .bxlead b{font-size:26px}
+}
+
+/* ============================================================
+   KEY TAKEAWAYS  (anatomy carried over from the original recap)
+   ============================================================ */
+#key-takeaways{padding-top:24px}
+.kt-btn{
+  width:100%; min-height:52px; display:flex; align-items:center; justify-content:center; gap:11px;
+  border-radius:999px; background:var(--pff); color:#fff; font-size:16px; font-weight:800;
+  letter-spacing:.01em; position:relative; overflow:hidden;
+  box-shadow:0 8px 20px rgba(10,102,255,.35), inset 0 -2px 0 rgba(255,255,255,.22);
+  transition:transform .12s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+}
+.kt-btn:hover{transform:translateY(-1px) scale(1.008); box-shadow:0 12px 26px rgba(10,102,255,.38)}
+.kt-btn:active{transform:translateY(0) scale(.99); background:var(--pff-press,#0653D4)}
+.kt-btn .kt-ic{
+  display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%;
+  background:rgba(255,255,255,.18); font-size:11px; transition:transform .3s var(--ease);
+}
+.kt-btn[aria-expanded="true"] .kt-ic{transform:rotate(180deg)}
+.kt-btn.busy{pointer-events:none}
+.kt-btn.busy::after{
+  content:""; position:absolute; inset:0; transform:translateX(-100%);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.32), transparent);
+  animation:sweep .9s var(--ease) infinite;
+}
+@keyframes sweep{to{transform:translateX(100%)}}
+
+.kt-panel{
+  margin-top:16px; border:1px solid var(--rule); border-radius:16px; background:var(--surface);
+  box-shadow:var(--shadow-1); overflow:hidden;
+}
+.kt-panel[hidden]{display:none}
+.kt-panel.show{animation:ktIn .3s ease-out}
+@keyframes ktIn{from{opacity:0; transform:translateY(-10px)}to{opacity:1; transform:none}}
+.kt-sec{padding:20px 16px}
+.kt-sec + .kt-sec{border-top:1px solid var(--rule); background:var(--surface-2)}
+.section-title{font-size:16px; font-weight:800; color:var(--ink); margin:0 0 12px; letter-spacing:-.02em}
+
+/* ---- biggest team differences ---- */
+.kt-diffs{display:grid; gap:12px}
+.ktd{
+  position:relative; overflow:hidden; background:var(--surface);
+  border:1px solid var(--rule); border-radius:14px; padding:16px;
+  opacity:0; animation:ktRow .42s var(--ease) forwards;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.ktd::before{content:""; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--away-ink), var(--home-ink)); opacity:.85}
+.ktd:hover{transform:translateY(-2px); box-shadow:var(--shadow-1); border-color:var(--rule-2)}
+@keyframes ktRow{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+.ktd-metric{
+  font-size:14px; font-weight:800; color:var(--ink); margin-bottom:12px;
+  text-transform:uppercase; letter-spacing:.03em; line-height:1.3;
+}
+.ktd-values{display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center; margin-bottom:10px}
+.ktd-team{
+  display:flex; align-items:center; gap:8px; padding:8px 12px;
+  border:1px solid var(--rule); border-radius:9px; min-width:0;
+}
+.ktd-team img{width:20px; height:20px; object-fit:contain; flex:none}
+.ktd-team .num{font-size:16px; font-weight:800; color:var(--ink)}
+.ktd-team.away{justify-content:flex-end; background:color-mix(in srgb, var(--away-brand) 8%, #fff);
+  border-color:color-mix(in srgb, var(--away-brand) 22%, var(--rule))}
+.ktd-team.home{justify-content:flex-start; background:color-mix(in srgb, var(--home-brand) 10%, #fff);
+  border-color:color-mix(in srgb, var(--home-brand) 26%, var(--rule))}
+.ktd-vs{font-size:11px; font-weight:800; color:var(--ink-3); letter-spacing:.12em}
+.ktd-note{
+  display:flex; align-items:center; justify-content:center; gap:6px; padding:6px 12px;
+  border-radius:7px; background:var(--surface-2); border:1px solid var(--rule);
+  font-size:12.5px; font-weight:700; color:var(--ink-2);
+}
+
+/* ---- box score standouts ---- */
+.kt-grid{display:grid; gap:14px}
+@media (min-width:540px){.kt-grid{grid-template-columns:1fr 1fr}}
+.kts{
+  position:relative; overflow:hidden; display:block; text-decoration:none;
+  background:var(--surface); border:1px solid var(--rule); border-radius:16px; padding:18px;
+  opacity:0; animation:ktRow .42s var(--ease) forwards;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.kts::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); opacity:.9}
+.kts:hover{transform:translateY(-3px); box-shadow:var(--shadow-2); border-color:var(--rule-2)}
+.kts-head{display:flex; align-items:center; gap:12px; margin-bottom:14px; min-width:0}
+.kts .ph{width:48px; border-width:2px}
+.kts-id{min-width:0}
+.kts-name{font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.02em; line-height:1.2;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.kts-team{font-size:12.5px; color:var(--ink-3); margin-top:2px}
+.kts-role{
+  display:inline-block; margin-top:6px; padding:4px 11px; border-radius:20px;
+  background:var(--accent); color:#fff; font-size:10px; font-weight:800;
+  letter-spacing:.08em; text-transform:uppercase;
+}
+.kts-stats{
+  background:color-mix(in srgb, var(--accent) 5%, var(--surface-2));
+  border:1px solid color-mix(in srgb, var(--accent) 14%, var(--rule));
+  border-radius:12px; padding:6px 14px;
+}
+.kts-stat{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:7px 0; border-bottom:1px solid var(--rule);
+}
+.kts-stat:last-child{border-bottom:0}
+.kts-stat .k{font-size:11px; font-weight:600; color:var(--ink-3); letter-spacing:.05em; text-transform:uppercase}
+.kts-stat .v{font-size:14px; font-weight:800; color:var(--ink)}
+
+/* ---------- CTA ---------- */
+.cta-band{
+  position:relative; overflow:hidden; border-radius:var(--r-lg); background:var(--ink); color:#fff;
+  padding:26px; display:grid; gap:14px; margin-top:30px;
+}
+.cta-band::before{
+  content:""; position:absolute; inset:auto -20% -70% auto; width:min(460px,84%); aspect-ratio:1;
+  background:radial-gradient(circle, rgba(10,102,255,.55), transparent 62%); filter:blur(10px);
+}
+.cta-band > *{position:relative}
+.cta-band .eyebrow{color:rgba(255,255,255,.6)}
+.cta-band h2{margin:0; font-size:clamp(22px,5.4vw,30px)}
+.cta-band p{margin:0; color:rgba(255,255,255,.74); font-size:14px; line-height:1.55}
+.cta-band .btn-primary{background:#fff; color:var(--ink)}
+.cta-band .btn-ghost{background:transparent; color:#fff; border-color:rgba(255,255,255,.28)}
+
+footer.site{padding:26px 0 48px; color:var(--ink-4); font-size:11px}
+footer.site .fin{display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between}
+footer.site a{color:var(--ink-3); text-decoration:none}
+footer.site a:hover{color:var(--ink)}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0; transform:translateY(12px)}
+.rv.in{opacity:1; transform:none; transition:opacity .55s var(--ease), transform .55s var(--ease)}
+@media (prefers-reduced-motion:reduce){
+  .rv,.rv.in{opacity:1; transform:none; transition:none}
+  .meter > span,.pfill,.pknob,.snapbar .sb > span{transition:none}
+  .track{scroll-behavior:auto}
+}
+@media print{
+  .topbar,.cbar,.sidebtn,.cta-band{display:none}
+  .track{display:block; overflow:visible}
+  .slide{break-inside:avoid; margin-bottom:14px}
+  .card{height:auto; box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+
+<div class="topbar" id="topbar">
+  <div class="wrap topbar-in">
+    <span class="tb-brand"><span class="dot"></span>PFF Game Recap</span>
+    <span class="tb-score" id="tb-score"></span>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-meta" id="hero-meta"></div>
+    <div class="scoreline" id="scoreline"></div>
+    <div class="hero-actions" id="hero-actions"></div>
+    <div class="qtr"><table class="qtable" id="qtable"></table></div>
+  </div>
+</header>
+<div id="hero-sentinel" aria-hidden="true"></div>
+
+<!-- ============ KEY TAKEAWAYS ============ -->
+<section class="band" id="key-takeaways">
+  <div class="wrap">
+    <button class="kt-btn" id="kt-btn" type="button" aria-expanded="false" aria-controls="kt-panel">
+      <span class="kt-label">Generate Key Takeaways</span><span class="kt-ic">&#9662;</span>
+    </button>
+    <div class="kt-panel" id="kt-panel" hidden>
+      <div class="kt-sec">
+        <div class="section-title">Biggest Team Differences</div>
+        <div class="kt-diffs" id="team-diffs"></div>
+      </div>
+      <div class="kt-sec">
+        <div class="section-title">Box Score Standouts</div>
+        <div class="kt-grid" id="top-performers"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAROUSEL SECTIONS (original headings) ============ -->
+<section class="band" id="game-overview"></section>
+<section class="band" id="rushing-report"></section>
+<section class="band" id="passing-report"></section>
+<section class="band" id="qb-comparison"></section>
+<section class="band" id="participation-slide"></section>
+<section class="band" id="player-grades"></section>
+<section class="band" id="boxscore-carousel"></section>
+
+<!-- ============ CTA ============ -->
+<section class="band">
+  <div class="wrap">
+    <div class="cta-band rv">
+      <span class="eyebrow">PFF+</span>
+      <h2 class="display">Every grade, every snap, every game</h2>
+      <p>Premium Stats gives you the full player-by-player grade file, advanced charting and season-long trends for all 32 teams.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://www.pff.com/subscribe" target="_blank" rel="noopener">Subscribe to PFF+ <span class="arr">&#8594;</span></a>
+        <a class="btn btn-ghost" id="cta-premium" href="#" target="_blank" rel="noopener">Open Premium Stats <span class="arr">&#8594;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap fin">
+    <span>Data: Pro Football Focus &#183; Initial grades subject to review</span>
+    <span><a href="https://www.pff.com" target="_blank" rel="noopener">pff.com</a></span>
+  </div>
+</footer>
+
+<script id="recap-data" type="application/json">{"meta":{"week":"P2","week_label":"Preseason Week 2","date":"August 20, 2026","season":2026,"premium_url":"https://premium.pff.com/nfl/games/2026/P2"},"away":{"name":"San Francisco 49ers","city":"San Francisco 49ers","mascot":"","nick":"49ers","q":[0,20,7,14],"cum":[0,20,27,41],"color":"#AA0000","color2":"#B3995D","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","score":41},"home":{"name":"Los Angeles Chargers","city":"Los Angeles Chargers","mascot":"","nick":"Chargers","q":[0,3,6,8],"cum":[0,3,9,17],"color":"#007BC7","color2":"#ffc20e","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","score":17},"quarters":["1Q","2Q","3Q","4Q"],"metrics":{"Total points":{"away":"41","home":"15"},"Total offensive plays":{"away":"72","home":"55"},"Average EPA per play":{"away":"-0.045","home":"-0.291"},"Total net yards":{"away":"321","home":"224"},"Avg yards per play":{"away":"4.5","home":"4.1"},"Total first downs":{"away":"18","home":"8"},"Rushing first downs":{"away":"7","home":"1"},"Passing first downs":{"away":"11","home":"7"},"Penalty first downs":{"away":"0","home":"0"},"3rd down efficiency":{"away":"35%","home":"14%"},"4th down efficiency":{"away":"14%","home":"8%"},"Possessions":{"away":"14","home":"12"},"Avg plays per drive":{"away":"6.1","home":"5.3"},"Avg yards per drive":{"away":"21.4","home":"17.2"},"Avg points per drive":{"away":"2.3","home":"0.7"},"Red zone posessions":{"away":"4","home":"1"},"Red zone plays":{"away":"14","home":"3"},"Red zone TDs":{"away":"4","home":"0"},"Red zone FGs":{"away":"0","home":"1"},"RZ scoring efficiency":{"away":"100%","home":"100%"},"Goal-to-go possessions":{"away":"2","home":"1"},"Goal-to-go plays":{"away":"6","home":"3"},"Goal-to-go TDs":{"away":"2","home":"0"},"Goal-to-go FGs":{"away":"0","home":"1"},"GTG scoring efficiency":{"away":"100%","home":"100%"},"Total turnovers":{"away":"2","home":"1"},"INTs (thrown)":{"away":"2","home":"0"},"Dropped INTs (thrown)":{"away":"1","home":"2"},"INT return yards":{"away":"16","home":"0"},"Fumbles":{"away":"1","home":"0"},"Fumbles lost":{"away":"0","home":"0"},"Turnover on downs":{"away":"0","home":"2"},"Penalties assessed":{"away":"2","home":"2"},"Penalties assessed - yards lost":{"away":"21","home":"15"},"Penalties declined / offset":{"away":"2","home":"1"},"Total touchdowns":{"away":"4","home":"1"},"Rushing touchdowns":{"away":"3","home":"0"},"Passing touchdowns":{"away":"1","home":"1"},"Return touchdowns":{"away":"1","home":"0"},"Defensive touchdowns":{"away":"0","home":"1"},"Safeties surrendered":{"away":"0","home":"0"},"2-point conversion attempts":{"away":"0","home":"0"},"2-point conversion successes":{"away":"0","home":"0"},"Challenges by team":{"away":"0","home":"0"},"Successful Challenges":{"away":"0","home":"0"},"Trick plays":{"away":"0","home":"0"},"Red zone possessions":{"away":"4","home":"1"}},"pr":{"Total rushing plays":{"away":"36","home":"20"},"Avg EPA per rushing play":{"away":"0.060","home":"-0.283"},"Net yards rushing":{"away":"147","home":"69"},"Avg net yards per rush":{"away":"4.1","home":"3.5"},"Avg yards before contact":{"away":"0.9","home":"0.1"},"Avg yards after contact":{"away":"3.1","home":"3.4"},"Explosive runs (10+)":{"away":"2","home":"1"},"Yards on expl. runs":{"away":"48","home":"37"},"TFL on rushing attempts":{"away":"0","home":"5"},"Yards lost on TFLs":{"away":"0","home":"-10"},"Scrambles":{"away":"4","home":"1"},"Scramble Yards":{"away":"16","home":"37"},"Designed runs by QB":{"away":"2","home":"2"},"Designed runs by QB - yards":{"away":"-2","home":"0"},"MTs forced on run plays":{"away":"9","home":"5"},"Total passing plays":{"away":"36","home":"35"},"Avg EPA per passing play":{"away":"-0.150","home":"-0.296"},"Gross passing yards":{"away":"174","home":"179"},"Avg (gross) yds per att.":{"away":"4.8","home":"5.3"},"Avg (gross) yds per comp.":{"away":"9.7","home":"9.4"},"Pass Attempts":{"away":"36","home":"34"},"Pass Completions":{"away":"18","home":"19"},"Completion %":{"away":"50%","home":"56%"},"Adj. completion %":{"away":"59%","home":"70%"},"Targeted passes":{"away":"32","home":"33"},"Dropped passes":{"away":"1","home":"4"},"Batted passes":{"away":"0","home":"1"},"Hit as thrown":{"away":"0","home":"0"},"Throwaways":{"away":"4","home":"0"},"Spikes":{"away":"0","home":"0"},"Passes broken up":{"away":"6","home":"4"},"Avg depth of target":{"away":"11.1","home":"9.6"},"Air yards":{"away":"121","home":"102"},"Avg air yds per comp.":{"away":"6.7","home":"5.4"},"Yards after the catch":{"away":"59","home":"77"},"Avg YAC per comp.":{"away":"3.3","home":"4.0"},"Yds lost on drops":{"away":"26","home":"48"},"Explosive passes (15+)":{"away":"4","home":"4"},"Yards on expl. passes":{"away":"82","home":"55"},"Deep attempts (20+)":{"away":"7","home":"4"},"Deep completions":{"away":"1","home":"0"},"Yards on deep comps":{"away":"17","home":"0"},"Total pressures allowed":{"away":"20","home":"8"},"Sacks allowed":{"away":"0","home":"1"},"Yards lost on sacks":{"away":"0","home":"1"},"Hits allowed":{"away":"2","home":"1"},"Hurries allowed":{"away":"13","home":"4"},"Unbl. pressures allowed":{"away":"5","home":"0"},"MTs forced on pass plays":{"away":"6","home":"3"}},"takeaways":{"game_diffs":{"Total points":{"metric":"Total points","away":41,"home":15,"diff":26,"winner":"away"},"Total offensive plays":{"metric":"Total offensive plays","away":72,"home":55,"diff":17,"winner":"away"},"Average EPA per play":{"metric":"Average EPA per play","away":-0.045,"home":-0.291,"diff":0.246,"winner":"away"},"Total net yards":{"metric":"Total net yards","away":321,"home":224,"diff":97,"winner":"away"},"Avg yards per play":{"metric":"Avg yards per play","away":4.5,"home":4.1,"diff":0.4,"winner":"away"},"Total first downs":{"metric":"Total first downs","away":18,"home":8,"diff":10,"winner":"away"},"Rushing first downs":{"metric":"Rushing first downs","away":7,"home":1,"diff":6,"winner":"away"},"Passing first downs":{"metric":"Passing first downs","away":11,"home":7,"diff":4,"winner":"away"},"Possessions":{"metric":"Possessions","away":14,"home":12,"diff":2,"winner":"away"},"Avg plays per drive":{"metric":"Avg plays per drive","away":6.1,"home":5.3,"diff":0.8,"winner":"away"},"Avg yards per drive":{"metric":"Avg yards per drive","away":21.4,"home":17.2,"diff":4.2,"winner":"away"},"Avg points per drive":{"metric":"Avg points per drive","away":2.3,"home":0.7,"diff":1.6,"winner":"away"},"Red zone posessions":{"metric":"Red zone posessions","away":4,"home":1,"diff":3,"winner":"away"},"Red zone plays":{"metric":"Red zone plays","away":14,"home":3,"diff":11,"winner":"away"},"Red zone TDs":{"metric":"Red zone TDs","away":4,"home":0,"diff":4,"winner":"away"},"Red zone FGs":{"metric":"Red zone FGs","away":0,"home":1,"diff":1,"winner":"home"},"Goal-to-go possessions":{"metric":"Goal-to-go possessions","away":2,"home":1,"diff":1,"winner":"away"},"Goal-to-go plays":{"metric":"Goal-to-go plays","away":6,"home":3,"diff":3,"winner":"away"},"Goal-to-go TDs":{"metric":"Goal-to-go TDs","away":2,"home":0,"diff":2,"winner":"away"},"Goal-to-go FGs":{"metric":"Goal-to-go FGs","away":0,"home":1,"diff":1,"winner":"home"},"Total turnovers":{"metric":"Total turnovers","away":2,"home":1,"diff":1,"winner":"away"},"INTs (thrown)":{"metric":"INTs (thrown)","away":2,"home":0,"diff":2,"winner":"away"},"Dropped INTs (thrown)":{"metric":"Dropped INTs (thrown)","away":1,"home":2,"diff":1,"winner":"home"},"INT return yards":{"metric":"INT return yards","away":16,"home":0,"diff":16,"winner":"away"},"Fumbles":{"metric":"Fumbles","away":1,"home":0,"diff":1,"winner":"away"},"Turnover on downs":{"metric":"Turnover on downs","away":0,"home":2,"diff":2,"winner":"home"},"Penalties assessed - yards lost":{"metric":"Penalties assessed - yards lost","away":21,"home":15,"diff":6,"winner":"away"},"Penalties declined / offset":{"metric":"Penalties declined / offset","away":2,"home":1,"diff":1,"winner":"away"},"Total touchdowns":{"metric":"Total touchdowns","away":4,"home":1,"diff":3,"winner":"away"},"Rushing touchdowns":{"metric":"Rushing touchdowns","away":3,"home":0,"diff":3,"winner":"away"},"Return touchdowns":{"metric":"Return touchdowns","away":1,"home":0,"diff":1,"winner":"away"},"Defensive touchdowns":{"metric":"Defensive touchdowns","away":0,"home":1,"diff":1,"winner":"home"},"Red zone possessions":{"metric":"Red zone possessions","away":4,"home":1,"diff":3,"winner":"away"},"PR_Total rushing plays":{"metric":"Total rushing plays","away":36,"home":20,"diff":16,"winner":"away"},"PR_Avg EPA per rushing play":{"metric":"Avg EPA per rushing play","away":0.06,"home":-0.283,"diff":0.343,"winner":"away"},"PR_Net yards rushing":{"metric":"Net yards rushing","away":147,"home":69,"diff":78,"winner":"away"},"PR_Avg net yards per rush":{"metric":"Avg net yards per rush","away":4.1,"home":3.5,"diff":0.6,"winner":"away"},"PR_Avg yards before contact":{"metric":"Avg yards before contact","away":0.9,"home":0.1,"diff":0.8,"winner":"away"},"PR_Avg yards after contact":{"metric":"Avg yards after contact","away":3.1,"home":3.4,"diff":0.3,"winner":"home"},"PR_Explosive runs (10+)":{"metric":"Explosive runs (10+)","away":2,"home":1,"diff":1,"winner":"away"},"PR_Yards on expl. runs":{"metric":"Yards on expl. runs","away":48,"home":37,"diff":11,"winner":"away"},"PR_TFL on rushing attempts":{"metric":"TFL on rushing attempts","away":0,"home":5,"diff":5,"winner":"home"},"PR_Yards lost on TFLs":{"metric":"Yards lost on TFLs","away":0,"home":-10,"diff":10,"winner":"away"},"PR_Scrambles":{"metric":"Scrambles","away":4,"home":1,"diff":3,"winner":"away"},"PR_Scramble Yards":{"metric":"Scramble Yards","away":16,"home":37,"diff":21,"winner":"home"},"PR_Designed runs by QB - yards":{"metric":"Designed runs by QB - yards","away":-2,"home":0,"diff":2,"winner":"home"},"PR_MTs forced on run plays":{"metric":"MTs forced on run plays","away":9,"home":5,"diff":4,"winner":"away"},"PR_Total passing plays":{"metric":"Total passing plays","away":36,"home":35,"diff":1,"winner":"away"},"PR_Avg EPA per passing play":{"metric":"Avg EPA per passing play","away":-0.15,"home":-0.296,"diff":0.146,"winner":"away"},"PR_Gross passing yards":{"metric":"Gross passing yards","away":174,"home":179,"diff":5,"winner":"home"},"PR_Avg (gross) yds per att.":{"metric":"Avg (gross) yds per att.","away":4.8,"home":5.3,"diff":0.5,"winner":"home"},"PR_Avg (gross) yds per comp.":{"metric":"Avg (gross) yds per comp.","away":9.7,"home":9.4,"diff":0.3,"winner":"away"},"PR_Pass Attempts":{"metric":"Pass Attempts","away":36,"home":34,"diff":2,"winner":"away"},"PR_Pass Completions":{"metric":"Pass Completions","away":18,"home":19,"diff":1,"winner":"home"},"PR_Targeted passes":{"metric":"Targeted passes","away":32,"home":33,"diff":1,"winner":"home"},"PR_Dropped passes":{"metric":"Dropped passes","away":1,"home":4,"diff":3,"winner":"home"},"PR_Batted passes":{"metric":"Batted passes","away":0,"home":1,"diff":1,"winner":"home"},"PR_Throwaways":{"metric":"Throwaways","away":4,"home":0,"diff":4,"winner":"away"},"PR_Passes broken up":{"metric":"Passes broken up","away":6,"home":4,"diff":2,"winner":"away"},"PR_Avg depth of target":{"metric":"Avg depth of target","away":11.1,"home":9.6,"diff":1.5,"winner":"away"},"PR_Air yards":{"metric":"Air yards","away":121,"home":102,"diff":19,"winner":"away"},"PR_Avg air yds per comp.":{"metric":"Avg air yds per comp.","away":6.7,"home":5.4,"diff":1.3,"winner":"away"},"PR_Yards after the catch":{"metric":"Yards after the catch","away":59,"home":77,"diff":18,"winner":"home"},"PR_Avg YAC per comp.":{"metric":"Avg YAC per comp.","away":3.3,"home":4,"diff":0.7,"winner":"home"},"PR_Yds lost on drops":{"metric":"Yds lost on drops","away":26,"home":48,"diff":22,"winner":"home"},"PR_Yards on expl. passes":{"metric":"Yards on expl. passes","away":82,"home":55,"diff":27,"winner":"away"},"PR_Deep attempts (20+)":{"metric":"Deep attempts (20+)","away":7,"home":4,"diff":3,"winner":"away"},"PR_Deep completions":{"metric":"Deep completions","away":1,"home":0,"diff":1,"winner":"away"},"PR_Yards on deep comps":{"metric":"Yards on deep comps","away":17,"home":0,"diff":17,"winner":"away"},"PR_Total pressures allowed":{"metric":"Total pressures allowed","away":20,"home":8,"diff":12,"winner":"away"},"PR_Sacks allowed":{"metric":"Sacks allowed","away":0,"home":1,"diff":1,"winner":"home"},"PR_Yards lost on sacks":{"metric":"Yards lost on sacks","away":0,"home":1,"diff":1,"winner":"home"},"PR_Hits allowed":{"metric":"Hits allowed","away":2,"home":1,"diff":1,"winner":"away"},"PR_Hurries allowed":{"metric":"Hurries allowed","away":13,"home":4,"diff":9,"winner":"away"},"PR_Unbl. pressures allowed":{"metric":"Unbl. pressures allowed","away":5,"home":0,"diff":5,"winner":"away"},"PR_MTs forced on pass plays":{"metric":"MTs forced on pass plays","away":6,"home":3,"diff":3,"winner":"away"}},"top_qb":{"name":"Trey Lance","team":"Chargers","yards":90,"attempts":17,"completions":11,"tds":0,"ints":0,"headshot":"https://media.pff.com/player-photos/nfl/91399.webp","team_logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","profile":"https://www.pff.com/nfl/players/Trey Lance/91399"},"top_rb":{"name":"Sincere McCormick","team":"49ers","yards":53,"attempts":6,"tds":1,"ypc":8.8,"headshot":"https://media.pff.com/player-photos/nfl/97119.webp","team_logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","profile":"https://www.pff.com/nfl/players/Sincere McCormick/97119"},"top_wr":{"name":"De'Zhaun Stribling","team":"49ers","yards":46,"receptions":4,"targets":5,"tds":0,"ypr":11.5,"headshot":"","team_logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","profile":"https://www.pff.com/nfl/players/DeZhaun Stribling/146508"},"top_pr":{"name":"Garmon Randolph","team":"Chargers","pressures":3,"sacks":0,"hits":0,"hurries":3,"headshot":"https://media.pff.com/player-photos/nfl/99314.webp","team_logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","profile":"https://www.pff.com/nfl/players/Garmon Randolph/99314"},"top_rd":{"name":"Quinton Bell","team":"49ers","run_stops":2,"tackles":2,"assists":0,"tfl":0,"headshot":"https://media.pff.com/player-photos/nfl/37468.webp","team_logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","profile":"https://www.pff.com/nfl/players/Quinton Bell/37468"},"top_cov":{"name":"Junior Colson","team":"Chargers","ints":1,"pbus":0,"targets":3,"completions_allowed":1,"headshot":"https://media.pff.com/player-photos/nfl/124827.webp","team_logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","profile":"https://www.pff.com/nfl/players/Junior Colson/124827"},"teams":{"away":{"name":"San Francisco 49ers","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg"},"home":{"name":"Los Angeles Chargers","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg"}}},"qb_teams":{"home":{"name":"Los Angeles Chargers","abbr":"Chargers","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","color":"#007BC7"},"away":{"name":"San Francisco 49ers","abbr":"49ers","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","color":"#AA0000"}},"passing_rows":[{"team":"los-angeles-chargers","name":"Trey Lance","DB":18,"ATT":17,"COMP":11,"YDS":90,"TD":0,"INT":0,"RTG":78.1,"COMP_pct":64.7,"aComp_pct":76.5,"ADOT":8.7,"SS_pct":52.9,"PS_pct":47.1,"AIR_pct":53.3,"YAC_pct":46.7,"avgTTT":2.51,"sacks":5,"pressure_pct":null,"headshot":"https://media.pff.com/player-photos/nfl/91399.webp","profile":"https://www.pff.com/nfl/players/Trey Lance/91399","btt":0,"twp":1,"btt_pct":null,"twp_pct":null},{"team":"los-angeles-chargers","name":"DJ Uiagalelei","DB":16,"ATT":15,"COMP":7,"YDS":80,"TD":1,"INT":0,"RTG":85.4,"COMP_pct":46.7,"aComp_pct":64.3,"ADOT":10.4,"SS_pct":40,"PS_pct":53.3,"AIR_pct":65,"YAC_pct":35,"avgTTT":2.47,"sacks":7,"pressure_pct":null,"headshot":"https://media.pff.com/player-photos/nfl/122162.webp","profile":"https://www.pff.com/nfl/players/DJ Uiagalelei/122162","btt":0,"twp":1,"btt_pct":null,"twp_pct":null},{"team":"los-angeles-chargers","name":"Justin Herbert","DB":2,"ATT":2,"COMP":1,"YDS":9,"TD":0,"INT":0,"RTG":62.5,"COMP_pct":50,"aComp_pct":50,"ADOT":11,"SS_pct":50,"PS_pct":50,"AIR_pct":22.2,"YAC_pct":77.8,"avgTTT":2.7,"sacks":10,"pressure_pct":null,"headshot":"https://media.pff.com/player-photos/nfl/28237.webp","profile":"https://www.pff.com/nfl/players/Justin Herbert/28237","btt":0,"twp":0,"btt_pct":null,"twp_pct":null},{"team":"er","name":"Adrian Martinez","DB":19,"ATT":17,"COMP":8,"YDS":56,"TD":1,"INT":2,"RTG":35,"COMP_pct":47.1,"aComp_pct":61.5,"ADOT":7.1,"SS_pct":47.1,"PS_pct":29.4,"AIR_pct":58.9,"YAC_pct":51.8,"avgTTT":3.71,"sacks":4,"pressure_pct":null,"headshot":"","profile":"https://www.pff.com/nfl/players/Adrian Martinez/5977","btt":1,"twp":4,"btt_pct":null,"twp_pct":null},{"team":"er","name":"Mac Jones","DB":14,"ATT":13,"COMP":6,"YDS":89,"TD":0,"INT":0,"RTG":69.1,"COMP_pct":46.2,"aComp_pct":53.8,"ADOT":16.5,"SS_pct":30.8,"PS_pct":69.2,"AIR_pct":67.4,"YAC_pct":32.6,"avgTTT":2.77,"sacks":10,"pressure_pct":null,"headshot":"https://media.pff.com/player-photos/nfl/60323.webp","profile":"https://www.pff.com/nfl/players/Mac Jones/60323","btt":2,"twp":0,"btt_pct":null,"twp_pct":null},{"team":"er","name":"Brock Purdy","DB":7,"ATT":6,"COMP":4,"YDS":29,"TD":0,"INT":0,"RTG":77.8,"COMP_pct":66.7,"aComp_pct":66.7,"ADOT":7.8,"SS_pct":66.7,"PS_pct":33.3,"AIR_pct":96.5,"YAC_pct":3.5,"avgTTT":2.63,"sacks":13,"pressure_pct":null,"headshot":"https://media.pff.com/player-photos/nfl/77672.webp","profile":"https://www.pff.com/nfl/players/Brock Purdy/77672","btt":0,"twp":0,"btt_pct":null,"twp_pct":null}],"participation":[{"label":"49ers • Offense","color":"#AA0000","rows":[{"name":"Jordan Watkins","pos":"WR","snaps":53,"pct":100},{"name":"Austen Pleasants","pos":"T","snaps":52,"pct":98.1},{"name":"Enrique Cruz Jr.","pos":"T","snaps":48,"pct":90.6},{"name":"Connor Colby","pos":"G","snaps":45,"pct":84.9},{"name":"Carver Willis","pos":"T","snaps":42,"pct":79.2},{"name":"Adrian Martinez","pos":"QB","snaps":38,"pct":71.7},{"name":"Doug Kramer","pos":"C","snaps":38,"pct":71.7},{"name":"Isaac Alarcon","pos":"T","snaps":38,"pct":71.7},{"name":"Nick Zakelj","pos":"G","snaps":38,"pct":71.7},{"name":"Brayden Willis","pos":"TE","snaps":37,"pct":69.8},{"name":"Trenton Irwin","pos":"WR","snaps":30,"pct":56.6},{"name":"Hayden Rucci","pos":"TE","snaps":29,"pct":54.7},{"name":"Jacob Cowing","pos":"WR","snaps":28,"pct":52.8},{"name":"KhaDarel Hodge","pos":"WR","snaps":26,"pct":49.1},{"name":"Brandon Parker","pos":"T","snaps":25,"pct":47.2},{"name":"Drake Nugent","pos":"C","snaps":25,"pct":47.2},{"name":"Mac Jones","pos":"QB","snaps":25,"pct":47.2},{"name":"Zamir White","pos":"HB","snaps":24,"pct":45.3},{"name":"Sincere McCormick","pos":"HB","snaps":20,"pct":37.7},{"name":"Demarcus Robinson","pos":"WR","snaps":19,"pct":35.8},{"name":"Jake Tonges","pos":"TE","snaps":18,"pct":34},{"name":"Kaelon Black","pos":"HB","snaps":16,"pct":30.2},{"name":"Khalil Herbert","pos":"HB","snaps":15,"pct":28.3},{"name":"De'Zhaun Stribling","pos":"WR","snaps":14,"pct":26.4},{"name":"Luke Farrell","pos":"TE","snaps":13,"pct":24.5},{"name":"Brock Purdy","pos":"QB","snaps":12,"pct":22.6},{"name":"Colton McKivitz","pos":"T","snaps":12,"pct":22.6},{"name":"Jake Brendel","pos":"C","snaps":12,"pct":22.6},{"name":"Josiah Deguara","pos":"TE","snaps":12,"pct":22.6},{"name":"Will Pauling","pos":"WR","snaps":11,"pct":20.8},{"name":"Deebo Samuel","pos":"WR","snaps":10,"pct":18.9}]},{"label":"49ers • Defense","color":"#AA0000","rows":[{"name":"Darrell Luter Jr.","pos":"CB","snaps":42,"pct":100},{"name":"Jalen Stroman","pos":"S","snaps":42,"pct":100},{"name":"Nickolas Martin","pos":"LB","snaps":33,"pct":78.6},{"name":"Garret Wallow","pos":"LB","snaps":32,"pct":76.2},{"name":"Jaden Dugger","pos":"LB","snaps":32,"pct":76.2},{"name":"Jack Jones","pos":"CB","snaps":29,"pct":69},{"name":"Jakob Robinson","pos":"CB","snaps":27,"pct":64.3},{"name":"Ogbo Okoronkwo","pos":"ED","snaps":27,"pct":64.3},{"name":"Tatum Bethune","pos":"LB","snaps":27,"pct":64.3},{"name":"Bryson Eason","pos":"DI","snaps":26,"pct":61.9},{"name":"James Thompson Jr.","pos":"DI","snaps":26,"pct":61.9},{"name":"Ashtyn Davis","pos":"S","snaps":25,"pct":59.5},{"name":"Quinton Bell","pos":"ED","snaps":23,"pct":54.8},{"name":"Sebastian Valdez","pos":"DI","snaps":23,"pct":54.8},{"name":"Ephesians Prysock","pos":"CB","snaps":21,"pct":50},{"name":"Alfred Collins","pos":"DI","snaps":20,"pct":47.6},{"name":"Victor Dimukeje","pos":"ED","snaps":19,"pct":45.2},{"name":"Xavier Thomas","pos":"ED","snaps":19,"pct":45.2},{"name":"Larry Worth III","pos":"S","snaps":18,"pct":42.9},{"name":"Deommodore Lenoir","pos":"CB","snaps":17,"pct":40.5},{"name":"Ji'Ayir Brown","pos":"S","snaps":17,"pct":40.5},{"name":"Marques Sigle","pos":"S","snaps":17,"pct":40.5},{"name":"Patrick McMorris","pos":"S","snaps":17,"pct":40.5},{"name":"Sam Okuayinonu","pos":"ED","snaps":17,"pct":40.5},{"name":"Evan Anderson","pos":"DI","snaps":14,"pct":33.3},{"name":"Romello Height","pos":"ED","snaps":13,"pct":31},{"name":"Osa Odighizuwa","pos":"DI","snaps":9,"pct":21.4},{"name":"Renardo Green","pos":"CB","snaps":9,"pct":21.4},{"name":"Upton Stout","pos":"CB","snaps":8,"pct":19}]},{"label":"Chargers • Offense","color":"#007BC7","rows":[{"name":"Jacob Spomer","pos":"C","snaps":50,"pct":100},{"name":"Logan Taylor","pos":"T","snaps":50,"pct":100},{"name":"Devonte Ross","pos":"WR","snaps":41,"pct":82},{"name":"Travis Burke","pos":"T","snaps":39,"pct":78},{"name":"Josh Kaltenberger","pos":"C","snaps":34,"pct":68},{"name":"Alex Harkey","pos":"T","snaps":31,"pct":62},{"name":"Trevor Penning","pos":"G","snaps":29,"pct":58},{"name":"Trey Lance","pos":"QB","snaps":29,"pct":58},{"name":"DJ Uiagalelei","pos":"QB","snaps":27,"pct":54},{"name":"Derius Davis","pos":"WR","snaps":26,"pct":52},{"name":"JaQuae Jackson","pos":"WR","snaps":25,"pct":50},{"name":"Oronde Gadsden II","pos":"TE","snaps":24,"pct":48},{"name":"Evan Svoboda","pos":"TE","snaps":23,"pct":46},{"name":"KeAndre Lambert-Smith","pos":"WR","snaps":20,"pct":40},{"name":"Kimani Vidal","pos":"HB","snaps":19,"pct":38},{"name":"Laekin Vakalahi","pos":"T","snaps":17,"pct":34},{"name":"Dalevon Campbell","pos":"WR","snaps":16,"pct":32},{"name":"Johnny Pascuzzi","pos":"TE","snaps":15,"pct":30},{"name":"Amar Johnson","pos":"HB","snaps":10,"pct":20},{"name":"Keaton Mitchell","pos":"HB","snaps":10,"pct":20},{"name":"Scott Matlock","pos":"FB","snaps":10,"pct":20},{"name":"Brenen Thompson","pos":"WR","snaps":9,"pct":18},{"name":"Cole Strange","pos":"G","snaps":9,"pct":18},{"name":"Greg Desrosiers Jr.","pos":"HB","snaps":9,"pct":18},{"name":"Jake Slaughter","pos":"C","snaps":9,"pct":18},{"name":"Kayode Awosika","pos":"G","snaps":9,"pct":18},{"name":"Trey Pipkins III","pos":"T","snaps":9,"pct":18},{"name":"Charlie Kolar","pos":"TE","snaps":8,"pct":16},{"name":"Jaret Patterson","pos":"HB","snaps":8,"pct":16},{"name":"Branson Taylor","pos":"G","snaps":6,"pct":12},{"name":"David Njoku","pos":"TE","snaps":5,"pct":10},{"name":"Jerand Bradley","pos":"WR","snaps":5,"pct":10},{"name":"Sincere Brown","pos":"WR","snaps":4,"pct":8},{"name":"Joe Alt","pos":"T","snaps":3,"pct":6},{"name":"Justin Herbert","pos":"QB","snaps":3,"pct":6},{"name":"Ladd McConkey","pos":"WR","snaps":3,"pct":6},{"name":"Omarion Hampton","pos":"HB","snaps":3,"pct":6},{"name":"Alec Ingold","pos":"FB","snaps":2,"pct":4}]},{"label":"Chargers • Defense","color":"#007BC7","rows":[{"name":"Avery Smith","pos":"CB","snaps":55,"pct":100},{"name":"Nikko Reed","pos":"CB","snaps":44,"pct":80},{"name":"Andre Carter II","pos":"ED","snaps":43,"pct":78.2},{"name":"Emany Johnson","pos":"LB","snaps":41,"pct":74.5},{"name":"Garmon Randolph","pos":"ED","snaps":41,"pct":74.5},{"name":"Nadame Tucker","pos":"ED","snaps":38,"pct":69.1},{"name":"Rodney Shelley","pos":"CB","snaps":38,"pct":69.1},{"name":"Lander Barton","pos":"LB","snaps":36,"pct":65.5},{"name":"Nick Barrett","pos":"DI","snaps":36,"pct":65.5},{"name":"TeRah Edwards","pos":"DI","snaps":31,"pct":56.4},{"name":"Genesis Smith","pos":"S","snaps":30,"pct":54.5},{"name":"Terry Webb","pos":"DI","snaps":30,"pct":54.5},{"name":"Jahmeer Carter","pos":"DI","snaps":28,"pct":50.9},{"name":"Isas Waxter","pos":"CB","snaps":27,"pct":49.1},{"name":"Devin Grant","pos":"S","snaps":24,"pct":43.6},{"name":"Myles Purchase","pos":"S","snaps":24,"pct":43.6},{"name":"Deane Leonard","pos":"CB","snaps":21,"pct":38.2},{"name":"Jacobian Guillory II","pos":"DI","snaps":21,"pct":38.2},{"name":"Junior Colson","pos":"LB","snaps":20,"pct":36.4},{"name":"Marlowe Wax","pos":"LB","snaps":19,"pct":34.5},{"name":"Kendall Williamson","pos":"S","snaps":18,"pct":32.7},{"name":"Tony Jefferson","pos":"S","snaps":18,"pct":32.7},{"name":"Noah Avinger","pos":"S","snaps":15,"pct":27.3},{"name":"R.J. Mickens","pos":"S","snaps":14,"pct":25.5},{"name":"Daiyan Henley","pos":"LB","snaps":12,"pct":21.8},{"name":"Elijah Molden","pos":"S","snaps":12,"pct":21.8},{"name":"Troy Dye","pos":"LB","snaps":11,"pct":20},{"name":"Bud Dupree","pos":"ED","snaps":10,"pct":18.2},{"name":"Cam Hart","pos":"CB","snaps":10,"pct":18.2},{"name":"Denzel Perryman","pos":"LB","snaps":10,"pct":18.2},{"name":"Justin Eboigbe","pos":"DI","snaps":10,"pct":18.2},{"name":"Tuli Tuipulotu","pos":"ED","snaps":10,"pct":18.2},{"name":"Del'Shawn Phillips","pos":"LB","snaps":9,"pct":16.4},{"name":"Jamaree Caldwell","pos":"DI","snaps":7,"pct":12.7},{"name":"Dalvin Tomlinson","pos":"DI","snaps":6,"pct":10.9},{"name":"Teair Tart","pos":"DI","snaps":6,"pct":10.9}]}],"grades":[{"teamLabel":"49ers • Offense","rank":"No. 1 offense","rookie":false,"pos":"WR","name":"De'Zhaun Stribling","full":"WR De'Zhaun Stribling","grade":88.5,"snaps":"14 snaps","headshot":"","profile":"https://www.pff.com/nfl/players/DeZhaun Stribling/146508","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg"},{"teamLabel":"49ers • Offense","rank":"No. 2 offense","rookie":false,"pos":"WR","name":"KhaDarel Hodge","full":"WR KhaDarel Hodge","grade":84.7,"snaps":"26 snaps","headshot":"https://media.pff.com/player-photos/nfl/26104.webp","profile":"https://www.pff.com/nfl/players/KhaDarel Hodge/26104","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg"},{"teamLabel":"49ers • Offense","rank":"No. 3 offense","rookie":false,"pos":"HB","name":"Khalil Herbert","full":"HB Khalil Herbert","grade":81.8,"snaps":"15 snaps","headshot":"https://media.pff.com/player-photos/nfl/41668.webp","profile":"https://www.pff.com/nfl/players/Khalil Herbert/41668","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg"},{"teamLabel":"Chargers • Offense","rank":"No. 4 offense","rookie":false,"pos":"G","name":"Trevor Penning","full":"G Trevor Penning","grade":79.3,"snaps":"29 snaps","headshot":"https://media.pff.com/player-photos/nfl/59963.webp","profile":"https://www.pff.com/nfl/players/Trevor Penning/59963","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg"},{"teamLabel":"49ers • Offense","rank":"No. 5 offense","rookie":false,"pos":"C","name":"Doug Kramer","full":"C Doug Kramer","grade":74.5,"snaps":"38 snaps","headshot":"https://media.pff.com/player-photos/nfl/41458.webp","profile":"https://www.pff.com/nfl/players/Doug Kramer/41458","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg"},{"teamLabel":"Chargers • Defense","rank":"No. 1 defense","rookie":false,"pos":"LB","name":"Junior Colson","full":"LB Junior Colson","grade":93.5,"snaps":"20 snaps","headshot":"https://media.pff.com/player-photos/nfl/124827.webp","profile":"https://www.pff.com/nfl/players/Junior Colson/124827","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg"},{"teamLabel":"49ers • Defense","rank":"No. 2 defense","rookie":false,"pos":"LB","name":"Tatum Bethune","full":"LB Tatum Bethune","grade":91.1,"snaps":"27 snaps","headshot":"https://media.pff.com/player-photos/nfl/98532.webp","profile":"https://www.pff.com/nfl/players/Tatum Bethune/98532","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg"},{"teamLabel":"49ers • Defense","rank":"No. 3 defense","rookie":false,"pos":"CB","name":"Jack Jones","full":"CB Jack Jones","grade":88.9,"snaps":"29 snaps","headshot":"https://media.pff.com/player-photos/nfl/29050.webp","profile":"https://www.pff.com/nfl/players/Jack Jones/29050","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg"},{"teamLabel":"Chargers • Defense","rank":"No. 4 defense","rookie":false,"pos":"ED","name":"Bud Dupree","full":"ED Bud Dupree","grade":88.1,"snaps":"10 snaps","headshot":"https://media.pff.com/player-photos/nfl/9455.webp","profile":"https://www.pff.com/nfl/players/Bud Dupree/9455","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg"},{"teamLabel":"Chargers • Defense","rank":"No. 5 defense","rookie":false,"pos":"LB","name":"Denzel Perryman","full":"LB Denzel Perryman","grade":87.7,"snaps":"10 snaps","headshot":"https://media.pff.com/player-photos/nfl/9481.webp","profile":"https://www.pff.com/nfl/players/Denzel Perryman/9481","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg"}],"box":[{"label":"49ers • Rushing","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","players":[{"name":"Sincere McCormick","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/97119.webp","primary":{"label":"RUSH YDS","value":"53"},"secondary":[{"label":"ATT","value":"6"},{"label":"YPC","value":"8.8"},{"label":"RUN TD","value":"1"}],"tertiary":[{"label":"MTF RUN","value":"2"},{"label":"YBC","value":"35"},{"label":"YCO","value":"18"}]},{"name":"Kaelon Black","pos":"HB","headshot":"","primary":{"label":"RUSH YDS","value":"33"},"secondary":[{"label":"ATT","value":"8"},{"label":"YPC","value":"4.1"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"4"},{"label":"YBC","value":"12"},{"label":"YCO","value":"21"}]},{"name":"Zamir White","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/83665.webp","primary":{"label":"RUSH YDS","value":"29"},"secondary":[{"label":"ATT","value":"12"},{"label":"YPC","value":"2.4"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"1"},{"label":"YBC","value":"-3"},{"label":"YCO","value":"32"}]},{"name":"Khalil Herbert","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/41668.webp","primary":{"label":"RUSH YDS","value":"18"},"secondary":[{"label":"ATT","value":"4"},{"label":"YPC","value":"4.5"},{"label":"RUN TD","value":"1"}],"tertiary":[{"label":"MTF RUN","value":"2"},{"label":"YBC","value":"3"},{"label":"YCO","value":"15"}]},{"name":"Adrian Martinez","pos":"QB","headshot":"https://media.pff.com/player-photos/nfl/83522.webp","primary":{"label":"RUSH YDS","value":"10"},"secondary":[{"label":"ATT","value":"4"},{"label":"YPC","value":"2.5"},{"label":"RUN TD","value":"1"}],"tertiary":[{"label":"MTF RUN","value":"0"},{"label":"YBC","value":"-15"},{"label":"YCO","value":"25"}]},{"name":"Brock Purdy","pos":"QB","headshot":"https://media.pff.com/player-photos/nfl/77672.webp","primary":{"label":"RUSH YDS","value":"3"},"secondary":[{"label":"ATT","value":"1"},{"label":"YPC","value":"3.0"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"0"},{"label":"YBC","value":"0"},{"label":"YCO","value":"0"}]},{"name":"Mac Jones","pos":"QB","headshot":"https://media.pff.com/player-photos/nfl/60323.webp","primary":{"label":"RUSH YDS","value":"1"},"secondary":[{"label":"ATT","value":"1"},{"label":"YPC","value":"1.0"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"0"},{"label":"YBC","value":"0"},{"label":"YCO","value":"1"}]}]},{"label":"Chargers • Rushing","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","players":[{"name":"Trey Lance","pos":"QB","headshot":"https://media.pff.com/player-photos/nfl/91399.webp","primary":{"label":"RUSH YDS","value":"42"},"secondary":[{"label":"ATT","value":"2"},{"label":"YPC","value":"21.0"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"1"},{"label":"YBC","value":"5"},{"label":"YCO","value":"37"}]},{"name":"Greg Desrosiers Jr.","pos":"HB","headshot":"","primary":{"label":"RUSH YDS","value":"21"},"secondary":[{"label":"ATT","value":"4"},{"label":"YPC","value":"5.3"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"1"},{"label":"YBC","value":"8"},{"label":"YCO","value":"13"}]},{"name":"Jaret Patterson","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/77745.webp","primary":{"label":"RUSH YDS","value":"7"},"secondary":[{"label":"ATT","value":"3"},{"label":"YPC","value":"2.3"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"0"},{"label":"YBC","value":"6"},{"label":"YCO","value":"1"}]},{"name":"Kimani Vidal","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/123727.webp","primary":{"label":"RUSH YDS","value":"7"},"secondary":[{"label":"ATT","value":"4"},{"label":"YPC","value":"1.8"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"1"},{"label":"YBC","value":"1"},{"label":"YCO","value":"6"}]},{"name":"Amar Johnson","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/148220.webp","primary":{"label":"RUSH YDS","value":"-1"},"secondary":[{"label":"ATT","value":"2"},{"label":"YPC","value":"-0.5"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"1"},{"label":"YBC","value":"-4"},{"label":"YCO","value":"3"}]},{"name":"Keaton Mitchell","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/123826.webp","primary":{"label":"RUSH YDS","value":"-1"},"secondary":[{"label":"ATT","value":"3"},{"label":"YPC","value":"-0.3"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"1"},{"label":"YBC","value":"-6"},{"label":"YCO","value":"5"}]},{"name":"Omarion Hampton","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/162750.webp","primary":{"label":"RUSH YDS","value":"-1"},"secondary":[{"label":"ATT","value":"1"},{"label":"YPC","value":"-1.0"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"0"},{"label":"YBC","value":"-4"},{"label":"YCO","value":"3"}]},{"name":"DJ Uiagalelei","pos":"QB","headshot":"https://media.pff.com/player-photos/nfl/122162.webp","primary":{"label":"RUSH YDS","value":"-5"},"secondary":[{"label":"ATT","value":"1"},{"label":"YPC","value":"-5.0"},{"label":"RUN TD","value":"0"}],"tertiary":[{"label":"MTF RUN","value":"0"},{"label":"YBC","value":"-5"},{"label":"YCO","value":"0"}]}]},{"label":"49ers • Receiving","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","players":[{"name":"De'Zhaun Stribling","pos":"WR","headshot":"","primary":{"label":"REC YDS","value":"46"},"secondary":[{"label":"REC","value":"4"},{"label":"TGT","value":"5"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"11.5"},{"label":"REC 1D","value":"3"},{"label":"YAC","value":"6"}]},{"name":"KhaDarel Hodge","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/26104.webp","primary":{"label":"REC YDS","value":"45"},"secondary":[{"label":"REC","value":"4"},{"label":"TGT","value":"4"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"11.3"},{"label":"REC 1D","value":"3"},{"label":"YAC","value":"8"}]},{"name":"Jordan Watkins","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/122730.webp","primary":{"label":"REC YDS","value":"41"},"secondary":[{"label":"REC","value":"3"},{"label":"TGT","value":"4"},{"label":"REC TD","value":"1"}],"tertiary":[{"label":"YPR","value":"13.7"},{"label":"REC 1D","value":"2"},{"label":"YAC","value":"11"}]},{"name":"Jacob Cowing","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/100894.webp","primary":{"label":"REC YDS","value":"14"},"secondary":[{"label":"REC","value":"2"},{"label":"TGT","value":"7"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"7.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"14"}]},{"name":"Luke Farrell","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/42353.webp","primary":{"label":"REC YDS","value":"13"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"2"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"13.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"10"}]},{"name":"Trenton Irwin","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/48080.webp","primary":{"label":"REC YDS","value":"11"},"secondary":[{"label":"REC","value":"2"},{"label":"TGT","value":"4"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"5.5"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"2"}]},{"name":"Deebo Samuel","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/48274.webp","primary":{"label":"REC YDS","value":"4"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"2"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"4.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"0"}]},{"name":"Brayden Willis","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/77917.webp","primary":{"label":"REC YDS","value":"0"},"secondary":[{"label":"REC","value":"0"},{"label":"TGT","value":"2"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"0.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"0"}]},{"name":"Demarcus Robinson","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/10760.webp","primary":{"label":"REC YDS","value":"0"},"secondary":[{"label":"REC","value":"0"},{"label":"TGT","value":"0"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"0.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"0"}]},{"name":"Hayden Rucci","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/101680.webp","primary":{"label":"REC YDS","value":"0"},"secondary":[{"label":"REC","value":"0"},{"label":"TGT","value":"0"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"0.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"0"}]},{"name":"Jake Tonges","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/60864.webp","primary":{"label":"REC YDS","value":"0"},"secondary":[{"label":"REC","value":"0"},{"label":"TGT","value":"0"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"0.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"0"}]},{"name":"Josiah Deguara","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/47034.webp","primary":{"label":"REC YDS","value":"0"},"secondary":[{"label":"REC","value":"0"},{"label":"TGT","value":"0"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"0.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"0"}]}]},{"label":"Chargers • Receiving","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","players":[{"name":"Oronde Gadsden II","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/144046.webp","primary":{"label":"REC YDS","value":"42"},"secondary":[{"label":"REC","value":"3"},{"label":"TGT","value":"4"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"14.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"7"}]},{"name":"Jerand Bradley","pos":"WR","headshot":"","primary":{"label":"REC YDS","value":"28"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"1"},{"label":"REC TD","value":"1"}],"tertiary":[{"label":"YPR","value":"28.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"10"}]},{"name":"Devonte Ross","pos":"WR","headshot":"","primary":{"label":"REC YDS","value":"24"},"secondary":[{"label":"REC","value":"2"},{"label":"TGT","value":"3"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"12.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"8"}]},{"name":"Dalevon Campbell","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/101711.webp","primary":{"label":"REC YDS","value":"16"},"secondary":[{"label":"REC","value":"2"},{"label":"TGT","value":"4"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"8.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"5"}]},{"name":"KeAndre Lambert-Smith","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/129789.webp","primary":{"label":"REC YDS","value":"13"},"secondary":[{"label":"REC","value":"2"},{"label":"TGT","value":"4"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"6.5"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"4"}]},{"name":"Keaton Mitchell","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/123826.webp","primary":{"label":"REC YDS","value":"11"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"1"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"11.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"10"}]},{"name":"Kimani Vidal","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/123727.webp","primary":{"label":"REC YDS","value":"10"},"secondary":[{"label":"REC","value":"2"},{"label":"TGT","value":"2"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"5.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"9"}]},{"name":"Brenen Thompson","pos":"WR","headshot":"","primary":{"label":"REC YDS","value":"9"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"2"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"9.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"1"}]},{"name":"Charlie Kolar","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/60917.webp","primary":{"label":"REC YDS","value":"9"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"1"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"9.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"7"}]},{"name":"Johnny Pascuzzi","pos":"TE","headshot":"","primary":{"label":"REC YDS","value":"7"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"2"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"7.0"},{"label":"REC 1D","value":"1"},{"label":"YAC","value":"4"}]},{"name":"Derius Davis","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/78196.webp","primary":{"label":"REC YDS","value":"5"},"secondary":[{"label":"REC","value":"1"},{"label":"TGT","value":"3"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"5.0"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"8"}]},{"name":"Scott Matlock","pos":"FB","headshot":"https://media.pff.com/player-photos/nfl/82482.webp","primary":{"label":"REC YDS","value":"5"},"secondary":[{"label":"REC","value":"2"},{"label":"TGT","value":"2"},{"label":"REC TD","value":"0"}],"tertiary":[{"label":"YPR","value":"2.5"},{"label":"REC 1D","value":"0"},{"label":"YAC","value":"4"}]}]},{"label":"49ers • Pass Blocking","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","players":[{"name":"Brandon Parker","pos":"T","headshot":"https://media.pff.com/player-photos/nfl/34693.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"14"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Brayden Willis","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/77917.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Colton McKivitz","pos":"T","headshot":"https://media.pff.com/player-photos/nfl/29314.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"7"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Connor Colby","pos":"G","headshot":"https://media.pff.com/player-photos/nfl/144862.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"24"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Doug Kramer","pos":"C","headshot":"https://media.pff.com/player-photos/nfl/41458.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"19"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Drake Nugent","pos":"C","headshot":"https://media.pff.com/player-photos/nfl/97828.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"14"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Hayden Rucci","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/101680.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Jacob Cowing","pos":"WR","headshot":"https://media.pff.com/player-photos/nfl/100894.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Jake Brendel","pos":"C","headshot":"https://media.pff.com/player-photos/nfl/11117.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"7"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Josiah Deguara","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/47034.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Kaelon Black","pos":"HB","headshot":"","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"3"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Luke Farrell","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/42353.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]}]},{"label":"Chargers • Pass Blocking","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","players":[{"name":"Alec Ingold","pos":"FB","headshot":"https://media.pff.com/player-photos/nfl/34934.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"2"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Alex Harkey","pos":"T","headshot":"","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"18"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Branson Taylor","pos":"G","headshot":"https://media.pff.com/player-photos/nfl/123026.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"3"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"David Njoku","pos":"TE","headshot":"https://media.pff.com/player-photos/nfl/11784.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Evan Svoboda","pos":"TE","headshot":"","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Jacob Spomer","pos":"C","headshot":"","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"30"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Jake Slaughter","pos":"C","headshot":"","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"6"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Jaret Patterson","pos":"HB","headshot":"https://media.pff.com/player-photos/nfl/77745.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"1"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Joe Alt","pos":"T","headshot":"https://media.pff.com/player-photos/nfl/147481.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"2"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Kayode Awosika","pos":"G","headshot":"https://media.pff.com/player-photos/nfl/44909.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"6"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Laekin Vakalahi","pos":"T","headshot":"https://media.pff.com/player-photos/nfl/183115.webp","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"8"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]},{"name":"Logan Taylor","pos":"T","headshot":"","primary":{"label":"PR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PBLK","value":"30"},{"label":"KD%","value":"0.0%"},{"label":"PR%","value":"0.0%"}]}]},{"label":"49ers • Pass Rushing","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","players":[{"name":"Sam Okuayinonu","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/101425.webp","primary":{"label":"TPR","value":"2"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"2"}],"tertiary":[{"label":"PRSH","value":"11"},{"label":"UBP","value":"1"},{"label":"PR%","value":"18.2%"}]},{"name":"James Thompson Jr.","pos":"DI","headshot":"","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"16"},{"label":"UBP","value":"0"},{"label":"PR%","value":"6.3%"}]},{"name":"Ogbo Okoronkwo","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/50130.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"16"},{"label":"UBP","value":"0"},{"label":"PR%","value":"6.3%"}]},{"name":"Osa Odighizuwa","pos":"DI","headshot":"https://media.pff.com/player-photos/nfl/42754.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"6"},{"label":"UBP","value":"0"},{"label":"PR%","value":"16.7%"}]},{"name":"Quinton Bell","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/37468.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"13"},{"label":"UBP","value":"0"},{"label":"PR%","value":"7.7%"}]},{"name":"Sebastian Valdez","pos":"DI","headshot":"https://media.pff.com/player-photos/nfl/147682.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"1"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"15"},{"label":"UBP","value":"0"},{"label":"PR%","value":"6.7%"}]},{"name":"Victor Dimukeje","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/56347.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"1"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"12"},{"label":"UBP","value":"0"},{"label":"PR%","value":"8.3%"}]},{"name":"Alfred Collins","pos":"DI","headshot":"https://media.pff.com/player-photos/nfl/123110.webp","primary":{"label":"TPR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"12"},{"label":"UBP","value":"0"},{"label":"PR%","value":"0.0%"}]},{"name":"Ashtyn Davis","pos":"S","headshot":"https://media.pff.com/player-photos/nfl/49560.webp","primary":{"label":"TPR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"1"},{"label":"UBP","value":"0"},{"label":"PR%","value":"0.0%"}]},{"name":"Bryson Eason","pos":"DI","headshot":"","primary":{"label":"TPR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"16"},{"label":"UBP","value":"0"},{"label":"PR%","value":"0.0%"}]},{"name":"Evan Anderson","pos":"DI","headshot":"https://media.pff.com/player-photos/nfl/123590.webp","primary":{"label":"TPR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"7"},{"label":"UBP","value":"0"},{"label":"PR%","value":"0.0%"}]},{"name":"Garret Wallow","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/60761.webp","primary":{"label":"TPR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"2"},{"label":"UBP","value":"0"},{"label":"PR%","value":"0.0%"}]}]},{"label":"Chargers • Pass Rushing","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","players":[{"name":"Andre Carter II","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/102780.webp","primary":{"label":"TPR","value":"3"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"1"},{"label":"HU","value":"2"}],"tertiary":[{"label":"PRSH","value":"17"},{"label":"UBP","value":"0"},{"label":"PR%","value":"17.6%"}]},{"name":"Garmon Randolph","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/99314.webp","primary":{"label":"TPR","value":"3"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"3"}],"tertiary":[{"label":"PRSH","value":"18"},{"label":"UBP","value":"0"},{"label":"PR%","value":"16.7%"}]},{"name":"Nadame Tucker","pos":"ED","headshot":"","primary":{"label":"TPR","value":"3"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"3"}],"tertiary":[{"label":"PRSH","value":"21"},{"label":"UBP","value":"2"},{"label":"PR%","value":"14.3%"}]},{"name":"Bud Dupree","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/9455.webp","primary":{"label":"TPR","value":"2"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"2"}],"tertiary":[{"label":"PRSH","value":"6"},{"label":"UBP","value":"0"},{"label":"PR%","value":"33.3%"}]},{"name":"Jacobian Guillory II","pos":"DI","headshot":"","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"7"},{"label":"UBP","value":"0"},{"label":"PR%","value":"14.3%"}]},{"name":"Lander Barton","pos":"LB","headshot":"","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"2"},{"label":"UBP","value":"0"},{"label":"PR%","value":"50.0%"}]},{"name":"Nick Barrett","pos":"DI","headshot":"","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"18"},{"label":"UBP","value":"0"},{"label":"PR%","value":"5.6%"}]},{"name":"Noah Avinger","pos":"S","headshot":"","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"1"},{"label":"UBP","value":"1"},{"label":"PR%","value":"100%"}]},{"name":"R.J. Mickens","pos":"S","headshot":"https://media.pff.com/player-photos/nfl/122153.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"1"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"1"},{"label":"UBP","value":"1"},{"label":"PR%","value":"100%"}]},{"name":"TeRah Edwards","pos":"DI","headshot":"https://media.pff.com/player-photos/nfl/129723.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"16"},{"label":"UBP","value":"1"},{"label":"PR%","value":"6.3%"}]},{"name":"Teair Tart","pos":"DI","headshot":"https://media.pff.com/player-photos/nfl/82261.webp","primary":{"label":"TPR","value":"1"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"1"}],"tertiary":[{"label":"PRSH","value":"4"},{"label":"UBP","value":"0"},{"label":"PR%","value":"25.0%"}]},{"name":"Avery Smith","pos":"CB","headshot":"","primary":{"label":"TPR","value":"0"},"secondary":[{"label":"SK","value":"0"},{"label":"HT","value":"0"},{"label":"HU","value":"0"}],"tertiary":[{"label":"PRSH","value":"3"},{"label":"UBP","value":"0"},{"label":"PR%","value":"0.0%"}]}]},{"label":"49ers • Run Defense","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","players":[{"name":"Quinton Bell","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/37468.webp","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.5"}]},{"name":"Sam Okuayinonu","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/101425.webp","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"2"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"-0.5"}]},{"name":"Tatum Bethune","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/98532.webp","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"2"},{"label":"TFL+NG","value":"2"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"-3.0"}]},{"name":"Bryson Eason","pos":"DI","headshot":"","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"0.0"}]},{"name":"Darrell Luter Jr.","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/121428.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.0"}]},{"name":"Deommodore Lenoir","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/55686.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"0.0"}]},{"name":"Garret Wallow","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/60761.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"2"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"1"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"1.0"}]},{"name":"Jakob Robinson","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/128395.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"-1.0"}]},{"name":"Larry Worth III","pos":"S","headshot":"","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"7.5"}]},{"name":"Nickolas Martin","pos":"LB","headshot":"","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"1"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"1.0"}]},{"name":"Ogbo Okoronkwo","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/50130.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"3.0"}]},{"name":"Romello Height","pos":"ED","headshot":"","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"-2.0"}]}]},{"label":"Chargers • Run Defense","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","players":[{"name":"Del'Shawn Phillips","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/57868.webp","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"1"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.0"}]},{"name":"Genesis Smith","pos":"S","headshot":"","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"1"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"-1.0"}]},{"name":"Jacobian Guillory II","pos":"DI","headshot":"","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"1"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"1.0"}]},{"name":"Justin Eboigbe","pos":"DI","headshot":"https://media.pff.com/player-photos/nfl/98925.webp","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"1"},{"label":"TFL+NG","value":"1"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.0"}]},{"name":"Lander Barton","pos":"LB","headshot":"","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"2"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"1"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"4.0"}]},{"name":"Marlowe Wax","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/123057.webp","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.0"}]},{"name":"Nick Barrett","pos":"DI","headshot":"","primary":{"label":"STOP","value":"2"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.0"}]},{"name":"Andre Carter II","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/102780.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"2"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"1"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"3.5"}]},{"name":"Denzel Perryman","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/9481.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"1"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"1.0"}]},{"name":"Jahmeer Carter","pos":"DI","headshot":"","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"1"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"1.0"}]},{"name":"Junior Colson","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/124827.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"1"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.0"}]},{"name":"Myles Purchase","pos":"S","headshot":"https://media.pff.com/player-photos/nfl/144548.webp","primary":{"label":"STOP","value":"1"},"secondary":[{"label":"TKL","value":"1"},{"label":"AST","value":"0"},{"label":"TFL+NG","value":"0"}],"tertiary":[{"label":"MT","value":"0"},{"label":"FF","value":"0"},{"label":"ADOTK","value":"2.0"}]}]},{"label":"49ers • Coverage","color":"#AA0000","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/san-francisco-49ers.svg","players":[{"name":"Jakob Robinson","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/128395.webp","primary":{"label":"P YDS ALL","value":"28"},"secondary":[{"label":"CTGT","value":"4"},{"label":"REC ALL","value":"3"},{"label":"COMP%","value":"75.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"1"},{"label":"RTG","value":"93.8"}]},{"name":"Patrick McMorris","pos":"S","headshot":"https://media.pff.com/player-photos/nfl/101309.webp","primary":{"label":"P YDS ALL","value":"28"},"secondary":[{"label":"CTGT","value":"1"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"158.3"}]},{"name":"Jaden Dugger","pos":"LB","headshot":"","primary":{"label":"P YDS ALL","value":"27"},"secondary":[{"label":"CTGT","value":"5"},{"label":"REC ALL","value":"4"},{"label":"COMP%","value":"80.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"89.2"}]},{"name":"Nickolas Martin","pos":"LB","headshot":"","primary":{"label":"P YDS ALL","value":"19"},"secondary":[{"label":"CTGT","value":"3"},{"label":"REC ALL","value":"3"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"93.1"}]},{"name":"Garret Wallow","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/60761.webp","primary":{"label":"P YDS ALL","value":"18"},"secondary":[{"label":"CTGT","value":"3"},{"label":"REC ALL","value":"3"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"91.7"}]},{"name":"Ji'Ayir Brown","pos":"S","headshot":"https://media.pff.com/player-photos/nfl/129767.webp","primary":{"label":"P YDS ALL","value":"18"},"secondary":[{"label":"CTGT","value":"1"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"118.8"}]},{"name":"Ashtyn Davis","pos":"S","headshot":"https://media.pff.com/player-photos/nfl/49560.webp","primary":{"label":"P YDS ALL","value":"16"},"secondary":[{"label":"CTGT","value":"1"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"118.8"}]},{"name":"Ephesians Prysock","pos":"CB","headshot":"","primary":{"label":"P YDS ALL","value":"10"},"secondary":[{"label":"CTGT","value":"1"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"108.3"}]},{"name":"Renardo Green","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/99773.webp","primary":{"label":"P YDS ALL","value":"9"},"secondary":[{"label":"CTGT","value":"2"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"50.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"62.5"}]},{"name":"Tatum Bethune","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/98532.webp","primary":{"label":"P YDS ALL","value":"6"},"secondary":[{"label":"CTGT","value":"3"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"33.3%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"42.4"}]},{"name":"Darrell Luter Jr.","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/121428.webp","primary":{"label":"P YDS ALL","value":"0"},"secondary":[{"label":"CTGT","value":"2"},{"label":"REC ALL","value":"0"},{"label":"COMP%","value":"0.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"39.6"}]},{"name":"Deommodore Lenoir","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/55686.webp","primary":{"label":"P YDS ALL","value":"0"},"secondary":[{"label":"CTGT","value":"2"},{"label":"REC ALL","value":"0"},{"label":"COMP%","value":"0.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"39.6"}]}]},{"label":"Chargers • Coverage","color":"#007BC7","logo":"https://pro-football-focus.github.io/gravity/src/assets/svg/nfl/los-angeles-chargers.svg","players":[{"name":"Avery Smith","pos":"CB","headshot":"","primary":{"label":"P YDS ALL","value":"37"},"secondary":[{"label":"CTGT","value":"4"},{"label":"REC ALL","value":"4"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"105.2"}]},{"name":"Nikko Reed","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/146321.webp","primary":{"label":"P YDS ALL","value":"26"},"secondary":[{"label":"CTGT","value":"3"},{"label":"REC ALL","value":"3"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"142.4"}]},{"name":"Junior Colson","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/124827.webp","primary":{"label":"P YDS ALL","value":"24"},"secondary":[{"label":"CTGT","value":"3"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"33.3%"}],"tertiary":[{"label":"INT","value":"1"},{"label":"PBU","value":"0"},{"label":"RTG","value":"23.6"}]},{"name":"Rodney Shelley","pos":"CB","headshot":"","primary":{"label":"P YDS ALL","value":"20"},"secondary":[{"label":"CTGT","value":"2"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"50.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"1"},{"label":"RTG","value":"85.4"}]},{"name":"Tony Jefferson","pos":"S","headshot":"https://media.pff.com/player-photos/nfl/8361.webp","primary":{"label":"P YDS ALL","value":"20"},"secondary":[{"label":"CTGT","value":"2"},{"label":"REC ALL","value":"2"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"108.3"}]},{"name":"Lander Barton","pos":"LB","headshot":"","primary":{"label":"P YDS ALL","value":"18"},"secondary":[{"label":"CTGT","value":"2"},{"label":"REC ALL","value":"2"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"104.2"}]},{"name":"Cam Hart","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/102955.webp","primary":{"label":"P YDS ALL","value":"11"},"secondary":[{"label":"CTGT","value":"2"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"50.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"66.7"}]},{"name":"Deane Leonard","pos":"CB","headshot":"https://media.pff.com/player-photos/nfl/124140.webp","primary":{"label":"P YDS ALL","value":"11"},"secondary":[{"label":"CTGT","value":"3"},{"label":"REC ALL","value":"2"},{"label":"COMP%","value":"66.7%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"72.9"}]},{"name":"Marlowe Wax","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/123057.webp","primary":{"label":"P YDS ALL","value":"7"},"secondary":[{"label":"CTGT","value":"1"},{"label":"REC ALL","value":"1"},{"label":"COMP%","value":"100%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"95.8"}]},{"name":"Andre Carter II","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/102780.webp","primary":{"label":"P YDS ALL","value":"0"},"secondary":[{"label":"CTGT","value":"0"},{"label":"REC ALL","value":"0"},{"label":"COMP%","value":"0.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"0.0"}]},{"name":"Bud Dupree","pos":"ED","headshot":"https://media.pff.com/player-photos/nfl/9455.webp","primary":{"label":"P YDS ALL","value":"0"},"secondary":[{"label":"CTGT","value":"0"},{"label":"REC ALL","value":"0"},{"label":"COMP%","value":"0.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"0.0"}]},{"name":"Daiyan Henley","pos":"LB","headshot":"https://media.pff.com/player-photos/nfl/61500.webp","primary":{"label":"P YDS ALL","value":"0"},"secondary":[{"label":"CTGT","value":"0"},{"label":"REC ALL","value":"0"},{"label":"COMP%","value":"0.0%"}],"tertiary":[{"label":"INT","value":"0"},{"label":"PBU","value":"0"},{"label":"RTG","value":"0.0"}]}]}],"ecdf":{"epa_rush_per_play":[0.33,0.329,0.281,0.262,0.235,0.214,0.199,0.158,0.152,0.15,0.14,0.116,0.083,0.081,0.081,0.052,0.032,0.021,0.017,0.014,0.014,0.007,0.002,0.002,-0.001,-0.015,-0.015,-0.025,-0.028,-0.043,-0.049,-0.06,-0.063,-0.066,-0.067,-0.07,-0.076,-0.078,-0.086,-0.093,-0.103,-0.104,-0.105,-0.106,-0.11,-0.11,-0.111,-0.112,-0.113,-0.129,-0.13,-0.134,-0.138,-0.139,-0.15,-0.15,-0.151,-0.152,-0.153,-0.158,-0.164,-0.165,-0.168,-0.17,-0.172,-0.176,-0.184,-0.19,-0.192,-0.204,-0.207,-0.221,-0.224,-0.228,-0.23,-0.258,-0.271,-0.276,-0.288,-0.294,-0.317,-0.322,-0.323,-0.341,-0.345,-0.359,-0.368,-0.369,-0.372,-0.416,-0.421,-0.426,-0.435,-0.471,-0.532,-0.569],"epa_pass_per_play":[0.748,0.691,0.61,0.505,0.497,0.487,0.483,0.465,0.404,0.401,0.388,0.385,0.356,0.355,0.354,0.334,0.329,0.328,0.314,0.313,0.306,0.296,0.293,0.286,0.261,0.25,0.235,0.233,0.21,0.207,0.187,0.186,0.181,0.174,0.171,0.163,0.142,0.136,0.133,0.127,0.108,0.104,0.101,0.09,0.068,0.066,0.048,0.047,0.045,0.043,0.031,0.029,0.022,0.003,-0.003,-0.006,-0.009,-0.012,-0.029,-0.031,-0.033,-0.033,-0.036,-0.039,-0.04,-0.049,-0.057,-0.057,-0.068,-0.094,-0.106,-0.13,-0.131,-0.133,-0.144,-0.199,-0.208,-0.229,-0.233,-0.242,-0.26,-0.265,-0.278,-0.284,-0.299,-0.313,-0.34,-0.347,-0.349,-0.35,-0.37,-0.464,-0.504,-0.578,-0.6,-0.888]}}</script>
+<script>/* ============================================================
+   PFF GAME RECAP \u2014 650px column, card carousels
+   ============================================================ */
+(function(){
+'use strict';
+
+var D = JSON.parse(document.getElementById('recap-data').textContent);
+var A = D.away, H = D.home;
+var INK = { a:'#1E5C3F', h:'#B07400' };   /* validated series pair */
+
+var $ = function(s,r){ return (r||document).querySelector(s); };
+var $$ = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+function el(t,c,h){ var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+function num(v){
+  if(v===null||v===undefined||v==='') return NaN;
+  if(typeof v==='number') return v;
+  var n=parseFloat(String(v).replace(/,/g,'').replace(/%/g,'').replace(/s$/,''));
+  return isNaN(n)?NaN:n;
+}
+function disp(v){ return (v===null||v===undefined||v==='')?'\u2014':String(v); }
+function initials(n){
+  var p=String(n||'').replace(/[^A-Za-z .'-]/g,'').split(/\s+/).filter(Boolean);
+  if(!p.length) return '\u2013';
+  return ((p[0][0]||'')+(p.length>1?p[p.length-1][0]:'')).toUpperCase();
+}
+function photo(url,name,accent,style){
+  var inner='<span class="init">'+esc(initials(name))+'</span>';
+  if(url) inner='<img src="'+esc(url)+'" alt="" loading="lazy" decoding="async" onerror="this.remove()">'+inner;
+  return '<span class="ph" style="border-color:'+(accent||'#D4D8DE')+(style?';'+style:'')+'">'+inner+'</span>';
+}
+/* "Shemar Bartholomew" -> "S. Bartholomew" so the compact list never clips a surname */
+function shortName(n){
+  var p=String(n||'').trim().split(/\s+/);
+  return p.length<2 ? String(n||'') : (p[0][0]+'. '+p.slice(1).join(' '));
+}
+function tlogo(url,name){ return url ? '<img src="'+esc(url)+'" alt="" onerror="this.remove()">' : ''; }
+function bigLogo(url,name){
+  if(!url) return '<span class="mono">'+esc(initials(name))+'</span>';
+  return '<img src="'+esc(url)+'" alt="" onerror="this.parentNode.innerHTML=\'<span class=&quot;mono&quot;>'+esc(initials(name))+'</span>\'">';
+}
+function ordinal(n){
+  n=Math.round(n); var k=n%100, j=n%10;
+  if(k>=11&&k<=13) return n+'th';
+  return n + (j===1?'st':j===2?'nd':j===3?'rd':'th');
+}
+function signed(v,dp){ var n=num(v); if(isNaN(n)) return '\u2014'; return (n>=0?'+':'')+n.toFixed(dp==null?2:dp); }
+function cityOf(t){ return String(t.name||'').replace(new RegExp('\\s*'+t.nick+'$'),'').trim()||t.nick; }
+function abbrOf(t){
+  var w=cityOf(t).split(/\s+/).filter(Boolean);
+  return (w.length>1?w.map(function(x){return x[0];}).join(''):cityOf(t).slice(0,3)).toUpperCase();
+}
+var ABBR={a:abbrOf(A),h:abbrOf(H)};
+
+function makeECDF(list){
+  return function(v){
+    var x=num(v); if(isNaN(x)||!list||!list.length) return 0;
+    if(x>list[0]) return 100;
+    if(x<list[list.length-1]) return 0;
+    var lo=0,hi=list.length-1,ans=hi;
+    while(lo<=hi){ var m=(lo+hi)>>1; if(x>=list[m]){ ans=m; hi=m-1; } else lo=m+1; }
+    return Math.round(100-(ans/(list.length-1))*100);
+  };
+}
+var pctRush=makeECDF((D.ecdf||{}).epa_rush_per_play);
+var pctPass=makeECDF((D.ecdf||{}).epa_pass_per_play);
+
+/* ============================================================
+   SHARED PIECES
+   ============================================================ */
+var winner = H.score>A.score?'h':(A.score>H.score?'a':null);
+
+function teamsHead(){
+  return '<span class="badge">'+tlogo(A.logo,A.nick)+'<span class="bn">'+esc(A.name)+'</span></span>'+
+         '<span class="sep">\u2022</span>'+
+         '<span class="badge">'+tlogo(H.logo,H.nick)+'<span class="bn">'+esc(H.name)+'</span></span>';
+}
+function oneHead(team,label,pill){
+  return '<span class="badge">'+tlogo(team.logo,team.nick)+'<span class="bn">'+esc(team.nick)+(label?' \u2022 '+esc(label):'')+'</span></span>'+
+    (pill?'<span class="pill">'+esc(pill)+'</span>':'');
+}
+function meter(pct,color,opts){
+  opts=opts||{};
+  return '<div class="meter"><span'+(opts.neg?' class="neg"':'')+' data-w="'+pct+'" style="background-color:'+color+'"></span></div>';
+}
+var LOWER_BETTER={
+  'Penalties assessed':1,'Penalties assessed - yards lost':1,'Total turnovers':1,'INTs (thrown)':1,
+  'Fumbles':1,'Fumbles lost':1,'Turnover on downs':1,'Safeties surrendered':1,'TFL on rushing attempts':1,
+  'Total pressures allowed':1,'Sacks allowed':1,'Yards lost on sacks':1,'Hits allowed':1,'Hurries allowed':1,
+  'Unbl. pressures allowed':1,'Dropped passes':1,'Yds lost on drops':1,'Batted passes':1
+};
+function statRow(label,av,hv){
+  var an=num(av), hn=num(hv);
+  var mx=Math.max(Math.abs(an)||0,Math.abs(hn)||0)||1;
+  var lb=!!LOWER_BETTER[label];
+  var leadA=!isNaN(an)&&!isNaN(hn)&&(lb?an<hn:an>hn);
+  var leadH=!isNaN(an)&&!isNaN(hn)&&(lb?hn<an:hn>an);
+  return '<div class="crow"><div class="clab">'+esc(label)+
+      (lb?'<span class="tag">lower is better</span>':'')+'</div>'+
+    '<div class="vsrow'+(leadH?' behind':'')+'"><span class="abbr">'+ABBR.a+'</span>'+
+      '<span class="val num">'+disp(av)+'</span>'+meter(isNaN(an)?0:Math.abs(an)/mx*100,INK.a,{neg:an<0})+'</div>'+
+    '<div class="vsrow'+(leadA?' behind':'')+'"><span class="abbr">'+ABBR.h+'</span>'+
+      '<span class="val num">'+disp(hv)+'</span>'+meter(isNaN(hn)?0:Math.abs(hn)/mx*100,INK.h,{neg:hn<0})+'</div>'+
+  '</div>';
+}
+function rowsBody(pairs){
+  return '<div class="rows">'+pairs.map(function(p){ return statRow(p[0],p[1],p[2]); }).join('')+'</div>';
+}
+function tile(team,ink,valueHtml,subHtml,extra,cls){
+  return '<div class="tile'+(cls?' '+cls:'')+'" style="--accent:'+ink+'">'+
+    '<div class="tteam">'+tlogo(team.logo,team.nick)+'<span class="bn">'+esc(team.nick)+'</span></div>'+
+    (valueHtml||'')+(extra||'')+(subHtml?'<div class="tsub">'+subHtml+'</div>':'')+'</div>';
+}
+function donut(pctv,ink,label,text){
+  var C=2*Math.PI*42, off=C*(1-Math.max(0,Math.min(100,pctv))/100);
+  return '<div class="donut"><svg viewBox="0 0 100 100" aria-hidden="true">'+
+    '<circle cx="50" cy="50" r="42" fill="none" stroke="#EBEDF1" stroke-width="10"/>'+
+    '<circle cx="50" cy="50" r="42" fill="none" stroke="'+ink+'" stroke-width="10" stroke-linecap="round" '+
+      'stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/></svg>'+
+    '<div class="dv"><b>'+esc(text)+'</b><span>'+esc(label)+'</span></div></div>';
+}
+function pctScale(pctv){
+  return '<div class="pscale"><div class="ptrack"></div><div class="pfill" data-w="'+pctv+'"></div>'+
+    '<div class="pknob" data-l="'+pctv+'"></div>'+
+    '<div class="pmarks"><span>0</span><span>50</span><span>100</span></div></div>';
+}
+
+/* even chunking so no slide ends up with a single lonely row */
+function chunk(arr,max){
+  if(arr.length<=max) return [arr];
+  var parts=Math.ceil(arr.length/max), size=Math.ceil(arr.length/parts), out=[];
+  for(var i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size));
+  return out;
+}
+function pairsFrom(src,keys){
+  return keys.filter(function(k){ return src[k]; }).map(function(k){ return [k,src[k].away,src[k].home]; });
+}
+function groupSlides(src,groups,max){
+  var out=[];
+  groups.forEach(function(g){
+    var pairs=pairsFrom(src,g[1]); if(!pairs.length) return;
+    chunk(pairs,max||6).forEach(function(part,i,all){
+      out.push({head:teamsHead(), body:rowsBody(part),
+        caption:g[0]+(all.length>1?' ('+(i+1)+' of '+all.length+')':'')});
+    });
+  });
+  return out;
+}
+
+/* ============================================================
+   CAROUSEL ENGINE
+   ============================================================ */
+function carousel(host, slides, label){
+  var n=slides.length;
+  var html='<button class="sidebtn prev" type="button" aria-label="Previous">\u2039</button>'+
+    '<div class="track" tabindex="0" role="group" aria-roledescription="carousel" aria-label="'+esc(label||'')+'">'+
+    slides.map(function(s,i){
+      return '<div class="slide" role="group" aria-roledescription="slide" aria-label="'+(i+1)+' of '+n+'">'+
+        '<div class="card">'+
+          '<div class="card-head">'+(s.head||'')+'</div>'+
+          '<div class="card-body'+(s.bodyClass?' '+s.bodyClass:'')+'">'+s.body+'</div>'+
+          '<div class="card-meta"><span>'+esc(s.caption||'')+'</span><span class="cnt">'+(i+1)+' / '+n+'</span></div>'+
+        '</div></div>';
+    }).join('')+
+    '</div>'+
+    '<button class="sidebtn next" type="button" aria-label="Next">\u203a</button>'+
+    '<div class="cbar">'+
+      '<button class="cbtn prev" type="button" aria-label="Previous slide">\u2039</button>'+
+      '<div class="dots" role="tablist">'+slides.map(function(s,i){
+        return '<button class="dot" type="button" role="tab" data-i="'+i+'" aria-current="'+(i===0)+'" aria-label="Slide '+(i+1)+'"></button>';
+      }).join('')+'</div>'+
+      '<button class="cbtn next" type="button" aria-label="Next slide">\u203a</button>'+
+    '</div>';
+  host.className='carousel'; host.innerHTML=html;
+
+  var track=$('.track',host), dots=$$('.dot',host), idx=0;
+  var stepW=function(){ var s=$('.slide',track); return s ? s.getBoundingClientRect().width+14 : track.clientWidth; };
+  function sync(){
+    var i=Math.round(track.scrollLeft/stepW());
+    i=Math.max(0,Math.min(n-1,i));
+    if(i!==idx){ idx=i; animate($$('.slide',track)[idx]); }
+    dots.forEach(function(d,j){ d.setAttribute('aria-current', String(j===idx)); });
+    $$('.prev',host).forEach(function(b){ b.disabled = idx<=0; });
+    $$('.next',host).forEach(function(b){ b.disabled = idx>=n-1; });
+  }
+  function go(i,smooth){
+    i=Math.max(0,Math.min(n-1,i));
+    track.scrollTo({left:i*stepW(), behavior:(smooth===false?'auto':'smooth')});
+  }
+  $$('.prev',host).forEach(function(b){ b.addEventListener('click',function(){ go(idx-1); }); });
+  $$('.next',host).forEach(function(b){ b.addEventListener('click',function(){ go(idx+1); }); });
+  dots.forEach(function(d){ d.addEventListener('click',function(){ go(+d.dataset.i); }); });
+  var raf;
+  track.addEventListener('scroll',function(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(sync); },{passive:true});
+  track.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){ e.preventDefault(); go(idx+1); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); go(idx-1); }
+    else if(e.key==='Home'){ e.preventDefault(); go(0); }
+    else if(e.key==='End'){ e.preventDefault(); go(n-1); }
+  });
+  /* mouse drag (desktop) \u2014 ignore drags that start on scrollable content */
+  var down=false,sx=0,sl=0,moved=false,startIdx=0;
+  track.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='mouse') return;
+    if(e.target.closest('.tscroll, a, button')) return;
+    down=true; moved=false; sx=e.clientX; sl=track.scrollLeft; startIdx=idx;
+  });
+  track.addEventListener('pointermove',function(e){
+    if(!down) return;
+    var dx=e.clientX-sx;
+    if(!moved && Math.abs(dx)>4){ moved=true; track.classList.add('dragging'); }
+    if(moved){ track.scrollLeft=sl-dx; e.preventDefault(); }
+  });
+  function end(e){
+    if(!down) return; down=false;
+    if(!moved) return;
+    track.classList.remove('dragging');
+    var dx=(e&&e.clientX!=null)?e.clientX-sx:0, w=stepW();
+    if(Math.abs(dx)>w*0.12) go(startIdx + (dx<0?1:-1));
+    else go(Math.round(track.scrollLeft/w));
+  }
+  track.addEventListener('pointerup',end);
+  track.addEventListener('pointercancel',end);
+  track.addEventListener('pointerleave',end);
+  window.addEventListener('resize',function(){ clearTimeout(carousel._t); carousel._t=setTimeout(function(){ go(idx,false); },160); });
+  sync();
+  return { go:go, track:track, index:function(){ return idx; } };
+}
+
+function section(id,title,slides){
+  var host=$('#'+id); if(!host) return;
+  host.innerHTML='<div class="wrap"><div class="sec-head rv">'+
+      '<h2 class="display">'+esc(title)+'</h2>'+
+    '</div><div class="carousel-host rv"></div></div>';
+  carousel($('.carousel-host',host), slides, title);
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+function renderTopbar(){
+  $('#tb-score').innerHTML='<span class="tsn">'+esc(A.nick)+'</span><span class="num">'+A.score+'</span>'+
+    '<span class="sep">\u00b7</span><span class="num">'+H.score+'</span><span class="tsn">'+esc(H.nick)+'</span>'+
+    '<span class="tb-final">Final</span>';
+}
+function renderHero(){
+  $('#hero-meta').innerHTML=
+    '<span class="chip">'+esc(D.meta.week_label||String(D.meta.week).replace(/^P/,'Preseason Week '))+'</span>'+
+    '<span class="chip">'+esc(D.meta.date)+'</span>'+
+    '<span class="chip">'+esc(D.meta.season)+' Season</span>';
+  function side(t,k){
+    var isW=winner===k, isL=winner&&!isW;
+    return '<div class="sl-team'+(isL?' loser':'')+'">'+
+      '<div class="sl-logo">'+bigLogo(t.logo,t.nick)+'</div>'+
+      '<div><div class="sl-city">'+esc(cityOf(t))+'</div><div class="sl-nick">'+esc(t.nick)+'</div></div>'+
+      '<div class="sl-score num">'+t.score+'</div>'+
+      (isW?'<div class="winner-tick">Winner</div>':'<div class="tick-space"></div>')+'</div>';
+  }
+  $('#scoreline').innerHTML=side(A,'a')+
+    '<div class="sl-mid"><span class="sl-dash"></span><span class="sl-final">Final</span></div>'+side(H,'h');
+  $('#hero-actions').innerHTML=
+    '<a class="btn btn-primary" href="'+esc(D.meta.premium_url||'#')+'" target="_blank" rel="noopener">View in Premium Stats <span class="arr">\u2192</span></a>'+
+    '<a class="btn btn-ghost" href="#boxscore-carousel">Jump to box score <span class="arr">\u2193</span></a>';
+  var qs=D.quarters||['1Q','2Q','3Q','4Q'];
+  function row(t,ink){
+    var mx=Math.max.apply(null,(t.q||[]).concat([0]));
+    return '<tr><td class="tcell"><span class="tc">'+tlogo(t.logo,t.nick)+esc(t.nick)+'</span></td>'+
+      (t.q||[]).map(function(v){ return '<td class="num'+(v>0&&v===mx?' qmax':'')+'" style="--accent:'+ink+'">'+v+'</td>'; }).join('')+
+      '<td class="tot num">'+t.score+'</td></tr>';
+  }
+  $('#qtable').innerHTML='<thead><tr><th class="tcell">Scoring by quarter</th>'+
+    qs.map(function(q){ return '<th>'+esc(q)+'</th>'; }).join('')+'<th>T</th></tr></thead>'+
+    '<tbody>'+row(A,INK.a)+row(H,INK.h)+'</tbody>';
+}
+
+/* ============================================================
+   TABLES (inside cards)
+   ============================================================ */
+function tableHTML(cfg){
+  var state=cfg._s||(cfg._s={sort:null,dir:-1});
+  var rows=cfg.rows.slice();
+  if(state.sort!=null){
+    var c=cfg.cols[state.sort];
+    rows.sort(function(a,b){
+      var x=num(cfg.raw(a,c)), y=num(cfg.raw(b,c));
+      if(isNaN(x)) x=-Infinity; if(isNaN(y)) y=-Infinity;
+      return (x-y)*state.dir;
+    });
+  }
+  var maxes=cfg.cols.map(function(c){
+    return Math.max.apply(null,cfg.rows.map(function(r){ var n=num(cfg.raw(r,c)); return isNaN(n)?-Infinity:n; }));
+  });
+  var thead='<tr><th class="pl">Player</th>'+cfg.cols.map(function(c,i){
+    var s=state.sort===i;
+    return '<th'+(s?' aria-sort="'+(state.dir<0?'descending':'ascending')+'"':'')+' data-i="'+i+'">'+esc(c[0])+
+      '<span class="sortcue">'+(s&&state.dir>0?'\u25b2':'\u25bc')+'</span></th>';
+  }).join('')+'</tr>';
+  var tbody=rows.map(function(r){
+    var ink=cfg.ink(r);
+    var cells=cfg.cols.map(function(c,i){
+      var v=cfg.raw(r,c), n=num(v);
+      if(cfg.bar&&cfg.bar(c)){
+        return '<td><span class="snapbar" style="--accent:'+ink+'"><span class="sb"><span data-w="'+cfg.barPct(r,c)+'"></span></span>'+
+          '<span class="sv num">'+disp(v)+'</span></span></td>';
+      }
+      return '<td class="num'+(!isNaN(n)&&n===maxes[i]&&n!==0?' lead':'')+'">'+disp(v)+'</td>';
+    }).join('');
+    return '<tr><td class="pl"><span class="pcell">'+
+      (cfg.noPhoto?'':photo(cfg.photo?cfg.photo(r):'',cfg.name(r),ink))+
+      '<span class="pi"><span class="pn">'+esc(cfg.name(r))+'</span>'+
+      (cfg.sub?'<span class="pp">'+esc(cfg.sub(r))+'</span>':'')+'</span></span></td>'+cells+'</tr>';
+  }).join('');
+  return '<div class="tzone"><div class="tscroll"><table class="data"><thead>'+thead+'</thead><tbody>'+tbody+
+    '</tbody></table></div><span class="xfade"></span></div>';
+}
+/* delegated sorting for every table in the page */
+document.addEventListener('click',function(e){
+  var th=e.target.closest('table.data th[data-i]'); if(!th) return;
+  var wrap=th.closest('.card-body'); if(!wrap||!wrap._cfg) return;
+  var cfg=wrap._cfg, i=+th.dataset.i, s=cfg._s;
+  if(s.sort===i) s.dir=-s.dir; else { s.sort=i; s.dir=-1; }
+  var top=$('.tscroll',wrap).scrollTop;
+  wrap.innerHTML=(wrap._pre||'')+tableHTML(cfg);
+  $('.tscroll',wrap).scrollTop=top;
+  animate(wrap);
+});
+function mountTable(bodyHost,cfg,pre){ bodyHost._cfg=cfg; bodyHost._pre=pre||''; }
+
+/* ============================================================
+   SECTION BUILDERS
+   ============================================================ */
+/* ---- Game Overview ---- */
+function timelineSlide(){
+  return {head:teamsHead(), caption:'Score timeline', bodyClass:'tlbody',
+    body:'<div class="chart-shell" id="timeline"></div>'+
+      '<div class="legend" id="tl-legend" style="justify-content:center"></div>'};
+}
+function drawTimeline(){
+  var host=$('#timeline'); if(!host) return;
+  var qs=D.quarters||['1Q','2Q','3Q','4Q'], n=qs.length;
+  /* draw at the card's real pixel size so the chart fills the slide on every screen */
+  var box=host.getBoundingClientRect();
+  var Wv=Math.max(300, Math.round(box.width||640));
+  var Hv=Math.max(210, Math.round(box.height||372));
+  var PL=40, PR=Math.min(96, Math.round(Wv*0.17)), PT=14, PB=34;
+  var maxV=Math.max.apply(null,(A.cum||[]).concat(H.cum||[]).concat([7]));
+  var step=maxV<=14?7:(maxV<=35?7:14), top=Math.ceil(maxV/step)*step;
+  var iw=Wv-PL-PR, ih=Hv-PT-PB;
+  var x=function(i){ return PL+(iw/n)*i; }, y=function(v){ return PT+ih-(v/top)*ih; };
+  function stepPath(c){
+    var d='';
+    for(var i=0;i<n;i++){
+      var x0=x(i),x1=x(i+1);
+      d += (i===0? 'M'+x0.toFixed(1)+','+y(0).toFixed(1)+' L'+x0.toFixed(1)+','+y(c[i]).toFixed(1)
+                 : ' L'+x0.toFixed(1)+','+y(c[i]).toFixed(1));
+      d += ' L'+x1.toFixed(1)+','+y(c[i]).toFixed(1);
+    }
+    return d;
+  }
+  var ticks=[]; for(var v=0; v<=top; v+=step) ticks.push(v);
+  var s='<svg class="tl" viewBox="0 0 '+Wv+' '+Hv+'" role="img" aria-label="Cumulative score by quarter">';
+  s+=ticks.map(function(t){
+    return '<line x1="'+PL+'" x2="'+(Wv-PR+10)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="#E6E8EC"/>'+
+      '<text x="'+(PL-9)+'" y="'+(y(t)+4)+'" text-anchor="end" font-size="12" font-weight="700" fill="#9AA0AB">'+t+'</text>';
+  }).join('');
+  s+=qs.map(function(q,i){
+    return '<line x1="'+x(i+1)+'" x2="'+x(i+1)+'" y1="'+PT+'" y2="'+(PT+ih)+'" stroke="#EBEDF1"/>'+
+      '<text x="'+((x(i)+x(i+1))/2)+'" y="'+(PT+ih+24)+'" text-anchor="middle" font-size="12" font-weight="800" fill="#6B7180">'+esc(q)+'</text>';
+  }).join('');
+  s+='<line x1="'+PL+'" x2="'+(Wv-PR+10)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="#D4D8DE" stroke-width="1.5"/>';
+  s+='<path d="'+stepPath(A.cum)+'" fill="none" stroke="'+INK.a+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
+  s+='<path d="'+stepPath(H.cum)+'" fill="none" stroke="'+INK.h+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
+  var gap=Math.abs(y(A.cum[n-1])-y(H.cum[n-1]));
+  function endLab(t,ink,cum,dy){
+    var yy=y(cum[n-1])+dy;
+    return '<circle cx="'+x(n)+'" cy="'+y(cum[n-1])+'" r="5.5" fill="#fff" stroke="'+ink+'" stroke-width="3"/>'+
+      '<text x="'+(x(n)+13)+'" y="'+(yy+4)+'" font-size="14" font-weight="800" fill="#14161B">'+cum[n-1]+'</text>'+
+      '<text x="'+(x(n)+13)+'" y="'+(yy+21)+'" font-size="10.5" font-weight="800" fill="#6B7180">'+esc(t.nick.toUpperCase())+'</text>';
+  }
+  s+=endLab(A,INK.a,A.cum,gap<32?-12:0)+endLab(H,INK.h,H.cum,gap<32?12:0);
+  s+='<g id="tl-hover">'+qs.map(function(q,i){
+    return '<rect x="'+x(i)+'" y="'+PT+'" width="'+(iw/n)+'" height="'+ih+'" fill="transparent" data-i="'+i+'"/>';
+  }).join('')+'</g>';
+  s+='<line id="tl-cross" x1="0" x2="0" y1="'+PT+'" y2="'+(PT+ih)+'" stroke="#14161B" stroke-dasharray="3 3" opacity="0" pointer-events="none"/>';
+  s+='</svg>';
+  host.innerHTML=s+'<div class="tt" id="tl-tip"></div>';
+  var tip=$('#tl-tip'), cross=$('#tl-cross'), svg=$('svg',host);
+  function show(i){
+    tip.innerHTML='<div class="tt-h">'+esc(D.quarters[i])+' \u00b7 end of quarter</div>'+
+      '<div class="tt-r"><span class="k"><span class="sw" style="background:'+INK.a+'"></span>'+esc(A.nick)+'</span><span class="v">'+A.cum[i]+'</span></div>'+
+      '<div class="tt-r"><span class="k"><span class="sw" style="background:'+INK.h+'"></span>'+esc(H.nick)+'</span><span class="v">'+H.cum[i]+'</span></div>'+
+      '<div class="tt-r" style="opacity:.6"><span class="k">Quarter</span><span class="v">'+A.q[i]+'\u2013'+H.q[i]+'</span></div>';
+    tip.classList.add('on');
+    var r=host.getBoundingClientRect(), px=((x(i)+x(i+1))/2)/Wv*r.width;
+    tip.style.left=Math.max(4,Math.min(px-tip.offsetWidth/2, r.width-tip.offsetWidth-4))+'px';
+    tip.style.top='6px';
+    cross.setAttribute('x1',(x(i)+x(i+1))/2); cross.setAttribute('x2',(x(i)+x(i+1))/2); cross.setAttribute('opacity','.35');
+  }
+  $$('#tl-hover rect',host).forEach(function(r){
+    r.addEventListener('mouseenter',function(){ show(+r.dataset.i); });
+    r.addEventListener('touchstart',function(){ show(+r.dataset.i); },{passive:true});
+  });
+  svg.addEventListener('mouseleave',function(){ tip.classList.remove('on'); cross.setAttribute('opacity','0'); });
+  $('#tl-legend').innerHTML=
+    '<span class="k"><span class="sw" style="background:'+INK.a+'"></span>'+esc(A.name)+'</span>'+
+    '<span class="k"><span class="sw" style="background:'+INK.h+'"></span>'+esc(H.name)+'</span>';
+}
+var KPI_ORDER=['Total net yards','Avg yards per play','Average EPA per play','Total first downs',
+  'Passing first downs','Avg points per drive'];
+function kpiSlide(){
+  var gd=(D.takeaways||{}).game_diffs||{};
+  var picks=KPI_ORDER.filter(function(k){ return gd[k]; }).slice(0,4);
+  function dv(metric,side){
+    var m=(D.metrics||{})[metric]; if(m&&m[side]!=null) return m[side];
+    var p=(D.pr||{})[metric]; return p?p[side]:null;
+  }
+  return {head:teamsHead(), caption:'Where the game was won',
+    body:'<div class="rows">'+picks.map(function(k){
+      var d=gd[k], lead=d.winner==='home'?H:A;
+      var av=dv(k,'away'), hv=dv(k,'home');
+      return statRow(k+'  \u00b7  '+lead.nick+' +'+(Math.round(d.diff*1000)/1000), av!=null?av:d.away, hv!=null?hv:d.home);
+    }).join('')+'</div>'};
+}
+function downsSlide(){
+  var m3=(D.metrics||{})['3rd down efficiency'], m4=(D.metrics||{})['4th down efficiency'];
+  if(!m3&&!m4) return null;
+  function quad(m,label){
+    if(!m) return '';
+    return tile(A,INK.a,donut(num(m.away)||0,INK.a,label,disp(m.away)),'')+
+           tile(H,INK.h,donut(num(m.home)||0,INK.h,label,disp(m.home)),'');
+  }
+  return {head:teamsHead(), caption:'3rd & 4th down efficiency', bodyClass:'fill',
+    body:'<div class="pair quad">'+quad(m3,'3rd down')+quad(m4,'4th down')+'</div>'};
+}
+function standoutSlides(){
+  var T=D.takeaways||{};
+  var defs=[
+    ['top_qb','Passing',function(p){ return [p.yards,'Yards']; },function(p){ return p.completions+'/'+p.attempts+' \u00b7 '+p.tds+' TD'; }],
+    ['top_rb','Rushing',function(p){ return [p.yards,'Yards']; },function(p){ return p.attempts+' att \u00b7 '+p.ypc+' YPC'; }],
+    ['top_wr','Receiving',function(p){ return [p.yards,'Yards']; },function(p){ return p.receptions+'/'+p.targets+' \u00b7 '+p.tds+' TD'; }],
+    ['top_pr','Pass rush',function(p){ return [p.pressures,'Press.']; },function(p){ return p.sacks+' sacks \u00b7 '+p.hurries+' hurries'; }],
+    ['top_rd','Run defense',function(p){ return [p.run_stops,'Stops']; },function(p){ return p.tackles+' tackles \u00b7 '+p.tfl+' TFL'; }],
+    ['top_cov','Coverage',function(p){ return [p.pbus,'PBU']; },function(p){ return p.completions_allowed+'/'+p.targets+' allowed'; }]
+  ];
+  var items=defs.map(function(d){
+    var p=T[d[0]]; if(!p||!p.name) return '';
+    var ink=p.team===A.nick?INK.a:INK.h, v=d[2](p), tag=p.profile?'a':'div';
+    return '<'+tag+' class="so" style="--accent:'+ink+'"'+(p.profile?' href="'+esc(p.profile)+'" target="_blank" rel="noopener"':'')+'>'+
+      photo(p.headshot,p.name,ink)+
+      '<span class="si"><span class="sr-role">'+esc(d[1])+' leader</span>'+
+        '<span class="sn">'+esc(p.name)+'</span><span class="sm">'+esc(p.team)+' \u00b7 '+esc(d[3](p))+'</span></span>'+
+      '<span class="sv"><b class="num">'+disp(v[0])+'</b><span>'+esc(v[1])+'</span></span>'+
+    '</'+tag+'>';
+  }).join('');
+  return [{head:teamsHead(), caption:'Phase leaders', body:'<div class="solist">'+items+'</div>'}];
+}
+function buildOverview(){
+  var slides=[timelineSlide()];
+  slides=slides.concat(groupSlides(D.metrics,[
+    ['Plays, yards, efficiency',['Total offensive plays','Total net yards','Avg yards per play','Average EPA per play']],
+    ['First downs breakdown',['Total first downs','Rushing first downs','Passing first downs','Penalty first downs']]
+  ],5));
+  var dn=downsSlide(); if(dn) slides.push(dn);
+  slides=slides.concat(groupSlides(D.metrics,[
+    ['Drives summary',['Possessions','Avg plays per drive','Avg yards per drive','Avg points per drive']],
+    ['Red zone summary',['Red zone possessions','Red zone plays','Red zone TDs','Red zone FGs','RZ scoring efficiency']],
+    ['Goal-to-go summary',['Goal-to-go possessions','Goal-to-go plays','Goal-to-go TDs','Goal-to-go FGs','GTG scoring efficiency']],
+    ['Scoring summary',['Total points','Total touchdowns','Rushing touchdowns','Passing touchdowns','Return touchdowns']],
+    ['Turnovers & defensive scores',['Total turnovers','INTs (thrown)','Fumbles','Fumbles lost','Defensive touchdowns']],
+    ['Takeaway detail & two-point tries',['Dropped INTs (thrown)','INT return yards','Turnover on downs','2-point conversion attempts','2-point conversion successes']],
+    ['Penalties',['Penalties assessed','Penalties assessed - yards lost','Penalties declined / offset']],
+    ['Game management',['Safeties surrendered','Challenges by team','Successful Challenges','Trick plays']]
+  ],5));
+  section('game-overview','Game Overview', slides);
+}
+
+/* ---- Rushing / Passing reports ---- */
+function epaSlide(kind){
+  var key = kind==='rush'?'Avg EPA per rushing play':'Avg EPA per passing play';
+  var row=(D.pr||{})[key]; if(!row) return null;
+  var fn = kind==='rush'?pctRush:pctPass;
+  var pa=fn(row.away), ph=fn(row.home);
+  var list=(D.ecdf||{})[kind==='rush'?'epa_rush_per_play':'epa_pass_per_play']||[];
+  var med=list.length?list[Math.floor(list.length/2)]:null;
+  var cap='EPA per '+(kind==='rush'?'run':'pass')+', ranked against every 2025 team game';
+  var ref=med!=null?'<br>2025 median '+signed(med):'';
+  return {head:teamsHead(), caption:'EPA per '+(kind==='rush'?'rushing':'passing')+' play (vs. 2025 average)', bodyClass:'fill',
+    body:'<div class="pair">'+
+      tile(A,INK.a,'<div class="tval num">'+signed(row.away)+'</div>',
+        '<b>'+ordinal(pa)+' percentile</b><br>'+cap+ref, pctScale(pa), 'spread')+
+      tile(H,INK.h,'<div class="tval num">'+signed(row.home)+'</div>',
+        '<b>'+ordinal(ph)+' percentile</b><br>'+cap+ref, pctScale(ph), 'spread')+
+    '</div>'};
+}
+function buildRushing(){
+  var slides=[]; var e=epaSlide('rush'); if(e) slides.push(e);
+  slides=slides.concat(groupSlides(D.pr,[
+    ['Rushing report',['Total rushing plays','Net yards rushing','Avg net yards per rush','Avg yards before contact','Avg yards after contact']],
+    ['Explosive runs & elusivity',['Explosive runs (10+)','Yards on expl. runs','TFL on rushing attempts','Yards lost on TFLs','MTs forced on run plays']],
+    ['Quarterback runs',['Scrambles','Scramble Yards','Designed runs by QB','Designed runs by QB - yards']]
+  ],5));
+  section('rushing-report','Team Rushing Reports', slides);
+}
+function buildPassing(){
+  var slides=[]; var e=epaSlide('pass'); if(e) slides.push(e);
+  slides=slides.concat(groupSlides(D.pr,[
+    ['Passing report',['Total passing plays','Pass Attempts','Pass Completions','Completion %','Gross passing yards']]
+  ],5));
+  var ac=(D.pr||{})['Adj. completion %'];
+  if(ac) slides.push({head:teamsHead(), caption:'Adjusted completion percentage', bodyClass:'fill',
+    body:'<div class="pair">'+
+      tile(A,INK.a,donut(num(ac.away)||0,INK.a,'Adj. comp.',disp(ac.away)),'Drops, throwaways and batted passes removed')+
+      tile(H,INK.h,donut(num(ac.home)||0,INK.h,'Adj. comp.',disp(ac.home)),'Drops, throwaways and batted passes removed')+
+    '</div>'});
+  slides=slides.concat(groupSlides(D.pr,[
+    ['Yards per throw',['Avg (gross) yds per att.','Avg (gross) yds per comp.']],
+    ['Air yards and aDOT',['Avg depth of target','Air yards','Avg air yds per comp.']],
+    ['Yards after the catch',['Yards after the catch','Avg YAC per comp.','Yds lost on drops']],
+    ['Deep passing & explosive plays',['Explosive passes (15+)','Yards on expl. passes','Deep attempts (20+)','Deep completions','Yards on deep comps']],
+    ['Pass results',['Targeted passes','Dropped passes','Batted passes','Hit as thrown','Throwaways']],
+    ['Ball at the catch point',['Spikes','Passes broken up','MTs forced on pass plays']],
+    ['Pass protection',['Total pressures allowed','Sacks allowed','Yards lost on sacks']],
+    ['Pressure detail',['Hits allowed','Hurries allowed','Unbl. pressures allowed']]
+  ],5));
+  section('passing-report','Team Passing Reports', slides);
+}
+
+/* ---- Quarterback Comparison ---- */
+function slugOf(t){ return t.name.toLowerCase().replace(/\s+/g,'-'); }
+function qbsFor(t){
+  return (D.passing_rows||[]).filter(function(r){ return r.team===slugOf(t); })
+    .sort(function(a,b){ return (b.DB||0)-(a.DB||0); });
+}
+function buildQB(){
+  var qa=qbsFor(A), qh=qbsFor(H);
+  if(!qa.length||!qh.length){ var s=$('#qb-comparison'); if(s) s.remove(); return; }
+  var pa=qa[0], ph=qh[0];
+  function head(){
+    return '<span class="badge">'+tlogo(A.logo,A.nick)+'<span class="bn">'+esc(pa.name)+'</span></span>'+
+      '<span class="sep">vs</span>'+
+      '<span class="badge">'+tlogo(H.logo,H.nick)+'<span class="bn">'+esc(ph.name)+'</span></span>';
+  }
+  function duelHead(){
+    return '<div class="duel-head">'+
+      '<div class="qbc" style="--accent:'+INK.a+'">'+photo(pa.headshot,pa.name,INK.a)+
+        '<div><div class="qn">'+esc(pa.name)+'</div><div class="qt">'+esc(A.nick)+'</div></div></div>'+
+      '<div class="duel-vs">vs</div>'+
+      '<div class="qbc" style="--accent:'+INK.h+'">'+photo(ph.headshot,ph.name,INK.h)+
+        '<div><div class="qn">'+esc(ph.name)+'</div><div class="qt">'+esc(H.nick)+'</div></div></div></div>';
+  }
+  function drows(defs){
+    return defs.map(function(r){
+      var label=r[0], k=r[1], dp=r[2], dir=r[3];
+      var an=num(pa[k]), hn=num(ph[k]);
+      if(isNaN(an)&&isNaN(hn)) return '';
+      var suf=/_pct$/.test(k)?'%':(k==='avgTTT'?'s':'');
+      var wa=false, wh=false;
+      if(dir!=='neutral'&&!isNaN(an)&&!isNaN(hn)&&an!==hn){
+        wa = dir==='high'? an>hn : an<hn;
+        wh = dir==='high'? hn>an : hn<an;
+      }
+      return '<div class="drow">'+
+        '<div class="dv a num'+(wa?' win':'')+'" style="--accent:'+INK.a+'">'+(isNaN(an)?'\u2014':an.toFixed(dp)+suf)+'</div>'+
+        '<div class="dl">'+esc(label)+'</div>'+
+        '<div class="dv b num'+(wh?' win':'')+'" style="--accent:'+INK.h+'">'+(isNaN(hn)?'\u2014':hn.toFixed(dp)+suf)+'</div></div>';
+    }).join('');
+  }
+  /* Big-time throws / turnover-worthy plays \u2014 only when the passing file carries them.
+     BTT is measured against attempts and TWP against dropbacks. Each block names its
+     own denominator so the two rates are never read off the same base. */
+  function playSlide(){
+    var hasA=!isNaN(num(pa.btt))||!isNaN(num(pa.twp));
+    var hasH=!isNaN(num(ph.btt))||!isNaN(num(ph.twp));
+    if(!hasA&&!hasH) return null;
+    var CRIT='#D03B3B';
+    function read(p,key,pctKey,denKey){
+      var n=num(p[key]), den=Math.max(0,num(p[denKey])||0);
+      var rate=!isNaN(num(p[pctKey]))?num(p[pctKey]):(den?n/den*100:NaN);
+      return {n:n, den:den, rate:rate};
+    }
+    var A_btt=read(pa,'btt','btt_pct','ATT'), H_btt=read(ph,'btt','btt_pct','ATT');
+    var A_twp=read(pa,'twp','twp_pct','DB'),  H_twp=read(ph,'twp','twp_pct','DB');
+
+    function side(m,ink,denom){
+      /* bars share one width; a non-zero count keeps a visible sliver */
+      var fill=isNaN(m.rate)?0:Math.max(m.n>0?2.5:0, Math.min(100,m.rate));
+      return '<div class="pmside" style="--accent:'+ink+'">'+
+        '<b class="num'+(m.n>0?'':' none')+'">'+(isNaN(m.rate)?'\u2014':m.rate.toFixed(1)+'%')+'</b>'+
+        '<span class="pmbar"><i style="width:'+fill.toFixed(1)+'%"></i></span>'+
+        '<span class="pmcount"><b>'+(isNaN(m.n)?'\u2014':m.n)+'</b> of '+m.den+' '+esc(denom)+'</span>'+
+      '</div>';
+    }
+    function block(label,denom,ma,mh,inkA,inkH,capInk){
+      return '<div class="pmblock">'+
+        '<div class="pmttl" style="--accent:'+capInk+'">'+
+          '<b><i></i>'+esc(label)+'</b><em>per '+esc(denom.replace(/s$/,''))+'</em></div>'+
+        '<div class="pmpair">'+side(ma,inkA,denom)+'<span class="pmrule"></span>'+side(mh,inkH,denom)+'</div>'+
+      '</div>';
+    }
+    return {head:head(), caption:'Big-time throws & turnover-worthy plays', bodyClass:'fill',
+      body:'<div class="pmw">'+
+        block('Big-time throws','attempts', A_btt, H_btt, INK.a, INK.h, 'var(--ink-3)')+
+        block('Turnover-worthy plays','dropbacks', A_twp, H_twp, CRIT, CRIT, CRIT)+
+      '</div>'};
+  }
+
+  var slides=[
+    {head:head(), caption:'QB box score', bodyClass:'duel',
+     body:duelHead()+'<div class="drows">'+drows([['Dropbacks','DB',0,'high'],['Attempts','ATT',0,'high'],['Completions','COMP',0,'high'],
+       ['Passing yards','YDS',0,'high'],['Touchdowns','TD',0,'high'],['Interceptions','INT',0,'low'],['Passer rating','RTG',1,'high']])+'</div>'},
+    null, /* placeholder: BTT/TWP slide is spliced in below, straight after the box score */
+    {head:head(), caption:'Completion rate', bodyClass:'fill',
+     body:'<div class="pair">'+
+       tile(A,INK.a,donut(num(pa.COMP_pct)||0,INK.a,'Completion',(num(pa.COMP_pct)||0).toFixed(1)+'%'),
+         'Adjusted <b>'+(num(pa.aComp_pct)||0).toFixed(1)+'%</b>')+
+       tile(H,INK.h,donut(num(ph.COMP_pct)||0,INK.h,'Completion',(num(ph.COMP_pct)||0).toFixed(1)+'%'),
+         'Adjusted <b>'+(num(ph.aComp_pct)||0).toFixed(1)+'%</b>')+
+     '</div>'},
+    {head:head(), caption:'Distribution', bodyClass:'duel',
+     body:duelHead()+'<div class="drows">'+drows([['Avg depth of target','ADOT',1,'high'],['Short of the sticks %','SS_pct',1,'neutral'],
+       ['Past the sticks %','PS_pct',1,'high'],['Air yards share','AIR_pct',1,'neutral'],['YAC share','YAC_pct',1,'neutral']])+'</div>'},
+    {head:head(), caption:'Time to throw', bodyClass:'fill',
+     body:'<div class="pair">'+
+       tile(A,INK.a,'<div class="tval num">'+(num(pa.avgTTT)||0).toFixed(2)+'s</div>','Average time from snap to throw')+
+       tile(H,INK.h,'<div class="tval num">'+(num(ph.avgTTT)||0).toFixed(2)+'s</div>','Average time from snap to throw')+
+     '</div>'}
+  ];
+  slides[1]=playSlide();
+  slides=slides.filter(Boolean);
+  section('qb-comparison','Quarterback Comparison', slides);
+}
+
+/* ---- Participation ---- */
+function buildParticipation(){
+  var slides=(D.participation||[]).map(function(p){
+    var team=/packers/i.test(p.label)?A:H;
+    var ink=team===A?INK.a:INK.h;
+    var mx=Math.max.apply(null,p.rows.map(function(r){ return r.snaps; }));
+    var cfg={
+      cols:[['Snaps played','snaps',0]], rows:p.rows,
+      raw:function(r){ return r.snaps; },
+      ink:function(){ return ink; },
+      name:function(r){ return r.name; },
+      sub:function(r){ return r.pos; },
+      noPhoto:true,
+      bar:function(){ return true; },
+      barPct:function(r){ return Math.round(r.snaps/mx*100); }
+    };
+    return {head:oneHead(team,p.label.split('\u2022')[1]?p.label.split('\u2022')[1].trim():'',p.rows.length+' players'),
+      caption:p.label.replace('\u2022','\u00b7')+' participation', bodyClass:'flush', body:tableHTML(cfg), _cfg:cfg};
+  });
+  section('participation-slide','Player Participation & Snap Counts', slides);
+  $$('#participation-slide .card-body').forEach(function(b,i){ mountTable(b, slides[i]._cfg); });
+}
+
+/* ---- PFF grades ---- */
+function gradeClass(g){ return g>=90?'g-elite':g>=80?'g-high':g>=70?'g-good':g>=60?'g-avg':'g-low'; }
+function buildGrades(){
+  var all=D.grades||[];
+  function sideOf(g){ return /defense/i.test(g.rank)||/defense/i.test(g.teamLabel)?'defense':'offense'; }
+  var slides=[];
+  ['offense','defense'].forEach(function(side){
+    var list=all.filter(function(g){ return sideOf(g)===side; });
+    if(!list.length) return;
+    slides.push({head:teamsHead(), caption:'Top five graded '+side+' players', bodyClass:'center',
+      body:'<div class="glist">'+list.map(function(g,i){
+        var ink=/packers/i.test(g.teamLabel)?INK.a:INK.h;
+        var tag=g.profile?'a':'div';
+        return '<'+tag+' class="grow"'+(g.profile?' href="'+esc(g.profile)+'" target="_blank" rel="noopener" style="text-decoration:none"':'')+'>'+
+          '<span class="gr">'+(i+1)+'</span>'+photo(g.headshot,g.name,ink)+
+          '<span class="gi"><span class="gnm">'+esc(g.name)+'</span>'+
+            '<span class="gsub">'+esc(g.teamLabel)+' \u00b7 '+esc(g.pos)+' \u00b7 '+esc(g.snaps)+'</span></span>'+
+          '<span class="gchip '+gradeClass(g.grade)+'">'+g.grade.toFixed(1)+'</span>'+
+        '</'+tag+'>';
+      }).join('')+'</div>'});
+    list.forEach(function(g){
+      var ink=/packers/i.test(g.teamLabel)?INK.a:INK.h;
+      slides.push({head:oneHead({logo:g.logo,nick:g.teamLabel}, '', g.rank),
+        caption:'Initial grade, subject to review', bodyClass:'fill',
+        body:'<div class="gcard" style="--accent:'+ink+'">'+
+          photo(g.headshot,g.name,ink)+
+          '<div><div class="gn">'+esc(g.name)+'</div>'+
+            '<div class="gmeta"><span>'+esc(g.pos)+'</span><span>\u00b7</span><span>'+esc(g.snaps)+'</span>'+
+            (g.rookie?'<span class="tag">Rookie</span>':'')+'</div></div>'+
+          '<div class="gbig num">'+g.grade.toFixed(1)+'</div>'+
+          '<div class="glab">PFF Grade</div>'+
+          (g.profile?'<a class="btn btn-ghost" style="margin-top:4px" href="'+esc(g.profile)+'" target="_blank" rel="noopener">View profile <span class="arr">\u2192</span></a>':'')+
+        '</div>'});
+    });
+  });
+  section('player-grades','Initial PFF Grades', slides);
+}
+
+/* ---- Box score: decomposed stat bars, every player who logged a snap ---- */
+/* Each phase gets a headline stat and, where the maths is real, a stacked bar that
+   breaks that number into its PFF components (air vs YAC, sacks/hits/hurries, ...). */
+var BOX_VIEW={
+  /* YBC/YCO are the PFF-exclusive pair here \u2014 they take the slots 1D RUSH and FUM had */
+  'Rushing':{key:'RUSH YDS', label:'RUSH YDS',
+    pills:['ATT','YPC','MTF RUN','RUN TD','YBC','YCO']},
+  'Receiving':{key:'REC YDS', label:'REC YDS',
+    derive:function(p,v){ var yac=num(v('YAC')); if(isNaN(yac)) return null;
+      var tot=num(v('REC YDS')); if(isNaN(tot)) return null;
+      return [[Math.max(0,tot-yac),'air'],[yac,'YAC']]; },
+    pills:['REC','TGT','YPR','REC 1D','REC TD']},
+  'Pass Blocking':{key:'PBLK', label:'PASS BLOCKS',
+    pills:['PR','SK','HT','HU','PR%','KD%']},
+  'Pass Rushing':{key:'TPR', label:'PRESSURES',
+    parts:[['SK','sacks'],['HT','hits'],['HU','hurries']],
+    pills:['PRSH','PR%','UBP']},
+  'Run Defense':{key:'STOP', label:'RUN STOPS',
+    derive:function(p,v){ var tfl=num(v('TFL+NG')), st=num(v('STOP'));
+      if(isNaN(tfl)||isNaN(st)) return null;
+      return [[Math.min(tfl,st),'TFL/NG'],[Math.max(0,st-tfl),'stops']]; },
+    pills:['TKL','AST','MT','FF','ADOTK']},
+  /* rank by targets, not yards allowed \u2014 sorting on yards would feature whoever got
+     beaten most, which is the opposite of a leaderboard */
+  'Coverage':{key:'P YDS ALL', label:'YDS ALLOWED', rank:'CTGT',
+    pills:['CTGT','REC ALL','COMP%','PBU','INT','RTG']}
+};
+function mixInk(ink,pct){ return 'color-mix(in srgb, '+ink+' '+pct+'%, #FFFFFF)'; }
+
+function buildBox(){
+  var slides=(D.box||[]).map(function(b){
+    var nick=b.label.split('\u2022')[0].trim();
+    var ink=(nick===A.nick)?INK.a:INK.h;
+    var phase=(b.label.split('\u2022')[1]||'').trim();
+    var p0=b.players[0]||{primary:null,secondary:[],tertiary:[]};
+    var view=BOX_VIEW[phase]||{};
+    var have=[].concat(p0.primary?[p0.primary.label]:[],
+        (p0.secondary||[]).map(function(s){ return s.label; }),
+        (p0.tertiary||[]).map(function(s){ return s.label; })).filter(Boolean);
+    var prim=(view.key&&have.indexOf(view.key)>-1)?view.key:(p0.primary?p0.primary.label:have[0]);
+    var primLabel=view.label||prim;
+    var rankKey=(view.rank&&have.indexOf(view.rank)>-1)?view.rank:prim;
+    function make(p){
+      return function(label){
+        if(p.primary&&p.primary.label===label) return p.primary.value;
+        var f=(p.secondary||[]).concat(p.tertiary||[]).filter(function(s){ return s.label===label; })[0];
+        return f?f.value:null;
+      };
+    }
+    var rows=b.players.slice().sort(function(x,y){
+      var xa=num(make(y)(rankKey)), yb=num(make(x)(rankKey));
+      if(isNaN(xa)) xa=-Infinity; if(isNaN(yb)) yb=-Infinity;
+      if(xa!==yb) return xa-yb;
+      var xp=num(make(y)(prim)), yp=num(make(x)(prim));
+      if(isNaN(xp)) xp=-Infinity; if(isNaN(yp)) yp=-Infinity;
+      return xp-yp;
+    });
+    if(!rows.length){
+      return {head:oneHead({logo:b.logo,nick:nick},phase,null), caption:phase+' box score',
+        bodyClass:'center', body:'<p class="empty">No '+esc(phase.toLowerCase())+' snaps recorded.</p>'};
+    }
+    /* a stat every player reads 0 on says nothing \u2014 spend the tiles on live columns first */
+    var live=function(k){ return rows.some(function(p){ var n=num(make(p)(k)); return !isNaN(n)&&n!==0; }); };
+    var pool=(view.pills||have).filter(function(k){ return k!==prim && have.indexOf(k)>-1; });
+    var tileKeys=pool.filter(live).concat(pool.filter(function(k){ return !live(k); })).slice(0,6);
+    var cols=tileKeys.length>=5?3:(tileKeys.length>=3?3:Math.max(1,tileKeys.length));
+
+    var cards=rows.map(function(p){
+      var v=make(p);
+      /* an odd count would leave a hole in the last row \u2014 widen the final tile instead */
+      var rem=tileKeys.length%cols, spanLast=rem?(cols-rem+1):1;
+      var tiles=tileKeys.map(function(k,ti){
+        var raw=v(k), n=num(raw), z=(!isNaN(n)&&n===0)?' zero':'';
+        var sp=(ti===tileKeys.length-1&&spanLast>1)?' style="grid-column:span '+spanLast+'"':'';
+        return '<div class="bxt'+z+'"'+sp+'><span>'+esc(k)+'</span><b class="num">'+disp(raw)+'</b></div>';
+      }).join('');
+      return '<div class="bxc" style="--accent:'+ink+'">'+
+        '<div class="bxhd">'+
+          '<span class="bxn"><span class="bxnm">'+esc(p.name)+'</span>'+
+            (p.pos?'<span class="bxpos">'+esc(p.pos)+'</span>':'')+'</span>'+
+          photo(p.headshot,p.name,ink)+
+        '</div>'+
+        '<div class="bxlead"><b class="num">'+disp(v(prim))+'</b><span>'+esc(primLabel)+'</span></div>'+
+        (tiles?'<div class="bxg" style="--bcols:'+cols+'">'+tiles+'</div>':'')+
+      '</div>';
+    }).join('');
+
+    return {head:oneHead({logo:b.logo,nick:nick}, phase, rows.length+' players'),
+      caption:phase+' \u00b7 by '+(view.rank?rankKey:primLabel).toLowerCase(), bodyClass:'blbody',
+      body:'<div class="tscroll bxscroll"><div class="bxcards">'+cards+'</div></div>'};
+  });
+  section('boxscore-carousel','Box Score Breakdown', slides);
+}
+
+/* ============================================================
+   KEY TAKEAWAYS  ("Generate Key Takeaways" panel)
+   ============================================================ */
+var STANDOUTS=[
+  ['top_qb','Passing',      function(p){ return [['Yards',p.yards],['Completions',p.completions+'/'+p.attempts],['Touchdowns',p.tds],['Interceptions',p.ints]]; }],
+  ['top_rb','Rushing',      function(p){ return [['Yards',p.yards],['Attempts',p.attempts],['Touchdowns',p.tds],['Yards/Carry',p.ypc]]; }],
+  ['top_wr','Receiving',    function(p){ return [['Yards',p.yards],['Receptions',p.receptions+'/'+p.targets],['Touchdowns',p.tds],['Yards/Rec',p.ypr]]; }],
+  ['top_pr','Pass Rush',    function(p){ return [['Pressures',p.pressures],['Sacks',p.sacks],['Hits',p.hits],['Hurries',p.hurries]]; }],
+  ['top_cov','Coverage',    function(p){ return [['Interceptions',p.ints],['Pass Breakups',p.pbus],['Targets',p.completions_allowed+'/'+p.targets]]; }],
+  ['top_rd','Run Defense',  function(p){ return [['Run Stops',p.run_stops],['Tackles',p.tackles],['Assists',p.assists],['TFL+NG',p.tfl]]; }]
+];
+function buildTakeaways(){
+  var btn=$('#kt-btn'), panel=$('#kt-panel'); if(!btn||!panel) return;
+  var built=false;
+  function displayOf(metric,side){
+    var m=(D.metrics||{})[metric]; if(m&&m[side]!=null) return m[side];
+    var p=(D.pr||{})[metric]; return p?p[side]:null;
+  }
+  function fill(){
+    var T=D.takeaways||{}, gd=T.game_diffs||{};
+    var top=Object.keys(gd).map(function(k){ return gd[k]; })
+      .filter(function(d,i,arr){ return arr.findIndex(function(x){ return x.metric===d.metric; })===i; })
+      .sort(function(a,b){ return b.diff-a.diff; }).slice(0,5);
+    $('#team-diffs').innerHTML=top.map(function(d,i){
+      var lead=d.winner==='home'?H:A;
+      var avD=displayOf(d.metric,'away'), hvD=displayOf(d.metric,'home');
+      var diff=Math.round(d.diff*1000)/1000;
+      return '<div class="ktd" style="animation-delay:'+(i*60)+'ms">'+
+        '<div class="ktd-metric">'+esc(d.metric)+'</div>'+
+        '<div class="ktd-values">'+
+          '<div class="ktd-team away">'+tlogo(A.logo,A.nick)+'<span class="num">'+disp(avD!=null?avD:d.away)+'</span></div>'+
+          '<div class="ktd-vs">VS</div>'+
+          '<div class="ktd-team home"><span class="num">'+disp(hvD!=null?hvD:d.home)+'</span>'+tlogo(H.logo,H.nick)+'</div>'+
+        '</div>'+
+        '<div class="ktd-note">'+esc(lead.nick)+' had '+diff+' more</div>'+
+      '</div>';
+    }).join('');
+    $('#top-performers').innerHTML=STANDOUTS.map(function(s,i){
+      var p=T[s[0]]; if(!p||!p.name) return '';
+      var ink=p.team===A.nick?INK.a:INK.h, tag=p.profile?'a':'div';
+      var stats=s[2](p).map(function(st){
+        return '<div class="kts-stat"><span class="k">'+esc(st[0])+'</span><span class="v num">'+disp(st[1])+'</span></div>';
+      }).join('');
+      return '<'+tag+' class="kts" style="--accent:'+ink+'; animation-delay:'+((i*60)+120)+'ms"'+
+        (p.profile?' href="'+esc(p.profile)+'" target="_blank" rel="noopener"':'')+'>'+
+        '<div class="kts-head">'+photo(p.headshot,p.name,ink)+
+          '<div class="kts-id"><div class="kts-name">'+esc(p.name)+'</div>'+
+            '<div class="kts-team">'+esc(p.team)+'</div>'+
+            '<span class="kts-role">'+esc(s[1])+'</span></div></div>'+
+        '<div class="kts-stats">'+stats+'</div>'+
+      '</'+tag+'>';
+    }).join('');
+    animate(panel);
+  }
+  function open(){
+    panel.hidden=false; panel.classList.add('show');
+    btn.setAttribute('aria-expanded','true');
+    $('.kt-label',btn).textContent='Hide Key Takeaways';
+  }
+  btn.addEventListener('click',function(){
+    if(btn.getAttribute('aria-expanded')==='true'){
+      panel.classList.remove('show'); panel.hidden=true;
+      btn.setAttribute('aria-expanded','false');
+      $('.kt-label',btn).textContent='Show Key Takeaways';
+      return;
+    }
+    if(!built){
+      btn.classList.add('busy');
+      $('.kt-label',btn).textContent='Generating\u2026';
+      setTimeout(function(){
+        fill(); built=true; btn.classList.remove('busy'); open();
+      }, reduced?0:520);
+    } else open();
+  });
+}
+
+/* ============================================================
+   ANIMATION
+   ============================================================ */
+var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function animate(scope){
+  var s=scope||document;
+  requestAnimationFrame(function(){
+    $$('[data-w]',s).forEach(function(e){ e.style.width=e.dataset.w+'%'; });
+    $$('[data-l]',s).forEach(function(e){ e.style.left=e.dataset.l+'%'; });
+  });
+}
+var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
+  es.forEach(function(en){
+    if(en.isIntersecting){ en.target.classList.add('in'); animate(en.target); io.unobserve(en.target); }
+  });
+},{rootMargin:'0px 0px -6% 0px', threshold:.05}):null;
+function reveal(){
+  $$('.rv').forEach(function(e){
+    if(e.classList.contains('in')) return;
+    if(!io||reduced){ e.classList.add('in'); animate(e); } else io.observe(e);
+  });
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+function boot(){
+  document.title=A.name+' at '+H.name+' \u2014 Game Recap';
+  renderTopbar(); renderHero();
+  buildTakeaways(); buildOverview(); drawTimeline();
+  buildRushing(); buildPassing(); buildQB(); buildParticipation(); buildGrades(); buildBox();
+  var pcta=$('#cta-premium'); if(pcta&&D.meta.premium_url) pcta.href=D.meta.premium_url;
+  var sent=$('#hero-sentinel');
+  if(sent&&'IntersectionObserver' in window){
+    new IntersectionObserver(function(e){ $('#topbar').classList.toggle('stuck', !e[0].isIntersecting); },{threshold:0}).observe(sent);
+  }
+  reveal(); animate();
+  /* webfonts change row heights, so re-fit once Archivo is actually in use */
+  window.addEventListener('resize',function(){ clearTimeout(boot._t); boot._t=setTimeout(function(){ drawTimeline(); },220); });
+}
+if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded',boot);
+})();
+</script>
+</body>
+</html>
