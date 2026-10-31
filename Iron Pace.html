@@ -228,7 +228,7 @@ X("db_fly", "Flat Dumbbell Fly", "chest", ["chest_iso"], { eq: "db", pat: "fly",
 X("incline_fly", "Incline Dumbbell Fly", "chest", ["chest_iso", "chest_incline"], { eq: "db", pat: "fly", bench: "incline", w: 12.5, reps: [10, 15], muscles: "Upper chest",
   setup: "Bench at 30°, light dumbbells over your upper chest.",
   cues: ["Slight elbow bend, fixed throughout", "Lower out to the sides to shoulder level", "Squeeze your chest to bring them together"] });
-X("pullover", "Dumbbell Pullover", "chest", ["chest_iso"], { eq: "db1", pat: "pullover", bench: "flat", w: 25, reps: [10, 15], muscles: "Chest · lats · serratus",
+X("pullover", "Dumbbell Pullover", "chest", ["chest_iso", "back_vert"], { eq: "db1", pat: "pullover", bench: "flat", w: 25, reps: [10, 15], muscles: "Chest · lats · serratus",
   setup: "Load one dumbbell heavy. Lie flat holding it with both hands over your chest.",
   cues: ["Keep a slight bend in the elbows", "Lower it back behind your head until your chest and lats stretch", "Pull it back over your chest. Ribs stay down"] });
 X("pushup_stands", "Push-ups on Stands", "chest", ["chest_bw"], { pat: "pushup", reps: [10, 20], tempo: -0.5, muscles: "Chest · triceps · core",
@@ -274,22 +274,22 @@ X("band_curl", "Band Curl", "biceps", ["bi_band"], { eq: "band", pat: "curl", an
   cues: ["Elbows tight to your ribs", "Curl up against the band and hold a beat", "Resist on the way down"] });
 
 /* Support (keeps you balanced) */
-X("one_arm_row", "One-Arm Dumbbell Row", "support", ["sup_back"], { eq: "db1", pat: "row", bench: "flat", w: 25, side: true, big: true, muscles: "Lats · upper back · rear delts",
+X("one_arm_row", "One-Arm Dumbbell Row", "back", ["back_row"], { eq: "db1", pat: "row", bench: "flat", w: 25, side: true, big: true, muscles: "Lats · upper back · rear delts",
   setup: "Knee and hand on the flat bench, back flat, dumbbell hanging under your shoulder.",
   cues: ["Pull your elbow back toward your hip", "Squeeze your shoulder blade at the top", "Lower to a full stretch. Finish one side, then switch"] });
-X("band_row", "Standing Band Row", "support", ["sup_back"], { eq: "band", anchorPos: "chest height, in front of you", pat: "standRow", w: 35, reps: [12, 20], muscles: "Upper back · rear delts",
+X("band_row", "Standing Band Row", "back", ["back_row2"], { eq: "band", anchorPos: "chest height, in front of you", pat: "standRow", w: 35, reps: [12, 20], muscles: "Upper back · rear delts",
   setup: "Door anchor at chest height in front of you. Step back into tension.",
   cues: ["Stand tall, chest up", "Row the handles to your lower ribs", "Squeeze your shoulder blades, return slowly"] });
-X("oh_ext", "Seated Overhead Triceps Extension", "support", ["sup_tri"], { eq: "db1", pat: "ohExt", bench: "flat", w: 20, reps: [10, 15], muscles: "Triceps long head",
+X("oh_ext", "Seated Overhead Triceps Extension", "triceps", ["tri"], { eq: "db1", pat: "ohExt", bench: "flat", w: 20, reps: [10, 15], muscles: "Triceps long head",
   setup: "Sit on the end of the bench. Hold one dumbbell overhead with both hands under the top plate.",
   cues: ["Elbows point forward, close to your head", "Lower the dumbbell behind your head", "Extend fully overhead"] });
-X("band_pushdown", "Band Triceps Pushdown", "support", ["sup_tri"], { eq: "band", anchorPos: "top of the door, in front of you", pat: "pushdown", w: 25, reps: [12, 20], muscles: "Triceps",
+X("band_pushdown", "Band Triceps Pushdown", "triceps", ["tri"], { eq: "band", anchorPos: "top of the door, in front of you", pat: "pushdown", w: 25, reps: [12, 20], muscles: "Triceps",
   setup: "Door anchor at the top of the door. Face it, elbows at your sides.",
   cues: ["Elbows stay glued to your sides", "Push down to straight arms", "Let your hands rise back to chest height"] });
-X("skull", "Dumbbell Skull Crusher", "support", ["sup_tri"], { eq: "db", pat: "skull", bench: "flat", w: 12.5, reps: [10, 15], muscles: "Triceps",
+X("skull", "Dumbbell Skull Crusher", "triceps", ["tri"], { eq: "db", pat: "skull", bench: "flat", w: 12.5, reps: [10, 15], muscles: "Triceps",
   setup: "Flat bench, dumbbells pressed up, palms facing.",
   cues: ["Keep your upper arms still", "Bend at the elbows to lower the bells beside your head", "Extend back up to straight arms"] });
-X("close_press", "Close-Grip Dumbbell Press", "support", ["sup_tri"], { eq: "db", pat: "press", bench: "flat", w: 17.5, muscles: "Triceps · inner chest",
+X("close_press", "Close-Grip Dumbbell Press", "triceps", ["tri"], { eq: "db", pat: "press", bench: "flat", w: 17.5, muscles: "Triceps · inner chest",
   setup: "Flat bench, dumbbells together over your chest, palms facing.",
   cues: ["Elbows tucked close to your ribs", "Lower to your lower chest", "Press up through your triceps"] });
 
@@ -318,15 +318,110 @@ X("band_hammer", "Band Hammer Curl", "biceps", ["bi_band", "bi_hammer"], { eq: "
 X("band_bayes", "Behind-the-Body Band Curl", "biceps", ["bi_band", "bi_stretch"], { eq: "band", pat: "bayesCurl", anchorPos: "bottom of the door, behind you", w: 15, reps: [10, 15], side: true, muscles: "Biceps long head",
   setup: "Door anchor at the bottom of the door behind you. One handle, step forward so your arm is pulled slightly behind your body.",
   cues: ["Keep the elbow back behind your torso", "Curl up without letting the elbow swing forward", "Get a full stretch at the bottom. Finish one side, then switch"] });
-X("band_single_row", "Single-Arm Band Row", "support", ["sup_back"], { eq: "band", pat: "standRow", anchorPos: "chest height, in front of you", w: 25, reps: [12, 15], side: true, muscles: "Lats · upper back",
+X("band_single_row", "Single-Arm Band Row", "back", ["back_row2"], { eq: "band", pat: "standRow", anchorPos: "chest height, in front of you", w: 25, reps: [12, 15], side: true, muscles: "Lats · upper back",
   setup: "Door anchor at chest height in front of you. One handle, staggered stance.",
   cues: ["Row your elbow back past your ribs", "Squeeze your shoulder blade", "Reach forward fully on the way back. Finish one side, then switch"] });
-X("band_face_pull", "Band Face Pull", "support", ["sup_back"], { eq: "band", pat: "facePull", anchorPos: "head height, in front of you", w: 20, reps: [15, 20], muscles: "Rear delts · upper back",
+X("band_face_pull", "Band Face Pull", "back", ["rear"], { eq: "band", pat: "facePull", anchorPos: "head height, in front of you", w: 20, reps: [15, 20], muscles: "Rear delts · upper back",
   setup: "Door anchor around head height in front of you. Overhand grip, step back into tension.",
   cues: ["Pull the handles toward your eyes", "Elbows high and wide", "Squeeze for a second, return slowly"] });
-X("band_pulldown", "Straight-Arm Band Pulldown", "support", ["sup_back"], { eq: "band", pat: "pulldown", anchorPos: "top of the door, in front of you", w: 25, reps: [12, 15], muscles: "Lats",
+X("band_pulldown", "Straight-Arm Band Pulldown", "back", ["back_vert"], { eq: "band", pat: "pulldown", anchorPos: "top of the door, in front of you", w: 25, reps: [12, 15], muscles: "Lats",
   setup: "Door anchor at the top of the door. Face it, step back, arms straight up and forward.",
   cues: ["Keep your arms straight", "Sweep the handles down to your thighs", "Feel your lats, then let them rise slowly"] });
+
+/* Shoulders */
+X("db_ohp", "Seated Dumbbell Shoulder Press", "shoulders", ["sh_press"], { eq: "db", pat: "shoulderPress", bench: "upright", w: 15, big: true, muscles: "Front & side delts · triceps",
+  setup: "Set the bench upright. Sit tall with the dumbbells at shoulder height, palms forward.",
+  cues: ["Back flat against the pad, ribs down", "Press up until the bells nearly touch overhead", "Lower to ear level under control"] });
+X("arnold", "Arnold Press", "shoulders", ["sh_press"], { eq: "db", pat: "shoulderPress", bench: "upright", w: 12.5, big: true, muscles: "All three delt heads",
+  setup: "Bench upright. Start with dumbbells in front of your shoulders, palms facing you.",
+  cues: ["Rotate your palms forward as you press", "Finish overhead, palms forward", "Reverse the rotation on the way down"] });
+X("band_ohp", "Band Overhead Press", "shoulders", ["sh_press"], { eq: "band", pat: "standOHP", anchorFeet: true, anchorPos: "none, stand on the band", w: 25, reps: [12, 20], muscles: "Delts · triceps",
+  setup: "Stand on the middle of the band, handles at your shoulders.",
+  cues: ["Squeeze your glutes so you don't lean back", "Press straight overhead", "Lower slowly back to your shoulders"] });
+X("lat_raise", "Dumbbell Lateral Raise", "shoulders", ["sh_lat"], { eq: "db", pat: "raise", w: 7.5, reps: [12, 20], muscles: "Side delts",
+  setup: "Light dumbbells at your sides, slight lean forward.",
+  cues: ["Raise out to the sides, leading with your elbows", "Stop at shoulder height", "Lower for a slow 2-count"] });
+X("band_lat_raise", "Band Lateral Raise", "shoulders", ["sh_lat"], { eq: "band", pat: "raise", anchorFeet: true, anchorPos: "none, stand on the band", w: 10, reps: [15, 20], muscles: "Side delts",
+  setup: "Stand on the band with feet together, a handle in each hand.",
+  cues: ["Slight bend in the elbows", "Raise out to the sides to shoulder height", "Resist the band on the way down"] });
+X("front_raise", "Dumbbell Front Raise", "shoulders", ["sh_lat"], { eq: "db1", pat: "raise", w: 15, reps: [10, 15], muscles: "Front delts",
+  setup: "Hold one dumbbell with both hands in front of your thighs.",
+  cues: ["Arms nearly straight", "Raise to eye level", "Lower slowly, no swinging"] });
+X("pike_pushup", "Pike Push-ups", "shoulders", ["sh_press"], { pat: "pike", reps: [6, 12], tempo: -0.5, muscles: "Shoulders · triceps",
+  setup: "Start in a push-up position, walk your feet in and lift your hips high.",
+  cues: ["Head moves toward the floor between your hands", "Elbows angle back, not straight out", "Press back up to the pike"] });
+X("rear_fly", "Bent-Over Rear Delt Fly", "back", ["rear"], { eq: "db", pat: "bentFly", w: 7.5, reps: [12, 20], muscles: "Rear delts · upper back",
+  setup: "Light dumbbells. Hinge forward until your chest is nearly parallel to the floor.",
+  cues: ["Flat back, soft knees", "Raise the dumbbells out wide with a slight elbow bend", "Squeeze your shoulder blades, lower slowly"] });
+X("pull_apart", "Band Pull-Apart", "back", ["rear"], { eq: "band", pat: "pullApart", noAnchor: true, anchorPos: "none, hold the tube in both hands", w: 10, reps: [15, 25], muscles: "Rear delts · upper back",
+  setup: "Hold one tube by the ends at shoulder width, arms straight out in front.",
+  cues: ["Pull the band apart until it touches your chest", "Keep your arms straight", "Return slowly"] });
+
+/* Triceps extras */
+X("bench_dip", "Bench Dips", "triceps", ["tri"], { pat: "dip", reps: [10, 20], tempo: -0.5, muscles: "Triceps",
+  setup: "Hands on the edge of the bench behind you, legs out in front.",
+  cues: ["Keep your back close to the bench", "Lower until elbows reach 90°", "Press back up to straight arms"] });
+X("kickback", "Dumbbell Kickback", "triceps", ["tri"], { eq: "db", pat: "kickback", w: 10, reps: [12, 15], muscles: "Triceps",
+  setup: "Hinge forward with a flat back, upper arms tight to your sides.",
+  cues: ["Upper arms stay parallel to the floor", "Extend your forearms straight back", "Squeeze, then lower slowly"] });
+X("diamond_pushup", "Diamond Push-ups", "triceps", ["tri"], { pat: "pushup", noEnv: true, reps: [8, 15], tempo: -0.5, muscles: "Triceps · inner chest",
+  setup: "Push-up position with your hands together under your chest, thumbs and fingers touching.",
+  cues: ["Elbows track back along your ribs", "Lower your chest to your hands", "Drop to your knees to finish the set if needed"] });
+
+/* Back extras */
+X("db_bent_row", "Dumbbell Bent-Over Row", "back", ["back_row"], { eq: "db", pat: "bentRow", w: 20, big: true, muscles: "Lats · mid back",
+  setup: "Hinge forward to about 45°, dumbbells hanging under your shoulders.",
+  cues: ["Flat back, brace your core", "Row the dumbbells to your hips", "Lower to a full stretch"] });
+X("bb_row", "Barbell Bent-Over Row", "back", ["back_row"], { eq: "bb", pat: "bentRow", w: 40, big: true, muscles: "Lats · mid back",
+  setup: "Build the barbell. Overhand grip, hinge forward to about 45°.",
+  cues: ["Pull the bar to your belly button", "Elbows drive back, not out", "Don't stand up as you row"] });
+X("incline_row", "Chest-Supported Incline Row", "back", ["back_row", "back_row2"], { eq: "db", pat: "spiderRow", bench: "incline45", w: 17.5, muscles: "Mid back · lats",
+  setup: "Bench at 45°. Lie chest-down on it, dumbbells hanging.",
+  cues: ["Chest stays on the pad", "Row elbows back past your ribs", "Pause and squeeze at the top"] });
+X("band_lat_pulldown", "Kneeling Band Pulldown", "back", ["back_vert"], { eq: "band", pat: "kneelPulldown", anchorPos: "top of the door, in front of you", w: 30, reps: [12, 15], muscles: "Lats",
+  setup: "Door anchor at the top of the door. Kneel facing it, arms reaching up.",
+  cues: ["Pull your elbows down to your sides", "Chest up, squeeze your lats", "Let your arms rise slowly"] });
+
+/* Legs & glutes */
+X("goblet_squat", "Goblet Squat", "legs", ["leg_squat"], { eq: "db1", pat: "squat", w: 30, big: true, muscles: "Quads · glutes",
+  setup: "Hold one dumbbell vertically at your chest, feet shoulder-width.",
+  cues: ["Sit down between your heels", "Chest tall, elbows inside your knees", "Drive up through your whole foot"] });
+X("bb_squat", "Barbell Back Squat", "legs", ["leg_squat"], { eq: "bb", pat: "squatBB", w: 45, big: true, reps: [10, 15], muscles: "Quads · glutes",
+  setup: "Build the barbell, lift it onto your upper back, feet shoulder-width.",
+  cues: ["Brace before every rep", "Squat to at least parallel", "Knees track over your toes"] });
+X("sumo_squat", "Dumbbell Sumo Squat", "legs", ["leg_squat", "glute"], { eq: "db1", pat: "squat", w: 30, reps: [10, 15], muscles: "Glutes · inner thighs",
+  setup: "Wide stance, toes turned out, one dumbbell hanging between your legs.",
+  cues: ["Push your knees out", "Sit straight down", "Squeeze your glutes at the top"] });
+X("db_rdl", "Dumbbell Romanian Deadlift", "legs", ["leg_hinge"], { eq: "db", pat: "hinge", w: 20, big: true, muscles: "Hamstrings · glutes",
+  setup: "Dumbbells in front of your thighs, soft knees.",
+  cues: ["Push your hips back, dumbbells slide down your legs", "Stop when your hamstrings are fully stretched", "Squeeze your glutes to stand"] });
+X("bb_rdl", "Barbell Romanian Deadlift", "legs", ["leg_hinge"], { eq: "bb", pat: "hinge", w: 45, big: true, muscles: "Hamstrings · glutes",
+  setup: "Build the barbell. Overhand grip, standing tall.",
+  cues: ["Hips back, flat back", "Bar stays close to your legs", "Stand up by squeezing your glutes"] });
+X("rev_lunge", "Dumbbell Reverse Lunge", "legs", ["leg_uni"], { eq: "db", pat: "lunge", w: 15, side: true, muscles: "Quads · glutes",
+  setup: "Dumbbells at your sides, feet hip-width.",
+  cues: ["Step back and drop your back knee toward the floor", "Front shin stays fairly vertical", "Push through the front heel. Finish one side, then switch"] });
+X("split_squat", "Bulgarian Split Squat", "legs", ["leg_uni"], { eq: "db", pat: "splitSquat", bench: "flat", w: 12.5, side: true, muscles: "Quads · glutes",
+  setup: "Rear foot on the bench behind you, dumbbells at your sides.",
+  cues: ["Drop straight down", "Lean slightly forward for more glute", "Drive up through the front foot. Finish one side, then switch"] });
+X("step_up", "Dumbbell Step-up", "legs", ["leg_uni", "glute"], { eq: "db", pat: "stepUp", bench: "flat", w: 15, side: true, muscles: "Glutes · quads",
+  setup: "Stand facing the flat bench, dumbbells at your sides.",
+  cues: ["Whole foot on the bench", "Push through that heel to stand up", "Lower slowly. Finish one side, then switch"] });
+X("hip_thrust", "Dumbbell Hip Thrust", "legs", ["glute"], { eq: "db1", pat: "hipThrust", bench: "flat", w: 35, big: true, muscles: "Glutes",
+  setup: "Upper back against the side of the bench, one dumbbell across your hips.",
+  cues: ["Chin tucked, ribs down", "Drive your hips up until your body is flat", "Squeeze your glutes hard for a second at the top"] });
+X("glute_bridge", "Glute Bridge", "legs", ["glute"], { pat: "bridge", reps: [15, 25], muscles: "Glutes · hamstrings",
+  setup: "Lie on the mat, knees bent, feet flat.",
+  cues: ["Press through your heels", "Lift your hips to a straight line", "Squeeze two seconds at the top"] });
+X("band_kickback", "Band Glute Kickback", "legs", ["glute"], { eq: "band", pat: "bandKick", bandJoint: "a", anchorPos: "bottom of the door, in front of you", w: 15, reps: [12, 20], side: true, muscles: "Glutes",
+  setup: "Ankle strap on, door anchor at the bottom of the door. Face the door and hold the frame.",
+  cues: ["Kick your leg straight back", "Squeeze your glute, don't arch your lower back", "Return slowly. Finish one side, then switch"] });
+X("band_ham_curl", "Standing Band Hamstring Curl", "legs", ["leg_acc"], { eq: "band", pat: "hamCurl", bandJoint: "a", anchorPos: "bottom of the door, in front of you", w: 15, reps: [12, 20], side: true, muscles: "Hamstrings",
+  setup: "Ankle strap on, door anchor at the bottom of the door. Face the door.",
+  cues: ["Thigh stays still", "Curl your heel toward your glute", "Lower slowly. Finish one side, then switch"] });
+X("calf_raise", "Dumbbell Calf Raise", "legs", ["leg_acc"], { eq: "db", pat: "calf", w: 20, reps: [15, 25], muscles: "Calves",
+  setup: "Dumbbells at your sides. Balls of your feet on a step or plate if you have one.",
+  cues: ["Rise as high as you can", "Pause at the top", "Lower all the way down"] });
 
 /* Abs: timed */
 const AB = (id, name, tags, pat, o) => X(id, name, "abs", tags, Object.assign({ mode: "time", pat }, o));
@@ -358,8 +453,11 @@ CS("child", "Child's Pose", "child", { muscles: "Back · lats", setup: "Kneel an
 CS("reach", "Overhead Reach", "reach", { muscles: "Lats · core", setup: "Stand tall, arms overhead.", cues: ["Reach up and lean gently to each side", "Ribs down", "Breathe into your sides"] });
 CS("cross_body", "Cross-Body Shoulder Stretch", "crossBody", { side: true, muscles: "Rear delts", setup: "Pull one arm across your chest.", cues: ["Hold above the elbow", "Keep the shoulder down", "Switch sides at halftime"] });
 
+CS("quad_stretch", "Standing Quad Stretch", "quad", { side: true, muscles: "Quads · hip flexors", setup: "Stand tall, hold the wall if you need to.", cues: ["Pull your heel to your glute", "Knees together, hips forward", "Switch sides at halftime"] });
+CS("ham_stretch", "Seated Hamstring Stretch", "hamStretch", { muscles: "Hamstrings · lower back", setup: "Sit on the mat with your legs straight.", cues: ["Hinge forward from the hips", "Reach toward your toes", "Breathe and relax into it"] });
 const EXM = Object.fromEntries(EX.map(x => [x.id, x]));
 const COOL = ["door_chest", "bicep_wall", "cobra", "child", "reach", "cross_body"];
+const COOL_DAY = { A: ["door_chest", "cross_body", "reach", "cobra", "child"], B: ["bicep_wall", "child", "cross_body", "reach", "cobra"], C: ["quad_stretch", "ham_stretch", "child", "cobra", "door_chest", "bicep_wall"] };
 
 /* ---------------- figure poses (side view, 240x150, floor y=142) ---------------- */
 const STAND = { h: [122, 32], s: [120, 46], p: [118, 86], k: [119, 114], a: [118, 142] };
@@ -387,6 +485,30 @@ const PAT = {
   bayesCurl: { env: "doorL", anchor: [18, 134], a: P(STAND, { e: [110, 72], w: [104, 98] }), b: P(STAND, { e: [110, 72], w: [124, 54] }) },
   facePull: { env: "doorR", anchor: [222, 32], a: P(STAND, { e: [144, 38], w: [168, 32] }), b: P(STAND, { e: [104, 40], w: [128, 30] }) },
   pulldown: { env: "doorR", anchor: [222, 18], a: P(STAND, { e: [142, 33], w: [164, 20] }), b: P(STAND, { e: [122, 72], w: [124, 98] }) },
+  shoulderPress: { env: "benchUpright", a: { h: [114, 54], s: [112, 68], p: [110, 108], k: [138, 108], a: [142, 142], e: [116, 86], w: [118, 62] }, b: { h: [114, 54], s: [112, 68], p: [110, 108], k: [138, 108], a: [142, 142], e: [115, 44], w: [117, 20] } },
+  standOHP: { env: "none", a: P(STAND, { e: [118, 70], w: [122, 50] }), b: P(STAND, { e: [120, 24], w: [121, 2] }) },
+  raise: { env: "none", a: P(STAND, { e: [121, 72], w: [122, 98] }), b: P(STAND, { e: [140, 50], w: [162, 50] }) },
+  pike: { env: "mat", a: { a: [60, 138], k: [78, 112], p: [98, 82], s: [138, 108], h: [146, 120], e: [144, 123], w: [150, 138] }, b: { a: [60, 138], k: [78, 112], p: [98, 86], s: [134, 118], h: [142, 132], e: [124, 122], w: [150, 138] } },
+  bentFly: { env: "none", a: { a: [110, 142], k: [114, 116], p: [100, 88], s: [140, 66], h: [152, 58], e: [141, 90], w: [142, 114] }, b: { a: [110, 142], k: [114, 116], p: [100, 88], s: [140, 66], h: [152, 58], e: [134, 70], w: [128, 76] } },
+  pullApart: { env: "none", a: P(STAND, { e: [144, 48], w: [168, 48] }), b: P(STAND, { e: [126, 50], w: [120, 50] }) },
+  bentRow: { env: "none", a: { a: [110, 142], k: [114, 116], p: [100, 88], s: [140, 66], h: [152, 58], e: [141, 90], w: [142, 114] }, b: { a: [110, 142], k: [114, 116], p: [100, 88], s: [140, 66], h: [152, 58], e: [118, 76], w: [126, 98] } },
+  kickback: { env: "none", a: { a: [110, 142], k: [114, 116], p: [100, 88], s: [140, 66], h: [152, 58], e: [116, 74], w: [122, 98] }, b: { a: [110, 142], k: [114, 116], p: [100, 88], s: [140, 66], h: [152, 58], e: [116, 74], w: [92, 80] } },
+  spiderRow: { env: "benchSpider", a: { h: [134, 73], s: [124, 84], e: [126, 108], w: [127, 132], p: [88, 112], k: [76, 128], a: [62, 142] }, b: { h: [134, 73], s: [124, 84], e: [104, 96], w: [116, 114], p: [88, 112], k: [76, 128], a: [62, 142] } },
+  kneelPulldown: { env: "doorTop", anchor: [222, 14], a: { a: [70, 140], k: [100, 140], p: [104, 108], s: [110, 68], h: [114, 54], e: [130, 46], w: [146, 26] }, b: { a: [70, 140], k: [100, 140], p: [104, 108], s: [110, 68], h: [114, 54], e: [112, 92], w: [124, 72] } },
+  dip: { env: "benchBehind", a: { h: [84, 66], s: [80, 80], e: [77, 96], w: [74, 112], p: [86, 118], k: [122, 120], a: [154, 140] }, b: { h: [86, 84], s: [82, 98], e: [60, 100], w: [74, 112], p: [88, 134], k: [122, 124], a: [154, 140] } },
+  squat: { env: "none", a: P(STAND, { e: [128, 64], w: [130, 52] }), b: { p: [100, 112], k: [134, 112], a: [118, 142], s: [118, 74], h: [124, 60], e: [132, 90], w: [133, 78] } },
+  squatBB: { env: "none", a: P(STAND, { e: [104, 60], w: [114, 44] }), b: { p: [100, 112], k: [134, 112], a: [118, 142], s: [118, 74], h: [124, 60], e: [102, 90], w: [112, 72] } },
+  hinge: { env: "none", a: P(STAND, { e: [121, 72], w: [122, 98] }), b: { p: [104, 90], k: [122, 116], a: [118, 142], s: [142, 70], h: [154, 64], e: [143, 94], w: [144, 118] } },
+  lunge: { env: "none", a: P(STAND, { e: [121, 72], w: [122, 98], k2: [119, 114], a2: [118, 142] }), b: { p: [112, 110], k: [138, 112], a: [136, 142], k2: [96, 138], a2: [72, 140], s: [114, 70], h: [116, 56], e: [116, 96], w: [117, 120] } },
+  splitSquat: { env: "benchFeet", a: { p: [110, 88], s: [112, 48], h: [114, 34], k: [128, 114], a: [126, 142], k2: [94, 112], a2: [72, 110], e: [113, 74], w: [114, 100] }, b: { p: [106, 108], s: [110, 68], h: [112, 54], k: [136, 112], a: [128, 142], k2: [90, 134], a2: [70, 112], e: [111, 94], w: [112, 120] } },
+  stepUp: { env: "benchStep", a: { p: [118, 86], s: [120, 46], h: [122, 32], k: [140, 90], a: [142, 112], k2: [119, 114], a2: [118, 142], e: [121, 72], w: [122, 98] }, b: { p: [146, 64], s: [148, 24], h: [150, 10], k: [147, 90], a: [146, 112], k2: [132, 90], a2: [124, 104], e: [149, 50], w: [150, 76] } },
+  hipThrust: { env: "benchHip", a: { h: [64, 102], s: [78, 106], p: [110, 130], k: [140, 108], a: [146, 142], e: [94, 116], w: [110, 122] }, b: { h: [64, 100], s: [78, 104], p: [114, 104], k: [146, 104], a: [146, 142], e: [96, 100], w: [113, 98] } },
+  bridge: { env: "mat", a: { h: [176, 132], s: [160, 134], p: [116, 134], k: [96, 110], a: [80, 138], e: [138, 138], w: [118, 139] }, b: { h: [176, 132], s: [160, 134], p: [118, 112], k: [92, 108], a: [80, 138], e: [138, 138], w: [118, 139] } },
+  bandKick: { env: "doorR", anchor: [222, 138], a: { h: [130, 34], s: [126, 48], p: [116, 86], k2: [117, 114], a2: [116, 142], k: [116, 114], a: [114, 140], e: [146, 58], w: [166, 64] }, b: { h: [130, 34], s: [126, 48], p: [116, 86], k2: [117, 114], a2: [116, 142], k: [100, 110], a: [80, 124], e: [146, 58], w: [166, 64] } },
+  hamCurl: { env: "doorR", anchor: [222, 138], a: { h: [124, 32], s: [122, 46], p: [118, 86], k2: [119, 114], a2: [118, 142], k: [120, 114], a: [119, 140], e: [146, 58], w: [166, 64] }, b: { h: [124, 32], s: [122, 46], p: [118, 86], k2: [119, 114], a2: [118, 142], k: [119, 114], a: [96, 100], e: [146, 58], w: [166, 64] } },
+  calf: { env: "none", a: P(STAND, { e: [121, 72], w: [122, 98] }), b: { h: [122, 25], s: [120, 39], p: [118, 79], k: [119, 107], a: [120, 136], e: [121, 65], w: [122, 91] } },
+  quad: { env: "none", a: P(STAND, { e: [112, 72], w: [102, 96], k: [118, 114], a: [100, 96], k2: [119, 114], a2: [118, 142] }), b: P(STAND, { e: [112, 72], w: [100, 92], k: [117, 114], a: [98, 92], k2: [119, 114], a2: [118, 142] }) },
+  hamStretch: { env: "mat", a: { p: [100, 136], k: [130, 136], a: [160, 137], s: [124, 102], h: [134, 92], e: [140, 116], w: [156, 126] }, b: { p: [100, 136], k: [130, 136], a: [160, 137], s: [130, 108], h: [142, 102], e: [146, 122], w: [162, 132] } },
   standRow: { env: "doorR", anchor: [222, 58], a: P(STAND, { e: [144, 56], w: [168, 56] }), b: P(STAND, { e: [100, 62], w: [122, 58] }) },
   pushup: { env: "stands", a: { a: [44, 138], k: [78, 128], p: [110, 118], s: [156, 106], h: [170, 101], e: [158, 121], w: [160, 134] }, b: { a: [44, 138], k: [78, 132], p: [110, 127], s: [154, 124], h: [168, 121], e: [138, 118], w: [160, 134] } },
   dpushup: { env: "benchFeet", a: { a: [40, 110], k: [72, 112], p: [104, 114], s: [154, 112], h: [168, 109], e: [158, 126], w: [160, 140] }, b: { a: [40, 110], k: [72, 114], p: [104, 120], s: [152, 128], h: [166, 127], e: [136, 124], w: [160, 140] } },
@@ -468,7 +590,11 @@ function drawFigure(cv, x, t, accent) {
     case "benchEnd": RR(20, 112, 100, 7, prop); L([34, 119], [34, 142], 4, prop); L([106, 119], [106, 142], 4, prop); break;
     case "benchSpider": L([80, 124], [132, 88], 7, prop); L([92, 120], [92, 142], 4, prop); L([118, 104], [118, 142], 4, prop); RR(50, 126, 36, 6, prop); break;
     case "benchFeet": RR(14, 112, 60, 7, prop); L([24, 119], [24, 142], 4, prop); L([64, 119], [64, 142], 4, prop); break;
-    case "stands": RR(150, 136, 22, 5, prop); break;
+    case "stands": if (!x.noEnv) RR(150, 136, 22, 5, prop); break;
+    case "benchUpright": RR(84, 112, 50, 7, prop); L([100, 113], [96, 48], 7, prop); L([92, 119], [92, 142], 4, prop); L([124, 119], [124, 142], 4, prop); break;
+    case "benchBehind": RR(16, 112, 64, 7, prop); L([26, 119], [26, 142], 4, prop); L([70, 119], [70, 142], 4, prop); break;
+    case "benchHip": RR(14, 108, 62, 7, prop); L([24, 115], [24, 142], 4, prop); L([66, 115], [66, 142], 4, prop); break;
+    case "benchStep": RR(132, 112, 80, 7, prop); L([142, 119], [142, 142], 4, prop); L([202, 119], [202, 142], 4, prop); break;
     case "mat": RR(28, 139, 184, 4, prop); break;
     case "doorL": L([16, 6], [16, 142], 3, prop); break;
     case "doorR": L([224, 6], [224, 142], 3, prop); break;
@@ -481,7 +607,7 @@ function drawFigure(cv, x, t, accent) {
   if (x.eq === "band") {
     const an = x.anchorFeet ? [ps.a[0], 141] : (x.anchor || pt.anchor);
     if (x.anchor && pt.env === "none") L([x.anchor[0] + 2, 6], [x.anchor[0] + 2, 142], 3, prop);
-    if (an) { ctx.setLineDash([5, 3]); L(an, ps.w, 2.5, accent); ctx.setLineDash([]); }
+    if (an && !x.noAnchor) { ctx.setLineDash([5, 3]); L(an, ps[x.bandJoint || "w"], 2.5, accent); ctx.setLineDash([]); }
   }
   // far limbs
   L(ps.p, ps.k2, 7, fg, .32); L(ps.k2, ps.a2, 7, fg, .32);
@@ -498,18 +624,19 @@ function drawFigure(cv, x, t, accent) {
   if (x.eq === "db") { RR(w[0] - 9, w[1] - 4.5, 18, 9, accent); }
   else if (x.eq === "db1") { RR(w[0] - 6, w[1] - 8, 12, 16, accent); }
   else if (x.eq === "bb") { ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(w[0], w[1], 11, 0, 7); ctx.fill(); ctx.fillStyle = COLORS.surf; ctx.beginPath(); ctx.arc(w[0], w[1], 3, 0, 7); ctx.fill(); }
-  else if (x.eq === "band") { ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(w[0], w[1], 4.5, 0, 7); ctx.fill(); }
+  else if (x.eq === "band") { const j = ps[x.bandJoint || "w"]; ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(j[0], j[1], 4.5, 0, 7); ctx.fill(); }
 }
 const ease = t => .5 - .5 * Math.cos(Math.PI * t);
-function demoT(x, ms, period) { const P0 = period || (x.mode === "time" ? (x.pat === "run" ? .7 : (["plank", "hollow", "sidePlank", "child", "cobra", "stretchChest", "stretchBi", "reach", "crossBody"].includes(x.pat) ? 3.2 : 2.2)) : 3); const ph = (ms / 1000 % P0) / P0; return ease(ph < .5 ? ph * 2 : 2 - ph * 2); }
+function demoT(x, ms, period) { const P0 = period || (x.mode === "time" ? (x.pat === "run" ? .7 : (["plank", "hollow", "sidePlank", "child", "cobra", "stretchChest", "stretchBi", "reach", "crossBody", "quad", "hamStretch"].includes(x.pat) ? 3.2 : 2.2)) : 3); const ph = (ms / 1000 % P0) / P0; return ease(ph < .5 ? ph * 2 : 2 - ph * 2); }
 
 /* ---------------- state ---------------- */
 const LS_STATE = "ironpace.state.v1", LS_SESS = "ironpace.sessions.v1";
-const DEFAULTS = { voice: true, voiceURI: "", rate: 1, beeps: true, tempoCoach: true, tempo: 3, autoStart: true, restMain: 75, restIso: 60, abWork: 40, abRest: 15, total: 45, warm: 5, abs: 8, cool: 3, inc: 2.5, maxDb: 20, maxBar: 45, smartPace: true, encourage: true, tubes: "10, 15, 20, 25, 30" };
+const DEFAULTS = { voice: true, voiceURI: "", rate: 1, beeps: true, tempoCoach: true, tempo: 3, autoStart: true, restMain: 75, restIso: 60, abWork: 40, abRest: 15, total: 60, warm: 5, abs: 8, cool: 4, cfgv: 2, inc: 2.5, maxDb: 20, maxBar: 45, smartPace: true, encourage: true, musicMode: "duck", tubes: "10, 15, 20, 25, 30" };
 function blank() { return { v: 1, settings: { ...DEFAULTS }, ex: {}, recent: {}, lastType: null, plan: null, bw: [], updatedAt: 0 }; }
 function lsGet(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
-function normalize(s) { const b = blank(); s = Object.assign(b, s || {}); s.settings = Object.assign({ ...DEFAULTS }, s.settings || {}); s.ex = s.ex || {}; s.recent = s.recent || {}; s.bw = s.bw || []; return s; }
+function normalize(s) { const mig = !!(s && s.settings && s.settings.cfgv !== 2); const b = blank(); s = Object.assign(b, s || {}); s.settings = Object.assign({ ...DEFAULTS }, s.settings || {});
+  if (mig) { s.settings.cfgv = 2; s.settings.total = 60; s.settings.cool = Math.max(s.settings.cool, 4); s.lastType = null; } s.ex = s.ex || {}; s.recent = s.recent || {}; s.bw = s.bw || []; return s; }
 let S = normalize(lsGet(LS_STATE));
 let SESSIONS = lsGet(LS_SESS) || [];
 function save() { S.updatedAt = Date.now(); lsSet(LS_STATE, S); queueRemoteState(); }
@@ -525,7 +652,7 @@ function unitOf(x) { return { db: "lb each", db1: "lb", bb: "lb total", band: "l
 function incOf(x) { return x.eq === "bb" || x.eq === "band" ? 5 : S.settings.inc; }
 function maxOf(x) { return { db: S.settings.maxDb, db1: S.settings.maxDb * 2, bb: S.settings.maxBar, band: tubeList().reduce((a, b) => a + b, 0) }[x.eq] || 0; }
 function repSec(x) { return Math.max(1.5, S.settings.tempo + (x.tempo || 0) + ((S.ex[x.id] && S.ex[x.id].slow) || 0)); }
-function benchTxt(x) { return { flat: "Flat bench", incline: "Bench 30°", decline: "Decline bench", incline45: "Bench 45°" }[x.bench] || ""; }
+function benchTxt(x) { return { flat: "Flat bench", incline: "Bench 30°", decline: "Decline bench", incline45: "Bench 45°", upright: "Bench upright" }[x.bench] || ""; }
 
 /* ---------------- cloud sync (db capability), local first ---------------- */
 let DB = null, UID = null, SYNC = "device", writeChain = Promise.resolve(), stateTimer = null;
@@ -560,9 +687,9 @@ async function initSync() {
 
 /* ---------------- plan generation ---------------- */
 const TYPES = {
-  A: { name: "Chest Day", short: "Chest", tag: "Heavy dumbbell pressing, a band press or fly, dumbbell and band curls, a row to finish.", slots: ["chest_press", "chest_incline", "chest_band", "bi_main", "bi_band", "sup_back|sup_tri"], restMul: 1 },
-  B: { name: "Biceps Day", short: "Biceps", tag: "Dumbbell and band curls from three angles, chest presses, a band or dumbbell row.", slots: ["bi_main", "bi_band", "bi_stretch|bi_peak|bi_hammer", "chest_press|chest_incline", "chest_band", "sup_back"], restMul: 1 },
-  C: { name: "Pump Day", short: "Pump", tag: "Mostly bands and push-ups with shorter rests, so chest and arms recover between heavy days.", slots: ["chest_band", "chest_bw", "bi_band", "chest_band|chest_iso", "bi_band|bi_hammer", "sup_back"], restMul: .8 },
+  A: { name: "Push Day", short: "Push", focus: "Chest · Shoulders · Triceps", tag: "Chest goes first while you're fresh, then shoulders and triceps.", slots: ["chest_press", "chest_incline", "chest_band|chest_iso", "sh_press", "sh_lat", "tri", "tri"], restMul: 1 },
+  B: { name: "Pull Day", short: "Pull", focus: "Back · Biceps · Rear delts", tag: "Heavy rows and a pulldown, rear delts, then three biceps angles.", slots: ["back_row", "back_vert", "back_row2", "rear", "bi_main", "bi_band", "bi_stretch|bi_peak|bi_hammer"], restMul: 1 },
+  C: { name: "Legs & Pump", short: "Legs", focus: "Legs · Glutes + chest & biceps pump", tag: "Squat, hinge, single-leg and glute work, then a quick chest and biceps finisher.", slots: ["leg_squat", "leg_hinge", "leg_uni", "glute", "leg_acc", "chest_band|chest_bw", "bi_band|bi_hammer"], restMul: .9 },
 };
 const NEXT_TYPE = { A: "B", B: "C", C: "A" };
 function score(id) { const last = S.recent[id] || 0; const days = last ? (Date.now() - last) / 864e5 : 30; return Math.min(days, 21) + Math.random() * 5; }
@@ -574,11 +701,11 @@ function genPlan(type) {
   TYPES[type].slots.forEach(slot => { const id = pick(slot, used); used.push(id); items.push({ id, slot }); });
   const absU = [], abs = [];
   AB_SLOTS.forEach(slot => { const id = pick(slot, absU, true); absU.push(id); abs.push({ id, slot }); });
-  const cool = [...COOL].sort(() => Math.random() - .5);
-  return { v: 2, date: dayKey(), type, items, abs, cool };
+  const cool = [...(COOL_DAY[type] || COOL)];
+  return { v: 3, date: dayKey(), type, items, abs, cool };
 }
 function todayPlan() {
-  if (!S.plan || S.plan.v !== 2 || S.plan.date !== dayKey()) { const t = S.lastType ? NEXT_TYPE[S.lastType] : "A"; S.plan = genPlan(t); save(); }
+  if (!S.plan || S.plan.v !== 3 || S.plan.date !== dayKey()) { const t = S.lastType ? NEXT_TYPE[S.lastType] : "A"; S.plan = genPlan(t); save(); }
   return S.plan;
 }
 function setSec(id) { const x = EXM[id], st = exState(id); return st.r * repSec(x) * (x.side ? 2 : 1) + 6; }
@@ -587,8 +714,9 @@ function fit(plan) {
   const abPer = plan.abs.length * (st.abWork + st.abRest);
   const abRounds = clamp(Math.floor((st.abs * 60 - 20) / abPer), 1, 3);
   const absSec = abRounds * abPer + 20;
-  const coolN = clamp(Math.round(st.cool * 60 / 30), 2, 6);
-  const budget = st.total * 60 - st.warm * 60 - absSec - coolN * 30 - 30;
+  const coolN = clamp(Math.min(Math.round(st.cool * 60 / 30), plan.cool.length), 2, 6);
+  const stretch = clamp(Math.round(st.cool * 60 / coolN / 5) * 5, 30, 60);
+  const budget = st.total * 60 - st.warm * 60 - absSec - coolN * stretch - 30;
   let items = plan.items.map(it => { const x = EXM[it.id]; return { ...it, sets: 3, rest: Math.round((x.big ? st.restMain : st.restIso) * T.restMul) }; });
   const est = () => items.reduce((t, it) => t + it.sets * (setSec(it.id) + it.rest), 0) + 20;
   let g = 0;
@@ -599,7 +727,7 @@ function fit(plan) {
   g = 0;
   while (g++ < 6) { const c = items.find(it => it.sets < 4); if (!c || budget - est() < setSec(c.id) + c.rest) break; c.sets++; }
   const lift = est();
-  return { items, abRounds, absSec, coolN, lift, warmSec: st.warm * 60, coolSec: coolN * 30, total: st.warm * 60 + absSec + lift + coolN * 30 };
+  return { items, abRounds, absSec, coolN, lift, stretch, warmSec: st.warm * 60, coolSec: coolN * stretch, total: st.warm * 60 + absSec + lift + coolN * stretch };
 }
 
 /* ---------------- audio ---------------- */
@@ -615,13 +743,25 @@ function say(text, flush) {
     speechSynthesis.speak(u);
   } catch (e) { }
 }
+/* Play nicely with Spotify and other music apps (Audio Session API, Safari 16.4+ / iOS) */
+function applyAudioSession() {
+  try { if (navigator.audioSession) navigator.audioSession.type = S.settings.musicMode === "mix" ? "ambient" : "transient"; } catch (e) { }
+}
+let acIdle = null;
+function acWake(fn) {
+  if (!AC) return;
+  clearTimeout(acIdle);
+  const go = () => { try { fn(); } catch (e) { } acIdle = setTimeout(() => { try { if (AC && AC.state === "running") AC.suspend(); } catch (e) { } }, 1500); };
+  if (AC.state === "suspended") AC.resume().then(go, () => { }); else go();
+}
 function unlockAudio() {
+  applyAudioSession();
   try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); } catch (e) { }
   try { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } catch (e) { }
 }
 function beep(f = 880, d = .12, vol = .25) {
   if (!S.settings.beeps || !AC) return;
-  try { const o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; o.type = "sine"; g.gain.setValueAtTime(vol, AC.currentTime); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + d); o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d + .02); } catch (e) { }
+  acWake(() => { const o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; o.type = "sine"; g.gain.setValueAtTime(vol, AC.currentTime); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + d); o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d + .02); });
 }
 const tick = () => beep(1320, .05, .12);
 const PRAISE = ["Strong work.", "That's how you build it.", "Good set.", "Clean reps.", "Keep that form.", "You're on track.", "Nice and controlled."];
@@ -643,18 +783,19 @@ function viewToday() {
   const exRow = (id, meta, swap) => `<button class="item" data-act="sheet" data-id="${id}"><canvas data-thumb="${id}"></canvas><div><div class="nm">${esc(EXM[id].name)}</div><div class="mt">${meta}</div></div>${swap ? `<span class="icon-btn" role="button" aria-label="Swap exercise" data-act="swap" data-kind="${swap}" data-id="${id}">${ICON.swap}</span>` : "<span></span>"}</button>`;
   const liftRows = F.items.map(it => { const x = EXM[it.id], st = exState(it.id); return exRow(it.id, `${it.sets} × ${st.r}${x.side ? " / side" : ""} · ${esc(weightLabel(x, st))}${x.bench ? " · " + benchTxt(x) : ""}${x.anchorPos && x.anchorPos.indexOf("none") ? " · anchor " + esc(x.anchorPos.split(",")[0]) : ""}`, "lift"); }).join("");
   const absRows = plan.abs.map(a => exRow(a.id, `${S.settings.abWork}s on · ${S.settings.abRest}s rest${EXM[a.id].side ? " · switch sides halfway" : ""}`, "abs")).join("");
-  const coolRows = plan.cool.slice(0, F.coolN).map(id => exRow(id, "30s" + (EXM[id].side ? " · 15s each side" : ""), "")).join("");
+  const coolRows = plan.cool.slice(0, F.coolN).map(id => exRow(id, F.stretch + "s" + (EXM[id].side ? " · " + F.stretch / 2 + "s each side" : ""), "")).join("");
   const seg = (sec, col) => `<span style="flex:${sec};background:${col}"></span>`;
   return `
   <header class="top"><div class="brand"><i></i>Iron Pace</div><div class="date">${new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}</div></header>
   <section class="hero">
-    <div class="eyebrow">Today · Day ${plan.type} of the A-B-C rotation</div>
+    <div class="eyebrow">Today · Push → Pull → Legs rotation</div>
     <h1>${T.name}</h1>
+    <div class="eyebrow" style="color:var(--fg)">${T.focus}</div>
     <p class="muted">${T.tag}</p>
     <div class="daychips" role="group" aria-label="Workout type">${Object.keys(TYPES).map(k => `<button class="chip" data-act="type" data-t="${k}" aria-pressed="${k === plan.type}">${k} · ${TYPES[k].short}</button>`).join("")}</div>
     <div class="timeline">${seg(F.warmSec, PHC.warm)}${seg(F.absSec, PHC.abs)}${seg(F.lift, PHC.lift)}${seg(F.coolSec, PHC.cool)}</div>
     <div class="legend num"><span><b style="background:var(--warm)"></b>Warm-up ${fmt(F.warmSec)}</span><span><b style="background:var(--abs)"></b>Abs ${fmt(F.absSec)}</span><span><b style="background:var(--lift)"></b>Weights ${fmt(F.lift)}</span><span><b style="background:var(--cool)"></b>Cool-down ${fmt(F.coolSec)}</span></div>
-    ${done ? `<div class="note">You already trained today (${fmt(done.dur)}). Going again is fine, or pick Pump Day for a lighter session.</div>` : ""}
+    ${done ? `<div class="note">You already trained today (${fmt(done.dur)}). Going again is fine, or switch to a different day.</div>` : ""}
     <button class="btn primary block" data-act="start">${ICON.play} Start ${Math.round(tot / 60)}-minute workout</button>
     <div class="row-actions"><button class="btn small" data-act="reshuffle">${ICON.swap} Fresh exercises</button></div>
   </section>
@@ -689,10 +830,10 @@ function viewHistory() {
   <section><div class="block-h"><h3>Sessions</h3></div>${list ? `<div class="list">${list}</div>` : `<p class="note">Finish your first workout and it shows up here with every set you logged.</p>`}</section>`;
 }
 function viewLibrary() {
-  const groups = { all: "All", band: "Bands", chest: "Chest", biceps: "Biceps", abs: "Abs", support: "Back & triceps", cool: "Stretches" };
+  const groups = { all: "All", chest: "Chest", shoulders: "Shoulders", triceps: "Triceps", back: "Back", biceps: "Biceps", legs: "Legs", abs: "Abs", band: "Bands", cool: "Stretches" };
   const xs = EX.filter(x => LIBF === "all" ? x.group !== "warm" : LIBF === "band" ? x.eq === "band" : x.group === LIBF);
   return `<header class="top"><div class="brand"><i></i>Library</div><div class="date">${xs.length} moves</div></header>
-  <p class="muted">Everything here uses your gear: adjustable dumbbells and bar, bench, bands with door anchor, mat and treadmill.</p>
+  <p class="muted">Everything here uses your gear: adjustable dumbbells and bar, bench, bands with door anchor and ankle straps, mat and treadmill.</p>
   <div class="filters">${Object.entries(groups).map(([k, v]) => `<button class="chip" data-act="libf" data-f="${k}" aria-pressed="${LIBF === k}">${v}</button>`).join("")}</div>
   <div class="list">${xs.map(x => `<button class="item" data-act="sheet" data-id="${x.id}"><canvas data-thumb="${x.id}"></canvas><div><div class="nm">${esc(x.name)}</div><div class="mt">${esc(x.muscles || "")}</div></div><span></span></button>`).join("")}</div>`;
 }
@@ -712,6 +853,7 @@ function viewSettings() {
     <div class="field"><div><label for="s_voiceURI">Voice</label></div><select id="s_voiceURI" data-set="voiceURI"><option value="">Automatic</option>${VOICES.map(v => `<option value="${esc(v.voiceURI)}" ${v.voiceURI === S.settings.voiceURI ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></div>
     ${fNum("rate", "Speaking speed", "1 is normal", .7, 1.5, .05)}
     <div class="field"><div><label>Test the voice</label><small>Connect your headphones first</small></div><button class="btn small" data-act="testvoice">${ICON.play} Play</button></div>
+    <div class="field"><div><label for="s_musicMode">With music playing</label><small>How the coach shares your headphones with Spotify</small></div><select id="s_musicMode" data-set="musicMode"><option value="duck" ${S.settings.musicMode !== "mix" ? "selected" : ""}>Lower music while coaching</option><option value="mix" ${S.settings.musicMode === "mix" ? "selected" : ""}>Mix, don't lower music</option></select></div>
     ${fBool("beeps", "Countdown beeps", "3-2-1 beeps and rep ticks")}
     ${fBool("tempoCoach", "Tempo rep counter", "Counts reps out loud at a set pace. Off = you tap Done")}
     ${fNum("tempo", "Seconds per rep", "3 = 2 down, 1 up", 2, 6, .5)}
@@ -734,7 +876,7 @@ function viewSettings() {
   <section><div class="block-h"><h3>Data</h3></div><div class="form">
     <div class="field"><div><label>Reset everything</label><small>Deletes history, weights and body-weight log${SYNC === "cloud" ? " on this device and your account" : ""}</small></div>${CONFIRM_RESET ? `<div class="row-actions"><button class="btn small" data-act="resetno">Keep</button><button class="btn small" style="color:var(--bad)" data-act="resetyes">Delete all</button></div>` : `<button class="btn small" data-act="reset">Reset</button>`}</div>
   </div></section>
-  <p class="note">Tip: keep this page open with the screen on during a workout. Phones pause timers and voice when the screen locks. On iPhone, flip the silent switch off so beeps play.</p>`;
+  <p class="note">Tip: start Spotify first, then open Iron Pace and tap Start. Keep this page on screen during the workout; timers and voice pause when the screen locks or you switch apps. Control music from the lock screen or Control Center. In "Mix" mode, iPhone beeps follow the silent switch.</p>`;
 }
 function navHTML() {
   const t = (k, l, ic) => `<button data-act="tab" data-tab="${k}" aria-current="${TAB === k ? "page" : "false"}">${ICON[ic]}<span>${l}</span></button>`;
@@ -805,7 +947,7 @@ function buildSteps(plan, F) {
       else steps.push({ k: "rest", ph: "lift", dur: lastSet ? Math.max(it.rest, 35) : it.rest, log: true, trans: lastSet });
     }
   });
-  plan.cool.slice(0, F.coolN).forEach(id => steps.push({ k: "timed", ph: "cool", id, dur: 30 }));
+  plan.cool.slice(0, F.coolN).forEach(id => steps.push({ k: "timed", ph: "cool", id, dur: F.stretch }));
   // planned durations
   let acc = 0;
   steps.forEach(s => { s.plan = s.k === "set" ? setSec(s.id) : s.dur; s.at = acc; acc += s.plan; });
@@ -973,7 +1115,7 @@ function renderPlayer() {
   let title = "", sub = "", badge = "", side = "", adj = "", extra = "";
   if (s.k === "timed") {
     title = x.name; badge = phName;
-    sub = s.ph === "abs" ? `Round ${s.round} of ${s.rounds} · ${S.settings.abWork}s` : s.ph === "warm" ? "Treadmill" : "Stretch · 30s";
+    sub = s.ph === "abs" ? `Round ${s.round} of ${s.rounds} · ${S.settings.abWork}s` : s.ph === "warm" ? "Treadmill" : `Stretch · ${s.dur}s`;
   } else if (s.k === "set") {
     const c = PL.cur[s.id];
     title = x.name; badge = `Lift ${s.xi + 1} of ${s.xn}`;
@@ -1054,13 +1196,13 @@ function renderSummary() {
     <div class="sum-grid"><div class="tile"><div class="v num">${fmt(s.dur)}</div><div class="l">Time</div></div><div class="tile"><div class="v num">${s.volume >= 10000 ? (s.volume / 1000).toFixed(1) + "k" : s.volume}</div><div class="l">lb lifted</div></div><div class="tile"><div class="v num">${Object.keys(PL.logs).length}</div><div class="l">Sets</div></div></div>
     ${R.result.length ? `<section><div class="block-h"><h3>Next time</h3></div><div class="list">${R.result.map(r => `<div class="item" style="grid-template-columns:1fr auto"><div><div class="nm">${esc(r.name)}${r.pr ? ` <span class="prog up">New best</span>` : ""}</div><div class="mt num">${r.sets.map(z => (z.w ? fmtW(z.w) + "×" : "") + z.r).join(", ")}</div></div><span class="prog ${r.cls}">${esc(r.note)}</span></div>`).join("")}</div></section>` : ""}
     ${s.abs.length ? `<p class="muted">Abs: ${s.abs.map(esc).join(", ")}</p>` : ""}
-    <p class="note">Tomorrow is ${TYPES[NEXT_TYPE[s.type]].name}. Exercises you did today are pushed to the back of the queue so the next sessions stay fresh.</p>
+    <p class="note">Next up is ${TYPES[NEXT_TYPE[s.type]].name} (${TYPES[NEXT_TYPE[s.type]].focus}). Exercises you did today are pushed to the back of the queue so the next sessions stay fresh.</p>
     <button class="btn primary block" data-act="close">Back to today</button>
   </div></div>`;
 }
 
 /* ---------------- animation loop ---------------- */
-const CON_FIRST = ["curl", "inclineCurl", "concentration", "spider", "row", "standRow", "standPress", "standFly", "pushdown", "standPressLow", "standPressHigh", "standFlyHigh", "standFlyLow", "bayesCurl", "facePull", "pulldown"];
+const CON_FIRST = ["curl", "inclineCurl", "concentration", "spider", "row", "standRow", "standPress", "standFly", "pushdown", "standPressLow", "standPressHigh", "standFlyHigh", "standFlyLow", "bayesCurl", "facePull", "pulldown", "shoulderPress", "standOHP", "raise", "bentFly", "pullApart", "bentRow", "kickback", "spiderRow", "kneelPulldown", "hipThrust", "bridge", "bandKick", "hamCurl", "stepUp", "calf"];
 function frame(ms) {
   if (PL && !PL.done) {
     const s = curStep(), cv = $("#pFig");
@@ -1148,7 +1290,7 @@ document.addEventListener("change", e => {
   if (el.type === "checkbox") S.settings[k] = el.checked;
   else if (el.tagName === "SELECT" || el.dataset.kind === "text") S.settings[k] = el.value;
   else { const v = parseFloat(el.value); if (!isNaN(v)) S.settings[k] = clamp(v, +el.min, +el.max); }
-  save(); if (k === "voiceURI") say("Voice selected.", true);
+  save(); if (k === "voiceURI") say("Voice selected.", true); if (k === "musicMode") { applyAudioSession(); }
 });
 document.addEventListener("submit", e => {
   const f = e.target.closest("[data-form=bw]"); if (!f) return; e.preventDefault();
@@ -1159,6 +1301,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => rend
 new MutationObserver(() => render()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (!PL) { drawThumbs(); drawSparks(); } else { const nf = $("#nextFig"); if (nf) delete nf.dataset.done; } }, 150); });
 
+applyAudioSession();
 render();
 initSync();
 </script>
