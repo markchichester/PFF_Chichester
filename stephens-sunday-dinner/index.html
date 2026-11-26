@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a2e1f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Stephen's">
+<title>Stephen's Sunday Dinner</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{
+  --bg:#f6efe3; --card:#fffaf1; --ink:#2b1d14; --muted:#7a6a5c; --line:#e6d9c6;
+  --accent:#8c2f1b; --accent2:#a8462c; --gold:#b98328; --green:#3f6e3b; --late:#b3261e;
+  --oven:#c0532c; --stove:#2f6f8f; --prep:#6b7d3a; --table:#7b5aa6;
+  --r:16px; --shadow:0 1px 2px rgba(60,30,10,.06),0 4px 14px rgba(60,30,10,.07);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(96px + env(safe-area-inset-bottom))}
+h1,h2,h3,.serif{font-family:Georgia,"Times New Roman",serif}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input,select{font:inherit;color:var(--ink)}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+.hidden{display:none!important}
+
+/* header */
+.hero{padding:22px 4px 10px;text-align:center}
+.hero .mark{width:54px;height:54px;margin:0 auto 6px;display:block}
+.hero h1{margin:0;font-size:28px;letter-spacing:.2px;color:var(--accent)}
+.hero p{margin:4px 0 0;color:var(--muted);font-style:italic;font-family:Georgia,serif}
+.topbtns{position:absolute;right:12px;top:calc(12px + env(safe-area-inset-top));display:flex;gap:6px}
+.iconbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--card);box-shadow:var(--shadow);font-size:18px}
+
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:12px 0}
+.card h2{margin:0 0 10px;font-size:19px}
+.row{display:flex;gap:10px;align-items:center}
+.row > *{flex:1}
+label.f{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px}
+.inp{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:16px}
+.inp:focus{outline:2px solid var(--gold);border-color:transparent}
+.sub{color:var(--muted);font-size:14px}
+.big-summary{font-family:Georgia,serif;font-size:17px;margin-top:12px;padding:12px;border-radius:12px;background:#f3e6d2}
+.big-summary b{color:var(--accent)}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:9px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:15px;white-space:nowrap}
+.chip.saved{border-style:dashed}
+
+.dish{display:flex;gap:12px;align-items:center;padding:12px;border-radius:14px;background:#fff;border:1px solid var(--line);margin-top:8px;width:100%;text-align:left}
+.dish .emo{font-size:28px;width:40px;text-align:center}
+.dish .nm{font-weight:600}
+.dish .meta{font-size:13px;color:var(--muted)}
+.dish .go{margin-left:auto;color:var(--muted);font-size:20px}
+.addbtn{width:100%;margin-top:10px;padding:13px;border:2px dashed var(--line);border-radius:14px;color:var(--accent);font-weight:600}
+
+.btn{padding:13px 18px;border-radius:14px;font-weight:600;background:#fff;border:1px solid var(--line)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.green{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.danger{color:var(--late);border-color:#e8c2bd}
+.btn.small{padding:8px 12px;font-size:14px;border-radius:10px}
+.bottombar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(rgba(246,239,227,0),var(--bg) 30%);z-index:5}
+.bottombar .wrap{display:flex;gap:10px;padding:0}
+.bottombar .btn{flex:1;font-size:17px;padding:16px}
+
+/* timeline */
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.tl li:first-child{border-top:0}
+.tl .tm{width:72px;flex:0 0 72px;font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;padding-top:2px}
+.tl .tm small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.tl .what{flex:1}
+.tl .what .lb{font-weight:500}
+.tl .what .it{font-size:13px;color:var(--muted)}
+.tl .what .nt{font-size:13px;color:var(--muted);font-style:italic}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:6px;color:#fff;vertical-align:1px;margin-right:4px}
+.tag.oven{background:var(--oven)}.tag.stove{background:var(--stove)}.tag.prep{background:var(--prep)}.tag.table{background:var(--table)}
+.chk{width:30px;height:30px;flex:0 0 30px;border-radius:9px;border:2px solid var(--line);background:#fff;display:grid;place-items:center;font-size:17px;color:#fff}
+.tl li.done .chk{background:var(--green);border-color:var(--green)}
+.tl li.done .what,.tl li.done .tm{opacity:.45}
+.tl li.done .lb{text-decoration:line-through}
+.tl li.late .tm{color:var(--late)}
+.tl li.nowline{border-top:2px solid var(--accent)}
+
+/* live */
+.livehead{text-align:center;padding:16px 0 4px}
+.livehead .meal{font-family:Georgia,serif;font-size:20px;color:var(--accent)}
+.livehead .dt{color:var(--muted);font-size:14px}
+.livehead .cd{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-1px;margin-top:2px}
+.livehead .cdl{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.shift{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.nowcard{background:var(--accent);color:#fff;border-radius:20px;padding:16px;margin:14px 0;box-shadow:0 8px 24px rgba(140,47,27,.3)}
+.nowcard h2{margin:0 0 8px;font-size:15px;text-transform:uppercase;letter-spacing:1.2px;font-family:inherit;opacity:.85}
+.nowitem{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.12);border-radius:14px;padding:12px;margin-top:8px}
+.nowitem .txt{flex:1}
+.nowitem .lb{font-size:20px;font-weight:700;line-height:1.2}
+.nowitem .it{font-size:14px;opacity:.85;margin-top:2px}
+.nowitem .nt{font-size:14px;opacity:.85;font-style:italic;margin-top:2px}
+.nowitem .lt{font-size:13px;font-weight:700;background:#fff;color:var(--late);border-radius:6px;padding:1px 6px;display:inline-block;margin-top:4px}
+.donebtn{background:#fff;color:var(--accent);font-weight:800;padding:14px 16px;border-radius:14px;font-size:16px}
+.calm{text-align:center;padding:6px 0 2px}
+.calm .q{font-family:Georgia,serif;font-size:20px}
+.nextcard .nx{display:flex;gap:12px;align-items:center}
+.nextcard .nx .cd{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent);min-width:110px}
+.nextcard .nx .lb{font-size:18px;font-weight:600}
+.nextcard .later{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.nextcard .later div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:15px}
+.nextcard .later span:last-child{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.status div.s{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.status div.s:first-of-type{border-top:0}
+.status .emo{font-size:24px;width:34px;text-align:center}
+.status .nm{font-weight:600}
+.status .ph{font-size:14px;color:var(--muted)}
+.status .rt{margin-left:auto;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent);white-space:nowrap}
+.status .rt small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.served{text-align:center;padding:26px 10px}
+.served .q{font-family:Georgia,serif;font-size:26px;color:var(--accent)}
+
+/* sheets */
+.sheet{position:fixed;inset:0;background:rgba(30,15,5,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet-card{background:var(--bg);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
+.sheet-card h2{margin:0 0 12px;font-size:22px}
+.sheet-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sheet-head h2{margin:0;flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stepedit{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin-top:8px}
+.stepedit .r1{display:flex;gap:8px}
+.stepedit .r2{display:flex;gap:8px;margin-top:8px;align-items:center}
+.stepedit .when{font-size:13px;color:var(--muted);white-space:nowrap}
+.xbtn{width:40px;flex:0 0 40px;border-radius:10px;border:1px solid var(--line);color:var(--late);font-size:18px}
+.libgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.libbtn{display:flex;align-items:center;gap:8px;padding:12px;border-radius:12px;background:#fff;border:1px solid var(--line);text-align:left;font-size:15px}
+.libbtn span{font-size:22px}
+.sect{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:14px 0 6px}
+.calc{background:#f3e6d2;border-radius:12px;padding:10px 12px;font-size:14px;margin-top:10px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.toggle:first-of-type{border-top:0}
+.toggle input{width:22px;height:22px;accent-color:var(--accent)}
+
+.toast{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:30;background:var(--ink);color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;gap:12px;align-items:center;max-width:620px;margin:0 auto;animation:drop .25s ease}
+.toast .t{flex:1;font-weight:600}
+.toast .t small{display:block;font-weight:400;opacity:.8}
+@keyframes drop{from{transform:translateY(-20px);opacity:0}}
+.flash{animation:flash 1s ease 3}
+@keyframes flash{50%{background:#d9472b}}
+footer{text-align:center;color:var(--muted);font-family:Georgia,serif;font-style:italic;font-size:14px;padding:20px 10px}
+</style>
+</head>
+<body>
+
+<!-- ================= PLAN ================= -->
+<div id="planView">
+  <div class="topbtns"><button class="iconbtn" id="setBtn" aria-label="Settings">⚙️</button></div>
+  <div class="wrap">
+    <header class="hero">
+      <img class="mark" src="icon.svg" alt="">
+      <h1>Stephen's Sunday Dinner</h1>
+      <p>For Dad, who always had it on the table on time.</p>
+    </header>
+
+    <section class="card">
+      <h2>What are we cooking?</h2>
+      <div class="chips" id="presetChips"></div>
+      <div style="margin-top:10px">
+        <label class="f" for="mealName">Name of the meal</label>
+        <input class="inp" id="mealName" placeholder="Sunday Roast">
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div><label class="f" for="serveDate">Dinner day</label><input class="inp" type="date" id="serveDate"></div>
+        <div><label class="f" for="serveTime">On the table at</label><input class="inp" type="time" id="serveTime"></div>
+      </div>
+      <div class="big-summary" id="summary"></div>
+    </section>
+
+    <section class="card">
+      <h2>The menu</h2>
+      <div class="sub">Tap a dish to change its timings.</div>
+      <div id="dishList"></div>
+      <button class="addbtn" id="addDish">+ Add a dish</button>
+    </section>
+
+    <section class="card">
+      <h2>The running order</h2>
+      <ul class="tl" id="planTimeline"></ul>
+    </section>
+
+    <footer>Stephen's way: everything hot, everything at once.</footer>
+  </div>
+  <div class="bottombar"><div class="wrap">
+    <button class="btn" id="saveMenu" style="flex:0 0 auto">Save menu</button>
+    <button class="btn primary" id="startBtn">Start cooking</button>
+  </div></div>
+</div>
+
+<!-- ================= LIVE ================= -->
+<div id="liveView" class="hidden">
+  <div class="topbtns"><button class="iconbtn" id="setBtn2" aria-label="Settings">⚙️</button></div>
+  <div class="wrap">
+    <div class="livehead">
+      <div class="meal" id="lvMeal"></div>
+      <div class="dt" id="lvServe"></div>
+      <div class="cd" id="lvCd" data-cd></div>
+      <div class="cdl">until dinner</div>
+      <div class="shift">
+        <button class="btn small" data-shift="-5">−5 min</button>
+        <button class="btn small" data-shift="5">Running late +5</button>
+        <button class="btn small" data-shift="15">+15</button>
+      </div>
+    </div>
+    <div id="lvBody"></div>
+    <section class="card">
+      <h2>Every step</h2>
+      <ul class="tl" id="liveTimeline"></ul>
+    </section>
+    <footer>Cooking for the family, the way Dad did.</footer>
+  </div>
+  <div class="bottombar"><div class="wrap">
+    <button class="btn danger" id="endBtn">Stop &amp; back to the plan</button>
+  </div></div>
+</div>
+
+<div id="sheet" class="sheet hidden"><div class="sheet-card" id="sheetCard"></div></div>
+<div id="toastHost"></div>
+
+<script>
+/* ============================================================
+   Stephen's Sunday Dinner — a countdown + checklist for big meals.
+   Every step is stored as "minutes before dinner", so moving the
+   dinner time moves the whole plan with it.
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2, 9);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const WHERE = { prep:'Prep', oven:'Oven', stove:'Stove', table:'Table' };
+const STORE = 'stephens-sunday-dinner.v1';
+
+/* ---------- Recipe library ---------- */
+const MEATS = {
+  beef:    { name:'Roast beef',  emoji:'🥩', meat:{ weight:3,  perLb:18, extra:0,  rest:20, temp:350, temper:60, target:'125–130°F for medium-rare' } },
+  turkey:  { name:'Turkey',      emoji:'🦃', meat:{ weight:14, perLb:13, extra:0,  rest:30, temp:325, temper:60, target:'165°F in the thickest part of the thigh' },
+             steps:[['Baste the turkey', 120, 'oven', ''], ['Check the turkey — tent with foil if browning too fast', 75, 'oven', '']] },
+  ham:     { name:'Glazed ham',  emoji:'🍖', meat:{ weight:8,  perLb:12, extra:0,  rest:15, temp:325, temper:30, target:'140°F (fully-cooked ham)' },
+             steps:[['Glaze the ham, back in uncovered', 45, 'oven', '']] },
+  chicken: { name:'Roast chicken', emoji:'🍗', meat:{ weight:4, perLb:20, extra:0, rest:15, temp:375, temper:30, target:'165°F in the thigh' } },
+  lamb:    { name:'Leg of lamb', emoji:'🐑', meat:{ weight:5,  perLb:20, extra:0,  rest:15, temp:350, temper:45, target:'135°F for medium-rare' } },
+  pork:    { name:'Pork loin',   emoji:'🐖', meat:{ weight:3,  perLb:20, extra:0,  rest:10, temp:350, temper:30, target:'145°F' } },
+};
+const SIDES = {
+  roastpot: { name:'Roast potatoes', emoji:'🥔', steps:[
+    ['Peel and cut potatoes into big chunks',120,'prep',''],
+    ['Big pot of salted water on to boil',105,'stove',''],
+    ['Potatoes into the boiling water — parboil',95,'stove','About 10 minutes'],
+    ['Fat into a roasting tin, into the oven to get hot',90,'oven','425°F if the oven is free'],
+    ['Drain, shake to rough up the edges, let them steam dry',85,'stove',''],
+    ['Potatoes into the hot fat — baste them',75,'oven',''],
+    ['Turn the roast potatoes',40,'oven',''],
+    ['Roast potatoes out — salt them',5,'oven',''] ]},
+  mash: { name:'Mashed potatoes', emoji:'🥣', steps:[
+    ['Peel and cut potatoes for the mash',75,'prep',''],
+    ['Pot of salted water on',60,'stove',''],
+    ['Potatoes in — simmer until tender',50,'stove','About 20 minutes'],
+    ['Warm the milk and butter',30,'stove',''],
+    ['Drain and mash, season, lid on to keep warm',25,'stove',''] ]},
+  yorkshire: { name:'Yorkshire puddings', emoji:'🧁', steps:[
+    ['Make the Yorkshire batter and let it rest',90,'prep','Equal cups eggs, flour, milk + pinch of salt'],
+    ['Oil in the tin, into the oven to get smoking hot',30,'oven','450°F once the meat is out'],
+    ['Batter in — DON\'T open the oven door',22,'oven','About 20 minutes'],
+    ['Yorkshires out',2,'oven',''] ]},
+  gravy: { name:'Gravy', emoji:'🫗', steps:[
+    ['Start the gravy — pan juices, flour, stock',25,'stove',''],
+    ['Gravy into a warm jug',3,'stove',''] ]},
+  carrots: { name:'Carrots', emoji:'🥕', steps:[
+    ['Peel and slice the carrots',60,'prep',''],
+    ['Water on for the carrots',25,'stove',''],
+    ['Carrots in',18,'stove','12–15 minutes'],
+    ['Drain carrots — butter and pepper',3,'stove',''] ]},
+  peas: { name:'Peas', emoji:'🫛', steps:[
+    ['Peas on',8,'stove',''],
+    ['Drain the peas, knob of butter',2,'stove',''] ]},
+  greenbeans: { name:'Green beans', emoji:'🫘', steps:[
+    ['Trim the green beans',60,'prep',''],
+    ['Water on for the beans',18,'stove',''],
+    ['Green beans in',8,'stove','5–6 minutes'],
+    ['Drain the beans',2,'stove',''] ]},
+  sprouts: { name:'Brussels sprouts', emoji:'🥬', steps:[
+    ['Trim and halve the sprouts',70,'prep',''],
+    ['Sprouts into the oven',30,'oven','425°F, tossed in oil and salt'],
+    ['Shake the sprouts tray',15,'oven',''],
+    ['Sprouts out',3,'oven',''] ]},
+  stuffing: { name:'Stuffing', emoji:'🍞', steps:[
+    ['Make the stuffing',100,'prep',''],
+    ['Stuffing into the oven, covered',45,'oven','350°F'],
+    ['Uncover the stuffing to crisp',20,'oven',''],
+    ['Stuffing out',5,'oven',''] ]},
+  gbc: { name:'Green bean casserole', emoji:'🥘', steps:[
+    ['Assemble the green bean casserole',80,'prep',''],
+    ['Green bean casserole into the oven',40,'oven','350°F'],
+    ['Fried onions on top',10,'oven',''],
+    ['Green bean casserole out',3,'oven',''] ]},
+  sweetpot: { name:'Sweet potato casserole', emoji:'🍠', steps:[
+    ['Assemble the sweet potato casserole',90,'prep',''],
+    ['Sweet potato casserole into the oven',50,'oven','350°F'],
+    ['Marshmallows / topping on',15,'oven',''],
+    ['Sweet potato casserole out',3,'oven',''] ]},
+  cranberry: { name:'Cranberry sauce', emoji:'🍒', steps:[
+    ['Cranberries, sugar and orange juice into a pan',150,'stove','Simmer ~15 min until they pop'],
+    ['Cranberry sauce off the heat to cool and set',135,'stove',''] ]},
+  rolls: { name:'Dinner rolls', emoji:'🥖', steps:[
+    ['Rolls into the oven',15,'oven','Just to warm through'],
+    ['Rolls out — into a basket with a towel',4,'oven',''] ]},
+  pigs: { name:'Pigs in blankets', emoji:'🌭', steps:[
+    ['Pigs in blankets into the oven',35,'oven','400°F'],
+    ['Turn the pigs in blankets',20,'oven',''],
+    ['Pigs in blankets out',3,'oven',''] ]},
+  cauli: { name:'Cauliflower cheese', emoji:'🧀', steps:[
+    ['Make the cheese sauce, blanch the cauliflower',80,'stove',''],
+    ['Cauliflower cheese into the oven',45,'oven','375°F until bubbling'],
+    ['Cauliflower cheese out',3,'oven',''] ]},
+  mac: { name:'Mac and cheese', emoji:'🧀', steps:[
+    ['Make the mac and cheese',90,'stove',''],
+    ['Mac and cheese into the oven',40,'oven','350°F'],
+    ['Mac and cheese out',3,'oven',''] ]},
+  table: { name:'The table', emoji:'🍽️', steps:[
+    ['Set the table',45,'table',''],
+    ['Warm the plates',15,'table',''],
+    ['Call everyone to the table',3,'table',''] ]},
+};
+const PRESETS = {
+  sunday:       { label:'🥩 Sunday Roast', name:'Sunday Roast', time:'17:00', items:['beef','roastpot','mash','yorkshire','carrots','peas','gravy','table'] },
+  thanksgiving: { label:'🦃 Thanksgiving', name:'Thanksgiving Dinner', time:'16:00', items:['turkey','mash','stuffing','gbc','sweetpot','cranberry','rolls','gravy','table'] },
+  christmas:    { label:'🎄 Christmas', name:'Christmas Dinner', time:'15:00', items:['turkey','roastpot','mash','sprouts','pigs','carrots','stuffing','gravy','table'] },
+  blank:        { label:'＋ Start blank', name:'Dinner', time:'17:00', items:[] },
+};
+
+function fromLib(key){
+  const src = MEATS[key] || SIDES[key];
+  const it = { id:uid(), lib:key, name:src.name, emoji:src.emoji, meat: src.meat ? {...src.meat} : null,
+    steps:(src.steps||[]).map(([label,at,where,note]) => ({ id:uid(), label, at, where, note })) };
+  return it;
+}
+
+/* ---------- State ---------- */
+const todayISO = () => { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+function defaultState(){
+  return { plan: planFromPreset('sunday'), saved:[], live:null,
+           settings:{ sound:true, vibrate:true, heads:true, nag:true } };
+}
+function planFromPreset(k){
+  const p = PRESETS[k];
+  return { name:p.name, date:todayISO(), time:p.time, items:p.items.map(fromLib) };
+}
+let S;
+try { S = JSON.parse(localStorage.getItem(STORE)) || defaultState(); } catch(e){ S = defaultState(); }
+S.settings = Object.assign({ sound:true, vibrate:true, heads:true, nag:true }, S.settings||{});
+S.saved = S.saved || [];
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e){} };
+if (!S.live && S.plan.date < todayISO()) S.plan.date = todayISO();
+
+/* ---------- Schedule maths ---------- */
+const CARVE = 10;
+function meatInfo(it){
+  const m = it.meat;
+  const cook = Math.max(1, Math.round((+m.weight||0) * (+m.perLb||0) + (+m.extra||0)));
+  const out = (+m.rest||0) + CARVE;
+  const inAt = out + cook;
+  return { cook, out, inAt };
+}
+function meatSteps(it){
+  const m = it.meat, { cook, out, inAt } = meatInfo(it);
+  const n = it.name;
+  const s = [
+    { key:'fridge',  label:`Take the ${n.toLowerCase()} out of the fridge`, at:inAt + (+m.temper||0), where:'prep', note:'Let it come up toward room temperature; pat dry and season' },
+    { key:'preheat', label:`Preheat the oven to ${m.temp}°F`, at:inAt + 20, where:'oven', note:`For the ${n.toLowerCase()}` },
+    { key:'in',      label:`${n} into the oven`, at:inAt, where:'oven', note:`${fmtMins(cook)} at ${m.temp}°F` },
+    { key:'check',   label:`Check the ${n.toLowerCase()}'s temperature`, at:out + 15, where:'oven', note:`Pull it at ${m.target}` },
+    { key:'out',     label:`${n} out — rest it under foil`, at:out, where:'oven', note:`Rest ${m.rest} min. Save the juices for gravy` },
+    { key:'carve',   label:`Carve the ${n.toLowerCase()}`, at:CARVE, where:'table', note:'' },
+  ];
+  if (+m.temper <= 0) s.shift();
+  if (cook < 30) s.splice(s.findIndex(x=>x.key==='check'),1);
+  return s.map(x => ({ ...x, id: it.id + ':' + x.key, gen:true }));
+}
+function allSteps(plan){
+  const out = [];
+  plan.items.forEach(it => {
+    const st = (it.meat ? meatSteps(it) : []).concat(it.steps);
+    st.forEach(s => out.push({ ...s, at:+s.at||0, item:it }));
+  });
+  out.push({ id:'serve', label:'Dinner is on the table', at:0, where:'table', note:'', item:{ name:'Everyone', emoji:'🍽️' } });
+  const order = { prep:0, oven:1, stove:2, table:3 };
+  out.sort((a,b) => b.at - a.at || (a.id==='serve') - (b.id==='serve') || order[a.where]-order[b.where]);
+  return out;
+}
+function serveDate(plan = S.plan){ return new Date(`${plan.date}T${plan.time || '17:00'}`); }
+const stepTime = (s, sd) => new Date(sd.getTime() - s.at * 60000);
+
+/* ---------- Formatting ---------- */
+const fmtClock = d => d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+function fmtMins(m){ m = Math.round(m); const h = Math.floor(m/60), mm = m%60; return h ? `${h} hr${mm?` ${mm} min`:''}` : `${mm} min`; }
+function fmtCd(ms){
+  const neg = ms < 0; ms = Math.abs(ms);
+  const t = Math.floor(ms/1000), h = Math.floor(t/3600), m = Math.floor(t%3600/60), s = t%60;
+  const str = h ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+  return neg ? '−' + str : str;
+}
+function dayLabel(d){
+  const t = new Date(); t.setHours(0,0,0,0);
+  const x = new Date(d); x.setHours(0,0,0,0);
+  const diff = Math.round((x - t)/86400000);
+  return diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : diff === -1 ? 'Yesterday' : d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+}
+
+/* ============================================================
+   PLAN VIEW
+   ============================================================ */
+function renderPresets(){
+  const h = Object.entries(PRESETS).map(([k,p]) => `<button class="chip" data-preset="${k}">${p.label}</button>`)
+   .concat(S.saved.map((m,i) => `<button class="chip saved" data-saved="${i}">⭐ ${esc(m.name)}</button>`));
+  $('#presetChips').innerHTML = h.join('');
+}
+function renderPlan(){
+  const p = S.plan;
+  if (document.activeElement !== $('#mealName')) $('#mealName').value = p.name;
+  $('#serveDate').value = p.date; $('#serveTime').value = p.time;
+  const steps = allSteps(p), sd = serveDate();
+  const first = steps[0], startT = stepTime(first, sd);
+  const totalMin = first.at;
+  const late = startT < new Date();
+  $('#summary').innerHTML = p.items.length
+    ? `Start at <b>${fmtClock(startT)}</b> ${dayLabel(startT).toLowerCase() === 'today' ? 'today' : '· ' + dayLabel(startT)} · ${fmtMins(totalMin)} of cooking · ${steps.length - 1} steps.
+       ${late ? `<div style="color:var(--late);font-size:14px;margin-top:4px">That start time has already passed — push dinner later or start now and catch up.</div>` : ''}`
+    : 'Add a dish to build your running order.';
+
+  $('#dishList').innerHTML = p.items.map(it => {
+    let meta;
+    if (it.meat){ const mi = meatInfo(it); meta = `${it.meat.weight} lb · ${fmtMins(mi.cook)} at ${it.meat.temp}°F · rest ${it.meat.rest} min`; }
+    else { const st = it.steps.length; const mx = Math.max(0, ...it.steps.map(s=>+s.at||0)); meta = `${st} step${st===1?'':'s'} · starts ${fmtClock(new Date(sd - mx*60000))}`; }
+    return `<button class="dish" data-dish="${it.id}"><span class="emo">${esc(it.emoji)}</span><span><div class="nm">${esc(it.name)}</div><div class="meta">${meta}</div></span><span class="go">›</span></button>`;
+  }).join('');
+
+  $('#planTimeline').innerHTML = timelineHTML(steps, sd, false);
+}
+function timelineHTML(steps, sd, live){
+  const now = Date.now();
+  let markedNow = false;
+  return steps.map(s => {
+    const t = stepTime(s, sd), done = live && S.live.done[s.id];
+    const isLate = live && !done && t.getTime() <= now;
+    let cls = done ? 'done' : isLate ? 'late' : '';
+    if (live && !markedNow && t.getTime() > now){ markedNow = true; cls += ' nowline'; }
+    const rel = s.at === 0 ? 'Dinner' : `−${fmtMins(s.at)}`;
+    return `<li class="${cls}" ${live ? `data-step="${s.id}"` : ''}>
+      ${live ? `<button class="chk" aria-label="Done">${done ? '✓' : ''}</button>` : ''}
+      <div class="tm">${fmtClock(t)}<small>${rel}</small></div>
+      <div class="what"><div class="lb"><span class="tag ${s.where}">${WHERE[s.where]}</span>${esc(s.label)}</div>
+        <div class="it">${esc(s.item.emoji)} ${esc(s.item.name)}</div>${s.note ? `<div class="nt">${esc(s.note)}</div>` : ''}</div>
+    </li>`;
+  }).join('');
+}
+
+$('#presetChips').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  if (S.plan.items.length && !confirm('Replace the current menu?')) return;
+  const keepDate = S.plan.date;
+  if (b.dataset.preset) S.plan = planFromPreset(b.dataset.preset);
+  else {
+    const m = JSON.parse(JSON.stringify(S.saved[+b.dataset.saved]));
+    m.items.forEach(it => { it.id = uid(); it.steps.forEach(s => s.id = uid()); });
+    S.plan = { name:m.name, time:m.time, date:keepDate, items:m.items };
+  }
+  S.plan.date = keepDate >= todayISO() ? keepDate : todayISO();
+  save(); renderPlan();
+});
+$('#mealName').addEventListener('input', e => { S.plan.name = e.target.value; save(); });
+$('#serveDate').addEventListener('change', e => { if (e.target.value){ S.plan.date = e.target.value; save(); renderPlan(); } });
+$('#serveTime').addEventListener('change', e => { if (e.target.value){ S.plan.time = e.target.value; save(); renderPlan(); } });
+$('#dishList').addEventListener('click', e => { const b = e.target.closest('[data-dish]'); if (b) openEditor(b.dataset.dish); });
+$('#addDish').addEventListener('click', openLibrary);
+$('#saveMenu').addEventListener('click', () => {
+  const name = prompt('Save this menu as…', S.plan.name || 'My menu'); if (!name) return;
+  const copy = JSON.parse(JSON.stringify({ name, time:S.plan.time, items:S.plan.items }));
+  const i = S.saved.findIndex(m => m.name === name);
+  if (i >= 0) S.saved[i] = copy; else S.saved.push(copy);
+  save(); renderPresets(); toast('Saved', `“${name}” is in your menus up top.`);
+});
+
+/* ---------- Sheets ---------- */
+function openSheet(html){ $('#sheetCard').onclick = null; $('#sheetCard').innerHTML = html; $('#sheet').classList.remove('hidden'); $('#sheetCard').scrollTop = 0; }
+function closeSheet(){ $('#sheet').classList.add('hidden'); $('#sheetCard').innerHTML = ''; }
+$('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') { closeSheet(); renderAll(); } });
+
+function openLibrary(){
+  const btn = (k,src) => `<button class="libbtn" data-lib="${k}"><span>${src.emoji}</span>${src.name}</button>`;
+  openSheet(`<div class="sheet-head"><h2>Add a dish</h2><button class="btn small" data-close>Close</button></div>
+    <div class="sect">The meat</div><div class="libgrid">${Object.entries(MEATS).map(([k,v])=>btn(k,v)).join('')}</div>
+    <div class="sect">Sides &amp; extras</div><div class="libgrid">${Object.entries(SIDES).map(([k,v])=>btn(k,v)).join('')}</div>
+    <div class="sect">Something else</div><div class="libgrid"><button class="libbtn" data-lib="__custom"><span>✍️</span>My own dish</button></div>`);
+}
+$('#sheetCard').addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) { closeSheet(); renderAll(); return; }
+  const lib = e.target.closest('[data-lib]');
+  if (lib){
+    const k = lib.dataset.lib;
+    const it = k === '__custom'
+      ? { id:uid(), lib:'custom', name:'New dish', emoji:'🍲', meat:null, steps:[{ id:uid(), label:'Into the oven', at:40, where:'oven', note:'' }, { id:uid(), label:'Out', at:5, where:'oven', note:'' }] }
+      : fromLib(k);
+    S.plan.items.push(it); save(); renderPlan(); openEditor(it.id); return;
+  }
+});
+
+/* ---------- Dish editor ---------- */
+let editing = null;
+function openEditor(id){
+  const it = S.plan.items.find(x => x.id === id); if (!it) return;
+  editing = it;
+  const m = it.meat;
+  openSheet(`<div class="sheet-head"><h2>${esc(it.emoji)} ${esc(it.name)}</h2><button class="btn small primary" data-close>Done</button></div>
+    <div class="row"><div style="flex:0 0 70px"><label class="f">Icon</label><input class="inp" data-f="emoji" value="${esc(it.emoji)}" maxlength="4"></div>
+    <div><label class="f">Name</label><input class="inp" data-f="name" value="${esc(it.name)}"></div></div>
+    ${m ? `<div class="sect">Roasting</div>
+      <div class="grid2">
+        <div><label class="f">Weight (lb)</label><input class="inp" type="number" inputmode="decimal" step="0.25" min="0" data-m="weight" value="${m.weight}"></div>
+        <div><label class="f">Minutes per lb</label><input class="inp" type="number" inputmode="decimal" min="0" data-m="perLb" value="${m.perLb}"></div>
+        <div><label class="f">Oven °F</label><input class="inp" type="number" inputmode="numeric" data-m="temp" value="${m.temp}"></div>
+        <div><label class="f">Extra minutes</label><input class="inp" type="number" inputmode="numeric" data-m="extra" value="${m.extra}"></div>
+        <div><label class="f">Rest (min)</label><input class="inp" type="number" inputmode="numeric" min="0" data-m="rest" value="${m.rest}"></div>
+        <div><label class="f">Out of fridge (min before oven)</label><input class="inp" type="number" inputmode="numeric" min="0" data-m="temper" value="${m.temper}"></div>
+      </div>
+      <div style="margin-top:10px"><label class="f">Pull it out at</label><input class="inp" data-m="target" value="${esc(m.target)}"></div>
+      <div class="calc" id="meatCalc"></div>` : ''}
+    <div class="sect">${m ? 'Extra steps (basting, glazing…)' : 'Steps'}</div>
+    <div class="sub">Set each step as minutes before dinner hits the table.</div>
+    <div id="stepEdits"></div>
+    <button class="addbtn" data-addstep>+ Add a step</button>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn danger" data-deldish style="flex:1">Remove dish</button>
+      <button class="btn primary" data-close style="flex:1">Done</button>
+    </div>`);
+  renderStepEdits(); updateEditorTimes();
+}
+function renderStepEdits(){
+  const it = editing;
+  const sorted = [...it.steps].sort((a,b) => b.at - a.at);
+  $('#stepEdits').innerHTML = sorted.map(s => `<div class="stepedit" data-sid="${s.id}">
+    <div class="r1"><input class="inp" data-s="label" value="${esc(s.label)}" placeholder="What to do"><button class="xbtn" data-delstep aria-label="Delete step">✕</button></div>
+    <div class="r2">
+      <input class="inp" style="flex:0 0 84px" type="number" inputmode="numeric" min="0" data-s="at" value="${s.at}">
+      <span class="when" data-when>min before</span>
+      <select class="inp" data-s="where" style="flex:1">${Object.entries(WHERE).map(([k,v])=>`<option value="${k}" ${s.where===k?'selected':''}>${v}</option>`).join('')}</select>
+    </div>
+    <div class="r2"><input class="inp" data-s="note" value="${esc(s.note||'')}" placeholder="Note (optional) — temp, time, tips"></div>
+  </div>`).join('');
+}
+function updateEditorTimes(){
+  if (!editing) return;
+  const sd = serveDate();
+  document.querySelectorAll('#stepEdits [data-sid]').forEach(el => {
+    const s = editing.steps.find(x => x.id === el.dataset.sid);
+    if (s) el.querySelector('[data-when]').textContent = `min before → ${fmtClock(new Date(sd - (+s.at||0)*60000))}`;
+  });
+  if (editing.meat && $('#meatCalc')){
+    const mi = meatInfo(editing);
+    const at = x => fmtClock(new Date(sd - x*60000));
+    $('#meatCalc').innerHTML = `In the oven at <b>${at(mi.inAt)}</b> for <b>${fmtMins(mi.cook)}</b> · out at <b>${at(mi.out)}</b> · rest ${editing.meat.rest} min · carve at ${at(CARVE)}`;
+  }
+}
+$('#sheetCard').addEventListener('input', e => {
+  if (!editing) return;
+  const t = e.target;
+  if (t.dataset.f) editing[t.dataset.f] = t.value;
+  else if (t.dataset.m) editing.meat[t.dataset.m] = t.dataset.m === 'target' ? t.value : (t.value === '' ? 0 : +t.value);
+  else if (t.dataset.s){
+    const s = editing.steps.find(x => x.id === t.closest('[data-sid]').dataset.sid);
+    s[t.dataset.s] = t.dataset.s === 'at' ? (t.value === '' ? 0 : +t.value) : t.value;
+  } else return;
+  save(); updateEditorTimes(); renderAll();
+});
+$('#sheetCard').addEventListener('change', e => { if (editing && e.target.dataset.s){ const s = editing.steps.find(x => x.id === e.target.closest('[data-sid]').dataset.sid); s[e.target.dataset.s] = e.target.dataset.s==='at'?+e.target.value:e.target.value; save(); renderAll(); } });
+$('#sheetCard').addEventListener('click', e => {
+  if (!editing) return;
+  if (e.target.closest('[data-addstep]')){ editing.steps.push({ id:uid(), label:'', at:30, where:'stove', note:'' }); save(); renderStepEdits(); updateEditorTimes(); renderAll();
+    const inputs = document.querySelectorAll('#stepEdits [data-s="label"]'); const blank = [...inputs].find(i => !i.value); blank && blank.focus(); }
+  else if (e.target.closest('[data-delstep]')){ const id = e.target.closest('[data-sid]').dataset.sid; editing.steps = editing.steps.filter(s => s.id !== id); save(); renderStepEdits(); updateEditorTimes(); renderAll(); }
+  else if (e.target.closest('[data-deldish]')){ if (confirm(`Remove ${editing.name} from the menu?`)){ S.plan.items = S.plan.items.filter(x => x !== editing); editing = null; save(); closeSheet(); renderAll(); } }
+  else if (e.target.closest('[data-close]')){ editing = null; }
+});
+
+/* ---------- Settings ---------- */
+function openSettings(){
+  const st = S.settings;
+  const tg = (k, label, sub) => `<label class="toggle"><span>${label}<div class="sub">${sub}</div></span><input type="checkbox" data-set="${k}" ${st[k]?'checked':''}></label>`;
+  openSheet(`<div class="sheet-head"><h2>Settings</h2><button class="btn small primary" data-close>Done</button></div>
+    <div class="card" style="margin:0">
+      ${tg('sound','Sound','A chime when each step is due')}
+      ${tg('vibrate','Vibrate','Buzz the phone too (Android)')}
+      ${tg('heads','2-minute heads-up','A softer chime just before each step')}
+      ${tg('nag','Keep reminding me','Chime again every 30 seconds until I tick it off (up to 5 min)')}
+    </div>
+    <button class="btn" style="width:100%;margin-top:12px" data-testalarm>Test the alarm</button>
+    <p class="sub" style="margin-top:14px">Tip: keep this screen open while you cook — the app keeps your phone awake. Phones pause web pages that are in the background, so alarms are most reliable with the app on screen. On iPhone, use Share → Add to Home Screen.</p>`);
+}
+['#setBtn','#setBtn2'].forEach(s => $(s).addEventListener('click', openSettings));
+$('#sheetCard').addEventListener('change', e => { const k = e.target.dataset.set; if (k){ S.settings[k] = e.target.checked; save(); } });
+$('#sheetCard').addEventListener('click', e => { if (e.target.closest('[data-testalarm]')){ unlockAudio(); alarm({ label:'This is what an alarm sounds like', item:{ name:'Test', emoji:'🔔' }, note:'' }, false); } });
+
+/* ============================================================
+   LIVE (cooking) VIEW
+   ============================================================ */
+function startCooking(){
+  unlockAudio(); askNotify(); keepAwake();
+  const steps = allSteps(S.plan), sd = serveDate();
+  const lateBy = Date.now() - stepTime(steps[0], sd).getTime();
+  if (lateBy > 60000){
+    const pushed = new Date(sd.getTime() + Math.ceil(lateBy/300000)*300000);
+    openSheet(`<h2>You're starting ${fmtMins(lateBy/60000)} behind</h2>
+      <p>The first step was due at ${fmtClock(stepTime(steps[0], sd))}. What do you want to do?</p>
+      <button class="btn primary" style="width:100%;margin-top:6px" data-go="push">Push dinner to ${fmtClock(pushed)} ${dayLabel(pushed)==='Today'?'':dayLabel(pushed)}</button>
+      <button class="btn" style="width:100%;margin-top:8px" data-go="keep">Keep ${fmtClock(sd)} — I'll catch up</button>
+      <button class="btn" style="width:100%;margin-top:8px" data-close>Cancel</button>`);
+    $('#sheetCard').onclick = e => {
+      const g = e.target.closest('[data-go]'); if (!g) return;
+      $('#sheetCard').onclick = null;
+      if (g.dataset.go === 'push') setServe(pushed);
+      closeSheet(); goLive();
+    };
+    return;
+  }
+  goLive();
+}
+function goLive(){
+  S.live = { done:{}, alerted:{}, warned:{}, nagged:{} };
+  const now = Date.now(), sd = serveDate();
+  allSteps(S.plan).forEach(s => { if (stepTime(s, sd).getTime() < now - 90000) S.live.alerted[s.id] = S.live.warned[s.id] = 1; });
+  save(); lastSig = ''; renderAll(); window.scrollTo(0,0);
+}
+$('#startBtn').addEventListener('click', () => {
+  if (!S.plan.items.length) return toast('Nothing on the menu', 'Add a dish first.');
+  startCooking();
+});
+$('#endBtn').addEventListener('click', () => { if (confirm('Stop cooking mode? Your ticks will be cleared.')){ S.live = null; save(); releaseWake(); renderAll(); window.scrollTo(0,0); } });
+
+function setServe(d){
+  const iso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString();
+  S.plan.date = iso.slice(0,10); S.plan.time = iso.slice(11,16);
+}
+document.querySelectorAll('[data-shift]').forEach(b => b.addEventListener('click', () => {
+  const mins = +b.dataset.shift;
+  setServe(new Date(serveDate().getTime() + mins*60000));
+  // steps that slide back into the future can alert again
+  const now = Date.now(), sd = serveDate();
+  allSteps(S.plan).forEach(s => { if (stepTime(s, sd).getTime() > now){ delete S.live.alerted[s.id]; delete S.live.warned[s.id]; delete S.live.nagged[s.id]; } });
+  save(); lastSig = ''; renderLive();
+  toast(mins > 0 ? `Dinner pushed back ${mins} min` : `Dinner moved up ${-mins} min`, `Now on the table at ${fmtClock(sd)}. Everything not yet done has moved with it.`);
+}));
+
+let lastSig = '';
+function liveModel(){
+  const steps = allSteps(S.plan), sd = serveDate(), now = Date.now();
+  const due = steps.filter(s => !S.live.done[s.id] && stepTime(s, sd).getTime() <= now && s.id !== 'serve');
+  const upcoming = steps.filter(s => !S.live.done[s.id] && stepTime(s, sd).getTime() > now);
+  return { steps, sd, now, due, upcoming };
+}
+function renderLive(){
+  const { steps, sd, now, due, upcoming } = liveModel();
+  lastSig = sig();
+  $('#lvMeal').textContent = S.plan.name || 'Dinner';
+  $('#lvServe').textContent = `On the table at ${fmtClock(sd)}${dayLabel(sd)==='Today'?'':' · '+dayLabel(sd)}`;
+  let h = '';
+  const served = now >= sd.getTime() && !due.length;
+  if (served){
+    h += `<div class="card served"><div style="font-size:44px">🍽️</div><div class="q">Dinner's on the table.</div><p class="sub">Just the way Dad used to do it. Enjoy it.</p></div>`;
+  } else if (due.length){
+    h += `<div class="nowcard"><h2>Do this now</h2>${due.map(s => {
+      const lateMin = Math.floor((now - stepTime(s, sd).getTime())/60000);
+      return `<div class="nowitem"><div class="txt"><div class="lb"><span class="tag ${s.where}" style="background:rgba(255,255,255,.25)">${WHERE[s.where]}</span>${esc(s.label)}</div>
+        <div class="it">${esc(s.item.emoji)} ${esc(s.item.name)} · due ${fmtClock(stepTime(s, sd))}</div>
+        ${s.note ? `<div class="nt">${esc(s.note)}</div>` : ''}
+        ${lateMin >= 2 ? `<span class="lt">${fmtMins(lateMin)} late</span>` : ''}</div>
+        <button class="donebtn" data-done="${s.id}">Done ✓</button></div>`; }).join('')}
+      ${due.length > 2 ? `<button class="donebtn" style="width:100%;margin-top:10px;background:rgba(255,255,255,.18);color:#fff" data-alldone>Mark all ${due.length} as done</button>` : ''}</div>`;
+  } else {
+    h += `<div class="card calm"><div class="q">Nothing to do right now.</div><div class="sub">Put the kettle on. I'll call you when it's time.</div></div>`;
+  }
+  const nx = upcoming.filter(s => s.id !== 'serve');
+  if (nx.length){
+    const first = nx[0], t0 = stepTime(first, sd).getTime();
+    const same = nx.filter(s => stepTime(s, sd).getTime() === t0);
+    const later = nx.slice(same.length, same.length + 4);
+    h += `<section class="card nextcard"><h2>Up next</h2>
+      <div class="nx"><div class="cd" data-cd="${t0}"></div><div><div class="lb">${same.map(s=>esc(s.label)).join('<br>')}</div>
+      <div class="sub">${same.map(s=>esc(s.item.emoji+' '+s.item.name)).join(' · ')} · at ${fmtClock(new Date(t0))}</div></div></div>
+      ${later.length ? `<div class="later">${later.map(s => `<div><span>${esc(s.item.emoji)} ${esc(s.label)}</span><span>${fmtClock(stepTime(s, sd))}</span></div>`).join('')}</div>` : ''}
+    </section>`;
+  }
+  // What's cooking — per dish status
+  const rows = S.plan.items.map(it => {
+    const st = steps.filter(s => s.item === it);
+    if (!st.length) return '';
+    const past = st.filter(s => S.live.done[s.id] || stepTime(s, sd).getTime() <= now);
+    const next = st.find(s => !S.live.done[s.id] && stepTime(s, sd).getTime() > now);
+    const cur = past[past.length - 1];
+    const phase = !cur ? 'Not started' : !next ? 'Ready ✓' : cur.label;
+    return `<div class="s"><span class="emo">${esc(it.emoji)}</span><div><div class="nm">${esc(it.name)}</div><div class="ph">${esc(phase)}</div></div>
+      ${next ? `<div class="rt" data-cd="${stepTime(next, sd).getTime()}"></div>` : ''}</div>`;
+  }).join('');
+  h += `<section class="card status"><h2>What's cooking</h2>${rows}</section>`;
+  $('#lvBody').innerHTML = h;
+  // add the next-step label under per-dish countdowns
+  $('#liveTimeline').innerHTML = timelineHTML(steps, sd, true);
+  tickText();
+}
+function sig(){
+  const { sd, now, steps } = liveModel();
+  return S.plan.date + S.plan.time + '|' + steps.map(s => (S.live.done[s.id]?'d':'') + (stepTime(s, sd).getTime() <= now ? 'p' : 'f')).join('') + '|' + Math.floor(now/60000);
+}
+function tickText(){
+  const now = Date.now();
+  document.querySelectorAll('#lvBody [data-cd]').forEach(el => { el.textContent = fmtCd(+el.dataset.cd - now); });
+  const left = serveDate().getTime() - now;
+  $('#lvCd').textContent = left > 0 ? fmtCd(left) : 'Serve!';
+}
+$('#lvBody').addEventListener('click', e => { if (e.target.closest('[data-alldone]')){ liveModel().due.forEach(s => S.live.done[s.id] = 1); save(); renderLive(); return; } const b = e.target.closest('[data-done]'); if (b){ S.live.done[b.dataset.done] = 1; save(); renderLive(); } });
+$('#liveTimeline').addEventListener('click', e => {
+  const li = e.target.closest('[data-step]'); if (!li || !e.target.closest('.chk')) return;
+  const id = li.dataset.step; if (S.live.done[id]) delete S.live.done[id]; else S.live.done[id] = 1;
+  save(); renderLive();
+});
+
+/* ---------- Alarms ---------- */
+let actx = null;
+function unlockAudio(){ try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch(e){} }
+function chime(strong){
+  if (!S.settings.sound || !actx) return;
+  const notes = strong ? [784, 988, 1175, 784, 988, 1175] : [880, 1175];
+  notes.forEach((f, i) => {
+    const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + i * 0.22;
+    o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(strong ? 0.6 : 0.3, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.55);
+  });
+}
+function alarm(s, heads){
+  chime(!heads);
+  if (S.settings.vibrate && navigator.vibrate) navigator.vibrate(heads ? [150] : [400,150,400,150,700]);
+  toast(heads ? `In 2 minutes: ${s.label}` : s.label, `${s.item.emoji} ${s.item.name}${s.note ? ' · ' + s.note : ''}`, !heads);
+  notify(heads ? `In 2 min: ${s.label}` : s.label, `${s.item.name}${s.note ? ' — ' + s.note : ''}`, s.id + (heads ? '-h' : ''));
+}
+function checkAlarms(){
+  if (!S.live) return;
+  const now = Date.now(), sd = serveDate();
+  let dirty = false;
+  allSteps(S.plan).forEach(s => {
+    if (S.live.done[s.id]) return;
+    const t = stepTime(s, sd).getTime();
+    if (t <= now && !S.live.alerted[s.id]){ S.live.alerted[s.id] = now; dirty = true; if (now - t < 120000) alarm(s, false); }
+    else if (S.settings.heads && t > now && t - now <= 120000 && !S.live.warned[s.id] && s.id !== 'serve'){ S.live.warned[s.id] = 1; dirty = true; alarm(s, true); }
+    else if (S.settings.nag && t <= now && now - t < 300000 && S.live.alerted[s.id] && s.id !== 'serve'){
+      const last = S.live.nagged[s.id] || S.live.alerted[s.id];
+      if (now - last >= 30000){ S.live.nagged[s.id] = now; chime(false); if (S.settings.vibrate && navigator.vibrate) navigator.vibrate([200,100,200]); }
+    }
+  });
+  if (dirty) save();
+}
+
+/* ---------- Notifications, wake lock, toast ---------- */
+let swReg = null;
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').then(r => swReg = r).catch(()=>{});
+function askNotify(){ try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch(e){} }
+function notify(title, body, tag){
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted' || document.visibilityState === 'visible') return;
+    const opts = { body, tag, renotify:true, icon:'icon-192.png', badge:'icon-192.png', vibrate:[400,150,400] };
+    if (swReg) swReg.showNotification(title, opts); else new Notification(title, opts);
+  } catch(e){}
+}
+let wake = null;
+async function keepAwake(){ try { if ('wakeLock' in navigator && !wake){ wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => wake = null); } } catch(e){} }
+function releaseWake(){ try { wake && wake.release(); } catch(e){} wake = null; }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.live){ keepAwake(); unlockAudio(); lastSig=''; tick(); } });
+document.addEventListener('pointerdown', unlockAudio, { once:false, passive:true });
+
+let toastTimer;
+function toast(title, sub, strong){
+  $('#toastHost').innerHTML = `<div class="toast ${strong?'flash':''}"><div class="t">${esc(title)}${sub?`<small>${esc(sub)}</small>`:''}</div><button class="btn small" style="background:#fff;color:var(--ink)" data-x>OK</button></div>`;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toastHost').innerHTML = '', strong ? 20000 : 5000);
+}
+$('#toastHost').addEventListener('click', e => { if (e.target.closest('[data-x]')) $('#toastHost').innerHTML = ''; });
+
+/* ---------- Main loop ---------- */
+function renderAll(){
+  $('#planView').classList.toggle('hidden', !!S.live);
+  $('#liveView').classList.toggle('hidden', !S.live);
+  if (S.live) renderLive(); else { renderPresets(); renderPlan(); }
+}
+function tick(){
+  if (!S.live) return;
+  checkAlarms();
+  if (sig() !== lastSig) renderLive(); else tickText();
+}
+renderAll();
+if (S.live) keepAwake();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
